@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import logo from '../assets/favicon.ico'
-import {Navbar, Nav, NavDropdown, Form, FormControl, Button, InputGroup} from 'react-bootstrap';
-import { MDBCol } from 'mdbreact';
+import {Navbar, Nav, NavDropdown, Form, FormControl, Button} from 'react-bootstrap';
+
 class CustomNavBar extends Component {
     render() {
         return (
@@ -14,7 +14,7 @@ class CustomNavBar extends Component {
                     height="30"
                     className="d-inline-block align-top"
                 />
-                {' UniCast'}
+                {' React Bootstrap'}
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
@@ -29,12 +29,10 @@ class CustomNavBar extends Component {
                             <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
                         </NavDropdown>
                     </Nav>
-                        <MDBCol md="6">
-                            <form className="form-inline mt-4 mb-4">
-                                <MDBIcon icon="search" />
-                                <input className="form-control form-control-sm ml-3 w-75" type="text" placeholder="Search" aria-label="Search" />
-                            </form>
-                        </MDBCol>
+                    <Form inline>
+                        <FormControl type="text" placeholder="Search" className="mr-sm-2" />
+                        <Button variant="outline-success">Search</Button>
+                    </Form>
                 </Navbar.Collapse>
             </Navbar>
         );
