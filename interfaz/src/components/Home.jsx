@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Jumbotron, Button } from 'react-bootstrap';
 import  CustomNavBar from './CustomNavBar';
-import Video from './Video';
 
 class Home extends Component {
     render() {
@@ -18,9 +17,6 @@ class Home extends Component {
                 <p>
                     <Button variant="primary">Learn more</Button>
                 </p>
-                <div class="container" style={{height: '400px', width: '400px'}} >
-                    <Video />
-                </div>
             </Jumbotron>
             </div>
         );
