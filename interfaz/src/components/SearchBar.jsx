@@ -1,15 +1,30 @@
 import React, { Component } from 'react';
 import { MDBCol } from 'mdbreact';
-import { FaSearch } from 'react-icons/fa';
 
 class SearchBar extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { value: '' };
+        this.handleChange = this.handleChange.bind(this);
+        this.keyPress = this.keyPress.bind(this);
+   }
+
+    handleChange(e) {
+        this.setState({ value: e.target.value });
+    }
+
+    keyPress(e){
+        if (e.keyCode === 13) {
+            //Codigo aqui
+            
+        }
+    }
+
     render() {
         return (
-            <MDBCol md="6">
-                <form className="form-inline mt-4 mb-4">
-                    <FaSearch />
-                    <input className="form-control form-control-sm ml-3 w-75" type="text" placeholder="Search" aria-label="Search" />
-                </form>
+            <MDBCol md="6" className="mx-auto">
+                <input className="form-control" onKeyDown={this.keyPress}
+                onChange={this.handleChange} type="text" placeholder="Buscar..." aria-label="Search" />
             </MDBCol>
         );
     }
