@@ -1,10 +1,30 @@
 import React, { Component } from 'react';
 import logo from '../assets/favicon.ico'
-import {Navbar, Nav, NavDropdown} from 'react-bootstrap';
+import {Navbar, Nav} from 'react-bootstrap';
 import { FaBell, FaEnvelope, FaUser} from 'react-icons/fa'
 import SearchBar from './SearchBar';
+import './DropDown.css';
 
 class CustomNavBar extends Component {
+    constructor() {
+        super();
+        this.state = { displayMenu: false };
+        this.showDropdown = this.showDropdown.bind(this);
+        this.hideDropdown = this.hideDropdown.bind(this);
+    }
+
+    showDropdown(event) {
+        event.preventDefault();
+        this.setState({displayMenu: !this.state.displayMenu},() => {
+            document.addEventListener('click', this.hideDropdown)})
+    }
+
+    hideDropdown() {
+        this.setState({displayMenu: false}, () => {
+            document.removeEventListener('click', this.hideDropdown)
+        })
+    }
+
     render() {
         return (
             <Navbar expand="lg" bg="light"  className="shadow-sm mb-5 bg-white rounded" sticky="top">
@@ -24,13 +44,22 @@ class CustomNavBar extends Component {
                 <Nav className="ml-auto">
                     <Nav.Link href="#home"><FaBell size={20}/></Nav.Link>
                     <Nav.Link href="#link"><FaEnvelope size={20}/></Nav.Link>
-                    <NavDropdown alignRight title={<FaUser size={25}/>} id="basic-nav-dropdown">
-                        <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-                        <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
-                        <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-                        <NavDropdown.Divider />
-                        <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
-                    </NavDropdown>
+                    <Nav.Link>
+                        <div class="dropdown">
+                            <FaUser size={25} onClick={this.showDropdown}/>
+                            {this.state.displayMenu ? (
+                                <div class="dropdown-content">
+                                    <a href='#aaa'>Link 1</a>
+                                    <a href='#aa'>Link 2</a>
+                                    <a href='#a'>Link 3</a>
+                                </div>
+                                ):
+                                (
+                                    null
+                                )                        
+                            }
+                        </div>
+                        </Nav.Link>
                 </Nav>
                 </Navbar.Collapse>
             </Navbar>
