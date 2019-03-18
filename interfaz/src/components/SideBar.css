@@ -1,0 +1,41 @@
+/* The side navigation menu */
+.sidebar {
+  margin: 0;
+  padding: 0;
+  top: 57px;
+  left: 0;
+  width: 230px;
+  background-color: #f3f3f3;
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+  z-index: 10;
+}
+
+/* Sidebar links */
+.sidebar a {
+  display: block;
+  color: black;
+  padding: 10px 30px;
+  font-size: 14px;
+  text-decoration: none;
+  text-align: left;
+}
+
+/* Active/current link */
+.sidebar a.active {
+  background-color: #d8d8d8;
+  font-weight: 600;
+}
+
+/* Links on mouse-over */
+.sidebar a:hover:not(.active) {
+  background-color: #d8d8d8;
+}
+
+/* Page content. The value of the margin-left property should match the value of the sidebar's width property */
+div.content {
+  margin-left: 200px;
+  padding: 1px 16px;
+  height: 1000px;
+}
