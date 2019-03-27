@@ -39,3 +39,21 @@ div.content {
   padding: 1px 16px;
   height: 1000px;
 }
+
+/* Listado de asignaturas en la barra lateral */
+.asignaturas {
+  margin-top: 10px;
+  border-top-width: 1px;
+  border-top-color: #d8d8d8;
+  border-top-style: solid;
+}
+
+.asignaturas h4 {
+  display: block;
+  color: #8b8b8b;
+  padding: 10px 30px;
+  font-size: 16px;
+  text-decoration: none;
+  text-align: left;
+  margin-bottom: 0;
+}

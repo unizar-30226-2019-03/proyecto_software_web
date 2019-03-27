@@ -24,9 +24,10 @@ class Home extends Component {
     return (
       <div>
         <Helmet>
+          <title>Inicio</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
-        <CustomNavBar onChange={this.handleChange} />
+        <CustomNavBar onChange={this.handleChange} activar={"inicio"} />
         <div
           style={{ marginLeft: this.state.contentMargin, marginTop: "55px" }}
         >

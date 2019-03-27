@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import CustomNavBar from "./CustomNavBar";
 import { Helmet } from "react-helmet";
 
-class About extends Component {
+class Notificaciones extends Component {
   constructor() {
     super();
     this.state = {
@@ -32,11 +32,11 @@ class About extends Component {
             marginTop: "55px"
           }}
         >
-          ABOUT PAGEGEGEGEGE
+          NOTIFICACIONES PAGEGEGEGEGE
         </div>
       </div>
     );
   }
 }
 
-export default About;
+export default Notificaciones;

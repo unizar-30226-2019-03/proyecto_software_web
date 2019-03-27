@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import logo from "../assets/favicon.ico";
 import { Navbar, Nav } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import { FaBell, FaEnvelope, FaUser, FaBars } from "react-icons/fa";
 import SearchBar from "./SearchBar";
 import "./DropDown.css";
@@ -87,7 +88,7 @@ class CustomNavBar extends Component {
               <FaBars size={20} onClick={this.showSideBar} />
             </Nav.Link>
           </Nav>
-          <Navbar.Brand href="#" style={{ marginLeft: "15px" }}>
+          <Navbar.Brand href="/inicio" style={{ marginLeft: "15px" }}>
             <img
               alt="holi"
               src={logo}
@@ -101,10 +102,10 @@ class CustomNavBar extends Component {
           <Navbar.Collapse id="basic-navbar-nav">
             <SearchBar />
             <Nav className="ml-auto">
-              <Nav.Link href="#home">
+              <Nav.Link href="/notificaciones">
                 <FaBell size={20} />
               </Nav.Link>
-              <Nav.Link href="#link">
+              <Nav.Link href="/mensajes">
                 <FaEnvelope size={20} />
               </Nav.Link>
               <Nav.Link>
@@ -112,9 +113,9 @@ class CustomNavBar extends Component {
                   <FaUser size={25} onClick={this.showDropdown} />
                   {this.state.displayMenu ? (
                     <div className="dropdown-content">
-                      <a href="#aaa">Link 1</a>
-                      <a href="#aa">Link 2</a>
-                      <a href="#a">Link 3</a>
+                      <Link to="/perfil">Mi perfil</Link>
+                      <Link to="/about">Información</Link>
+                      <Link to="/">Cerrar Sesión</Link>
                     </div>
                   ) : null}
                 </div>
@@ -122,7 +123,11 @@ class CustomNavBar extends Component {
             </Nav>
           </Navbar.Collapse>
         </Navbar>
-        <div>{this.state.displaySide ? <SideBar /> : null}</div>
+        <div>
+          {this.state.displaySide ? (
+            <SideBar activate={this.props.activar} />
+          ) : null}
+        </div>
       </div>
     );
   }

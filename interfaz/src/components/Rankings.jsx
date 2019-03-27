@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import CustomNavBar from "./CustomNavBar";
 import { Helmet } from "react-helmet";
 
-class About extends Component {
+class Rankings extends Component {
   constructor() {
     super();
     this.state = {
@@ -22,21 +22,21 @@ class About extends Component {
     return (
       <div>
         <Helmet>
-          <title>Notificaciones</title>
+          <title>Ránkings</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
-        <CustomNavBar onChange={this.handleChange} activar={""} />
+        <CustomNavBar onChange={this.handleChange} activar={"rankings"} />
         <div
           style={{
             marginLeft: this.state.contentMargin,
             marginTop: "55px"
           }}
         >
-          ABOUT PAGEGEGEGEGE
+          RANKINGS PAGEGEGEGEGE
         </div>
       </div>
     );
   }
 }
 
-export default About;
+export default Rankings;
