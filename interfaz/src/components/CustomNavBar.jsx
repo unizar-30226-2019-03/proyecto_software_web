@@ -23,11 +23,6 @@ class CustomNavBar extends Component {
     this.hideDropdown = this.hideDropdown.bind(this);
     this.showSideBar = this.showSideBar.bind(this);
     this.resize = this.resize.bind(this);
-    this.changeDropdownPage = this.changeDropdownPage.bind(this);
-  }
-
-  changeDropdownPage(newUrl) {
-    window.location = newUrl;
   }
 
   componentDidMount() {
