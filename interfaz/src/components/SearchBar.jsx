@@ -15,7 +15,7 @@ class SearchBar extends Component {
 
   keyPress(e) {
     if (e.keyCode === 13) {
-      //Codigo aqui
+      //ESTO CAMBIA DE PÁGINA window.location = "/";
     }
   }
 

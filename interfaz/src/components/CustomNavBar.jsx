@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import logo from "../assets/favicon.ico";
 import { Navbar, Nav } from "react-bootstrap";
-import { Link } from "react-router-dom";
 import { FaBell, FaEnvelope, FaUser, FaBars } from "react-icons/fa";
 import SearchBar from "./SearchBar";
 import "./DropDown.css";
@@ -24,6 +23,11 @@ class CustomNavBar extends Component {
     this.hideDropdown = this.hideDropdown.bind(this);
     this.showSideBar = this.showSideBar.bind(this);
     this.resize = this.resize.bind(this);
+    this.changeDropdownPage = this.changeDropdownPage.bind(this);
+  }
+
+  changeDropdownPage(newUrl) {
+    window.location = newUrl;
   }
 
   componentDidMount() {
@@ -77,12 +81,7 @@ class CustomNavBar extends Component {
   render() {
     return (
       <div>
-        <Navbar
-          expand="lg"
-          bg="light"
-          className="shadow-sm mb-5 bg-white"
-          fixed="top"
-        >
+        <Navbar bg="light" className="shadow-sm mb-5 bg-white" fixed="top">
           <Nav>
             <Nav.Link>
               <FaBars size={20} onClick={this.showSideBar} />
@@ -98,30 +97,27 @@ class CustomNavBar extends Component {
             />
             {" UniCast"}
           </Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <SearchBar />
-            <Nav className="ml-auto">
-              <Nav.Link href="/notificaciones">
-                <FaBell size={20} />
-              </Nav.Link>
-              <Nav.Link href="/mensajes">
-                <FaEnvelope size={20} />
-              </Nav.Link>
-              <Nav.Link>
-                <div className="dropdown">
-                  <FaUser size={25} onClick={this.showDropdown} />
-                  {this.state.displayMenu ? (
-                    <div className="dropdown-content">
-                      <Link to="/perfil">Mi perfil</Link>
-                      <Link to="/about">Información</Link>
-                      <Link to="/">Cerrar Sesión</Link>
-                    </div>
-                  ) : null}
-                </div>
-              </Nav.Link>
-            </Nav>
-          </Navbar.Collapse>
+          <SearchBar />
+          <Nav className="ml-auto">
+            <Nav.Link href="/notificaciones">
+              <FaBell size={20} />
+            </Nav.Link>
+            <Nav.Link href="/mensajes">
+              <FaEnvelope size={20} />
+            </Nav.Link>
+            <Nav.Item style={{ color: "#00000080", width: "36px" }}>
+              <div className="dropdown" style={{ top: "5px" }}>
+                <FaUser size={25} onClick={this.showDropdown} />
+                {this.state.displayMenu ? (
+                  <div className="dropdown-content">
+                    <a href="/perfil">Mi perfil</a>
+                    <a href="/about">Información</a>
+                    <a href="/">Cerrar Sesión</a>
+                  </div>
+                ) : null}
+              </div>
+            </Nav.Item>
+          </Nav>
         </Navbar>
         <div>
           {this.state.displaySide ? (
