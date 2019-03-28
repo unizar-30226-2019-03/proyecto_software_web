@@ -3,7 +3,7 @@ import logo from "../assets/favicon.ico";
 import { Navbar, Nav } from "react-bootstrap";
 import { FaBell, FaEnvelope, FaUser, FaBars } from "react-icons/fa";
 import SearchBar from "./SearchBar";
-import "./DropDown.css";
+import "../App.css";
 import SideBar from "./SideBar";
 
 class CustomNavBar extends Component {
@@ -17,12 +17,15 @@ class CustomNavBar extends Component {
       displayMenu: false,
       displaySide: true,
       windowWidth: window.innerWidth,
+      displayNotif: false,
       hide: false
     };
     this.showDropdown = this.showDropdown.bind(this);
     this.hideDropdown = this.hideDropdown.bind(this);
     this.showSideBar = this.showSideBar.bind(this);
     this.resize = this.resize.bind(this);
+    this.showDropdownNotif = this.showDropdownNotif.bind(this);
+    this.hideDropdownNotif = this.hideDropdownNotif.bind(this);
   }
 
   componentDidMount() {
@@ -67,9 +70,22 @@ class CustomNavBar extends Component {
     });
   }
 
+  showDropdownNotif(event) {
+    event.preventDefault();
+    this.setState({ displayNotif: !this.state.displayNotif }, () => {
+      document.addEventListener("click", this.hideDropdownNotif);
+    });
+  }
+
   hideDropdown() {
     this.setState({ displayMenu: false }, () => {
       document.removeEventListener("click", this.hideDropdown);
+    });
+  }
+
+  hideDropdownNotif() {
+    this.setState({ displayNotif: false }, () => {
+      document.removeEventListener("click", this.hideDropdownNotif);
     });
   }
 
@@ -82,6 +98,7 @@ class CustomNavBar extends Component {
               <FaBars size={20} onClick={this.showSideBar} />
             </Nav.Link>
           </Nav>
+
           <Navbar.Brand href="/inicio" style={{ marginLeft: "15px" }}>
             <img
               alt="holi"
@@ -92,14 +109,31 @@ class CustomNavBar extends Component {
             />
             {" UniCast"}
           </Navbar.Brand>
+
           <SearchBar />
+
           <Nav className="ml-auto">
-            <Nav.Link href="/notificaciones">
-              <FaBell size={20} />
-            </Nav.Link>
-            <Nav.Link href="/mensajes">
+            <Nav.Item style={{ color: "#00000080", width: "36px" }}>
+              <div className="dropdown" style={{ top: "8px" }}>
+                <FaBell size={20} onClick={this.showDropdownNotif} />
+                {this.state.displayNotif ? (
+                  <div className="dropdown-content">
+                    <a href="#a">Video Nuevo1</a>
+                    <a href="#a">Vídeo Nuevo2</a>
+                    <a href="#a">Vídeo Nuevo3</a>
+                    <a href="#a">Vídeo Nuevo4</a>
+                    <a href="#a">Vídeo Nuevo5</a>
+                    <a href="#a">Vídeo Nuevo6</a>
+                    <a href="#a">Vídeo Nuevo7</a>
+                  </div>
+                ) : null}
+              </div>
+            </Nav.Item>
+
+            <Nav.Link href="/mensajes" style={{ color: "#00000080" }}>
               <FaEnvelope size={20} />
             </Nav.Link>
+
             <Nav.Item style={{ color: "#00000080", width: "36px" }}>
               <div className="dropdown" style={{ top: "5px" }}>
                 <FaUser size={25} onClick={this.showDropdown} />

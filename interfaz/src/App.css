@@ -1,3 +1,4 @@
+/* CSS DE LA APLICACIÓN */
 .App {
   text-align: center;
 }
@@ -30,4 +31,95 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+/* CSS DE LOS DROPDOWN MENU DE LA BARRA DE NAVEGACIÓN */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Cambia cursor como si fuera un link al estar encima */
+.dropdown :hover {
+  cursor: pointer;
+}
+
+/* Estilo del menú desplegable */
+.dropdown-content {
+  display: block;
+  position: absolute;
+  right: 0;
+  background-color: white;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+/* Estilo de los enlaces del menú desplegable */
+.dropdown-content a {
+  color: black;
+  padding: 8px 16px;
+  text-decoration: none;
+  text-align: left;
+  font-size: 14px;
+  display: block;
+}
+
+/* Cambia fondo cuando pasas por encima del enlace */
+.dropdown-content a:hover {
+  background-color: #f1f1f1;
+}
+
+/* CSS PARA SIDEBAR */
+.sidebar {
+  margin: 0;
+  padding: 0;
+  top: 57px;
+  left: 0;
+  width: 230px;
+  background-color: #f3f3f3;
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+  z-index: 10;
+}
+
+/* Sidebar links */
+.sidebar a {
+  display: block;
+  color: black;
+  padding: 10px 30px;
+  font-size: 14px;
+  text-decoration: none;
+  text-align: left;
+}
+
+/* Active/current link */
+.sidebar a.active {
+  background-color: #d8d8d8;
+  font-weight: 600;
+}
+
+/* Links on mouse-over */
+.sidebar a:hover:not(.active) {
+  background-color: #d8d8d8;
+}
+
+/* Listado de asignaturas en la barra lateral */
+.asignaturas {
+  margin-top: 10px;
+  border-top-width: 1px;
+  border-top-color: #d8d8d8;
+  border-top-style: solid;
+}
+
+/* Título para separar secciones en sidebar */
+.asignaturas h4 {
+  display: block;
+  color: #8b8b8b;
+  padding: 10px 30px;
+  font-size: 16px;
+  text-decoration: none;
+  text-align: left;
+  margin-bottom: 0;
 }
