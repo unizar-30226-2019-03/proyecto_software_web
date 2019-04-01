@@ -136,3 +136,11 @@
   top: -11px;
   cursor: pointer;
 }
+
+.scroll-menu-arrow-hidden {
+  padding: 65px 1px;
+  position: relative;
+  top: -11px;
+  visibility: hidden;
+  pointer-events: none;
+}

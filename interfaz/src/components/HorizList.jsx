@@ -38,18 +38,18 @@ export const Menu = list =>
     return <MenuItem url={name} key={name} img={image} />;
   });
 
-const ArrowL = hide => {
+const ArrowL = () => {
   return (
     <div>
-      <FaAngleLeft size={25} color="#00000080" style={{ visibility: hide }} />
+      <FaAngleLeft size={25} color="#00000080" />
     </div>
   );
 };
 
-const ArrowR = hide => {
+const ArrowR = () => {
   return (
     <div>
-      <FaAngleRight size={25} color="#00000080" style={{ visibility: hide }} />
+      <FaAngleRight size={25} color="#00000080" />
     </div>
   );
 };
@@ -69,8 +69,8 @@ const HMenuArr = ({ menu }) => {
         transition={0.15}
         alignCenter={false}
         dragging={false}
-        arrowRight={ArrowR("visible")}
-        arrowLeft={ArrowL("visible")}
+        arrowRight={ArrowR()}
+        arrowLeft={ArrowL()}
       />
     </div>
   );
@@ -81,7 +81,7 @@ const HMenu = ({ menu }) => {
     <div
       className=""
       style={{
-        width: "96%",
+        width: "97%",
         borderBottom: "1px solid lightgrey"
       }}
     >
@@ -91,8 +91,9 @@ const HMenu = ({ menu }) => {
         transition={0.15}
         alignCenter={false}
         dragging={false}
-        arrowRight={ArrowR("hidden")}
-        arrowLeft={ArrowL("hidden")}
+        arrowClass="scroll-menu-arrow-hidden"
+        arrowRight={ArrowR()}
+        arrowLeft={ArrowL()}
       />
     </div>
   );
