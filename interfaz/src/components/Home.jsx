@@ -1,22 +1,22 @@
 import React, { Component } from "react";
-import { Jumbotron, Button } from "react-bootstrap";
 import CustomNavBar from "./CustomNavBar";
 import { Helmet } from "react-helmet";
+import HorizList from "./HorizList";
 
 class Home extends Component {
   constructor() {
     super();
     this.state = {
-      contentMargin: "230px"
+      contentMargin: "270px"
     };
     this.handleChange = this.handleChange.bind(this);
   }
 
   handleChange(display) {
     if (display) {
-      this.setState({ contentMargin: "230px" });
+      this.setState({ contentMargin: "270px" });
     } else {
-      this.setState({ contentMargin: "0px" });
+      this.setState({ contentMargin: "50px" });
     }
   }
 
@@ -29,40 +29,35 @@ class Home extends Component {
         </Helmet>
         <CustomNavBar onChange={this.handleChange} activar={"inicio"} />
         <div
-          style={{ marginLeft: this.state.contentMargin, marginTop: "55px" }}
+          style={{
+            marginLeft: this.state.contentMargin,
+            marginTop: "80px"
+          }}
         >
-          <Jumbotron>
-            <h1>Hello, world!</h1>
-            <p>
-              This is a simple hero unit, a simple jumbotron-style component for
-              calling extra attention to featured content or information.
-            </p>
-            <p>
-              <Button variant="primary">Learn more</Button>
-            </p>
-          </Jumbotron>
-
-          <Jumbotron>
-            <h1>Hello, world!</h1>
-            <p>
-              This is a simple hero unit, a simple jumbotron-style component for
-              calling extra attention to featured content or information.
-            </p>
-            <p>
-              <Button variant="primary">Learn more</Button>
-            </p>
-          </Jumbotron>
-
-          <Jumbotron>
-            <h1>Hello, world!</h1>
-            <p>
-              This is a simple hero unit, a simple jumbotron-style component for
-              calling extra attention to featured content or information.
-            </p>
-            <p>
-              <Button variant="primary">Learn more</Button>
-            </p>
-          </Jumbotron>
+          <div>
+            <div style={{ marginLeft: "28px" }}>
+              <h5>Vídeos subidos recientemente</h5>
+            </div>
+            <HorizList useArrows={this.state.contentMargin === "270px"} />
+          </div>
+          <div>
+            <div style={{ marginLeft: "28px" }}>
+              <h5>Asignatura X</h5>
+            </div>
+            <HorizList useArrows={this.state.contentMargin === "270px"} />
+          </div>
+          <div>
+            <div style={{ marginLeft: "28px" }}>
+              <h5>Asignatura Y</h5>
+            </div>
+            <HorizList useArrows={this.state.contentMargin === "270px"} />
+          </div>
+          <div>
+            <div style={{ marginLeft: "28px" }}>
+              <h5>Asignatura Z</h5>
+            </div>
+            <HorizList useArrows={this.state.contentMargin === "270px"} />
+          </div>
         </div>
       </div>
     );

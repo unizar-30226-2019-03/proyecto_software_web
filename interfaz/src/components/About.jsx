@@ -6,16 +6,16 @@ class About extends Component {
   constructor() {
     super();
     this.state = {
-      contentMargin: "230px"
+      contentMargin: "300px"
     };
     this.handleChange = this.handleChange.bind(this);
   }
 
   handleChange(display) {
     if (display) {
-      this.setState({ contentMargin: "230px" });
+      this.setState({ contentMargin: "300px" });
     } else {
-      this.setState({ contentMargin: "0px" });
+      this.setState({ contentMargin: "70px" });
     }
   }
   render() {
@@ -29,7 +29,7 @@ class About extends Component {
         <div
           style={{
             marginLeft: this.state.contentMargin,
-            marginTop: "55px"
+            marginTop: "80px"
           }}
         >
           ABOUT PAGEGEGEGEGE

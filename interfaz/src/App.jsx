@@ -17,21 +17,19 @@ class App extends Component {
   render() {
     return (
       <Router>
-        <div className="App">
-          <Switch>
-            <Route exact path={"/"} component={SinSesion} />
-            <Route path={"/inicio"} component={Home} />
-            <Route path={"/about"} component={About} />
-            <Route path={"/asignaturas"} component={Asignaturas} />
-            <Route path={"/rankings"} component={Rankings} />
-            <Route path={"/historial"} component={Historial} />
-            <Route path={"/listas"} component={Listas} />
-            <Route path={"/perfil"} component={Perfil} />
-            <Route path={"/notificaciones"} component={Notificaciones} />
-            <Route path={"/mensajes"} component={Mensajes} />
-            <Route path={"/subj"} component={Asignatura} />
-          </Switch>
-        </div>
+        <Switch>
+          <Route exact path={"/"} component={SinSesion} />
+          <Route path={"/inicio"} component={Home} />
+          <Route path={"/about"} component={About} />
+          <Route path={"/asignaturas"} component={Asignaturas} />
+          <Route path={"/rankings"} component={Rankings} />
+          <Route path={"/historial"} component={Historial} />
+          <Route path={"/listas"} component={Listas} />
+          <Route path={"/perfil"} component={Perfil} />
+          <Route path={"/notificaciones"} component={Notificaciones} />
+          <Route path={"/mensajes"} component={Mensajes} />
+          <Route path={"/subj"} component={Asignatura} />
+        </Switch>
       </Router>
     );
   }

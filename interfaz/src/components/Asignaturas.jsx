@@ -6,16 +6,16 @@ class Asignaturas extends Component {
   constructor() {
     super();
     this.state = {
-      contentMargin: "230px"
+      contentMargin: "300px"
     };
     this.handleChange = this.handleChange.bind(this);
   }
 
   handleChange(display) {
     if (display) {
-      this.setState({ contentMargin: "230px" });
+      this.setState({ contentMargin: "300px" });
     } else {
-      this.setState({ contentMargin: "0px" });
+      this.setState({ contentMargin: "70px" });
     }
   }
   render() {
@@ -27,7 +27,7 @@ class Asignaturas extends Component {
         </Helmet>
         <CustomNavBar onChange={this.handleChange} activar={"asignaturas"} />
         <div
-          style={{ marginLeft: this.state.contentMargin, marginTop: "55px" }}
+          style={{ marginLeft: this.state.contentMargin, marginTop: "80px" }}
         >
           ASIGNATURAS PAGEGEGEGEGE
         </div>

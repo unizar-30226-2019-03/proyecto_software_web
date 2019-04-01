@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import logo from "../assets/favicon.ico";
 import { Navbar, Nav } from "react-bootstrap";
-import { FaBell, FaEnvelope, FaUser, FaBars } from "react-icons/fa";
+import { FaBell, FaEnvelope, FaBars } from "react-icons/fa";
 import SearchBar from "./SearchBar";
 import "../App.css";
 import SideBar from "./SideBar";
@@ -113,7 +113,9 @@ class CustomNavBar extends Component {
           <SearchBar />
 
           <Nav className="ml-auto">
-            <Nav.Item style={{ color: "#00000080", width: "36px" }}>
+            <Nav.Item
+              style={{ color: "#00000080", width: "36px", marginLeft: "3px" }}
+            >
               <div className="dropdown" style={{ top: "8px" }}>
                 <FaBell size={20} onClick={this.showDropdownNotif} />
                 {this.state.displayNotif ? (
@@ -130,13 +132,29 @@ class CustomNavBar extends Component {
               </div>
             </Nav.Item>
 
-            <Nav.Link href="/mensajes" style={{ color: "#00000080" }}>
+            <Nav.Link
+              href="/mensajes"
+              style={{ color: "#00000080", marginLeft: "0" }}
+            >
               <FaEnvelope size={20} />
             </Nav.Link>
 
-            <Nav.Item style={{ color: "#00000080", width: "36px" }}>
+            <Nav.Item
+              style={{
+                color: "#00000080",
+                width: "36px",
+                marginLeft: "10px"
+              }}
+            >
               <div className="dropdown" style={{ top: "5px" }}>
-                <FaUser size={25} onClick={this.showDropdown} />
+                <img
+                  alt="usuario"
+                  src={logo}
+                  width="30"
+                  height="30"
+                  onClick={this.showDropdown}
+                  style={{ borderRadius: "50%" }}
+                />
                 {this.state.displayMenu ? (
                   <div className="dropdown-content">
                     <a href="/perfil">Mi perfil</a>
