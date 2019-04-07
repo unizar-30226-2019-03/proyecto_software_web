@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
+import brand from "../assets/imgUnicast.jpg";
 import logo from "../assets/favicon.ico";
 import { Navbar, Nav } from "react-bootstrap";
 import { FaBell, FaEnvelope, FaBars } from "react-icons/fa";
@@ -11,6 +13,7 @@ class CustomNavBar extends Component {
    * Constructor
    * @param none
    */
+  _isMounted = false;
   constructor(props) {
     super(props);
     this.state = {
@@ -29,11 +32,16 @@ class CustomNavBar extends Component {
   }
 
   componentDidMount() {
-    this.resize();
-    window.addEventListener("resize", this.resize);
+    if (!this._isMounted) {
+      this.resize();
+      window.addEventListener("resize", this.resize);
+      return;
+    }
+    this._isMounted = true;
   }
 
   componentWillUnmount() {
+    this._isMounted = false;
     window.removeEventListener("resize", this.resize);
   }
 
@@ -94,27 +102,32 @@ class CustomNavBar extends Component {
       <div>
         <Navbar bg="light" className="shadow-sm mb-5 bg-white" fixed="top">
           <Nav>
-            <Nav.Link>
-              <FaBars size={20} onClick={this.showSideBar} />
+            <Nav.Link onClick={this.showSideBar}>
+              <FaBars size={20} />
             </Nav.Link>
           </Nav>
 
-          <Navbar.Brand href="/inicio" style={{ marginLeft: "15px" }}>
-            <img
-              alt="holi"
-              src={logo}
-              width="30"
-              height="30"
-              className="d-inline-block align-top"
-            />
-            {" UniCast"}
+          <Navbar.Brand style={{ marginLeft: "15px", height: "40px" }}>
+            <Link to="/inicio">
+              <img
+                alt="UniCast"
+                src={brand}
+                width="130"
+                height="30"
+                className="d-inline-block align-top"
+              />{" "}
+            </Link>
           </Navbar.Brand>
 
           <SearchBar />
 
           <Nav className="ml-auto">
             <Nav.Item
-              style={{ color: "#00000080", width: "36px", marginLeft: "3px" }}
+              style={{
+                color: "#00000080",
+                width: "36px",
+                marginLeft: "3px"
+              }}
             >
               <div className="dropdown" style={{ top: "8px" }}>
                 <FaBell size={20} onClick={this.showDropdownNotif} />
@@ -132,12 +145,17 @@ class CustomNavBar extends Component {
               </div>
             </Nav.Item>
 
-            <Nav.Link
-              href="/mensajes"
-              style={{ color: "#00000080", marginLeft: "0" }}
+            <Nav.Item
+              style={{
+                marginLeft: "0",
+                display: "block",
+                padding: ".5rem .5rem"
+              }}
             >
-              <FaEnvelope size={20} />
-            </Nav.Link>
+              <Link to="/mensajes" style={{ color: "#00000080" }}>
+                <FaEnvelope size={20} />
+              </Link>
+            </Nav.Item>
 
             <Nav.Item
               style={{
@@ -157,9 +175,11 @@ class CustomNavBar extends Component {
                 />
                 {this.state.displayMenu ? (
                   <div className="dropdown-content">
-                    <a href="/perfil">Mi perfil</a>
-                    <a href="/about">Información</a>
-                    <a href="/">Cerrar Sesión</a>
+                    <Link to="/perfil">Mi perfil</Link>
+                    <Link to="/about">Información</Link>
+                    <Link to="/" onClick={this.props.logOut}>
+                      Cerrar Sesión
+                    </Link>
                   </div>
                 ) : null}
               </div>
@@ -167,9 +187,10 @@ class CustomNavBar extends Component {
           </Nav>
         </Navbar>
         <div>
-          {this.state.displaySide ? (
-            <SideBar activate={this.props.activar} />
-          ) : null}
+          <SideBar
+            activate={this.props.activar}
+            show={this.state.displaySide ? "active" : ""}
+          />
         </div>
       </div>
     );

@@ -25,8 +25,13 @@ class Asignaturas extends Component {
           <title>Mis Asignaturas</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
-        <CustomNavBar onChange={this.handleChange} activar={"asignaturas"} />
+        <CustomNavBar
+          logOut={this.props.logOut}
+          onChange={this.handleChange}
+          activar={"asignaturas"}
+        />
         <div
+          className="transform"
           style={{ marginLeft: this.state.contentMargin, marginTop: "80px" }}
         >
           ASIGNATURAS PAGEGEGEGEGE

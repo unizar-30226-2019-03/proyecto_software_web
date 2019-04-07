@@ -1,22 +1,32 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import CustomNavBar from "./CustomNavBar";
-import { Helmet } from "react-helmet";
 import HorizList from "./HorizList";
+import { Helmet } from "react-helmet";
 
 class Home extends Component {
   constructor() {
     super();
     this.state = {
-      contentMargin: "270px"
+      contentMargin: "300px",
+      user: ""
     };
     this.handleChange = this.handleChange.bind(this);
   }
 
+  componentWillMount() {
+    if (document.cookie !== undefined) {
+      let userCookie = document.cookie;
+      let userID = userCookie.split("=")[1];
+      this.setState({ user: userID });
+    }
+  }
+
   handleChange(display) {
     if (display) {
-      this.setState({ contentMargin: "270px" });
+      this.setState({ contentMargin: "300px" });
     } else {
-      this.setState({ contentMargin: "50px" });
+      this.setState({ contentMargin: "71px" });
     }
   }
 
@@ -27,36 +37,65 @@ class Home extends Component {
           <title>Inicio</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
-        <CustomNavBar onChange={this.handleChange} activar={"inicio"} />
+        <CustomNavBar
+          logOut={this.props.logOut}
+          onChange={this.handleChange}
+          activar={"inicio"}
+        />
         <div
-          style={{
-            marginLeft: this.state.contentMargin,
-            marginTop: "80px"
-          }}
+          className="transform"
+          style={{ marginLeft: this.state.contentMargin, marginTop: "80px" }}
         >
           <div>
-            <div style={{ marginLeft: "28px" }}>
+            <div>
               <h5>Vídeos subidos recientemente</h5>
             </div>
-            <HorizList useArrows={this.state.contentMargin === "270px"} />
+            <HorizList />
           </div>
           <div>
-            <div style={{ marginLeft: "28px" }}>
-              <h5>Asignatura X</h5>
+            <div>
+              <Link
+                to="/asig/aX"
+                style={{
+                  fontSize: "1.25rem",
+                  color: "black",
+                  textDecoration: "none"
+                }}
+              >
+                Asignatura X
+              </Link>
             </div>
-            <HorizList useArrows={this.state.contentMargin === "270px"} />
+            <HorizList />
           </div>
           <div>
-            <div style={{ marginLeft: "28px" }}>
-              <h5>Asignatura Y</h5>
+            <div>
+              <Link
+                to="/asig/aY"
+                style={{
+                  fontSize: "1.25rem",
+                  color: "black",
+                  textDecoration: "none"
+                }}
+              >
+                Asignatura Y
+              </Link>
             </div>
-            <HorizList useArrows={this.state.contentMargin === "270px"} />
+            <HorizList />
           </div>
           <div>
-            <div style={{ marginLeft: "28px" }}>
-              <h5>Asignatura Z</h5>
+            <div>
+              <Link
+                to="/asig/aZ"
+                style={{
+                  fontSize: "1.25rem",
+                  color: "black",
+                  textDecoration: "none"
+                }}
+              >
+                Asignatura Z
+              </Link>
             </div>
-            <HorizList useArrows={this.state.contentMargin === "270px"} />
+            <HorizList />
           </div>
         </div>
       </div>

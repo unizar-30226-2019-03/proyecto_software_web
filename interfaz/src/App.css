@@ -84,6 +84,24 @@
   z-index: 10;
 }
 
+.sidebar.active {
+  margin: 0;
+  padding: 0;
+  top: 57px;
+  left: 0;
+  width: 0px;
+  background-color: #f3f3f3;
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+  z-index: 10;
+}
+
+.transform {
+  -webkit-transition: 0.2s; /* For Safari 3.1 to 6.0 */
+  transition: 0.2s;
+}
+
 /* Sidebar links */
 .sidebar a {
   display: block;
@@ -126,8 +144,16 @@
 
 /* Menú horizontal CSS */
 .menu-item {
+  width: 214px;
   padding-right: 4px;
   white-space: normal;
+}
+
+.fecha-subida {
+  margin-top: -2px;
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 12px;
+  margin-left: 30px;
 }
 
 .scroll-menu-arrow {
@@ -138,9 +164,254 @@
 }
 
 .scroll-menu-arrow-hidden {
-  padding: 65px 1px;
-  position: relative;
-  top: -11px;
   visibility: hidden;
-  pointer-events: none;
+}
+
+.arrow-horizontal-list-renderer {
+  cursor: pointer;
+  top: -23px;
+  margin-right: -20px;
+  margin-left: -20px;
+  position: relative;
+  padding: 0px 10px;
+  width: 40px;
+  height: 40px;
+  border-radius: 24px;
+  background-color: white;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.3), 0 0 4px rgba(0, 0, 0, 0.2);
+  display: flex;
+  -ms-flex-direction: column;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  z-index: 5;
+}
+
+/* CSS para la página de login */
+@media screen and (min-width: 600px) {
+  .login {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 430px;
+    height: 500px;
+    padding: 150px 40px;
+    border-radius: 5px;
+    box-sizing: border-box;
+    background: #ffffff;
+    box-shadow: 1px 4px 10px hsl(0, 0%, 71%);
+  }
+
+  .userIcon {
+    position: absolute;
+    border-radius: 0;
+    top: 16%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: black;
+    font-family: "Great Vibes", cursive;
+    font-size: 70px;
+    font-weight: normal;
+    text-align: center;
+    text-shadow: 0 1px 1px #fff;
+    width: 300px;
+    height: 100px;
+  }
+  .boton-login {
+    width: 100%;
+    margin-top: 20px;
+    background-color: #235da9;
+    border-color: #235da9;
+  }
+}
+
+@media screen and (max-width: 599px) {
+  .login {
+    position: fixed;
+    top: 25%;
+    left: 35px;
+    right: 8%;
+  }
+
+  .userIcon {
+    position: fixed;
+    border-radius: 0;
+    top: 11%;
+    left: 35px;
+    color: black;
+    font-family: "Great Vibes", cursive;
+    font-size: 70px;
+    font-weight: normal;
+    text-align: center;
+    text-shadow: 0 1px 1px #fff;
+    width: 200px;
+    height: 90px;
+  }
+  .boton-login {
+    position: absolute;
+    width: 123px;
+    bottom: 15px;
+    right: 0px;
+    background-color: #235da9;
+    border-color: #235da9;
+  }
+}
+
+.textInfo {
+  position: relative;
+  top: 10px;
+  margin: 0;
+  padding: 0px 0 20px;
+  text-align: center;
+  font-size: 14px;
+}
+
+/* CSS para página de registro */
+@media screen and (min-width: 900px) {
+  .signin {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 700px;
+    height: 620px;
+    padding: 150px 40px;
+    border-radius: 5px;
+    box-sizing: border-box;
+    background: #ffffff;
+    box-shadow: 1px 4px 10px hsl(0, 0%, 71%);
+  }
+
+  .img-signin {
+    position: absolute;
+    border-radius: 0;
+    top: 12%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: black;
+    font-family: "Great Vibes", cursive;
+    font-size: 70px;
+    font-weight: normal;
+    text-align: center;
+    text-shadow: 0 1px 1px #fff;
+    width: 300px;
+    height: 100px;
+  }
+
+  .boton-signin {
+    position: relative;
+    width: 110px;
+    margin-top: -10px;
+    background-color: #235da9;
+    border-color: #235da9;
+    left: calc(100% - 51.3%);
+  }
+
+  .boton-signin-reg {
+    position: relative;
+    width: 110px;
+    margin-top: 0px;
+    background-color: #235da9;
+    border-color: #235da9;
+    left: calc(100% - 29.5%);
+  }
+}
+
+@media screen and (max-width: 899px) and (min-width: 600px) {
+  .signin {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 450px;
+    height: 630px;
+    padding: 150px 40px;
+    border-radius: 5px;
+    box-sizing: border-box;
+    background: #ffffff;
+    box-shadow: 1px 4px 10px hsl(0, 0%, 71%);
+  }
+
+  .img-signin {
+    position: absolute;
+    border-radius: 0;
+    top: 12%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: black;
+    font-family: "Great Vibes", cursive;
+    font-size: 70px;
+    font-weight: normal;
+    text-align: center;
+    text-shadow: 0 1px 1px #fff;
+    width: 300px;
+    height: 100px;
+  }
+
+  .boton-signin {
+    position: relative;
+    width: 110px;
+    margin-top: -10px;
+    background-color: #235da9;
+    border-color: #235da9;
+    left: calc(100% - 86%);
+  }
+
+  .boton-signin-reg {
+    position: relative;
+    width: 110px;
+    margin-top: 0px;
+    background-color: #235da9;
+    border-color: #235da9;
+    left: calc(100% - 49.3%);
+  }
+}
+
+@media screen and (max-width: 599px) {
+  .signin {
+    position: fixed;
+    top: 25%;
+    left: 35px;
+    right: 8%;
+  }
+
+  .img-signin {
+    position: absolute;
+    border-radius: 0;
+    top: -30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: black;
+    font-family: "Great Vibes", cursive;
+    font-size: 70px;
+    font-weight: normal;
+    text-align: center;
+    text-shadow: 0 1px 1px #fff;
+    width: 100%;
+    height: 80px;
+  }
+
+  .boton-signin {
+    position: relative;
+    width: 110px;
+    margin-top: -10px;
+    background-color: #235da9;
+    border-color: #235da9;
+    left: calc(100% - 80%);
+  }
+
+  .boton-signin-reg {
+    position: relative;
+    width: 110px;
+    margin-top: 0px;
+    background-color: #235da9;
+    border-color: #235da9;
+    left: calc(100% - 185px);
+  }
 }

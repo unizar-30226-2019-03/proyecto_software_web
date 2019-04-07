@@ -25,12 +25,14 @@ class About extends Component {
           <title>Notificaciones</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
-        <CustomNavBar onChange={this.handleChange} activar={""} />
+        <CustomNavBar
+          logOut={this.props.logOut}
+          onChange={this.handleChange}
+          activar={""}
+        />
         <div
-          style={{
-            marginLeft: this.state.contentMargin,
-            marginTop: "80px"
-          }}
+          className="transform"
+          style={{ marginLeft: this.state.contentMargin, marginTop: "80px" }}
         >
           ABOUT PAGEGEGEGEGE
         </div>

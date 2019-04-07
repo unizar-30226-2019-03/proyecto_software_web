@@ -25,12 +25,14 @@ class Rankings extends Component {
           <title>Ránkings</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
-        <CustomNavBar onChange={this.handleChange} activar={"rankings"} />
+        <CustomNavBar
+          logOut={this.props.logOut}
+          onChange={this.handleChange}
+          activar={"rankings"}
+        />
         <div
-          style={{
-            marginLeft: this.state.contentMargin,
-            marginTop: "80px"
-          }}
+          className="transform"
+          style={{ marginLeft: this.state.contentMargin, marginTop: "80px" }}
         >
           RANKINGS PAGEGEGEGEGE
         </div>

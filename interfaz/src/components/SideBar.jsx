@@ -1,10 +1,16 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import "../App.css";
 
 class SideBar extends Component {
   constructor(props) {
     super(props);
+    this.state = { activar: this.props.show };
     this.active = this.active.bind(this);
+  }
+
+  componentWillReceiveProps(newProps) {
+    this.setState({ activar: newProps.show });
   }
 
   active(name) {
@@ -17,29 +23,33 @@ class SideBar extends Component {
 
   render() {
     return (
-      <div className="sidebar">
+      <div
+        className={
+          this.state.activar ? "sidebar transform" : "sidebar active transform"
+        }
+      >
         <div>
-          <a className={this.active("inicio")} href="/inicio">
+          <Link className={this.active("inicio")} to="/inicio">
             Inicio
-          </a>
-          <a className={this.active("rankings")} href="/rankings">
+          </Link>
+          <Link className={this.active("rankings")} to="/rankings">
             Rankings
-          </a>
-          <a className={this.active("asignaturas")} href="/asignaturas">
+          </Link>
+          <Link className={this.active("asignaturas")} to="/asignaturas">
             Mis asignaturas
-          </a>
-          <a className={this.active("listas")} href="/listas">
+          </Link>
+          <Link className={this.active("listas")} to="/listas">
             Mis listas
-          </a>
-          <a className={this.active("historial")} href="/historial">
+          </Link>
+          <Link className={this.active("historial")} to="/historial">
             Historial
-          </a>
+          </Link>
         </div>
         <div className="asignaturas">
           <h4>Asignaturas</h4>
-          <a className={this.active("asignatura1")} href="/subj">
+          <Link className={this.active("asignatura1")} to="/asig">
             Asignatura 1
-          </a>
+          </Link>
         </div>
       </div>
     );

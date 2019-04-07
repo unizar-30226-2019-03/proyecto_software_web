@@ -25,12 +25,14 @@ class Listas extends Component {
           <title>Mis Listas</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
-        <CustomNavBar onChange={this.handleChange} activar={"listas"} />
+        <CustomNavBar
+          logOut={this.props.logOut}
+          onChange={this.handleChange}
+          activar={"listas"}
+        />
         <div
-          style={{
-            marginLeft: this.state.contentMargin,
-            marginTop: "80px"
-          }}
+          className="transform"
+          style={{ marginLeft: this.state.contentMargin, marginTop: "80px" }}
         >
           MIS LISTAS PAGEGEGEGEGE
         </div>

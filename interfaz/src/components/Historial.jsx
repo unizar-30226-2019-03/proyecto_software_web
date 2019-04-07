@@ -25,12 +25,14 @@ class Historial extends Component {
           <title>Historial</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
-        <CustomNavBar onChange={this.handleChange} activar={"historial"} />
+        <CustomNavBar
+          logOut={this.props.logOut}
+          onChange={this.handleChange}
+          activar={"historial"}
+        />
         <div
-          style={{
-            marginLeft: this.state.contentMargin,
-            marginTop: "80px"
-          }}
+          className="transform"
+          style={{ marginLeft: this.state.contentMargin, marginTop: "80px" }}
         >
           HISTORIAL PAGEGEGEGEGE
         </div>
