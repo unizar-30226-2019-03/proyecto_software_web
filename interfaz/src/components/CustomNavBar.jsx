@@ -5,7 +5,6 @@ import logo from "../assets/favicon.ico";
 import { Navbar, Nav } from "react-bootstrap";
 import { FaBell, FaEnvelope, FaBars } from "react-icons/fa";
 import SearchBar from "./SearchBar";
-import "../App.css";
 import SideBar from "./SideBar";
 
 class CustomNavBar extends Component {

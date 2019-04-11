@@ -415,3 +415,60 @@
     left: calc(100% - 185px);
   }
 }
+
+/* CSS para la página de mis asignaturas */
+.listado-asignaturas {
+  text-align: left;
+}
+
+.listado-asignaturas h5 {
+  font-weight: bold;
+}
+
+.lista {
+  position: relative;
+  margin-top: 32px;
+  margin-right: 70px;
+}
+
+.fondo {
+  font-size: 20px;
+  background-color: #fafafa;
+  transition: all 0.2s ease-in-out;
+}
+
+.fondo:hover {
+  transform: scale(1.01);
+}
+
+.fondo .imagen {
+  position: relative;
+  float: left;
+  left: 20%;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.fondo .asig {
+  font-size: 20px;
+  position: relative;
+  width: 45%;
+  float: left;
+}
+
+.fondo .uni {
+  font-size: 20px;
+  position: relative;
+  width: 33%;
+  float: left;
+}
+
+.boton-filtro {
+  background-color: #235da9;
+  border-color: #235da9;
+}
+
+.boton-filtro:focus {
+  box-shadow: 0 0 0 0rem rgba(35, 93, 169, 0.5);
+}

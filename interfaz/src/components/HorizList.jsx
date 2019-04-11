@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import ScrollMenu from "react-horizontal-scrolling-menu";
-import "../App.css";
 import imagenPrueba from "../assets/landscape.jpg";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import iconoAsign from "../assets/favicon.ico";

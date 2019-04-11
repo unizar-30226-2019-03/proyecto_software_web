@@ -44,11 +44,16 @@ class Home extends Component {
         />
         <div
           className="transform"
-          style={{ marginLeft: this.state.contentMargin, marginTop: "80px" }}
+          style={{
+            marginLeft: this.state.contentMargin,
+            marginTop: "80px"
+          }}
         >
           <div>
             <div>
-              <h5>Vídeos subidos recientemente</h5>
+              <h5 style={{ fontWeight: "bold" }}>
+                Vídeos subidos recientemente
+              </h5>
             </div>
             <HorizList />
           </div>
@@ -59,7 +64,8 @@ class Home extends Component {
                 style={{
                   fontSize: "1.25rem",
                   color: "black",
-                  textDecoration: "none"
+                  textDecoration: "none",
+                  fontWeight: "bold"
                 }}
               >
                 Asignatura X
@@ -74,7 +80,8 @@ class Home extends Component {
                 style={{
                   fontSize: "1.25rem",
                   color: "black",
-                  textDecoration: "none"
+                  textDecoration: "none",
+                  fontWeight: "bold"
                 }}
               >
                 Asignatura Y
@@ -89,7 +96,8 @@ class Home extends Component {
                 style={{
                   fontSize: "1.25rem",
                   color: "black",
-                  textDecoration: "none"
+                  textDecoration: "none",
+                  fontWeight: "bold"
                 }}
               >
                 Asignatura Z
