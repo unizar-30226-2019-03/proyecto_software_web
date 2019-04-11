@@ -34,7 +34,7 @@ class Notificaciones extends Component {
           className="transform"
           style={{ marginLeft: this.state.contentMargin, marginTop: "80px" }}
         >
-          NOTIFICACIONES PAGEGEGEGEGE
+          NOTIFICACIONES PAGE
         </div>
       </div>
     );

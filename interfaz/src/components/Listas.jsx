@@ -34,7 +34,7 @@ class Listas extends Component {
           className="transform"
           style={{ marginLeft: this.state.contentMargin, marginTop: "80px" }}
         >
-          MIS LISTAS PAGEGEGEGEGE
+          MIS LISTAS PAGE
         </div>
       </div>
     );

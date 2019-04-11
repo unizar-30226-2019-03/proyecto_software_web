@@ -34,7 +34,7 @@ class Asignatura extends Component {
           className="transform"
           style={{ marginLeft: this.state.contentMargin, marginTop: "80px" }}
         >
-          ASIGNATURA CONCRETA PAGEGEGEGEGE
+          ASIGNATURA CONCRETA PAGE
         </div>
       </div>
     );

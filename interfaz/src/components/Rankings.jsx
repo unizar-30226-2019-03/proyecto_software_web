@@ -34,7 +34,7 @@ class Rankings extends Component {
           className="transform"
           style={{ marginLeft: this.state.contentMargin, marginTop: "80px" }}
         >
-          RANKINGS PAGEGEGEGEGE
+          RANKINGS PAGE
         </div>
       </div>
     );

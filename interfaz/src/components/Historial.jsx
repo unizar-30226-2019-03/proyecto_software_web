@@ -34,7 +34,7 @@ class Historial extends Component {
           className="transform"
           style={{ marginLeft: this.state.contentMargin, marginTop: "80px" }}
         >
-          HISTORIAL PAGEGEGEGEGE
+          HISTORIAL PAGE
         </div>
       </div>
     );

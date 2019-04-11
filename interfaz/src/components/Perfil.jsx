@@ -34,7 +34,7 @@ class Perfil extends Component {
           className="transform"
           style={{ marginLeft: this.state.contentMargin, marginTop: "80px" }}
         >
-          PERFIL PAGEGEGEGEGE
+          PERFIL PAGE
         </div>
       </div>
     );

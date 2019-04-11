@@ -34,7 +34,7 @@ class Mensajes extends Component {
           className="transform"
           style={{ marginLeft: this.state.contentMargin, marginTop: "80px" }}
         >
-          MENSAJES PAGEGEGEGEGE
+          MENSAJES PAGE
         </div>
       </div>
     );
