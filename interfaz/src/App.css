@@ -156,6 +156,13 @@
   margin-left: 30px;
 }
 
+.fecha-subida-video {
+  margin-top: -2px;
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 14px;
+  margin-left: 0px;
+}
+
 .scroll-menu-arrow {
   padding: 65px 1px;
   position: relative;
@@ -471,4 +478,66 @@
 
 .boton-filtro:focus {
   box-shadow: 0 0 0 0rem rgba(35, 93, 169, 0.5);
+}
+
+/* CSS para la página de ver video */
+.reproductor {
+  margin-right: 20%;
+  height: 0;
+  padding-bottom: 56.25%;
+}
+/*
+.reproductor .columna-primaria {
+  flex: 71.8%;
+  padding: 10px;
+}
+
+.reproductor .columna-secundaria {
+  flex: 28.2%;
+  padding: 10px;
+}
+*/
+/* CSS para lista vertical */
+.vertical-item  {
+  width: 400px;
+  margin-bottom: 8px;
+}
+
+.video-marco {
+  height: 55%;
+}
+
+.aspect-ratio--16x9 {
+  width: 100%;
+  height: 0;
+  padding-bottom: 56.25%;
+}
+
+.datos-video {
+  border-bottom: 1px solid lightgrey;
+  margin-top: 20px;
+}
+
+.datos-video .nombre-canal {
+  position: relative;
+  top: 8px;
+  margin-left: 10px;
+  font-weight: 550;
+  text-decoration: none;
+  color: black;
+}
+
+.datos-video .boton-seguir {
+  background-color: #235da9;
+  border-color: #235da9;
+  margin-right: 0;
+  margin-left: auto;
+  font-size: 15px;
+  font-weight: 300;
+}
+
+.titulo-video {
+  font-weight: 500;
+  color: black;
+  font-size: 20px;
 }

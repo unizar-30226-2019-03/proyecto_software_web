@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import CustomNavBar from "./CustomNavBar";
+import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
 
 class Rankings extends Component {
@@ -25,14 +25,19 @@ class Rankings extends Component {
           <title>Ránkings</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
-        <CustomNavBar
+        <BarraNavegacion
           logOut={this.props.logOut}
           onChange={this.handleChange}
           activar={"rankings"}
+          displaySide={true}
+          hide={false}
         />
         <div
           className="transform"
-          style={{ marginLeft: this.state.contentMargin, marginTop: "80px" }}
+          style={{
+            marginLeft: this.state.contentMargin,
+            marginTop: "80px"
+          }}
         >
           RANKINGS PAGE
         </div>

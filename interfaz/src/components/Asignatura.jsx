@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import CustomNavBar from "./CustomNavBar";
+import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
 
 class Asignatura extends Component {
@@ -25,14 +25,19 @@ class Asignatura extends Component {
           <title>Asignatura</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
-        <CustomNavBar
+        <BarraNavegacion
           logOut={this.props.logOut}
           onChange={this.handleChange}
           activar={"asignatura1"}
+          displaySide={true}
+          hide={false}
         />
         <div
           className="transform"
-          style={{ marginLeft: this.state.contentMargin, marginTop: "80px" }}
+          style={{
+            marginLeft: this.state.contentMargin,
+            marginTop: "80px"
+          }}
         >
           ASIGNATURA CONCRETA PAGE
         </div>

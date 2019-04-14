@@ -6,8 +6,8 @@ import {
   Redirect
 } from "react-router-dom";
 import "./App.css";
-import Home from "./components/Home";
-import About from "./components/About";
+import Inicio from "./components/Inicio";
+import Informacion from "./components/Informacion";
 import Asignaturas from "./components/Asignaturas";
 import Rankings from "./components/Rankings";
 import Historial from "./components/Historial";
@@ -18,6 +18,7 @@ import Notificaciones from "./components/Notificaciones";
 import Asignatura from "./components/Asignatura";
 import Login from "./components/Login";
 import SignIn from "./components/SignIn";
+import ViendoVideo from "./components/ViendoVideo";
 
 class App extends Component {
   constructor(props) {
@@ -57,7 +58,7 @@ class App extends Component {
               this.state.user === "" ? (
                 <Login logUser={this.setUser} />
               ) : (
-                <Home logOut={this.logOut} />
+                <Inicio logOut={this.logOut} />
               )
             }
           />
@@ -69,17 +70,17 @@ class App extends Component {
             path={"/inicio"}
             render={() =>
               this.state.user !== "" ? (
-                <Home logOut={this.logOut} />
+                <Inicio logOut={this.logOut} />
               ) : (
                 <Redirect to={"/"} />
               )
             }
           />
           <Route
-            path={"/about"}
+            path={"/info"}
             render={() =>
               this.state.user !== "" ? (
-                <About logOut={this.logOut} />
+                <Informacion logOut={this.logOut} />
               ) : (
                 <Redirect to={"/"} />
               )
@@ -160,6 +161,16 @@ class App extends Component {
             render={() =>
               this.state.user !== "" ? (
                 <Asignatura logOut={this.logOut} />
+              ) : (
+                <Redirect to={"/"} />
+              )
+            }
+          />
+          <Route
+            path={"/video"}
+            render={() =>
+              this.state.user !== "" ? (
+                <ViendoVideo logOut={this.logOut} />
               ) : (
                 <Redirect to={"/"} />
               )

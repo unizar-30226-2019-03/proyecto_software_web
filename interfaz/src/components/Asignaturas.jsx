@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import CustomNavBar from "./CustomNavBar";
+import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
 import { ListGroup, Dropdown, Button, FormControl } from "react-bootstrap";
 import Link from "react-router-dom/Link";
@@ -113,10 +113,12 @@ class Asignaturas extends Component {
           <title>Mis Asignaturas</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
-        <CustomNavBar
+        <BarraNavegacion
           logOut={this.props.logOut}
           onChange={this.handleChange}
           activar={"asignaturas"}
+          displaySide={true}
+          hide={false}
         />
         <div
           className="transform"
