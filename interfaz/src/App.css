@@ -460,15 +460,53 @@
 .fondo .asig {
   font-size: 20px;
   position: relative;
-  width: 45%;
+  width: 42%;
   float: left;
 }
 
 .fondo .uni {
   font-size: 20px;
   position: relative;
+  width: 35%;
+  float: left;
+}
+
+.fondo .imagenRank {
+  position: relative;
+  float: left;
+  width: 32px;
+  margin-right: 10px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.fondo .asigRank {
+  font-size: 20px;
+  position: relative;
+  width: 40%;
+  float: left;
+}
+
+.fondo .puestoRanking {
+  font-size: 20px;
+  position: relative;
+  float: left;
+  width: 15%;
+}
+
+.fondo .uniRank {
+  font-size: 20px;
+  position: relative;
   width: 33%;
   float: left;
+}
+
+.fondo .puntuacion {
+  color: green;
+  margin-right: 0;
+  margin-left: auto;
+  font-size: 20px;
+  margin-bottom: 0;
 }
 
 .boton-filtro {
