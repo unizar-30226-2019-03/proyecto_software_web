@@ -640,3 +640,18 @@
   user-select: "none";
   width: 50px;
 }
+
+.anyadir-lista {
+  display: flex;
+  margin-right: 0;
+  margin-left: auto;
+  cursor: pointer;
+}
+
+.icono-lista {
+  color: #00000080;
+}
+
+.icono-lista:hover {
+  color: #000000a0;
+}
