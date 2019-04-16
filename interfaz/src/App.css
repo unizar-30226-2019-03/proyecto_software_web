@@ -655,3 +655,26 @@
 .icono-lista:hover {
   color: #000000a0;
 }
+
+.popup {
+  width: 100%;
+  font-size: 14px;
+  padding: 20px;
+}
+
+.popup .titulo {
+  font-size: 18px;
+  font-weight: 600;
+  border-bottom: 1px solid lightgrey;
+}
+
+.popup .form {
+  margin-top: 20px;
+}
+
+.boton-popup {
+  background-color: #235da9;
+  border-color: #235da9;
+  float: right;
+  margin-bottom: 20px;
+}

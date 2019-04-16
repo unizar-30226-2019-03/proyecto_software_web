@@ -3,14 +3,22 @@ import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
 import ListaHorizontal from "./ListaHorizontal";
 import { FaPlus, FaPencilAlt, FaRegTrashAlt } from "react-icons/fa";
+import Popup from "reactjs-popup";
+import { Form, Button } from "react-bootstrap";
 
 class Listas extends Component {
   constructor() {
     super();
     this.state = {
-      contentMargin: "300px"
+      contentMargin: "300px",
+      popUp: false,
+      popUpValidado: false
     };
+    this.nombreLista = React.createRef();
+    this.crearLista = this.crearLista.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.abrirPopUp = this.abrirPopUp.bind(this);
+    this.cerrarPopUp = this.cerrarPopUp.bind(this);
   }
 
   handleChange(display) {
@@ -20,6 +28,22 @@ class Listas extends Component {
       this.setState({ contentMargin: "70px" });
     }
   }
+
+  abrirPopUp() {
+    this.setState({ popUp: true });
+  }
+
+  cerrarPopUp() {
+    this.setState({ popUp: false, popUpValidado: false });
+  }
+
+  crearLista(evento) {
+    evento.preventDefault();
+    const nombreLista = this.nombreLista.current.value;
+    this.setState({ popUpValidado: true });
+    console.log(nombreLista);
+  }
+
   render() {
     return (
       <div>
@@ -57,14 +81,45 @@ class Listas extends Component {
               >
                 Mis listas de reproducción
               </h5>
-              <div className="anyadir-lista" onClick={() => alert("Hola")}>
-                <div style={{ marginRight: "5px" }}>
-                  <FaPlus color={"#00000080"} />
+
+              <Popup
+                open={this.state.popUp}
+                onOpen={this.abrirPopUp}
+                onClose={this.cerrarPopUp}
+                trigger={
+                  <div className="anyadir-lista">
+                    <div style={{ marginRight: "5px" }}>
+                      <FaPlus color={"#00000080"} />
+                    </div>
+                    <div style={{ marginTop: "2px", color: "#00000080" }}>
+                      NUEVA LISTA
+                    </div>
+                  </div>
+                }
+                modal={true}
+              >
+                <div className="popup">
+                  <div className="titulo">Nueva Lista</div>
+                  <Form
+                    className="form"
+                    onSubmit={e => {
+                      this.crearLista(e);
+                      this.cerrarPopUp();
+                    }}
+                  >
+                    <Form.Group controlId="formBasicEmail">
+                      <Form.Control
+                        type="text"
+                        ref={this.nombreLista}
+                        placeholder="Título de la lista..."
+                      />
+                    </Form.Group>
+                    <Button className="boton-popup" type="submit">
+                      Crear lista de reproducción
+                    </Button>
+                  </Form>
                 </div>
-                <div style={{ marginTop: "2px", color: "#00000080" }}>
-                  NUEVA LISTA
-                </div>
-              </div>
+              </Popup>
             </div>
             <div>
               <div style={{ display: "flex" }}>
