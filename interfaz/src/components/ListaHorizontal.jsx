@@ -23,7 +23,7 @@ const list = [
 
 // One item component
 // selected prop will be passed
-const MenuItem = ({ url, img }) => {
+export const MenuItem = ({ url, img }) => {
   return (
     <div>
       <div className="menu-item">
@@ -119,13 +119,8 @@ class HMenuArr extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      menu: this.props.menu,
-      useLeftArrow: false
+      menu: this.props.menu
     };
-    this.changeArrow = this.changeArrow.bind(this);
-  }
-  changeArrow() {
-    this.setState({ useLeftArrow: !this.state.useLeftArrow });
   }
   render() {
     return (
