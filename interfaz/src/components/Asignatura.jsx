@@ -5,7 +5,7 @@ import icono from "../assets/favicon.ico";
 import imagenPrueba from "../assets/landscape.jpg";
 import { Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { MenuItem } from "./ListaHorizontal";
+import { Menu } from "./ListaHorizontal";
 
 const profesores = [
   { foto: icono, nombre: "Jorge Pérez" },
@@ -130,7 +130,9 @@ class Asignatura extends Component {
             <div style={{ flex: "85%" }}>
               <div>
                 <p style={{ fontWeight: "550" }}>Vídeos subidos</p>
-                <div />
+                <div style={{ display: "flex", flexWrap: "wrap" }}>
+                  {Menu(list)}
+                </div>
               </div>
             </div>
             <div className="profesores-asignatura" style={{ flex: "15%" }}>

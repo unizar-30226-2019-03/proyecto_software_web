@@ -23,7 +23,7 @@ const list = [
 
 // One item component
 // selected prop will be passed
-export const MenuItem = ({ url, img }) => {
+const MenuItem = ({ url, img }) => {
   return (
     <div>
       <div className="menu-item">
