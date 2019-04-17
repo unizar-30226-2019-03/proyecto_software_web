@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet";
 import User_img from "../assets/user.png";
 import { Button, Form } from "react-bootstrap";
 import Popup from "reactjs-popup";
-import { FaPlus } from "react-icons/fa";
+import Link from "react-router-dom/Link";
 
 class CamposMostrar extends Component {
   renderCampo(nombre, contenido) {
@@ -165,9 +165,9 @@ class Perfil extends Component {
                   float: "left"
                 }}
               >
-                <div className="universidad">
+                <Link to="/editar-perfil" className="universidad">
                   <Button className="boton-filtro">Editar perfil</Button>
-                </div>
+                </Link>
               </div>
               <div
                 style={{
