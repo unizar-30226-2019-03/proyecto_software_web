@@ -3,9 +3,7 @@ import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
 import User_img from "../assets/user.png";
 import { Button, Form, Col } from "react-bootstrap";
-import Popup from "reactjs-popup";
 import { Redirect, Link } from "react-router-dom";
-import uni from "../assets/UnicastNombre.png";
 
 const FormularioDatos = (
   handleSubmit,
@@ -187,6 +185,7 @@ class EditarPerfil extends Component {
     this.asignaturas = React.createRef();
     this.handleSubmitDatos = this.handleSubmitDatos.bind(this);
     this.getBorder = this.getBorder.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
   handleSubmitDatos(event) {
     event.preventDefault();
@@ -203,6 +202,17 @@ class EditarPerfil extends Component {
     const asignaturas = this.asignaturas.current.value;
     if (pass === pass2) {
       this.setState({ datosValidados: true });
+      console.log(
+        nombre,
+        apellidos,
+        userID,
+        email,
+        foto,
+        descripcion,
+        universidad,
+        carrera,
+        asignaturas
+      );
     } else {
       this.setState({ passValida: 0 });
     }
@@ -232,7 +242,7 @@ class EditarPerfil extends Component {
       <div>
         <Helmet>
           <title>Perfil</title>
-          <style>{"body { background-color: #fafafa; }"}</style>
+          <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         {this.state.datosValidados ? (
           <Redirect to={"/perfil"} />
