@@ -240,7 +240,7 @@ class Listas extends Component {
 
   tick() {
     let t = this.state.tiempo;
-    if (t === 2) {
+    if (t === 3) {
       t = -1;
       this.pararReloj();
     }
