@@ -4,7 +4,6 @@ import { Helmet } from "react-helmet";
 import User_img from "../assets/user.png";
 import { Button, Form } from "react-bootstrap";
 import Popup from "reactjs-popup";
-import { FaPlus } from "react-icons/fa";
 
 class CamposMostrar extends Component {
   renderCampo(nombre, contenido) {
