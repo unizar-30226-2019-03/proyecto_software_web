@@ -214,11 +214,18 @@ class Listas extends Component {
   crearLista(evento) {
     evento.preventDefault();
     const nombreLista = this.nombreLista.current.value;
-    this.setState({ popUpValidado: true, nombreLista: nombreLista });
+    var nuevasListas = this.state.misListas.slice();
+    nuevasListas.push({ titulo: nombreLista });
+    this.setState({
+      popUpValidado: true,
+      nombreLista: nombreLista,
+      misListas: nuevasListas
+    });
     this.iniciarReloj();
   }
 
   deshacer() {
+    this.borrarLista(this.state.nombreLista);
     this.setState({ popUpValidado: false });
   }
 
