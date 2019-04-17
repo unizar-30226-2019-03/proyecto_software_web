@@ -187,6 +187,7 @@ class EditarPerfil extends Component {
     this.asignaturas = React.createRef();
     this.handleSubmitDatos = this.handleSubmitDatos.bind(this);
     this.getBorder = this.getBorder.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
   handleSubmitDatos(event) {
     event.preventDefault();
