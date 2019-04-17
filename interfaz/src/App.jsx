@@ -9,6 +9,7 @@ import "./App.css";
 import Inicio from "./components/Inicio";
 import Informacion from "./components/Informacion";
 import Asignaturas from "./components/Asignaturas";
+import EditarPerfil from "./components/EditarPerfil";
 import Rankings from "./components/Rankings";
 import Historial from "./components/Historial";
 import Listas from "./components/Listas";
@@ -91,6 +92,16 @@ class App extends Component {
             render={() =>
               this.state.user !== "" ? (
                 <Asignaturas logOut={this.logOut} />
+              ) : (
+                <Redirect to={"/"} />
+              )
+            }
+          />
+          <Route
+            path={"/editar-perfil"}
+            render={() =>
+              this.state.user !== "" ? (
+                <EditarPerfil logOut={this.logOut} />
               ) : (
                 <Redirect to={"/"} />
               )
