@@ -2,7 +2,9 @@ import React, { Component } from "react";
 import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
 import User_img from "../assets/user.png";
-import { Button } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
+import Popup from "reactjs-popup";
+import { FaPlus } from "react-icons/fa";
 
 class CamposMostrar extends Component {
   renderCampo(nombre, contenido) {
@@ -62,19 +64,65 @@ class Perfil extends Component {
   constructor() {
     super();
     this.state = {
-      contentMargin: "300px"
+      contentMargin: "300px",
+      popUp: false,
+      popUpValidado: false,
+      pass: "",
+      passValida: -1
     };
+    this.pass = React.createRef();
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.getBorder = this.getBorder.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.abrirPopUp = this.abrirPopUp.bind(this);
+    this.cerrarPopUp = this.cerrarPopUp.bind(this);
+  }
+
+  handleSubmit(event) {
+    const pass = this.pass.current.value;
+    event.preventDefault();
+    this.setState({ pass: pass });
+    if (pass === "1234") {
+      this.setState({ passValida: 1 });
+    } else {
+      this.setState({ passValida: 0 });
+    }
+    if (pass === "1234") {
+      this.props.logOut();
+    }
   }
 
   handleChange(display) {
     if (display) {
-      this.setState({ contentMargin: "300px" });
+      this.setState({
+        contentMargin: "300px"
+      });
     } else {
-      this.setState({ contentMargin: "70px" });
+      this.setState({
+        contentMargin: "70px"
+      });
     }
   }
+
+  abrirPopUp() {
+    this.setState({ popUp: true });
+  }
+
+  cerrarPopUp() {
+    this.setState({ popUp: false, popUpValidado: false });
+  }
+
+  getBorder(key) {
+    switch (key) {
+      case 0:
+        return "1px solid red";
+      default:
+        return "";
+    }
+  }
+
   render() {
+    let clasePass = { border: this.getBorder(this.state.passValida) };
     return (
       <div>
         <Helmet>
@@ -118,14 +166,7 @@ class Perfil extends Component {
                 }}
               >
                 <div className="universidad">
-                  <Button
-                    style={{
-                      backgroundColor: "#235da9",
-                      borderColor: "#235da9"
-                    }}
-                  >
-                    Editar perfil
-                  </Button>
+                  <Button className="boton-filtro">Editar perfil</Button>
                 </div>
               </div>
               <div
@@ -134,14 +175,7 @@ class Perfil extends Component {
                 }}
               >
                 <div className="universidad">
-                  <Button
-                    style={{
-                      backgroundColor: "#235da9",
-                      borderColor: "#235da9"
-                    }}
-                  >
-                    Subir vídeo
-                  </Button>
+                  <Button className="boton-filtro">Subir vídeo</Button>
                 </div>
               </div>
               <div
@@ -181,18 +215,70 @@ class Perfil extends Component {
             style={{
               padding: "30px 20px 0px 0px"
             }}
-          >
-            <div className="universidad">
-              <Button
+          />
+          <Popup
+            open={this.state.popUp}
+            onOpen={this.abrirPopUp}
+            onClose={this.cerrarPopUp}
+            trigger={
+              <div
                 style={{
-                  backgroundColor: "darkred",
-                  borderColor: "darkred"
+                  padding: "20px 20px 0px 0px"
                 }}
               >
-                Borrar cuenta
+                <div className="universidad">
+                  <Button className="btn-danger">Borrar cuenta</Button>
+                </div>
+              </div>
+            }
+            modal={true}
+          >
+            <div className="popup">
+              <div className="titulo">Confirmación borrado</div>
+              <p style={{ textAlign: "justify", marginTop: "20px" }}>
+                ¿Está seguro de que desea borrar la cuenta?
+              </p>
+              <p style={{ textAlign: "justify" }}>
+                Todos los datos que haya almacenado en la aplicación serán
+                borrados
+              </p>
+              <p style={{ textAlign: "justify" }}>
+                Introduzca la contraseña de su cuenta para confirmar
+              </p>
+              <Form
+                className="form"
+                onSubmit={e => {
+                  this.handleSubmit(e);
+                }}
+              >
+                <Form.Group controlId="password">
+                  <Form.Control
+                    required
+                    type="password"
+                    ref={this.pass}
+                    placeholder="Contraseña..."
+                    style={clasePass}
+                  />
+                </Form.Group>
+                <Button
+                  className="btn-danger"
+                  type="submit"
+                  style={{ float: "left" }}
+                >
+                  Confirmar borrado
+                </Button>
+              </Form>
+              <Button
+                className="boton-filtro"
+                style={{ float: "right" }}
+                onClick={() => {
+                  this.cerrarPopUp();
+                }}
+              >
+                Cancelar
               </Button>
             </div>
-          </div>
+          </Popup>
         </div>
       </div>
     );
