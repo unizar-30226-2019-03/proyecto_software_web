@@ -19,6 +19,7 @@ import Mensajes from "./components/Mensajes";
 import Notificaciones from "./components/Notificaciones";
 import Asignatura from "./components/Asignatura";
 import AdministradorCrear from "./components/AdministradorCrear";
+import AdministradorBorrar from "./components/AdministradorBorrar";
 import Login from "./components/Login";
 import SignIn from "./components/SignIn";
 import ViendoVideo from "./components/ViendoVideo";
@@ -26,7 +27,7 @@ import ViendoVideo from "./components/ViendoVideo";
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = { user: document.cookie };
+    this.state = { user: document.cookie.split("=")[1] };
     this.setUser = this.setUser.bind(this);
     this.logOut = this.logOut.bind(this);
   }
@@ -104,8 +105,18 @@ class App extends Component {
           <Route
             path={"/administrador-crear"}
             render={() =>
-              this.state.user === "admi@gmail.com" ? (
+              this.state.user === "admin@gmail.com" ? (
                 <AdministradorCrear logOut={this.logOut} />
+              ) : (
+                <Redirect to={"/"} />
+              )
+            }
+          />
+          <Route
+            path={"/administrador-borrar"}
+            render={() =>
+              this.state.user === "admin@gmail.com" ? (
+                <AdministradorBorrar logOut={this.logOut} />
               ) : (
                 <Redirect to={"/"} />
               )

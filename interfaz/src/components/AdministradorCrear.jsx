@@ -1,78 +1,219 @@
 import React, { Component } from "react";
-import BarraNavegacion from "./BarraNavegacion";
+import BarraAdmi from "./BarraAdmi";
 import { Helmet } from "react-helmet";
 import { Button, Form, Col } from "react-bootstrap";
-import { Redirect, Link } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 
-const FormularioDatos = (
-  handleSubmit,
-  titulo,
-  miniatura,
-  descripcion,
-  video,
-  asignatura
+const FormularioProfesor = (
+  handleProfesor,
+  nombre,
+  apellidos,
+  userID,
+  email,
+  passwd,
+  passwd2,
+  clasePass
 ) => {
   return (
-    <div style={{ margin: "0 20% 0 0" }}>
-      <Form onSubmit={e => handleSubmit(e)}>
+    <div style={{ margin: "20px 20px 20px 20px" }}>
+      <h6>Añadir profesor</h6>
+      <Form
+        id="form-profesor"
+        onSubmit={e =>
+          handleProfesor(e, document.getElementById("form-profesor"))
+        }
+      >
         <Form.Row>
-          <Form.Group as={Col} controlId="formGridTitulo">
-            <Form.Label>Título</Form.Label>
+          <Form.Group as={Col} controlId="formGridName">
+            <Form.Label>Nombre</Form.Label>
             <Form.Control
               type="text"
-              placeholder="Título del vídeo..."
+              placeholder="Nombre"
               required
-              ref={titulo}
+              ref={nombre}
+            />
+          </Form.Group>
+
+          <Form.Group as={Col} controlId="formGridSurname">
+            <Form.Label>Apellidos</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Apellidos"
+              required
+              ref={apellidos}
             />
           </Form.Group>
         </Form.Row>
-        <Form.Row>
-          <Form.Group as={Col} controlId="formGridAsingatura">
-            <Form.Label>Asignatura del vídeo</Form.Label>
-            <Form.Control as="select" ref={asignatura}>
-              <option>Proyecto Software</option>
-              <option>Inteligencia Artificial</option>
-              <option>Aprendizaje Automático</option>
-              <option>Algoritmia Básica</option>
-            </Form.Control>
-          </Form.Group>
-        </Form.Row>
 
-        <Form.Group controlId="formGridMiniatura">
-          <Form.Label>Foto de miniatura del video</Form.Label>
-          <Form.Control type="file" ref={miniatura} required />
-        </Form.Group>
-        <Form.Group controlId="exampleForm.ControlDescripcion">
-          <Form.Label>Descripción</Form.Label>
+        <Form.Group controlId="formGridUserID">
+          <Form.Label>Nombre de usuario</Form.Label>
           <Form.Control
-            as="textarea"
-            rows="3"
-            style={{ resize: "none" }}
-            ref={descripcion}
-            placeholder="Descripción del vídeo..."
+            type="text"
+            placeholder="Nombre de usuario"
             required
+            ref={userID}
           />
         </Form.Group>
-        <Form.Group controlId="formGridVideo">
-          <Form.Label>Vídeo</Form.Label>
-          <Form.Control type="file" ref={video} required />
+
+        <Form.Group controlId="formGridEmail">
+          <Form.Label>Email</Form.Label>
+          <Form.Control
+            placeholder="ejemplo@gmail.com"
+            type="email"
+            required
+            ref={email}
+          />
         </Form.Group>
+        <Form.Row>
+          <Form.Group as={Col} controlId="formGridPasswd">
+            <Form.Label>Contraseña</Form.Label>
+            <Form.Control
+              placeholder="Contraseña"
+              type="password"
+              required
+              ref={passwd}
+            />
+          </Form.Group>
+
+          <Form.Group as={Col} controlId="formGridPasswd2">
+            <Form.Label>Confirmar contraseña</Form.Label>
+            <Form.Control
+              placeholder="Confirmación"
+              type="password"
+              required
+              ref={passwd2}
+              style={clasePass}
+            />
+          </Form.Group>
+        </Form.Row>
+        <Button className="boton-filtro" type="reset">
+          Cancelar
+        </Button>
         <Button
           className="boton-filtro"
+          style={{ float: "right" }}
           type="submit"
-          style={{ float: "left" }}
         >
           Confirmar
         </Button>
       </Form>
-      <Link to="/perfil">
-        <Button
-          className="boton-filtro"
-          style={{ float: "right", marginBottom: "20px" }}
-        >
+    </div>
+  );
+};
+
+const FormularioUniversidad = (handleUniversidad, nombre) => {
+  return (
+    <div style={{ margin: "20px 20px 20px 20px" }}>
+      <h6>Añadir universidad</h6>
+      <Form
+        id="form-uni"
+        onSubmit={e =>
+          handleUniversidad(e, document.getElementById("form-uni"))
+        }
+      >
+        <Form.Row>
+          <Form.Group as={Col} controlId="formGridName">
+            <Form.Label>Universidad</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Nombre"
+              required
+              ref={nombre}
+            />
+          </Form.Group>
+        </Form.Row>
+        <Button className="boton-filtro" type="reset">
           Cancelar
         </Button>
-      </Link>
+        <Button
+          className="boton-filtro"
+          style={{ float: "right" }}
+          type="submit"
+        >
+          Confirmar
+        </Button>
+      </Form>
+    </div>
+  );
+};
+
+const FormularioCarrera = (handleCarrera, nombre) => {
+  return (
+    <div style={{ margin: "20px 20px 20px 20px" }}>
+      <h6>Añadir carrera</h6>
+      <Form
+        id="form-carrera"
+        onSubmit={e =>
+          handleCarrera(e, document.getElementById("form-carrera"))
+        }
+      >
+        <Form.Row>
+          <Form.Group as={Col} controlId="formGridCarrera">
+            <Form.Label>Carrera</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Nombre"
+              required
+              ref={nombre}
+            />
+          </Form.Group>
+        </Form.Row>
+        <Button className="boton-filtro" type="reset">
+          Cancelar
+        </Button>
+        <Button
+          className="boton-filtro"
+          style={{ float: "right" }}
+          type="submit"
+        >
+          Confirmar
+        </Button>
+      </Form>
+    </div>
+  );
+};
+
+const FormularioAsignatura = (handleAsignatura, carrera, asignatura) => {
+  return (
+    <div style={{ margin: "20px 20px 20px 20px" }}>
+      <h6>Añadir asignatura</h6>
+      <Form
+        id="form-asignatura"
+        onSubmit={e =>
+          handleAsignatura(e, document.getElementById("form-asignatura"))
+        }
+      >
+        <Form.Group as={Col} controlId="formGridCarrera">
+          <Form.Label>Carrera</Form.Label>
+          <Form.Control as="select" ref={carrera}>
+            <option>Ingeniería Informática</option>
+            <option>Derecho</option>
+            <option>Medicina</option>
+            <option>Administración de Empresas</option>
+          </Form.Control>
+        </Form.Group>
+        <Form.Row>
+          <Form.Group as={Col} controlId="formGridAsignatura">
+            <Form.Label>Asignatura</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Nombre"
+              required
+              ref={asignatura}
+            />
+          </Form.Group>
+        </Form.Row>
+        <Button className="boton-filtro" type="reset">
+          Cancelar
+        </Button>
+        <Button
+          className="boton-filtro"
+          style={{ float: "right" }}
+          type="submit"
+        >
+          Confirmar
+        </Button>
+      </Form>
     </div>
   );
 };
@@ -81,72 +222,116 @@ class AdministradorCrear extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      contentMargin: "300px",
+      passValida: -1,
       datosSubidos: false
     };
-    this.titulo = React.createRef();
-    this.miniatura = React.createRef();
-    this.descripcion = React.createRef();
-    this.video = React.createRef();
+    this.nombre = React.createRef();
+    this.apellidos = React.createRef();
+    this.userID = React.createRef();
+    this.email = React.createRef();
+    this.passwd = React.createRef();
+    this.passwd2 = React.createRef();
+    this.carrera = React.createRef();
     this.asignatura = React.createRef();
-    this.handleSubmitDatos = this.handleSubmitDatos.bind(this);
-    this.handleChange = this.handleChange.bind(this);
+    this.handleProfesor = this.handleProfesor.bind(this);
+    this.handleUniversidad = this.handleUniversidad.bind(this);
+    this.handleCarrera = this.handleCarrera.bind(this);
+    this.handleAsignatura = this.handleAsignatura.bind(this);
+    this.getBorder = this.getBorder.bind(this);
   }
-  handleSubmitDatos(event) {
-    event.preventDefault();
-    const titulo = this.titulo.current.value;
-    const miniatura = this.miniatura.current.value;
-    const descripcion = this.descripcion.current.value;
-    const video = this.video.current.value;
-    const asignatura = this.asignatura.current.value;
-    this.setState({ datosSubidos: true });
-    console.log(titulo, miniatura, descripcion, video, asignatura);
-  }
-  handleChange(display) {
-    if (display) {
-      this.setState({
-        contentMargin: "300px"
-      });
-    } else {
-      this.setState({
-        contentMargin: "70px"
-      });
+
+  getBorder(key) {
+    switch (key) {
+      case 0:
+        return "1px solid red";
+      default:
+        return "";
     }
+  }
+
+  handleProfesor(event, form) {
+    event.preventDefault();
+    const nombre = this.nombre.current.value;
+    const apellidos = this.apellidos.current.value;
+    const userID = this.userID.current.value;
+    const email = this.email.current.value;
+    const passwd = this.passwd.current.value;
+    const passwd2 = this.passwd2.current.value;
+    if (passwd === passwd2) {
+      //this.setState({ datosSubidos: true });
+      console.log(nombre, apellidos, userID, email, passwd, passwd2);
+      form.reset();
+    } else {
+      this.setState({ passValida: 0 });
+    }
+  }
+  handleUniversidad(event, form) {
+    event.preventDefault();
+    const nombre = this.nombre.current.value;
+    //this.setState({ datosSubidos: true });
+    console.log(nombre);
+    form.reset();
+  }
+  handleCarrera(event, form) {
+    event.preventDefault();
+    const nombre = this.nombre.current.value;
+    //this.setState({ datosSubidos: true });
+    console.log(nombre);
+    form.reset();
+  }
+  handleAsignatura(event, form) {
+    event.preventDefault();
+    const carrera = this.carrera.current.value;
+    const asignatura = this.asignatura.current.value;
+    //this.setState({ datosSubidos: true });
+    console.log(carrera, asignatura);
+    form.reset();
   }
 
   render() {
     return (
       <div>
         <Helmet>
-          <title>Subir Video</title>
+          <title>Añadir</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         {this.state.datosSubidos ? (
-          <Redirect to={"/perfil"} />
+          <Redirect to={"/administrador-crear"} />
         ) : (
           <div>
-            <BarraNavegacion
-              logOut={this.props.logOut}
-              onChange={this.handleChange}
-              activar={""}
-              displaySide={true}
-              hide={false}
-            />
+            <BarraAdmi logOut={this.props.logOut} />
             <div
               className="transform"
               style={{
-                marginLeft: this.state.contentMargin,
-                marginTop: "80px"
+                marginTop: "80px",
+                marginLeft: "100px",
+                marginRight: "100px",
+                marginDown: "80px"
               }}
             >
-              <h5>Subir Vídeo</h5>
-              <div>
-                {FormularioDatos(
-                  this.handleSubmitDatos,
-                  this.titulo,
-                  this.miniatura,
-                  this.descripcion,
-                  this.video,
+              <h5>Añadir elementos a la página</h5>
+              <div className="boxed">
+                {FormularioProfesor(
+                  this.handleProfesor,
+                  this.nombre,
+                  this.apellidos,
+                  this.userID,
+                  this.email,
+                  this.passwd,
+                  this.passwd2,
+                  { border: this.getBorder(this.state.passValida) }
+                )}
+              </div>
+              <div className="boxed" style={{ marginTop: "20px" }} id="a">
+                {FormularioUniversidad(this.handleUniversidad, this.nombre)}
+              </div>
+              <div className="boxed" style={{ marginTop: "20px" }}>
+                {FormularioCarrera(this.handleCarrera, this.nombre)}
+              </div>
+              <div className="boxed" style={{ marginTop: "20px" }}>
+                {FormularioAsignatura(
+                  this.handleAsignatura,
+                  this.carrera,
                   this.asignatura
                 )}
               </div>
