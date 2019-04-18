@@ -3,6 +3,8 @@ import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
 import ListaVertical from "./ListaVertical";
 import imagenPrueba from "../assets/landscape.jpg";
+import Popup from "reactjs-popup";
+import { FormCheck } from "react-bootstrap";
 
 const list = [
   {
@@ -52,6 +54,14 @@ const list = [
   }
 ];
 
+const listasRepro = [
+  "Lista de reproducción 1",
+  "Lista de reproducción 2",
+  "Lista de reproducción 3",
+  "Lista de reproducción 4",
+  "Lista de reproduccióndasds aadsasdsadasadsdasdasasddasdsaddsadas 5"
+];
+
 function RemoveAccents(str) {
   var accents =
     "ÀÁÂÃÄÅàáâãäåÒÓÔÕÕÖØòóôõöøÈÉÊËèéêëðÇçÐÌÍÎÏìíîïÙÚÛÜùúûüÑñŠšŸÿýŽž";
@@ -68,219 +78,43 @@ function RemoveAccents(str) {
   return str.join("");
 }
 
-const HistorialLista = ({
-  fixed,
-  borrar,
-  anyadir,
-  handleChange,
-  keyDown,
-  historial,
-  busqueda
-}) => {
-  return (
-    <div>
-      {!fixed ? (
-        <div style={{ display: "block", marginRight: "70px" }}>
-          <div className="profesores-asignatura">
-            <input
-              onChange={handleChange}
-              onKeyDown={keyDown}
-              defaultValue={busqueda}
-              style={{
-                fontSize: "14px",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                display: "-webkit-box",
-                WebkitLineClamp: "1",
-                WebkitBoxOrient: "vertical",
-                backgroundColor: "#fafafa",
-                borderWidth: "0px 0px 1px 0px",
-                borderColor: "lightgrey",
-                width: "calc(100% - 67%)",
-                color: "#00000080"
-              }}
-              placeholder={"Buscar en el historial de reproducción"}
-            />
-            <div
-              style={{
-                cursor: "pointer",
-                fontSize: "14px",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                display: "-webkit-box",
-                WebkitLineClamp: "1",
-                WebkitBoxOrient: "vertical"
-              }}
-              onClick={borrar}
-              className="tit-prof"
-            >
-              BORRAR TODO EL HISTORIAL
-            </div>
-            <div
-              style={{
-                cursor: "pointer",
-                fontSize: "14px",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                display: "-webkit-box",
-                WebkitLineClamp: "1",
-                WebkitBoxOrient: "vertical"
-              }}
-              onClick={anyadir}
-              className="tit-prof"
-            >
-              AÑADIR TODOS LOS VÍDEOS A
-            </div>
-          </div>
-          <div>
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                marginTop: "25px"
-              }}
-            >
-              <ListaVertical lista={historial} />
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div style={{ display: "flex", marginRight: "70px" }}>
-          <div style={{ paddingRight: "300px" }}>
-            <div>
-              <div
-                style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  marginTop: "25px"
-                }}
-              >
-                <ListaVertical lista={historial} />
-              </div>
-            </div>
-          </div>
-          <div
-            className="profesores-asignatura"
-            style={{ position: "fixed", right: "70px" }}
-          >
-            <input
-              onChange={handleChange}
-              onKeyDown={keyDown}
-              defaultValue={busqueda}
-              style={{
-                fontSize: "14px",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                display: "-webkit-box",
-                WebkitLineClamp: "1",
-                WebkitBoxOrient: "vertical",
-                backgroundColor: "#fafafa",
-                borderWidth: "0px 0px 1px 0px",
-                borderColor: "lightgrey",
-                width: "100%",
-                color: "#00000080"
-              }}
-              placeholder={"Buscar en el historial de reproducción"}
-            />
-            <div
-              style={{ cursor: "pointer", fontSize: "14px" }}
-              onClick={borrar}
-              className="tit-prof"
-            >
-              BORRAR TODO EL HISTORIAL
-            </div>
-            <div
-              style={{ cursor: "pointer", fontSize: "14px" }}
-              onClick={anyadir}
-              className="tit-prof"
-            >
-              AÑADIR TODOS LOS VÍDEOS A
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
+class ContenidoPopUp extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { listas: this.props.listaRepro };
+    this.handleChange = this.handleChange.bind(this);
+  }
 
-const HistorialFiltrado = ({
-  fixed,
-  borrar,
-  anyadir,
-  handleChange,
-  keyDown,
-  historial,
-  busqueda
-}) => {
-  return (
-    <div>
-      {!fixed ? (
-        <div style={{ display: "block", marginRight: "70px" }}>
-          <div className="profesores-asignatura">
-            <input
-              onChange={handleChange}
-              onKeyDown={keyDown}
-              defaultValue={busqueda}
-              style={{
-                fontSize: "14px",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                display: "-webkit-box",
-                WebkitLineClamp: "1",
-                WebkitBoxOrient: "vertical",
-                backgroundColor: "#fafafa",
-                borderWidth: "0px 0px 1px 0px",
-                borderColor: "lightgrey",
-                width: "calc(100% - 67%)",
-                color: "#00000080"
-              }}
-              placeholder={"Buscar en el historial de reproducción"}
-            />
-            <div
-              style={{
-                cursor: "pointer",
-                fontSize: "14px",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                display: "-webkit-box",
-                WebkitLineClamp: "1",
-                WebkitBoxOrient: "vertical"
-              }}
-              onClick={borrar}
-              className="tit-prof"
-            >
-              BORRAR TODO EL HISTORIAL
-            </div>
-            <div
-              style={{
-                cursor: "pointer",
-                fontSize: "14px",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                display: "-webkit-box",
-                WebkitLineClamp: "1",
-                WebkitBoxOrient: "vertical"
-              }}
-              onClick={anyadir}
-              className="tit-prof"
-            >
-              AÑADIR TODOS LOS VÍDEOS A
-            </div>
-          </div>
-          <div>
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                marginTop: "25px"
-              }}
-            >
-              {historial.length > 0 ? (
-                <ListaVertical lista={historial} />
-              ) : (
-                <div
+  handleChange(e) {
+    const item = e.target.value;
+    const isChecked = e.target.checked;
+    if (!isChecked) {
+      //Eliminar De la lista item
+      console.log("Eliminar de: ", item);
+    } else {
+      //Añadir a la lista item
+      console.log("Añadir a: ", item);
+    }
+  }
+
+  render() {
+    return (
+      <div>
+        <div style={{ borderBottom: "1px solid lightgrey", fontWeight: "450" }}>
+          Guardar historial en...
+        </div>
+        <div style={{ paddingTop: "15px", fontSize: "14px" }}>
+          {this.state.listas.map(lista => {
+            return (
+              <FormCheck id={lista} key={lista}>
+                <FormCheck.Input
+                  type={"checkbox"}
+                  value={lista}
+                  onChange={this.handleChange}
+                />
+                <FormCheck.Label
                   style={{
-                    fontSize: "14px",
+                    marginBottom: "10px",
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     display: "-webkit-box",
@@ -288,15 +122,110 @@ const HistorialFiltrado = ({
                     WebkitBoxOrient: "vertical"
                   }}
                 >
-                  Ningún título coincide con la consulta.
-                </div>
-              )}
-            </div>
-          </div>
+                  {lista}
+                </FormCheck.Label>
+              </FormCheck>
+            );
+          })}
         </div>
-      ) : (
-        <div style={{ display: "flex", marginRight: "70px" }}>
-          <div style={{ paddingRight: "300px" }}>
+      </div>
+    );
+  }
+}
+class HistorialLista extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { popUp: false };
+    this.abrirPopUp = this.abrirPopUp.bind(this);
+    this.cerrarPopUp = this.cerrarPopUp.bind(this);
+  }
+
+  abrirPopUp() {
+    this.setState({ popUp: true });
+  }
+
+  cerrarPopUp() {
+    this.setState({ popUp: false });
+  }
+
+  render() {
+    return (
+      <div>
+        {!this.props.fixed ? (
+          <div style={{ display: "block", marginRight: "70px" }}>
+            <div className="profesores-asignatura">
+              <input
+                onChange={this.props.handleChange}
+                onKeyDown={this.props.keyDown}
+                defaultValue={this.props.busqueda}
+                style={{
+                  fontSize: "14px",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  display: "-webkit-box",
+                  WebkitLineClamp: "1",
+                  WebkitBoxOrient: "vertical",
+                  backgroundColor: "#fafafa",
+                  borderWidth: "0px 0px 1px 0px",
+                  borderColor: "lightgrey",
+                  width: "calc(100% - 67%)",
+                  color: "#00000080"
+                }}
+                placeholder={"Buscar en el historial de reproducción"}
+              />
+              <div
+                style={{
+                  cursor: "pointer",
+                  fontSize: "14px",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  display: "-webkit-box",
+                  WebkitLineClamp: "1",
+                  WebkitBoxOrient: "vertical"
+                }}
+                onClick={this.props.borrar}
+                className="tit-prof"
+              >
+                BORRAR TODO EL HISTORIAL
+              </div>
+              <Popup
+                open={this.state.popUp}
+                onOpen={this.abrirPopUp}
+                onClose={this.cerrarPopUp}
+                repositionOnResize
+                position="right center"
+                arrow={false}
+                contentStyle={{
+                  width: "250px",
+                  maxHeight: "500px",
+                  padding: "16px 20px",
+                  border: "0",
+                  marginLeft: "10px",
+                  boxShadow:
+                    "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4)"
+                }}
+                trigger={
+                  <div
+                    style={{
+                      cursor: "pointer",
+                      fontSize: "14px",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      display: "-webkit-box",
+                      WebkitLineClamp: "1",
+                      WebkitBoxOrient: "vertical",
+                      width: "fit-content"
+                    }}
+                    onClick={this.props.anyadir}
+                    className="tit-prof"
+                  >
+                    AÑADIR TODOS LOS VÍDEOS A
+                  </div>
+                }
+              >
+                <ContenidoPopUp listaRepro={listasRepro} />
+              </Popup>
+            </div>
             <div>
               <div
                 style={{
@@ -305,8 +234,195 @@ const HistorialFiltrado = ({
                   marginTop: "25px"
                 }}
               >
-                {historial.length > 0 ? (
-                  <ListaVertical lista={historial} />
+                <ListaVertical lista={this.props.historial} />
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div style={{ display: "flex", marginRight: "70px" }}>
+            <div style={{ paddingRight: "300px" }}>
+              <div>
+                <div
+                  style={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    marginTop: "25px"
+                  }}
+                >
+                  <ListaVertical lista={this.props.historial} />
+                </div>
+              </div>
+            </div>
+            <div
+              className="profesores-asignatura"
+              style={{ position: "fixed", right: "70px" }}
+            >
+              <input
+                onChange={this.props.handleChange}
+                onKeyDown={this.props.keyDown}
+                defaultValue={this.props.busqueda}
+                style={{
+                  fontSize: "14px",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  display: "-webkit-box",
+                  WebkitLineClamp: "1",
+                  WebkitBoxOrient: "vertical",
+                  backgroundColor: "#fafafa",
+                  borderWidth: "0px 0px 1px 0px",
+                  borderColor: "lightgrey",
+                  width: "100%",
+                  color: "#00000080"
+                }}
+                placeholder={"Buscar en el historial de reproducción"}
+              />
+              <div
+                style={{ cursor: "pointer", fontSize: "14px" }}
+                onClick={this.props.borrar}
+                className="tit-prof"
+              >
+                BORRAR TODO EL HISTORIAL
+              </div>
+              <Popup
+                open={this.state.popUp}
+                onOpen={this.abrirPopUp}
+                onClose={this.cerrarPopUp}
+                repositionOnResize
+                position="bottom center"
+                arrow={false}
+                contentStyle={{
+                  width: "250px",
+                  maxHeight: "500px",
+                  padding: "16px 20px",
+                  border: "0",
+                  marginTop: "10px",
+                  boxShadow:
+                    "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4)"
+                }}
+                trigger={
+                  <div
+                    style={{ cursor: "pointer", fontSize: "14px" }}
+                    onClick={this.props.anyadir}
+                    className="tit-prof"
+                  >
+                    AÑADIR TODOS LOS VÍDEOS A
+                  </div>
+                }
+              >
+                <ContenidoPopUp listaRepro={listasRepro} />
+              </Popup>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+}
+
+class HistorialFiltrado extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { popUp: false };
+    this.abrirPopUp = this.abrirPopUp.bind(this);
+    this.cerrarPopUp = this.cerrarPopUp.bind(this);
+  }
+
+  abrirPopUp() {
+    this.setState({ popUp: true });
+  }
+
+  cerrarPopUp() {
+    this.setState({ popUp: false });
+  }
+
+  render() {
+    return (
+      <div>
+        {!this.props.fixed ? (
+          <div style={{ display: "block", marginRight: "70px" }}>
+            <div className="profesores-asignatura">
+              <input
+                onChange={this.props.handleChange}
+                onKeyDown={this.props.keyDown}
+                defaultValue={this.props.busqueda}
+                style={{
+                  fontSize: "14px",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  display: "-webkit-box",
+                  WebkitLineClamp: "1",
+                  WebkitBoxOrient: "vertical",
+                  backgroundColor: "#fafafa",
+                  borderWidth: "0px 0px 1px 0px",
+                  borderColor: "lightgrey",
+                  width: "calc(100% - 67%)",
+                  color: "#00000080"
+                }}
+                placeholder={"Buscar en el historial de reproducción"}
+              />
+              <div
+                style={{
+                  cursor: "pointer",
+                  fontSize: "14px",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  display: "-webkit-box",
+                  WebkitLineClamp: "1",
+                  WebkitBoxOrient: "vertical"
+                }}
+                onClick={this.props.borrar}
+                className="tit-prof"
+              >
+                BORRAR TODO EL HISTORIAL
+              </div>
+              <Popup
+                open={this.state.popUp}
+                onOpen={this.abrirPopUp}
+                onClose={this.cerrarPopUp}
+                repositionOnResize
+                position="right center"
+                arrow={false}
+                contentStyle={{
+                  width: "250px",
+                  maxHeight: "500px",
+                  padding: "16px 20px",
+                  border: "0",
+                  marginLeft: "10px",
+                  boxShadow:
+                    "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4)"
+                }}
+                trigger={
+                  <div
+                    style={{
+                      cursor: "pointer",
+                      fontSize: "14px",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      display: "-webkit-box",
+                      WebkitLineClamp: "1",
+                      WebkitBoxOrient: "vertical",
+                      width: "fit-content"
+                    }}
+                    onClick={this.props.anyadir}
+                    className="tit-prof"
+                  >
+                    AÑADIR TODOS LOS VÍDEOS A
+                  </div>
+                }
+              >
+                <ContenidoPopUp listaRepro={listasRepro} />
+              </Popup>
+            </div>
+            <div>
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  marginTop: "25px"
+                }}
+              >
+                {this.props.historial.length > 0 ? (
+                  <ListaVertical lista={this.props.historial} />
                 ) : (
                   <div
                     style={{
@@ -324,49 +440,101 @@ const HistorialFiltrado = ({
               </div>
             </div>
           </div>
-          <div
-            className="profesores-asignatura"
-            style={{ position: "fixed", right: "70px" }}
-          >
-            <input
-              onChange={handleChange}
-              onKeyDown={keyDown}
-              defaultValue={busqueda}
-              style={{
-                fontSize: "14px",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                display: "-webkit-box",
-                WebkitLineClamp: "1",
-                WebkitBoxOrient: "vertical",
-                backgroundColor: "#fafafa",
-                borderWidth: "0px 0px 1px 0px",
-                borderColor: "lightgrey",
-                width: "100%",
-                color: "#00000080"
-              }}
-              placeholder={"Buscar en el historial de reproducción"}
-            />
-            <div
-              style={{ cursor: "pointer", fontSize: "14px" }}
-              onClick={borrar}
-              className="tit-prof"
-            >
-              BORRAR TODO EL HISTORIAL
+        ) : (
+          <div style={{ display: "flex", marginRight: "70px" }}>
+            <div style={{ paddingRight: "300px" }}>
+              <div>
+                <div
+                  style={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    marginTop: "25px"
+                  }}
+                >
+                  {this.props.historial.length > 0 ? (
+                    <ListaVertical lista={this.props.historial} />
+                  ) : (
+                    <div
+                      style={{
+                        fontSize: "14px",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        display: "-webkit-box",
+                        WebkitLineClamp: "1",
+                        WebkitBoxOrient: "vertical"
+                      }}
+                    >
+                      Ningún título coincide con la consulta.
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
             <div
-              style={{ cursor: "pointer", fontSize: "14px" }}
-              onClick={anyadir}
-              className="tit-prof"
+              className="profesores-asignatura"
+              style={{ position: "fixed", right: "70px" }}
             >
-              AÑADIR TODOS LOS VÍDEOS A
+              <input
+                onChange={this.props.handleChange}
+                onKeyDown={this.props.keyDown}
+                defaultValue={this.props.busqueda}
+                style={{
+                  fontSize: "14px",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  display: "-webkit-box",
+                  WebkitLineClamp: "1",
+                  WebkitBoxOrient: "vertical",
+                  backgroundColor: "#fafafa",
+                  borderWidth: "0px 0px 1px 0px",
+                  borderColor: "lightgrey",
+                  width: "100%",
+                  color: "#00000080"
+                }}
+                placeholder={"Buscar en el historial de reproducción"}
+              />
+              <div
+                style={{ cursor: "pointer", fontSize: "14px" }}
+                onClick={this.props.borrar}
+                className="tit-prof"
+              >
+                BORRAR TODO EL HISTORIAL
+              </div>
+              <Popup
+                open={this.state.popUp}
+                onOpen={this.abrirPopUp}
+                onClose={this.cerrarPopUp}
+                repositionOnResize
+                position="bottom center"
+                arrow={false}
+                contentStyle={{
+                  width: "250px",
+                  maxHeight: "500px",
+                  padding: "16px 20px",
+                  border: "0",
+                  marginTop: "10px",
+                  boxShadow:
+                    "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4)"
+                }}
+                trigger={
+                  <div
+                    style={{ cursor: "pointer", fontSize: "14px" }}
+                    onClick={this.props.anyadir}
+                    className="tit-prof"
+                  >
+                    AÑADIR TODOS LOS VÍDEOS A
+                  </div>
+                }
+              >
+                <ContenidoPopUp listaRepro={listasRepro} />
+              </Popup>
             </div>
           </div>
-        </div>
-      )}
-    </div>
-  );
-};
+        )}
+      </div>
+    );
+  }
+}
 
 class Historial extends Component {
   constructor() {
