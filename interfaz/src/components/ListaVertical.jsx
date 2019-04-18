@@ -1,23 +1,7 @@
 import React, { Component } from "react";
-import imagenPrueba from "../assets/landscape.jpg";
 import { Link } from "react-router-dom";
 
-const list = [
-  { name: "item1", image: imagenPrueba },
-  { name: "item2", image: imagenPrueba },
-  { name: "item3", image: imagenPrueba },
-  { name: "item4", image: imagenPrueba },
-  { name: "item5", image: imagenPrueba },
-  { name: "item6", image: imagenPrueba },
-  { name: "item7", image: imagenPrueba },
-  { name: "item8", image: imagenPrueba },
-  { name: "item9", image: imagenPrueba },
-  { name: "item10", image: imagenPrueba },
-  { name: "item11", image: imagenPrueba },
-  { name: "item12", image: imagenPrueba }
-];
-
-const MenuItem = ({ url, img }) => {
+const MenuItem = ({ url, canal, img }) => {
   return (
     <div
       style={{
@@ -54,7 +38,7 @@ const MenuItem = ({ url, img }) => {
             }}
             to={`/video/${url}`}
           >
-            Vídeo de prueba en pagina de inicio {url}
+            {url}
           </Link>
         </div>
         <div
@@ -78,7 +62,7 @@ const MenuItem = ({ url, img }) => {
             }}
             to={`/asig/X`}
           >
-            La Resistencia en Movistar +
+            {canal}
           </Link>
           <div style={{ marginTop: "10px", width: "90%" }}>
             <div
@@ -114,15 +98,15 @@ const MenuItem = ({ url, img }) => {
 // Important! add unique key
 export const MenuVertical = list =>
   list.map(el => {
-    const { name, image } = el;
+    const { name, canal, image } = el;
 
-    return <MenuItem url={name} key={name} img={image} />;
+    return <MenuItem url={name} canal={canal} key={name} img={image} />;
   });
 
 class ListaVertical extends Component {
   constructor(props) {
     super(props);
-    this.menu = MenuVertical(list);
+    this.menu = MenuVertical(this.props.lista);
   }
   render() {
     return <div>{this.menu}</div>;
