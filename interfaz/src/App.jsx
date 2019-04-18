@@ -10,6 +10,7 @@ import Inicio from "./components/Inicio";
 import Informacion from "./components/Informacion";
 import Asignaturas from "./components/Asignaturas";
 import EditarPerfil from "./components/EditarPerfil";
+import SubirVideo from "./components/SubirVideo";
 import Rankings from "./components/Rankings";
 import Historial from "./components/Historial";
 import Listas from "./components/Listas";
@@ -82,6 +83,16 @@ class App extends Component {
             render={() =>
               this.state.user !== "" ? (
                 <Informacion logOut={this.logOut} />
+              ) : (
+                <Redirect to={"/"} />
+              )
+            }
+          />
+          <Route
+            path={"/subir-video"}
+            render={() =>
+              this.state.user !== "" ? (
+                <SubirVideo logOut={this.logOut} />
               ) : (
                 <Redirect to={"/"} />
               )

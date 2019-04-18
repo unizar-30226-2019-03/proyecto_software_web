@@ -174,9 +174,9 @@ class Perfil extends Component {
                   padding: "20px 20px 0px 0px"
                 }}
               >
-                <div className="universidad">
+                <Link to="/subir-video" className="universidad">
                   <Button className="boton-filtro">Subir vídeo</Button>
-                </div>
+                </Link>
               </div>
               <div
                 style={{

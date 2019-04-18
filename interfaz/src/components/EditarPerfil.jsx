@@ -145,30 +145,22 @@ const FormularioDatos = (
                   sí puede ser descifrado por su destinatario original"
           />
         </Form.Group>
-        <div style={{ display: "flex", float: "right" }}>
+
+        <Button className="boton-filtro" type="submit">
+          Confirmar
+        </Button>
+
+        <Link to="/perfil">
           <Button
-            type="submit"
+            className="boton-filtro"
             style={{
-              marginBottom: "20px",
-              marginRight: "20px",
-              backgroundColor: "#235da9",
-              borderColor: "#235da9"
+              float: "right",
+              marginBottom: "20px"
             }}
           >
-            Confirmar
+            Cancelar
           </Button>
-          <Link to="/perfil">
-            <Button
-              style={{
-                marginBottom: "20px",
-                backgroundColor: "#235da9",
-                borderColor: "#235da9"
-              }}
-            >
-              Cancelar
-            </Button>
-          </Link>
-        </div>
+        </Link>
       </Form>
     </div>
   );
@@ -251,7 +243,7 @@ class EditarPerfil extends Component {
     return (
       <div>
         <Helmet>
-          <title>Perfil</title>
+          <title>Editar Perfil</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         {this.state.datosValidados ? (
