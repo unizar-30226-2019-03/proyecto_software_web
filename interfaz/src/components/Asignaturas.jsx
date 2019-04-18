@@ -128,7 +128,14 @@ class Asignaturas extends Component {
           }}
         >
           <div className="listado-asignaturas">
-            <h5>Mis asignaturas</h5>
+            <div
+              style={{
+                borderBottom: "1px solid lightgrey",
+                marginRight: "70px"
+              }}
+            >
+              <h5>Mis asignaturas</h5>
+            </div>
 
             <ListGroup variant="flush" className="lista">
               <Dropdown style={{ marginBottom: "5px" }} drop={"right"}>

@@ -177,8 +177,14 @@ class Rankings extends Component {
           }}
         >
           <div className="listado-asignaturas">
-            <h5>Ránking de Asignaturas</h5>
-
+            <div
+              style={{
+                borderBottom: "1px solid lightgrey",
+                marginRight: "70px"
+              }}
+            >
+              <h5>Ránking de Asignaturas</h5>
+            </div>
             <ListGroup variant="flush" className="lista">
               <Dropdown style={{ marginBottom: "5px" }} drop={"right"}>
                 <Dropdown.Toggle

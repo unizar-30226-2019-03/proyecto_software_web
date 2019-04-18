@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import imagenPrueba from "../assets/landscape.jpg";
-import iconoAsign from "../assets/favicon.ico";
 import { Link } from "react-router-dom";
 
 const list = [
@@ -20,27 +19,38 @@ const list = [
 
 const MenuItem = ({ url, img }) => {
   return (
-    <div style={{ width: "400px", marginBottom: "8px", display: "flex" }}>
+    <div
+      style={{
+        marginBottom: "16px",
+        display: "flex"
+      }}
+    >
       <div>
         <Link to={`/video/${url}`}>
-          <img src={img} width="175" height="100" alt="videoX" />
+          <img src={img} width="240" height="140" alt="videoX" />
         </Link>
       </div>
-      <div>
+      <div style={{ marginTop: "5px" }}>
         <div
           style={{
             marginLeft: "10px",
             lineHeight: "normal",
-            marginBottom: "3px"
+            marginBottom: "10px"
           }}
         >
           <Link
             style={{
               textDecoration: "none",
               color: "black",
-              fontSize: "14px",
-              overflowWrap: "break-word",
-              fontWeight: "bold"
+              fontSize: "20px",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              display: "-webkit-box",
+              WebkitLineClamp: "2",
+              WebkitBoxOrient: "vertical",
+              fontWeight: "400",
+              wordWrap: "break-word",
+              width: "90%"
             }}
             to={`/video/${url}`}
           >
@@ -59,15 +69,42 @@ const MenuItem = ({ url, img }) => {
               textDecoration: "none",
               color: "#00000080",
               fontSize: "12px",
-              overflowWrap: "break-word",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              display: "-webkit-box",
+              WebkitLineClamp: "1",
+              WebkitBoxOrient: "vertical",
               fontWeight: "500"
             }}
             to={`/asig/X`}
           >
-            Asignatura concreta
+            La Resistencia en Movistar +
           </Link>
+          <div style={{ marginTop: "10px", width: "90%" }}>
+            <div
+              style={{
+                textDecoration: "none",
+                color: "#00000080",
+                fontSize: "12px",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                display: "-webkit-box",
+                WebkitLineClamp: "3",
+                WebkitBoxOrient: "vertical",
+                fontWeight: "500"
+              }}
+            >
+              Descripción del video. Un texto es una composición de signos
+              codificados en un sistema de escritura que forma una unidad de
+              sentido. También es una composición de caracteres imprimibles (con
+              grafema) generados por un algoritmo de cifrado que, aunque no
+              tienen sentido para cualquier persona, sí puede ser descifrado por
+              su destinatario original. En otras palabras, un texto es un
+              entramado de signos con una intención comunicativa que adquiere
+              sentido en determinado contexto.
+            </div>
+          </div>
         </div>
-        <div className="fecha-subida-vertical">Hace X min</div>
       </div>
     </div>
   );
