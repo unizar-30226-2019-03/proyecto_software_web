@@ -7,7 +7,13 @@ import uni from "../assets/UnicastNombre.png";
 class Login extends Component {
   constructor(props) {
     super(props);
-    this.state = { emailValido: -1, email: "", pass: "", passValida: -1 };
+    this.state = {
+      emailValido: -1,
+      email: "",
+      pass: "",
+      passValida: -1,
+      admi: -1
+    };
     this.email = React.createRef();
     this.pass = React.createRef();
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -31,6 +37,9 @@ class Login extends Component {
     }
     if ((email === "david@gmail.com") & (pass === "1234")) {
       this.props.logUser(email);
+    } else if ((email === "admi@gmail.com") & (pass === "admi")) {
+      this.setState({ admi: 1 });
+      this.props.logUser(email);
     }
   }
 
@@ -44,7 +53,6 @@ class Login extends Component {
   }
 
   render() {
-    let claseEmail = { border: this.getBorder(this.state.emailValido) };
     let clasePass = { border: this.getBorder(this.state.passValida) };
     return (
       <div>
@@ -55,58 +63,63 @@ class Login extends Component {
           <Redirect to={"/inicio"} />
         ) : (
           <div>
-            <div className="login transform">
-              <img className="userIcon" src={uni} alt="UniCast" />
-              <Form onSubmit={e => this.handleSubmit(e)}>
-                <Form.Group controlId="formBasicEmail">
-                  <Form.Label>Correo electrónico</Form.Label>
-                  <Form.Control
-                    required
-                    type="email"
-                    placeholder="Email"
-                    ref={this.email}
-                    style={claseEmail}
-                  />
-                  <Form.Text className="text-muted">
-                    Nunca compartiremos tus datos.
-                  </Form.Text>
-                </Form.Group>
+            {this.state.admi === 1 ? (
+              <Redirect to={"/administrador-crear"} />
+            ) : (
+              <div>
+                <div className="login transform">
+                  <img className="userIcon" src={uni} alt="UniCast" />
+                  <Form onSubmit={e => this.handleSubmit(e)}>
+                    <Form.Group controlId="formBasicEmail">
+                      <Form.Label>Correo electrónico</Form.Label>
+                      <Form.Control
+                        required
+                        type="email"
+                        placeholder="Email"
+                        ref={this.email}
+                      />
+                      <Form.Text className="text-muted">
+                        Nunca compartiremos tus datos.
+                      </Form.Text>
+                    </Form.Group>
 
-                <Form.Group controlId="formBasicPassword">
-                  <Form.Label>Constraseña</Form.Label>
-                  <Form.Control
-                    required
-                    type="password"
-                    placeholder="Constraseña"
-                    ref={this.pass}
-                    style={clasePass}
-                  />
-                </Form.Group>
+                    <Form.Group controlId="formBasicPassword">
+                      <Form.Label>Constraseña</Form.Label>
+                      <Form.Control
+                        required
+                        type="password"
+                        placeholder="Constraseña"
+                        ref={this.pass}
+                        style={clasePass}
+                      />
+                    </Form.Group>
 
-                <Button className="boton-login" type="submit">
-                  Iniciar Sesión
-                </Button>
-                <Link
-                  className="textInfo"
-                  to="/"
-                  style={{ color: "#007bff", textDecoration: "none" }}
-                >
-                  ¿Has olvidado tu contraseña?
-                </Link>
-                <p
-                  className="textInfo"
-                  style={{ textAlign: "left", padding: "5 0px" }}
-                >
-                  ¿No tienes cuenta?{" "}
-                  <Link
-                    style={{ color: "#007bff", textDecoration: "none" }}
-                    to="/registro"
-                  >
-                    Registrarse
-                  </Link>
-                </p>
-              </Form>
-            </div>
+                    <Button className="boton-login" type="submit">
+                      Iniciar Sesión
+                    </Button>
+                    <Link
+                      className="textInfo"
+                      to="/"
+                      style={{ color: "#007bff", textDecoration: "none" }}
+                    >
+                      ¿Has olvidado tu contraseña?
+                    </Link>
+                    <p
+                      className="textInfo"
+                      style={{ textAlign: "left", padding: "5 0px" }}
+                    >
+                      ¿No tienes cuenta?{" "}
+                      <Link
+                        style={{ color: "#007bff", textDecoration: "none" }}
+                        to="/registro"
+                      >
+                        Registrarse
+                      </Link>
+                    </p>
+                  </Form>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

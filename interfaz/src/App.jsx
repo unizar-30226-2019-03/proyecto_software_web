@@ -18,6 +18,7 @@ import Perfil from "./components/Perfil";
 import Mensajes from "./components/Mensajes";
 import Notificaciones from "./components/Notificaciones";
 import Asignatura from "./components/Asignatura";
+import AdministradorCrear from "./components/AdministradorCrear";
 import Login from "./components/Login";
 import SignIn from "./components/SignIn";
 import ViendoVideo from "./components/ViendoVideo";
@@ -59,6 +60,8 @@ class App extends Component {
             render={() =>
               this.state.user === "" ? (
                 <Login logUser={this.setUser} />
+              ) : this.state.user === "admi@gmail.com" ? (
+                <AdministradorCrear logUser={this.logOut} />
               ) : (
                 <Inicio logOut={this.logOut} />
               )
@@ -93,6 +96,16 @@ class App extends Component {
             render={() =>
               this.state.user !== "" ? (
                 <SubirVideo logOut={this.logOut} />
+              ) : (
+                <Redirect to={"/"} />
+              )
+            }
+          />
+          <Route
+            path={"/administrador-crear"}
+            render={() =>
+              this.state.user === "admi@gmail.com" ? (
+                <AdministradorCrear logOut={this.logOut} />
               ) : (
                 <Redirect to={"/"} />
               )
