@@ -37,7 +37,7 @@ class Login extends Component {
     }
     if ((email === "david@gmail.com") & (pass === "1234")) {
       this.props.logUser(email);
-    } else if ((email === "admi@gmail.com") & (pass === "admi")) {
+    } else if ((email === "admin@gmail.com") & (pass === "admin")) {
       this.setState({ admi: 1 });
       this.props.logUser(email);
     }

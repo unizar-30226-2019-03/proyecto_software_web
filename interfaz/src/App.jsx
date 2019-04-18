@@ -60,8 +60,8 @@ class App extends Component {
             render={() =>
               this.state.user === "" ? (
                 <Login logUser={this.setUser} />
-              ) : this.state.user === "admi@gmail.com" ? (
-                <AdministradorCrear logUser={this.logOut} />
+              ) : this.state.user === "admin@gmail.com" ? (
+                <AdministradorCrear logOut={this.logOut} />
               ) : (
                 <Inicio logOut={this.logOut} />
               )
