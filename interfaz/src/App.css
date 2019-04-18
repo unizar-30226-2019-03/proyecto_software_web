@@ -80,6 +80,7 @@
   background-color: #f3f3f3;
   position: fixed;
   overflow: hidden;
+  z-index: 1024;
 }
 
 .sidebar:hover {
