@@ -145,7 +145,7 @@ const FormularioDatos = (
           />
         </Form.Group>
         <Button
-          className="boton-signin-reg"
+          className="boton-filtro"
           type="submit"
           style={{ float: "left" }}
         >
@@ -241,7 +241,7 @@ class EditarPerfil extends Component {
     return (
       <div>
         <Helmet>
-          <title>Perfil</title>
+          <title>Editar Perfil</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         {this.state.datosValidados ? (
