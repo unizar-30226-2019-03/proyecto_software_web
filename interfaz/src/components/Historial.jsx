@@ -3,7 +3,7 @@ import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
 import ListaVertical from "./ListaVertical";
 
-const HistorialFixed = () => {
+const HistorialFixed = ({ borrar, anyadir, handleChange, keyDown }) => {
   return (
     <div style={{ display: "flex", marginRight: "70px" }}>
       <div style={{ paddingRight: "300px" }}>
@@ -23,16 +23,34 @@ const HistorialFixed = () => {
         className="profesores-asignatura"
         style={{ position: "fixed", right: "70px" }}
       >
+        <input
+          onChange={handleChange}
+          onKeyDown={keyDown}
+          style={{
+            fontSize: "14px",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            display: "-webkit-box",
+            WebkitLineClamp: "1",
+            WebkitBoxOrient: "vertical",
+            backgroundColor: "#fafafa",
+            borderWidth: "0px 0px 1px 0px",
+            borderColor: "lightgrey",
+            width: "100%",
+            color: "#00000080"
+          }}
+          placeholder={"Buscar en el historial de reproducción"}
+        />
         <div
           style={{ cursor: "pointer", fontSize: "14px" }}
-          onClick={() => alert("e")}
+          onClick={borrar}
           className="tit-prof"
         >
           BORRAR TODO EL HISTORIAL
         </div>
         <div
           style={{ cursor: "pointer", fontSize: "14px" }}
-          onClick={() => alert("e")}
+          onClick={anyadir}
           className="tit-prof"
         >
           AÑADIR TODOS LOS VÍDEOS A
@@ -42,10 +60,28 @@ const HistorialFixed = () => {
   );
 };
 
-const HistorialPequenyo = () => {
+const HistorialPequenyo = ({ borrar, anyadir, handleChange, keyDown }) => {
   return (
     <div style={{ display: "block", marginRight: "70px" }}>
       <div className="profesores-asignatura">
+        <input
+          onChange={handleChange}
+          onKeyDown={keyDown}
+          style={{
+            fontSize: "14px",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            display: "-webkit-box",
+            WebkitLineClamp: "1",
+            WebkitBoxOrient: "vertical",
+            backgroundColor: "#fafafa",
+            borderWidth: "0px 0px 1px 0px",
+            borderColor: "lightgrey",
+            width: "calc(100% - 67%)",
+            color: "#00000080"
+          }}
+          placeholder={"Buscar en el historial de reproducción"}
+        />
         <div
           style={{
             cursor: "pointer",
@@ -56,7 +92,7 @@ const HistorialPequenyo = () => {
             WebkitLineClamp: "1",
             WebkitBoxOrient: "vertical"
           }}
-          onClick={() => alert("e")}
+          onClick={borrar}
           className="tit-prof"
         >
           BORRAR TODO EL HISTORIAL
@@ -71,7 +107,7 @@ const HistorialPequenyo = () => {
             WebkitLineClamp: "1",
             WebkitBoxOrient: "vertical"
           }}
-          onClick={() => alert("e")}
+          onClick={anyadir}
           className="tit-prof"
         >
           AÑADIR TODOS LOS VÍDEOS A
@@ -97,10 +133,34 @@ class Historial extends Component {
     super();
     this.state = {
       contentMargin: "300px",
-      fixed: true
+      fixed: window.innerWidth >= 900,
+      busqueda: ""
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleResize = this.handleResize.bind(this);
+    this.borrarHistorial = this.borrarHistorial.bind(this);
+    this.buscarHistorial = this.buscarHistorial.bind(this);
+    this.keyDown = this.keyDown.bind(this);
+    this.anyadirHistorialA = this.anyadirHistorialA.bind(this);
+  }
+
+  borrarHistorial() {
+    alert("BORRAR TODO :O");
+  }
+
+  anyadirHistorialA() {
+    alert("AÑADIR A LISTA");
+  }
+
+  buscarHistorial(e) {
+    e.preventDefault();
+    this.setState({ busqueda: e.target.value });
+  }
+
+  keyDown(e) {
+    if (e.keyCode === 13) {
+      alert("Filtrar con búsqueda: " + this.state.busqueda);
+    }
   }
 
   handleResize() {
@@ -154,7 +214,21 @@ class Historial extends Component {
               </h5>
             </div>
           </div>
-          {this.state.fixed ? HistorialFixed() : HistorialPequenyo()}
+          {this.state.fixed ? (
+            <HistorialFixed
+              borrar={this.borrarHistorial}
+              handleChange={this.buscarHistorial}
+              keyDown={this.keyDown}
+              anyadir={this.anyadirHistorialA}
+            />
+          ) : (
+            <HistorialPequenyo
+              borrar={this.borrarHistorial}
+              handleChange={this.buscarHistorial}
+              keyDown={this.keyDown}
+              anyadir={this.anyadirHistorialA}
+            />
+          )}
         </div>
       </div>
     );
