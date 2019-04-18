@@ -25,7 +25,7 @@ const FormularioDatos = (
       <Form onSubmit={e => handleSubmit(e)}>
         <Form.Row>
           <Form.Group as={Col} controlId="formGridName">
-            <Form.Label>Nombre*</Form.Label>
+            <Form.Label>Nombre *</Form.Label>
             <Form.Control
               type="text"
               defaultValue="David"
@@ -35,7 +35,7 @@ const FormularioDatos = (
           </Form.Group>
 
           <Form.Group as={Col} controlId="formGridSurname">
-            <Form.Label>Apellidos*</Form.Label>
+            <Form.Label>Apellidos *</Form.Label>
             <Form.Control
               type="text"
               defaultValue="Solanas Sanz"
@@ -46,7 +46,7 @@ const FormularioDatos = (
         </Form.Row>
 
         <Form.Group controlId="formGridUserID">
-          <Form.Label>Nombre de usuario*</Form.Label>
+          <Form.Label>Nombre de usuario *</Form.Label>
           <Form.Control
             type="text"
             defaultValue="739999"
@@ -56,7 +56,7 @@ const FormularioDatos = (
         </Form.Group>
 
         <Form.Group controlId="formGridEmail">
-          <Form.Label>Email*</Form.Label>
+          <Form.Label>Email *</Form.Label>
           <Form.Control
             defaultValue="davidsolanas@gmail.com"
             type="email"
@@ -66,7 +66,7 @@ const FormularioDatos = (
         </Form.Group>
         <Form.Row>
           <Form.Group as={Col} controlId="formGridPasswd">
-            <Form.Label>Contraseña*</Form.Label>
+            <Form.Label>Contraseña *</Form.Label>
             <Form.Control
               defaultValue="1234"
               type="password"
@@ -76,7 +76,7 @@ const FormularioDatos = (
           </Form.Group>
 
           <Form.Group as={Col} controlId="formGridPasswd2">
-            <Form.Label>Confirmar contraseña*</Form.Label>
+            <Form.Label>Confirmar contraseña *</Form.Label>
             <Form.Control
               defaultValue="1234"
               type="password"
@@ -116,18 +116,19 @@ const FormularioDatos = (
             ref={asignaturas}
           />
         </Form.Group>
-        <div
-          style={{
-            float: "right",
-            padding: "0 60px 0 0"
-          }}
-        >
-          <img src={User_img} alt="Foto de perfil" width="60px" height="60px" />
-        </div>
+
         <Form.Group controlId="formGridFoto">
           <Form.Label>Foto de usuario</Form.Label>
-
-          <Form.Control type="file" ref={foto} />
+          <div style={{ display: "flex" }}>
+            <Form.Control type="file" ref={foto} />
+            <img
+              src={User_img}
+              alt="Foto de perfil"
+              width="60px"
+              height="60px"
+              style={{ marginTop: "-10px" }}
+            />
+          </div>
         </Form.Group>
 
         <Form.Group controlId="exampleForm.ControlTextarea1">
@@ -144,22 +145,23 @@ const FormularioDatos = (
                   sí puede ser descifrado por su destinatario original"
           />
         </Form.Group>
-        <Button
-          className="boton-filtro"
-          type="submit"
-          style={{ float: "left" }}
-        >
+
+        <Button className="boton-filtro" type="submit">
           Confirmar
         </Button>
+
+        <Link to="/perfil">
+          <Button
+            className="boton-filtro"
+            style={{
+              float: "right",
+              marginBottom: "20px"
+            }}
+          >
+            Cancelar
+          </Button>
+        </Link>
       </Form>
-      <Link to="/perfil">
-        <Button
-          className="boton-filtro"
-          style={{ float: "right", marginBottom: "20px" }}
-        >
-          Cancelar
-        </Button>
-      </Link>
     </div>
   );
 };

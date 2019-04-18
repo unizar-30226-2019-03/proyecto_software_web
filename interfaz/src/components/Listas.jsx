@@ -6,6 +6,17 @@ import { FaPlus, FaPencilAlt, FaRegTrashAlt } from "react-icons/fa";
 import Popup from "reactjs-popup";
 import { Form, Button } from "react-bootstrap";
 
+const lista = [
+  { titulo: "Lista de reproducción A" },
+  { titulo: "Lista de reproducción B" },
+  { titulo: "Lista de reproducción C" },
+  { titulo: "Lista de reproducción D" },
+  { titulo: "Lista de reproducción E" },
+  { titulo: "Lista de reproducción F" },
+  { titulo: "Lista de reproducción G" },
+  { titulo: "Lista de reproducción H" }
+];
+
 const Notificacion = ({ mostrar, nombre, handleClick }) => {
   return (
     <div
@@ -46,6 +57,120 @@ const Notificacion = ({ mostrar, nombre, handleClick }) => {
   );
 };
 
+class Lista extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      tituloOriginal: this.props.titulo,
+      titulo: this.props.titulo,
+      width: this.props.titulo.length,
+      popUp: false
+    };
+    this.handleChange = this.handleChange.bind(this);
+    this.keyPress = this.keyPress.bind(this);
+    this.abrirPopUp = this.abrirPopUp.bind(this);
+    this.cerrarPopUp = this.cerrarPopUp.bind(this);
+  }
+
+  abrirPopUp() {
+    this.setState({ popUp: true });
+  }
+
+  cerrarPopUp() {
+    this.setState({ popUp: false });
+  }
+
+  handleChange(e) {
+    e.preventDefault();
+    this.setState({
+      titulo: e.target.value,
+      width: e.target.value.length + 0.5
+    });
+  }
+
+  keyPress(e) {
+    if (e.keyCode === 13) {
+      e.target.blur();
+      this.props.editar(this.state.tituloOriginal, this.state.titulo);
+    }
+  }
+
+  render() {
+    return (
+      <div>
+        <div style={{ display: "flex" }}>
+          <div>
+            <h6 style={{ fontWeight: "bold" }}>
+              <input
+                defaultValue={this.state.titulo}
+                ref={ip => (this.titulo = ip)}
+                onChange={this.handleChange}
+                onKeyDown={this.keyPress}
+                size={this.state.width}
+                style={{
+                  backgroundColor: "#fafafa",
+                  border: "0",
+                  overflow: "visible",
+                  pointerEvents: "none"
+                }}
+              />
+            </h6>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              marginTop: "-4px"
+            }}
+          >
+            <div
+              style={{
+                cursor: "pointer",
+                marginRight: "15px"
+              }}
+              onClick={() => {
+                this.titulo.focus();
+              }}
+            >
+              <FaPencilAlt className="icono-lista" />
+            </div>
+            <Popup
+              open={this.state.popUp}
+              onOpen={this.abrirPopUp}
+              repositionOnResize
+              trigger={
+                <div style={{ cursor: "pointer" }}>
+                  <FaRegTrashAlt className="icono-lista" />
+                </div>
+              }
+            >
+              <div className="popup">
+                <div className="titulo">¿Estás seguro?</div>
+
+                <Button
+                  variant="link"
+                  style={{
+                    marginTop: "10px",
+                    padding: "0",
+                    textDecoration: "none",
+                    fontSize: "14px"
+                  }}
+                  onClick={() => {
+                    this.cerrarPopUp();
+                    this.props.borrar(this.state.titulo);
+                  }}
+                >
+                  Confirmar borrado
+                </Button>
+              </div>
+            </Popup>
+          </div>
+        </div>
+        <ListaHorizontal />
+      </div>
+    );
+  }
+}
+
 class Listas extends Component {
   constructor() {
     super();
@@ -54,7 +179,8 @@ class Listas extends Component {
       popUp: false,
       popUpValidado: false,
       nombreLista: "",
-      tiempo: 0
+      tiempo: 0,
+      misListas: lista
     };
     this.nombreLista = React.createRef();
     this.crearLista = this.crearLista.bind(this);
@@ -65,6 +191,8 @@ class Listas extends Component {
     this.iniciarReloj = this.iniciarReloj.bind(this);
     this.pararReloj = this.pararReloj.bind(this);
     this.tick = this.tick.bind(this);
+    this.borrarLista = this.borrarLista.bind(this);
+    this.editarLista = this.editarLista.bind(this);
   }
 
   handleChange(display) {
@@ -86,11 +214,18 @@ class Listas extends Component {
   crearLista(evento) {
     evento.preventDefault();
     const nombreLista = this.nombreLista.current.value;
-    this.setState({ popUpValidado: true, nombreLista: nombreLista });
+    var nuevasListas = this.state.misListas.slice();
+    nuevasListas.push({ titulo: nombreLista });
+    this.setState({
+      popUpValidado: true,
+      nombreLista: nombreLista,
+      misListas: nuevasListas
+    });
     this.iniciarReloj();
   }
 
   deshacer() {
+    this.borrarLista(this.state.nombreLista);
     this.setState({ popUpValidado: false });
   }
 
@@ -105,11 +240,25 @@ class Listas extends Component {
 
   tick() {
     let t = this.state.tiempo;
-    if (t === 2) {
+    if (t === 3) {
       t = -1;
       this.pararReloj();
     }
     this.setState({ tiempo: t + 1 });
+  }
+
+  borrarLista(titulo) {
+    var nuevasListas = this.state.misListas.slice();
+    const index = nuevasListas.findIndex(e => e.titulo === titulo);
+    nuevasListas.splice(index, 1);
+    this.setState({ misListas: nuevasListas });
+  }
+
+  editarLista(antigua, nueva) {
+    var nuevasListas = this.state.misListas.slice();
+    const index = nuevasListas.findIndex(e => e.titulo === antigua);
+    nuevasListas[index] = { titulo: nueva };
+    this.setState({ misListas: nuevasListas });
   }
 
   render() {
@@ -189,98 +338,17 @@ class Listas extends Component {
                 </div>
               </Popup>
             </div>
-            <div>
-              <div style={{ display: "flex" }}>
-                <div style={{ marginRight: "15px" }}>
-                  <h6 style={{ fontWeight: "bold" }}>
-                    Lista de reproducción A
-                  </h6>
-                </div>
-                <div style={{ display: "flex", marginTop: "-4px" }}>
-                  <div
-                    style={{
-                      cursor: "pointer",
-                      marginRight: "15px"
-                    }}
-                  >
-                    <FaPencilAlt className="icono-lista" />
-                  </div>
-                  <div style={{ cursor: "pointer" }}>
-                    <FaRegTrashAlt className="icono-lista" />
-                  </div>
-                </div>
-              </div>
-              <ListaHorizontal />
-            </div>
-            <div>
-              <div style={{ display: "flex" }}>
-                <div style={{ marginRight: "15px" }}>
-                  <h6 style={{ fontWeight: "bold" }}>
-                    Lista de reproducción B
-                  </h6>
-                </div>
-                <div style={{ display: "flex", marginTop: "-4px" }}>
-                  <div
-                    style={{
-                      cursor: "pointer",
-                      marginRight: "15px"
-                    }}
-                  >
-                    <FaPencilAlt className="icono-lista" />
-                  </div>
-                  <div style={{ cursor: "pointer" }}>
-                    <FaRegTrashAlt className="icono-lista" />
-                  </div>
-                </div>
-              </div>
-              <ListaHorizontal />
-            </div>
-            <div>
-              <div style={{ display: "flex" }}>
-                <div style={{ marginRight: "15px" }}>
-                  <h6 style={{ fontWeight: "bold" }}>
-                    Lista de reproducción C
-                  </h6>
-                </div>
-                <div style={{ display: "flex", marginTop: "-4px" }}>
-                  <div
-                    style={{
-                      cursor: "pointer",
-                      marginRight: "15px"
-                    }}
-                  >
-                    <FaPencilAlt className="icono-lista" />
-                  </div>
-                  <div style={{ cursor: "pointer" }}>
-                    <FaRegTrashAlt className="icono-lista" />
-                  </div>
-                </div>
-              </div>
-              <ListaHorizontal />
-            </div>
-            <div>
-              <div style={{ display: "flex" }}>
-                <div style={{ marginRight: "15px" }}>
-                  <h6 style={{ fontWeight: "bold" }}>
-                    Lista de reproducción D
-                  </h6>
-                </div>
-                <div style={{ display: "flex", marginTop: "-4px" }}>
-                  <div
-                    style={{
-                      cursor: "pointer",
-                      marginRight: "15px"
-                    }}
-                  >
-                    <FaPencilAlt className="icono-lista" />
-                  </div>
-                  <div style={{ cursor: "pointer" }}>
-                    <FaRegTrashAlt className="icono-lista" />
-                  </div>
-                </div>
-              </div>
-              <ListaHorizontal />
-            </div>
+            {this.state.misListas.map(e => {
+              const { titulo } = e;
+              return (
+                <Lista
+                  titulo={titulo}
+                  key={titulo}
+                  editar={this.editarLista}
+                  borrar={this.borrarLista}
+                />
+              );
+            })}
             <Notificacion
               mostrar={this.state.popUpValidado}
               nombre={this.state.nombreLista}
