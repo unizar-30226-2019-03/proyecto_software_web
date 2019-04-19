@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import brand from "../assets/imgUnicast.jpg";
-import { Navbar, Nav } from "react-bootstrap";
+import { Navbar, Nav, Button } from "react-bootstrap";
 
 class BarraAdmi extends Component {
   render() {
@@ -23,17 +23,32 @@ class BarraAdmi extends Component {
           <Nav className="ml-auto">
             <Nav.Item>
               <Link to="/administrador-crear">
-                <button className="boton-nav-admi">Añadir elementos</button>
+                <Button
+                  variant="link"
+                  style={{ color: "#00000080", textDecoration: "none" }}
+                >
+                  Añadir elementos
+                </Button>
               </Link>
             </Nav.Item>
             <Nav.Item>
               <Link to="/administrador-borrar">
-                <button className="boton-nav-admi">Borrar elementos</button>
+                <Button
+                  variant="link"
+                  style={{ color: "#00000080", textDecoration: "none" }}
+                >
+                  Borrar elementos
+                </Button>
               </Link>
             </Nav.Item>
             <Nav.Item>
               <Link to="/" onClick={this.props.logOut}>
-                <button className="boton-nav-admi">Cerrar sesión</button>
+                <Button
+                  variant="link"
+                  style={{ color: "#00000080", textDecoration: "none" }}
+                >
+                  Cerrar sesión
+                </Button>
               </Link>
             </Nav.Item>
           </Nav>

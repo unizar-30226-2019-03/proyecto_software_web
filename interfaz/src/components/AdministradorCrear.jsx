@@ -111,7 +111,7 @@ const FormularioUniversidad = (handleUniversidad, nombre) => {
         }
       >
         <Form.Row>
-          <Form.Group as={Col} controlId="formGridName">
+          <Form.Group as={Col} controlId="formGridNameUni">
             <Form.Label>Universidad</Form.Label>
             <Form.Control
               type="text"
@@ -183,7 +183,7 @@ const FormularioAsignatura = (handleAsignatura, carrera, asignatura) => {
         }
       >
         <Form.Row>
-          <Form.Group as={Col} controlId="formGridCarrera">
+          <Form.Group as={Col} controlId="formGridCarreraAsignatura">
             <Form.Label>Carrera</Form.Label>
             <Form.Control as="select" ref={carrera}>
               <option>Ingeniería Informática</option>
@@ -272,7 +272,7 @@ class FormularioProfeAsignatura extends React.Component {
           }
         >
           <Form.Row>
-            <Form.Group as={Col} controlId="formGridUni">
+            <Form.Group as={Col} controlId="formGridUniProfe">
               <Form.Label>Universidad</Form.Label>
               <Form.Control as="select" ref={this.props.uni}>
                 <option>Universidad de Zaragoza</option>
@@ -281,7 +281,7 @@ class FormularioProfeAsignatura extends React.Component {
                 <option>Universidad de San Jorge</option>
               </Form.Control>
             </Form.Group>
-            <Form.Group as={Col} controlId="formGridCarrera">
+            <Form.Group as={Col} controlId="formGridCarreraProfe">
               <Form.Label>Carrera</Form.Label>
               <Form.Control
                 as="select"
@@ -304,7 +304,7 @@ class FormularioProfeAsignatura extends React.Component {
             </Form.Group>
           </Form.Row>
           <Form.Row>
-            <Form.Group as={Col} controlId="formGridUserID">
+            <Form.Group as={Col} controlId="formGridUserIDProfe">
               <Form.Label>Nombre de usuario del profesor</Form.Label>
               <Form.Control
                 type="text"
