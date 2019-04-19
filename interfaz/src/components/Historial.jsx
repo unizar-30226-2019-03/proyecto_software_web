@@ -107,7 +107,7 @@ class ContenidoPopUp extends Component {
       this.setState({
         anyadido: true,
         lista: "",
-        mensaje: `ELIMINADO HISTORIAL DE ${item.toUpperCase()}`
+        mensaje: `Historial eliminado de ${item}`
       });
       this.iniciarReloj();
       console.log("Eliminar de: ", item);
@@ -116,7 +116,7 @@ class ContenidoPopUp extends Component {
       this.setState({
         anyadido: true,
         lista: item,
-        mensaje: `AÑADIDO HISTORIAL A ${item.toUpperCase()}`
+        mensaje: `Historial añadido a ${item}`
       });
       this.iniciarReloj();
       console.log("Añadir a: ", item);
@@ -222,6 +222,7 @@ class ContenidoPopUp extends Component {
     );
   }
 }
+
 class HistorialLista extends Component {
   constructor(props) {
     super(props);
@@ -329,6 +330,7 @@ class HistorialLista extends Component {
                   lista={this.props.historial}
                   anyadirALista={this.props.anyadirVideoALista}
                   borrar={this.props.borrarVideo}
+                  listaRepro={listasRepro}
                 />
               </div>
             </div>
@@ -348,6 +350,7 @@ class HistorialLista extends Component {
                     lista={this.props.historial}
                     anyadirALista={this.props.anyadirVideoALista}
                     borrar={this.props.borrarVideo}
+                    listaRepro={listasRepro}
                   />
                 </div>
               </div>
@@ -527,6 +530,7 @@ class HistorialFiltrado extends Component {
                     lista={this.props.historial}
                     anyadirALista={this.props.anyadirVideoALista}
                     borrar={this.props.borrarVideo}
+                    listaRepro={listasRepro}
                   />
                 ) : (
                   <div
@@ -561,6 +565,7 @@ class HistorialFiltrado extends Component {
                       lista={this.props.historial}
                       anyadirALista={this.props.anyadirVideoALista}
                       borrar={this.props.borrarVideo}
+                      listaRepro={listasRepro}
                     />
                   ) : (
                     <div
@@ -754,6 +759,7 @@ class HistorialListaBorrado extends Component {
                     lista={this.props.historial}
                     anyadirALista={this.props.anyadirVideoALista}
                     borrar={this.props.borrarVideo}
+                    listaRepro={listasRepro}
                   />
                 ) : (
                   <div
@@ -788,6 +794,7 @@ class HistorialListaBorrado extends Component {
                       lista={this.props.historial}
                       anyadirALista={this.props.anyadirVideoALista}
                       borrar={this.props.borrarVideo}
+                      listaRepro={listasRepro}
                     />
                   ) : (
                     <div
@@ -892,9 +899,8 @@ class Historial extends Component {
     this.borrarHistorial = this.borrarHistorial.bind(this);
     this.buscarHistorial = this.buscarHistorial.bind(this);
     this.keyDown = this.keyDown.bind(this);
-    this.anyadirHistorialA = this.anyadirHistorialA.bind(this);
     this.borrarVideo = this.borrarVideo.bind(this);
-    this.anyadirVideoALista = this.anyadirHistorialA.bind(this);
+    this.anyadirVideoALista = this.anyadirVideoALista.bind(this);
     this.iniciarReloj = this.iniciarReloj.bind(this);
     this.pararReloj = this.pararReloj.bind(this);
     this.tick = this.tick.bind(this);
@@ -902,12 +908,6 @@ class Historial extends Component {
 
   borrarHistorial() {
     this.setState({ miHistorial: [], fixed: false });
-  }
-
-  anyadirHistorialA() {
-    if (this.state.miHistorial.length > 0) {
-      alert("AÑADIR A LISTA");
-    }
   }
 
   buscarHistorial(e) {
@@ -942,7 +942,9 @@ class Historial extends Component {
     }
   }
 
-  anyadirVideoALista(nombreVideo) {}
+  anyadirVideoALista(nombreVideo) {
+    console.log("Añadir vídeo " + nombreVideo + " a lista X");
+  }
 
   borrarVideo(nombreVideo) {
     var nuevoHistorial = this.state.miHistorial.slice();
