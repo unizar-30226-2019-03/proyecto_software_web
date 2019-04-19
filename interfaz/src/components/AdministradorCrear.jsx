@@ -136,43 +136,7 @@ const FormularioUniversidad = (handleUniversidad, nombre) => {
   );
 };
 
-const FormularioCarrera = (handleCarrera, nombre) => {
-  return (
-    <div style={{ margin: "20px 20px 20px 20px" }}>
-      <h6>Añadir carrera</h6>
-      <Form
-        id="form-carrera"
-        onSubmit={e =>
-          handleCarrera(e, document.getElementById("form-carrera"))
-        }
-      >
-        <Form.Row>
-          <Form.Group as={Col} controlId="formGridCarrera">
-            <Form.Label>Carrera</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Nombre"
-              required
-              ref={nombre}
-            />
-          </Form.Group>
-        </Form.Row>
-        <Button className="boton-filtro" type="reset">
-          Cancelar
-        </Button>
-        <Button
-          className="boton-filtro"
-          style={{ float: "right" }}
-          type="submit"
-        >
-          Confirmar
-        </Button>
-      </Form>
-    </div>
-  );
-};
-
-const FormularioAsignatura = (handleAsignatura, carrera, asignatura) => {
+const FormularioAsignatura = (handleAsignatura, uni, asignatura) => {
   return (
     <div style={{ margin: "20px 20px 20px 20px" }}>
       <h6>Añadir asignatura</h6>
@@ -183,13 +147,13 @@ const FormularioAsignatura = (handleAsignatura, carrera, asignatura) => {
         }
       >
         <Form.Row>
-          <Form.Group as={Col} controlId="formGridCarrera">
-            <Form.Label>Carrera</Form.Label>
-            <Form.Control as="select" ref={carrera}>
-              <option>Ingeniería Informática</option>
-              <option>Derecho</option>
-              <option>Medicina</option>
-              <option>Administración de Empresas</option>
+          <Form.Group as={Col} controlId="formGridUni">
+            <Form.Label>Universidad</Form.Label>
+            <Form.Control as="select" ref={uni}>
+              <option>Universidad de Zaragoza</option>
+              <option>Universidad de Alicante</option>
+              <option>Universidad de Navarra</option>
+              <option>Universidad de San Jorge</option>
             </Form.Control>
           </Form.Group>
         </Form.Row>
@@ -223,32 +187,32 @@ class FormularioProfeAsignatura extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      asignatura: ""
+      uni: ""
     };
     this.handleChange = this.handleChange.bind(this);
     this.opcionesAsignaturas = this.opcionesAsignaturas.bind(this);
   }
 
   handleChange(event) {
-    this.setState({ asignatura: event.target.value });
+    this.setState({ uni: event.target.value });
   }
 
   opcionesAsignaturas(nombre) {
-    if (nombre === "Ingeniería Informática") {
+    if (nombre === "Universidad de Zaragoza") {
       return (
         <Form.Control as="select" ref={this.props.asignatura}>
           <option>Inteligencia Artificial</option>
           <option>Proyecto Software</option>
         </Form.Control>
       );
-    } else if (nombre === "Derecho") {
+    } else if (nombre === "Universidad de Alicante") {
       return (
         <Form.Control as="select" ref={this.props.asignatura}>
           <option>Derecho Penal</option>
           <option>Historia del derecho</option>
         </Form.Control>
       );
-    } else if (nombre === "Medicina") {
+    } else if (nombre === "Universidad de San Jorge") {
       return (
         <Form.Control as="select" ref={this.props.asignatura}>
           <option>Psiquiatría</option>
@@ -267,40 +231,32 @@ class FormularioProfeAsignatura extends React.Component {
           onSubmit={e =>
             this.props.handleProfeAsignatura(
               e,
-              document.getElementById("form-profeasignatura")
+              document.getElementById("form-profeasignatura"),
+              this
             )
           }
         >
           <Form.Row>
             <Form.Group as={Col} controlId="formGridUni">
               <Form.Label>Universidad</Form.Label>
-              <Form.Control as="select" ref={this.props.uni}>
-                <option>Universidad de Zaragoza</option>
-                <option>Universidad de Alicante</option>
-                <option>Universidad de Navarra</option>
-                <option>Universidad de San Jorge</option>
-              </Form.Control>
-            </Form.Group>
-            <Form.Group as={Col} controlId="formGridCarrera">
-              <Form.Label>Carrera</Form.Label>
               <Form.Control
                 as="select"
-                ref={this.props.carrera}
+                ref={this.props.uni}
                 onChange={e => this.handleChange(e)}
                 required
               >
                 <option>Seleccionar...</option>
-                <option>Ingeniería Informática</option>
-                <option>Derecho</option>
-                <option>Medicina</option>
-                <option>Administración de Empresas</option>
+                <option>Universidad de Zaragoza</option>
+                <option>Universidad de Alicante</option>
+                <option>Universidad de San Jorge</option>
+                <option>Universidad de Navarra</option>
               </Form.Control>
             </Form.Group>
           </Form.Row>
           <Form.Row>
             <Form.Group as={Col} controlId="formGridAsign" required>
               <Form.Label>Asignatura</Form.Label>
-              {this.opcionesAsignaturas(this.state.asignatura)}
+              {this.opcionesAsignaturas(this.state.uni)}
             </Form.Group>
           </Form.Row>
           <Form.Row>
@@ -344,16 +300,13 @@ class AdministradorCrear extends Component {
     this.passwdProf = React.createRef();
     this.passwd2Prof = React.createRef();
     this.nombreUni = React.createRef();
-    this.nombreCarrera = React.createRef();
-    this.carreraAsig = React.createRef();
+    this.uniAsig = React.createRef();
     this.nombreAsig = React.createRef();
     this.uniUn = React.createRef();
-    this.carreraUn = React.createRef();
     this.asignUn = React.createRef();
     this.userUn = React.createRef();
     this.handleProfesor = this.handleProfesor.bind(this);
     this.handleUniversidad = this.handleUniversidad.bind(this);
-    this.handleCarrera = this.handleCarrera.bind(this);
     this.handleAsignatura = this.handleAsignatura.bind(this);
     this.handleProfeAsignatura = this.handleProfeAsignatura.bind(this);
     this.getBorder = this.getBorder.bind(this);
@@ -402,38 +355,30 @@ class AdministradorCrear extends Component {
     form.reset();
     this.handleShow();
   }
-  handleCarrera(event, form) {
-    event.preventDefault();
-    const nombre = this.nombreCarrera.current.value;
-    //this.setState({ datosSubidos: true });
-    console.log(nombre);
-    form.reset();
-    this.handleShow();
-  }
   handleAsignatura(event, form) {
     event.preventDefault();
-    const carrera = this.carreraAsig.current.value;
+    const universidad = this.uniAsig.current.value;
     const asignatura = this.nombreAsig.current.value;
     //this.setState({ datosSubidos: true });
-    console.log(carrera, asignatura);
+    console.log(universidad, asignatura);
     form.reset();
     this.handleShow();
   }
 
-  handleProfeAsignatura(event, form) {
+  handleProfeAsignatura(event, form, that) {
     event.preventDefault();
     if (
       this.asignUn.current !== null &&
-      this.carreraUn.current.value !== "Seleccionar..."
+      this.uniUn.current.value !== "Seleccionar..."
     ) {
       const universidad = this.uniUn.value;
-      const carrera = this.carreraUn.current.value;
       const asignatura = this.asignUn.current.value;
       const user = this.userUn.value;
       //this.setState({ datosSubidos: true });
-      console.log(universidad, carrera, asignatura, user);
+      console.log(universidad, asignatura, user);
       form.reset();
       this.handleShow();
+      that.setState({ uni: "" });
     }
   }
 
@@ -471,12 +416,9 @@ class AdministradorCrear extends Component {
             {FormularioUniversidad(this.handleUniversidad, this.nombreUni)}
           </div>
           <div className="boxed" style={{ marginTop: "20px" }}>
-            {FormularioCarrera(this.handleCarrera, this.nombreCarrera)}
-          </div>
-          <div className="boxed" style={{ marginTop: "20px" }}>
             {FormularioAsignatura(
               this.handleAsignatura,
-              this.carreraAsig,
+              this.uniAsig,
               this.nombreAsig
             )}
           </div>
@@ -484,7 +426,6 @@ class AdministradorCrear extends Component {
             <FormularioProfeAsignatura
               handleProfeAsignatura={this.handleProfeAsignatura}
               uni={this.uniUn}
-              carrera={this.carreraUn}
               asignatura={this.asignUn}
               user={this.userUn}
             />
