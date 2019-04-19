@@ -99,7 +99,7 @@ class Login extends Component {
                     </Button>
                     <Link
                       className="textInfo"
-                      to="/"
+                      to="/recuperacion"
                       style={{ color: "#007bff", textDecoration: "none" }}
                     >
                       ¿Has olvidado tu contraseña?

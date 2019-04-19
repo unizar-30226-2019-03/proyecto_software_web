@@ -111,7 +111,7 @@ const FormularioUniversidad = (handleUniversidad, nombre) => {
         }
       >
         <Form.Row>
-          <Form.Group as={Col} controlId="formGridName">
+          <Form.Group as={Col} controlId="formGridNameUni">
             <Form.Label>Universidad</Form.Label>
             <Form.Control
               type="text"
@@ -237,7 +237,7 @@ class FormularioProfeAsignatura extends React.Component {
           }
         >
           <Form.Row>
-            <Form.Group as={Col} controlId="formGridUni">
+            <Form.Group as={Col} controlId="formGridUniProfe">
               <Form.Label>Universidad</Form.Label>
               <Form.Control
                 as="select"
@@ -260,7 +260,7 @@ class FormularioProfeAsignatura extends React.Component {
             </Form.Group>
           </Form.Row>
           <Form.Row>
-            <Form.Group as={Col} controlId="formGridUserID">
+            <Form.Group as={Col} controlId="formGridUserIDProfe">
               <Form.Label>Nombre de usuario del profesor</Form.Label>
               <Form.Control
                 type="text"

@@ -1,12 +1,170 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { FaTimes, FaPlus } from "react-icons/fa";
+import { Notificacion } from "./Listas";
+import { FormCheck } from "react-bootstrap";
+import Popup from "reactjs-popup";
+
+class ContenidoPopUp extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      listas: this.props.listaRepro,
+      anyadido: false,
+      lista: "",
+      tiempo: 0,
+      mensaje: "",
+      crearLista: false,
+      nombreNuevaLista: ""
+    };
+    this.handleChange = this.handleChange.bind(this);
+
+    this.actualizarNuevaLista = this.actualizarNuevaLista.bind(this);
+    this.crearLista = this.crearLista.bind(this);
+  }
+
+  handleChange(e) {
+    const item = e.target.value;
+    const isChecked = e.target.checked;
+    if (!isChecked) {
+      //Eliminar De la lista item
+      this.props.enviarPadre(true, item, `Eliminado de ${item}`, false);
+      this.props.iniciarReloj();
+      console.log("Eliminar de: ", this.props.video, item);
+    } else {
+      //Añadir a la lista item
+      this.props.enviarPadre(true, item, `Añadido a ${item}`, true);
+      this.props.iniciarReloj();
+      console.log("Añadir a: ", this.props.video, item);
+    }
+  }
+
+  actualizarNuevaLista(e) {
+    e.preventDefault();
+    this.setState({ nombreNuevaLista: e.target.value });
+  }
+
+  crearLista(e) {
+    if (e.keyCode === 13) {
+      //CREAR LA LISTA
+      const item = this.state.nombreNuevaLista;
+      var nuevasListas = this.state.listas.slice();
+      nuevasListas.push(item);
+      this.setState({
+        nombreNuevaLista: "",
+        crearLista: false,
+        listas: nuevasListas
+      });
+    }
+  }
+
+  render() {
+    return (
+      <div>
+        <div style={{ borderBottom: "1px solid lightgrey", fontWeight: "450" }}>
+          Guardar en...
+        </div>
+        <div
+          style={{
+            paddingTop: "15px",
+            fontSize: "14px",
+            borderBottom: "1px solid lightgrey"
+          }}
+        >
+          {this.state.listas.map(lista => {
+            return (
+              <FormCheck id={lista} key={lista}>
+                <FormCheck.Input
+                  type={"checkbox"}
+                  value={lista}
+                  onChange={this.handleChange}
+                />
+                <FormCheck.Label
+                  style={{
+                    marginBottom: "10px",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    display: "-webkit-box",
+                    WebkitLineClamp: "1",
+                    WebkitBoxOrient: "vertical"
+                  }}
+                >
+                  {lista}
+                </FormCheck.Label>
+              </FormCheck>
+            );
+          })}
+        </div>
+        <div
+          style={{ paddingTop: "15px", fontSize: "14px", cursor: "default" }}
+          onClick={() => this.setState({ crearLista: true })}
+        >
+          {!this.state.crearLista ? (
+            "+ Crear nueva lista"
+          ) : (
+            <input
+              style={{ border: "0", borderBottom: "1px solid lightgrey" }}
+              placeholder="Nueva lista..."
+              onChange={this.actualizarNuevaLista}
+              onKeyDown={this.crearLista}
+            />
+          )}
+        </div>
+      </div>
+    );
+  }
+}
 
 class MenuItem extends Component {
   constructor(props) {
     super(props);
-    this.state = { mostrarOpciones: false };
+    this.state = {
+      mostrarOpciones: false,
+      popUp: false,
+      tiempo: 0,
+      mostrarNotif: false,
+      mensaje: ""
+    };
+    this.abrirPopUp = this.abrirPopUp.bind(this);
+    this.cerrarPopUp = this.cerrarPopUp.bind(this);
+    this.iniciarReloj = this.iniciarReloj.bind(this);
+    this.pararReloj = this.pararReloj.bind(this);
+    this.tick = this.tick.bind(this);
+    this.recibirHijo = this.recibirHijo.bind(this);
   }
+
+  recibirHijo(mostrar, lista, mensaje, anyadir) {
+    this.setState({ mostrarNotif: mostrar, mensaje: mensaje });
+    //SI anyadir = true, anyadir a la lista lista, sino borrar de la lista lista
+  }
+
+  iniciarReloj() {
+    this.pararReloj();
+    this.timerID = setInterval(() => this.tick(), 1000);
+  }
+
+  pararReloj() {
+    clearInterval(this.timerID);
+  }
+
+  tick() {
+    let t = this.state.tiempo;
+    if (t === 3) {
+      t = -1;
+      this.pararReloj();
+      this.setState({ mostrarNotif: false });
+    }
+    this.setState({ tiempo: t + 1 });
+  }
+
+  abrirPopUp() {
+    this.setState({ popUp: true });
+  }
+
+  cerrarPopUp() {
+    this.setState({ popUp: false, mostrarOpciones: false });
+  }
+
   render() {
     return (
       <div
@@ -114,12 +272,37 @@ class MenuItem extends Component {
             }}
           >
             {" "}
-            <FaPlus
-              color={"#00000080"}
-              size={14}
-              style={{ marginRight: "5px", cursor: "pointer" }}
-              onClick={() => this.props.anyadirALista(this.props.url)}
-            />
+            <Popup
+              open={this.state.popUp}
+              onOpen={this.abrirPopUp}
+              onClose={this.cerrarPopUp}
+              arrow={false}
+              position="bottom right"
+              contentStyle={{
+                width: "250px",
+                maxHeight: "300px",
+                overflow: "scroll",
+                padding: "16px 20px",
+                border: "0",
+                marginTop: "10px",
+                boxShadow:
+                  "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4)"
+              }}
+              trigger={
+                <FaPlus
+                  color={"#00000080"}
+                  size={14}
+                  style={{ marginRight: "5px", cursor: "pointer" }}
+                />
+              }
+            >
+              <ContenidoPopUp
+                video={this.props.url}
+                listaRepro={this.props.listaRepro}
+                iniciarReloj={this.iniciarReloj}
+                enviarPadre={this.recibirHijo}
+              />
+            </Popup>
             <FaTimes
               color={"#00000080"}
               onClick={() => this.props.borrar(this.props.url)}
@@ -127,6 +310,11 @@ class MenuItem extends Component {
             />
           </div>
         ) : null}
+        <Notificacion
+          mostrar={this.state.mostrarNotif}
+          mensaje={this.state.mensaje}
+          deshacer={false}
+        />
       </div>
     );
   }
@@ -134,7 +322,7 @@ class MenuItem extends Component {
 
 // All items component
 // Important! add unique key
-export const MenuVertical = (list, borrar, anyadir) =>
+export const MenuVertical = (list, borrar, anyadir, listaRepro) =>
   list.map(el => {
     const { name, canal, image } = el;
 
@@ -146,6 +334,7 @@ export const MenuVertical = (list, borrar, anyadir) =>
         borrar={borrar}
         anyadirALista={anyadir}
         img={image}
+        listaRepro={listaRepro}
       />
     );
   });
@@ -156,7 +345,8 @@ class ListaVertical extends Component {
     this.menu = MenuVertical(
       this.props.lista,
       this.props.borrar,
-      this.props.anyadirALista
+      this.props.anyadirALista,
+      this.props.listaRepro
     );
   }
   render() {

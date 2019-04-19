@@ -23,6 +23,7 @@ import AdministradorBorrar from "./components/AdministradorBorrar";
 import Login from "./components/Login";
 import SignIn from "./components/SignIn";
 import ViendoVideo from "./components/ViendoVideo";
+import RecuperarPass from "./components/RecuperarPass";
 
 class App extends Component {
   constructor(props) {
@@ -222,6 +223,7 @@ class App extends Component {
               )
             }
           />
+          <Route path={"/recuperacion"} component={RecuperarPass} />
         </Switch>
       </Router>
     );

@@ -223,6 +223,20 @@
     box-shadow: 1px 4px 10px hsl(0, 0%, 71%);
   }
 
+  .recuperacion {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 430px;
+    height: 430px;
+    padding: 150px 40px;
+    border-radius: 5px;
+    box-sizing: border-box;
+    background: #ffffff;
+    box-shadow: 1px 4px 10px hsl(0, 0%, 71%);
+  }
+
   .userIcon {
     position: absolute;
     border-radius: 0;
@@ -244,10 +258,24 @@
     background-color: #235da9;
     border-color: #235da9;
   }
+
+  .boton-recuperacion {
+    width: 100%;
+    margin-top: 20px;
+    background-color: #235da9;
+    border-color: #235da9;
+  }
 }
 
 @media screen and (max-width: 599px) {
   .login {
+    position: fixed;
+    top: 25%;
+    left: 35px;
+    right: 8%;
+  }
+
+  .recuperacion {
     position: fixed;
     top: 25%;
     left: 35px;
@@ -269,10 +297,17 @@
     height: 90px;
   }
   .boton-login {
-    position: absolute;
+    position: relative;
     width: 123px;
-    bottom: 15px;
-    right: 0px;
+    float: right;
+    top: 15px;
+    background-color: #235da9;
+    border-color: #235da9;
+  }
+  .boton-recuperacion {
+    position: relative;
+    width: 186px;
+    float: right;
     background-color: #235da9;
     border-color: #235da9;
   }
