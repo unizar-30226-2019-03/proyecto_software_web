@@ -44,11 +44,11 @@ class App extends Component {
     document.cookie = `user=${
       this.state.user
     }; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-    this.setState({ user: "" });
+    this.setState({ user: undefined });
   }
 
   componentWillUnmount() {
-    this.setState({ user: "" });
+    this.setState({ user: undefined });
   }
 
   render() {
@@ -59,7 +59,7 @@ class App extends Component {
             exact
             path={"/"}
             render={() =>
-              this.state.user === "" ? (
+              this.state.user === undefined ? (
                 <Login logUser={this.setUser} />
               ) : this.state.user === "admin@gmail.com" ? (
                 <AdministradorCrear logOut={this.logOut} />
@@ -75,7 +75,7 @@ class App extends Component {
           <Route
             path={"/inicio"}
             render={() =>
-              this.state.user !== "" ? (
+              this.state.user !== undefined ? (
                 <Inicio logOut={this.logOut} />
               ) : (
                 <Redirect to={"/"} />
@@ -85,7 +85,7 @@ class App extends Component {
           <Route
             path={"/info"}
             render={() =>
-              this.state.user !== "" ? (
+              this.state.user !== undefined ? (
                 <Informacion logOut={this.logOut} />
               ) : (
                 <Redirect to={"/"} />
@@ -95,7 +95,7 @@ class App extends Component {
           <Route
             path={"/subir-video"}
             render={() =>
-              this.state.user !== "" ? (
+              this.state.user !== undefined ? (
                 <SubirVideo logOut={this.logOut} />
               ) : (
                 <Redirect to={"/"} />
@@ -125,7 +125,7 @@ class App extends Component {
           <Route
             path={"/asignaturas"}
             render={() =>
-              this.state.user !== "" ? (
+              this.state.user !== undefined ? (
                 <Asignaturas logOut={this.logOut} />
               ) : (
                 <Redirect to={"/"} />
@@ -135,7 +135,7 @@ class App extends Component {
           <Route
             path={"/editar-perfil"}
             render={() =>
-              this.state.user !== "" ? (
+              this.state.user !== undefined ? (
                 <EditarPerfil logOut={this.logOut} />
               ) : (
                 <Redirect to={"/"} />
@@ -145,7 +145,7 @@ class App extends Component {
           <Route
             path={"/rankings"}
             render={() =>
-              this.state.user !== "" ? (
+              this.state.user !== undefined ? (
                 <Rankings logOut={this.logOut} />
               ) : (
                 <Redirect to={"/"} />
@@ -155,7 +155,7 @@ class App extends Component {
           <Route
             path={"/historial"}
             render={() =>
-              this.state.user !== "" ? (
+              this.state.user !== undefined ? (
                 <Historial logOut={this.logOut} />
               ) : (
                 <Redirect to={"/"} />
@@ -165,7 +165,7 @@ class App extends Component {
           <Route
             path={"/listas"}
             render={() =>
-              this.state.user !== "" ? (
+              this.state.user !== undefined ? (
                 <Listas logOut={this.logOut} />
               ) : (
                 <Redirect to={"/"} />
@@ -175,7 +175,7 @@ class App extends Component {
           <Route
             path={"/perfil"}
             render={() =>
-              this.state.user !== "" ? (
+              this.state.user !== undefined ? (
                 <Perfil logOut={this.logOut} />
               ) : (
                 <Redirect to={"/"} />
@@ -185,7 +185,7 @@ class App extends Component {
           <Route
             path={"/notificaciones"}
             render={() =>
-              this.state.user !== "" ? (
+              this.state.user !== undefined ? (
                 <Notificaciones logOut={this.logOut} />
               ) : (
                 <Redirect to={"/"} />
@@ -195,7 +195,7 @@ class App extends Component {
           <Route
             path={"/mensajes"}
             render={() =>
-              this.state.user !== "" ? (
+              this.state.user !== undefined ? (
                 <Mensajes logOut={this.logOut} />
               ) : (
                 <Redirect to={"/"} />
@@ -205,7 +205,7 @@ class App extends Component {
           <Route
             path={"/asig"}
             render={() =>
-              this.state.user !== "" ? (
+              this.state.user !== undefined ? (
                 <Asignatura logOut={this.logOut} />
               ) : (
                 <Redirect to={"/"} />
@@ -215,7 +215,7 @@ class App extends Component {
           <Route
             path={"/video"}
             render={() =>
-              this.state.user !== "" ? (
+              this.state.user !== undefined ? (
                 <ViendoVideo logOut={this.logOut} />
               ) : (
                 <Redirect to={"/"} />
