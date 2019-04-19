@@ -17,7 +17,7 @@ const lista = [
   { titulo: "Lista de reproducción H" }
 ];
 
-const Notificacion = ({ mostrar, nombre, handleClick }) => {
+export const Notificacion = ({ mostrar, mensaje, handleClick, deshacer }) => {
   return (
     <div
       className={mostrar ? "visible" : "hidden"}
@@ -37,21 +37,22 @@ const Notificacion = ({ mostrar, nombre, handleClick }) => {
           fontWeight: "300"
         }}
       >
-        {" "}
-        LISTA {nombre.toUpperCase()} CREADA{" "}
-        <Button
-          variant="link"
-          style={{
-            textDecoration: "none",
-            fontWeight: "400",
-            fontSize: "14px",
-            marginTop: "-4px",
-            padding: "5px"
-          }}
-          onClick={handleClick}
-        >
-          DESHACER
-        </Button>
+        {mensaje}
+        {deshacer ? (
+          <Button
+            variant="link"
+            style={{
+              textDecoration: "none",
+              fontWeight: "400",
+              fontSize: "14px",
+              marginTop: "-4px",
+              padding: "5px"
+            }}
+            onClick={handleClick}
+          >
+            DESHACER
+          </Button>
+        ) : null}
       </div>
     </div>
   );
@@ -351,8 +352,9 @@ class Listas extends Component {
             })}
             <Notificacion
               mostrar={this.state.popUpValidado}
-              nombre={this.state.nombreLista}
+              mensaje={`LISTA ${this.state.nombreLista.toUpperCase()} CREADA`}
               handleClick={this.deshacer}
+              deshacer={true}
             />
           </div>
         </div>
