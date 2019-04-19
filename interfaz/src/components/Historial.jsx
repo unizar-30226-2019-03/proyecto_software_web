@@ -5,6 +5,7 @@ import ListaVertical from "./ListaVertical";
 import imagenPrueba from "../assets/landscape.jpg";
 import Popup from "reactjs-popup";
 import { FormCheck } from "react-bootstrap";
+import { Notificacion } from "./Listas";
 
 const list = [
   {
@@ -81,8 +82,21 @@ function RemoveAccents(str) {
 class ContenidoPopUp extends Component {
   constructor(props) {
     super(props);
-    this.state = { listas: this.props.listaRepro };
+    this.state = {
+      listas: this.props.listaRepro,
+      anyadido: false,
+      lista: "",
+      tiempo: 0,
+      mensaje: "",
+      crearLista: false,
+      nombreNuevaLista: ""
+    };
     this.handleChange = this.handleChange.bind(this);
+    this.iniciarReloj = this.iniciarReloj.bind(this);
+    this.pararReloj = this.pararReloj.bind(this);
+    this.tick = this.tick.bind(this);
+    this.actualizarNuevaLista = this.actualizarNuevaLista.bind(this);
+    this.crearLista = this.crearLista.bind(this);
   }
 
   handleChange(e) {
@@ -90,10 +104,60 @@ class ContenidoPopUp extends Component {
     const isChecked = e.target.checked;
     if (!isChecked) {
       //Eliminar De la lista item
+      this.setState({
+        anyadido: true,
+        lista: "",
+        mensaje: `ELIMINADO HISTORIAL DE ${item.toUpperCase()}`
+      });
+      this.iniciarReloj();
       console.log("Eliminar de: ", item);
     } else {
       //Añadir a la lista item
+      this.setState({
+        anyadido: true,
+        lista: item,
+        mensaje: `AÑADIDO HISTORIAL A ${item.toUpperCase()}`
+      });
+      this.iniciarReloj();
       console.log("Añadir a: ", item);
+    }
+  }
+
+  iniciarReloj() {
+    this.pararReloj();
+    this.timerID = setInterval(() => this.tick(), 1000);
+  }
+
+  pararReloj() {
+    clearInterval(this.timerID);
+  }
+
+  tick() {
+    let t = this.state.tiempo;
+    if (t === 3) {
+      t = -1;
+      this.pararReloj();
+      this.setState({ anyadido: false });
+    }
+    this.setState({ tiempo: t + 1 });
+  }
+
+  actualizarNuevaLista(e) {
+    e.preventDefault();
+    this.setState({ nombreNuevaLista: e.target.value });
+  }
+
+  crearLista(e) {
+    if (e.keyCode === 13) {
+      //CREAR LA LISTA
+      const item = this.state.nombreNuevaLista;
+      var nuevasListas = this.state.listas.slice();
+      nuevasListas.push(item);
+      this.setState({
+        nombreNuevaLista: "",
+        crearLista: false,
+        listas: nuevasListas
+      });
     }
   }
 
@@ -101,9 +165,15 @@ class ContenidoPopUp extends Component {
     return (
       <div>
         <div style={{ borderBottom: "1px solid lightgrey", fontWeight: "450" }}>
-          Guardar historial en...
+          Añadir historial a...
         </div>
-        <div style={{ paddingTop: "15px", fontSize: "14px" }}>
+        <div
+          style={{
+            paddingTop: "15px",
+            fontSize: "14px",
+            borderBottom: "1px solid lightgrey"
+          }}
+        >
           {this.state.listas.map(lista => {
             return (
               <FormCheck id={lista} key={lista}>
@@ -128,6 +198,26 @@ class ContenidoPopUp extends Component {
             );
           })}
         </div>
+        <div
+          style={{ paddingTop: "15px", fontSize: "14px", cursor: "default" }}
+          onClick={() => this.setState({ crearLista: true })}
+        >
+          {!this.state.crearLista ? (
+            "+ Crear nueva lista"
+          ) : (
+            <input
+              style={{ border: "0", borderBottom: "1px solid lightgrey" }}
+              placeholder="Nueva lista..."
+              onChange={this.actualizarNuevaLista}
+              onKeyDown={this.crearLista}
+            />
+          )}
+        </div>
+        <Notificacion
+          mostrar={this.state.anyadido}
+          mensaje={this.state.mensaje}
+          deshacer={false}
+        />
       </div>
     );
   }
@@ -197,7 +287,8 @@ class HistorialLista extends Component {
                 arrow={false}
                 contentStyle={{
                   width: "250px",
-                  maxHeight: "500px",
+                  maxHeight: "300px",
+                  overflow: "scroll",
                   padding: "16px 20px",
                   border: "0",
                   marginLeft: "10px",
@@ -292,7 +383,8 @@ class HistorialLista extends Component {
                 arrow={false}
                 contentStyle={{
                   width: "250px",
-                  maxHeight: "500px",
+                  maxHeight: "300px",
+                  overflow: "scroll",
                   padding: "16px 20px",
                   border: "0",
                   marginTop: "10px",
@@ -384,7 +476,8 @@ class HistorialFiltrado extends Component {
                 arrow={false}
                 contentStyle={{
                   width: "250px",
-                  maxHeight: "500px",
+                  maxHeight: "300px",
+                  overflow: "scroll",
                   padding: "16px 20px",
                   border: "0",
                   marginLeft: "10px",
@@ -509,7 +602,8 @@ class HistorialFiltrado extends Component {
                 arrow={false}
                 contentStyle={{
                   width: "250px",
-                  maxHeight: "500px",
+                  maxHeight: "300px",
+                  overflow: "scroll",
                   padding: "16px 20px",
                   border: "0",
                   marginTop: "10px",
