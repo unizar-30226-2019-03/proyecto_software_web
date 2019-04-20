@@ -563,7 +563,7 @@
 
 /* CSS para la página de ver video */
 .reproductor {
-  margin-right: 20%;
+  flex: 70%;
   height: 0;
   padding-bottom: 56.25%;
 }
@@ -748,4 +748,23 @@
 }
 .boxed {
   border: 1px solid gray;
+}
+
+.comentarios::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
+.coment {
+  position: relative;
+  background-color: white;
+}
+
+.coment .escribir-coment {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 65px;
+  right: 0;
+  border-top: 1px solid lightgrey;
 }

@@ -41,6 +41,8 @@ export default class Video extends Component {
 
   handleStateChange(state) {
     // copy player state to this component's state
+    //Envía el estado al padre para gestion de comentarios
+    this.props.enviarEstado(state);
     this.setState({
       player: state
     });
