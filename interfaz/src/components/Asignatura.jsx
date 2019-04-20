@@ -42,7 +42,7 @@ export const Profesor = ({ foto, nombre }) => {
       style={{ marginRight: "20px", textAlign: "center", marginBottom: "10px" }}
     >
       <Link
-        to="/profesores/X"
+        to="/profesor/X"
         style={{ textDecoration: "none", color: "black", display: "flex" }}
       >
         <img

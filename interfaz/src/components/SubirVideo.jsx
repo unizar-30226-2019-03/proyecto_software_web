@@ -10,7 +10,9 @@ const FormularioDatos = (
   miniatura,
   descripcion,
   video,
-  asignatura
+  asignatura,
+  img_valida,
+  video_valido
 ) => {
   return (
     <div style={{ margin: "0 20% 0 0" }}>
@@ -40,8 +42,13 @@ const FormularioDatos = (
 
         <Form.Group controlId="formGridMiniatura">
           <Form.Label>Foto de miniatura del video</Form.Label>
-          <Form.Control type="file" ref={miniatura} required />
+          <Form.Control type="file" accept="image/*" ref={miniatura} required />
         </Form.Group>
+        {img_valida === 0 ? (
+          <p class="text-danger">Introduzca un formato de imagen válido</p>
+        ) : (
+          ""
+        )}
         <Form.Group controlId="exampleForm.ControlDescripcion">
           <Form.Label>Descripción</Form.Label>
           <Form.Control
@@ -55,8 +62,13 @@ const FormularioDatos = (
         </Form.Group>
         <Form.Group controlId="formGridVideo">
           <Form.Label>Vídeo</Form.Label>
-          <Form.Control type="file" ref={video} required />
+          <Form.Control type="file" accept="video/*" ref={video} required />
         </Form.Group>
+        {video_valido === 0 ? (
+          <p class="text-danger">Introduzca un formato de imagen válido</p>
+        ) : (
+          ""
+        )}
         <Button
           className="boton-filtro"
           type="submit"
@@ -82,7 +94,9 @@ class SubirVideo extends Component {
     super(props);
     this.state = {
       contentMargin: "300px",
-      datosSubidos: false
+      datosSubidos: false,
+      img_valida: -1,
+      video_valido: -1
     };
     this.titulo = React.createRef();
     this.miniatura = React.createRef();
@@ -91,6 +105,23 @@ class SubirVideo extends Component {
     this.asignatura = React.createRef();
     this.handleSubmitDatos = this.handleSubmitDatos.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.checkFileExtensionImage = this.checkFileExtensionImage.bind(this);
+    this.checkFileExtensionVideo = this.checkFileExtensionVideo.bind(this);
+  }
+  checkFileExtensionImage(filename) {
+    var ext = filename.split(".").pop();
+    return ext === "jpg" || ext === "jpeg" || ext === "png" || ext === "bmp";
+  }
+  checkFileExtensionVideo(filename) {
+    var ext = filename.split(".").pop();
+    return (
+      ext === "mp4" ||
+      ext === "mov" ||
+      ext === "3gp" ||
+      ext === "wma" ||
+      ext === "flv" ||
+      ext === "avi"
+    );
   }
   handleSubmitDatos(event) {
     event.preventDefault();
@@ -99,8 +130,14 @@ class SubirVideo extends Component {
     const descripcion = this.descripcion.current.value;
     const video = this.video.current.value;
     const asignatura = this.asignatura.current.value;
-    this.setState({ datosSubidos: true });
-    console.log(titulo, miniatura, descripcion, video, asignatura);
+    if (!this.checkFileExtensionImage(miniatura)) {
+      this.setState({ img_valida: 0 });
+    } else if (!this.checkFileExtensionVideo(video)) {
+      this.setState({ video_valido: 0 });
+    } else {
+      this.setState({ datosSubidos: true });
+      console.log(titulo, miniatura, descripcion, video, asignatura);
+    }
   }
   handleChange(display) {
     if (display) {
@@ -147,7 +184,9 @@ class SubirVideo extends Component {
                   this.miniatura,
                   this.descripcion,
                   this.video,
-                  this.asignatura
+                  this.asignatura,
+                  this.state.img_valida,
+                  this.state.video_valido
                 )}
               </div>
             </div>

@@ -768,3 +768,17 @@
   right: 0;
   border-top: 1px solid lightgrey;
 }
+
+.link-asignatura {
+  position: relative;
+  font-weight: 550;
+  text-decoration: none;
+  color: black;
+}
+
+.link-asignatura:hover {
+  position: relative;
+  font-weight: 550;
+  text-decoration: none;
+  color: black;
+}
