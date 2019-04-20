@@ -7,7 +7,6 @@ import imagenPrueba from "../assets/landscape.jpg";
 import { Notificacion } from "./Listas";
 import { RemoveAccents } from "./Historial";
 import Popup from "reactjs-popup";
-import { Button } from "react-bootstrap";
 
 const list = [
   {
