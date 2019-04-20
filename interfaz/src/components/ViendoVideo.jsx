@@ -239,10 +239,14 @@ class ViendoVideo extends Component {
         nuevosComentarios
       );
     }
+    const altura =
+      document.getElementById("div-comentarios").clientHeight -
+      document.getElementById("cabecera-comentarios").clientHeight -
+      document.getElementById("zona-escribir-comentarios").clientHeight -
+      10;
     this.setState({
       comentarios: nuevosComentarios,
-      alturaComentarios: document.getElementById("div-comentarios")
-        .clientHeight,
+      alturaComentarios: altura,
       anchuraComentarios: document.getElementById("div-comentarios")
         .clientWidth,
       tiempoVideo: estado.currentTime
@@ -426,6 +430,7 @@ class ViendoVideo extends Component {
             }}
           >
             <div
+              id="cabecera-comentarios"
               style={{
                 borderBottom: "1px solid lightgrey",
                 fontSize: "16px",
@@ -441,7 +446,7 @@ class ViendoVideo extends Component {
                 padding: "20px 20px 0",
                 overflowY: "scroll",
                 maxWidth: `${this.state.anchuraComentarios}px`,
-                maxHeight: `${this.state.alturaComentarios - 45 - 65}px`,
+                maxHeight: `${this.state.alturaComentarios}px`,
                 fontSize: "14px"
               }}
               onScroll={this.handleScroll}
@@ -460,15 +465,21 @@ class ViendoVideo extends Component {
                   >
                     <div
                       style={{
-                        width: "10%",
-                        marginRight: "15px"
+                        flex: "10%",
+                        marginRight: "5px"
                       }}
                     >
                       <span style={{ fontSize: "12px" }}>
                         {this.getTime(tiempo)}
                       </span>
                     </div>
-                    <div style={{ width: "80%" }}>
+                    <div
+                      style={{
+                        flex: "90%",
+                        overflowWrap: "break-word",
+                        width: "10%"
+                      }}
+                    >
                       <span
                         style={{
                           marginRight: "5px",
@@ -478,16 +489,14 @@ class ViendoVideo extends Component {
                       >
                         {usuario}:
                       </span>
-                      <span style={{ overflowWrap: "break-word" }}>
-                        {comentario}
-                      </span>
+                      <span>{comentario}</span>
                     </div>
                   </div>
                 );
               })}
               {this.irAUltimoComentario()}
             </div>
-            <div className="escribir-coment">
+            <div id="zona-escribir-comentarios" className="escribir-coment">
               <div
                 style={{
                   height: "100%",
