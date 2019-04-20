@@ -5,6 +5,7 @@ import ListaHorizontal from "./ListaHorizontal";
 import { FaPlus, FaPencilAlt, FaRegTrashAlt } from "react-icons/fa";
 import Popup from "reactjs-popup";
 import { Form, Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 const lista = [
   { titulo: "Lista de reproducción A" },
@@ -99,7 +100,7 @@ class Lista extends Component {
   render() {
     return (
       <div>
-        <div style={{ display: "flex" }}>
+        <div style={{ display: "flex", width: "93.45%" }}>
           <div>
             <h6 style={{ fontWeight: "bold" }}>
               <input
@@ -164,6 +165,14 @@ class Lista extends Component {
                 </Button>
               </div>
             </Popup>
+          </div>
+          <div style={{ marginRight: "0", marginLeft: "auto" }}>
+            <Link
+              to={`/lista/` + this.state.titulo}
+              style={{ color: "#00000080", textDecoration: "none" }}
+            >
+              Ver todos los vídeos
+            </Link>
           </div>
         </div>
         <ListaHorizontal />
@@ -352,7 +361,7 @@ class Listas extends Component {
             })}
             <Notificacion
               mostrar={this.state.popUpValidado}
-              mensaje={`LISTA ${this.state.nombreLista.toUpperCase()} CREADA`}
+              mensaje={`Lista ${this.state.nombreLista.toUpperCase()} creada`}
               handleClick={this.deshacer}
               deshacer={true}
             />

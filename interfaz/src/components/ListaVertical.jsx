@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { FaTimes, FaPlus } from "react-icons/fa";
-import { Notificacion } from "./Listas";
 import { FormCheck } from "react-bootstrap";
 import Popup from "reactjs-popup";
 
@@ -29,13 +28,9 @@ class ContenidoPopUp extends Component {
     if (!isChecked) {
       //Eliminar De la lista item
       this.props.enviarPadre(true, item, `Eliminado de ${item}`, false);
-      this.props.iniciarReloj();
-      console.log("Eliminar de: ", this.props.video, item);
     } else {
       //Añadir a la lista item
       this.props.enviarPadre(true, item, `Añadido a ${item}`, true);
-      this.props.iniciarReloj();
-      console.log("Añadir a: ", this.props.video, item);
     }
   }
 
@@ -127,34 +122,13 @@ class MenuItem extends Component {
     };
     this.abrirPopUp = this.abrirPopUp.bind(this);
     this.cerrarPopUp = this.cerrarPopUp.bind(this);
-    this.iniciarReloj = this.iniciarReloj.bind(this);
-    this.pararReloj = this.pararReloj.bind(this);
-    this.tick = this.tick.bind(this);
     this.recibirHijo = this.recibirHijo.bind(this);
   }
 
   recibirHijo(mostrar, lista, mensaje, anyadir) {
     this.setState({ mostrarNotif: mostrar, mensaje: mensaje });
     //SI anyadir = true, anyadir a la lista lista, sino borrar de la lista lista
-  }
-
-  iniciarReloj() {
-    this.pararReloj();
-    this.timerID = setInterval(() => this.tick(), 1000);
-  }
-
-  pararReloj() {
-    clearInterval(this.timerID);
-  }
-
-  tick() {
-    let t = this.state.tiempo;
-    if (t === 3) {
-      t = -1;
-      this.pararReloj();
-      this.setState({ mostrarNotif: false });
-    }
-    this.setState({ tiempo: t + 1 });
+    this.props.anyadirALista(this.props.url, mensaje, lista, anyadir);
   }
 
   abrirPopUp() {
@@ -299,7 +273,6 @@ class MenuItem extends Component {
               <ContenidoPopUp
                 video={this.props.url}
                 listaRepro={this.props.listaRepro}
-                iniciarReloj={this.iniciarReloj}
                 enviarPadre={this.recibirHijo}
               />
             </Popup>
@@ -310,11 +283,6 @@ class MenuItem extends Component {
             />
           </div>
         ) : null}
-        <Notificacion
-          mostrar={this.state.mostrarNotif}
-          mensaje={this.state.mensaje}
-          deshacer={false}
-        />
       </div>
     );
   }

@@ -1,11 +1,13 @@
 import React, { Component } from "react";
+import { Redirect } from "react-router-dom";
 import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
 import ListaVertical from "./ListaVertical";
 import imagenPrueba from "../assets/landscape.jpg";
-import Popup from "reactjs-popup";
-import { FormCheck } from "react-bootstrap";
 import { Notificacion } from "./Listas";
+import { RemoveAccents } from "./Historial";
+import Popup from "reactjs-popup";
+import { Button } from "react-bootstrap";
 
 const list = [
   {
@@ -63,165 +65,7 @@ const listasRepro = [
   "Lista de reproduccióndasds aadsasdsadasadsdasdasasddasdsaddsadas 5"
 ];
 
-export function RemoveAccents(str) {
-  var accents =
-    "ÀÁÂÃÄÅàáâãäåÒÓÔÕÕÖØòóôõöøÈÉÊËèéêëðÇçÐÌÍÎÏìíîïÙÚÛÜùúûüÑñŠšŸÿýŽž";
-  var accentsOut =
-    "AAAAAAaaaaaaOOOOOOOooooooEEEEeeeeeCcDIIIIiiiiUUUUuuuuNnSsYyyZz";
-  str = str.split("");
-  var strLen = str.length;
-  var i, x;
-  for (i = 0; i < strLen; i++) {
-    if ((x = accents.indexOf(str[i])) !== -1) {
-      str[i] = accentsOut[x];
-    }
-  }
-  return str.join("");
-}
-
-class ContenidoPopUp extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      listas: this.props.listaRepro,
-      anyadido: false,
-      lista: "",
-      tiempo: 0,
-      mensaje: "",
-      crearLista: false,
-      nombreNuevaLista: ""
-    };
-    this.handleChange = this.handleChange.bind(this);
-    this.iniciarReloj = this.iniciarReloj.bind(this);
-    this.pararReloj = this.pararReloj.bind(this);
-    this.tick = this.tick.bind(this);
-    this.actualizarNuevaLista = this.actualizarNuevaLista.bind(this);
-    this.crearLista = this.crearLista.bind(this);
-  }
-
-  handleChange(e) {
-    const item = e.target.value;
-    const isChecked = e.target.checked;
-    if (!isChecked) {
-      //Eliminar De la lista item
-      this.setState({
-        anyadido: true,
-        lista: "",
-        mensaje: `Historial eliminado de ${item}`
-      });
-      this.iniciarReloj();
-    } else {
-      //Añadir a la lista item
-      this.setState({
-        anyadido: true,
-        lista: item,
-        mensaje: `Historial añadido a ${item}`
-      });
-      this.iniciarReloj();
-    }
-  }
-
-  iniciarReloj() {
-    this.pararReloj();
-    this.timerID = setInterval(() => this.tick(), 1000);
-  }
-
-  pararReloj() {
-    clearInterval(this.timerID);
-  }
-
-  tick() {
-    let t = this.state.tiempo;
-    if (t === 3) {
-      t = -1;
-      this.pararReloj();
-      this.setState({ anyadido: false });
-    }
-    this.setState({ tiempo: t + 1 });
-  }
-
-  actualizarNuevaLista(e) {
-    e.preventDefault();
-    this.setState({ nombreNuevaLista: e.target.value });
-  }
-
-  crearLista(e) {
-    if (e.keyCode === 13) {
-      //CREAR LA LISTA
-      const item = this.state.nombreNuevaLista;
-      var nuevasListas = this.state.listas.slice();
-      nuevasListas.push(item);
-      this.setState({
-        nombreNuevaLista: "",
-        crearLista: false,
-        listas: nuevasListas
-      });
-    }
-  }
-
-  render() {
-    return (
-      <div>
-        <div style={{ borderBottom: "1px solid lightgrey", fontWeight: "450" }}>
-          Añadir historial a...
-        </div>
-        <div
-          style={{
-            paddingTop: "15px",
-            fontSize: "14px",
-            borderBottom: "1px solid lightgrey"
-          }}
-        >
-          {this.state.listas.map(lista => {
-            return (
-              <FormCheck id={lista} key={lista}>
-                <FormCheck.Input
-                  type={"checkbox"}
-                  value={lista}
-                  onChange={this.handleChange}
-                />
-                <FormCheck.Label
-                  style={{
-                    marginBottom: "10px",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    display: "-webkit-box",
-                    WebkitLineClamp: "1",
-                    WebkitBoxOrient: "vertical"
-                  }}
-                >
-                  {lista}
-                </FormCheck.Label>
-              </FormCheck>
-            );
-          })}
-        </div>
-        <div
-          style={{ paddingTop: "15px", fontSize: "14px", cursor: "default" }}
-          onClick={() => this.setState({ crearLista: true })}
-        >
-          {!this.state.crearLista ? (
-            "+ Crear nueva lista"
-          ) : (
-            <input
-              style={{ border: "0", borderBottom: "1px solid lightgrey" }}
-              placeholder="Nueva lista..."
-              onChange={this.actualizarNuevaLista}
-              onKeyDown={this.crearLista}
-            />
-          )}
-        </div>
-        <Notificacion
-          mostrar={this.state.anyadido}
-          mensaje={this.state.mensaje}
-          deshacer={false}
-        />
-      </div>
-    );
-  }
-}
-
-class HistorialLista extends Component {
+class Lista extends Component {
   constructor(props) {
     super(props);
     this.state = { popUp: false };
@@ -260,37 +104,22 @@ class HistorialLista extends Component {
                   width: "calc(100% - 67%)",
                   color: "#00000080"
                 }}
-                placeholder={"Buscar en el historial de reproducción"}
+                placeholder={"Buscar en la lista de reproducción"}
               />
-              <div
-                style={{
-                  cursor: "pointer",
-                  fontSize: "14px",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  display: "-webkit-box",
-                  WebkitLineClamp: "1",
-                  WebkitBoxOrient: "vertical"
-                }}
-                onClick={this.props.borrar}
-                className="tit-prof"
-              >
-                BORRAR TODO EL HISTORIAL
-              </div>
               <Popup
                 open={this.state.popUp}
                 onOpen={this.abrirPopUp}
                 onClose={this.cerrarPopUp}
                 repositionOnResize
-                position="right center"
+                position="bottom left"
                 arrow={false}
                 contentStyle={{
                   width: "250px",
                   maxHeight: "300px",
                   overflow: "scroll",
                   padding: "16px 20px",
+                  marginTop: "10px",
                   border: "0",
-                  marginLeft: "10px",
                   boxShadow:
                     "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4)"
                 }}
@@ -306,14 +135,42 @@ class HistorialLista extends Component {
                       WebkitBoxOrient: "vertical",
                       width: "fit-content"
                     }}
-                    onClick={this.props.anyadir}
                     className="tit-prof"
                   >
-                    AÑADIR TODOS LOS VÍDEOS A
+                    BORRAR LA LISTA COMPLETA
                   </div>
                 }
               >
-                <ContenidoPopUp listaRepro={listasRepro} />
+                <div style={{ padding: "5px 10px" }}>
+                  <div
+                    style={{
+                      fontWeight: "550",
+                      fontSize: "16px",
+                      borderBottom: "1px solid lightgrey"
+                    }}
+                  >
+                    ¿Estás seguro?
+                  </div>
+                  <div style={{ fontSize: "13px", paddingTop: "10px" }}>
+                    Una vez eliminada no habrá vuelta atrás.
+                  </div>
+                  <div
+                    style={{
+                      color: "red",
+                      fontSize: "14px",
+                      paddingTop: "10px",
+                      width: "fit-content",
+                      height: "fit-content",
+                      cursor: "pointer"
+                    }}
+                    onClick={() => {
+                      this.cerrarPopUp();
+                      this.props.borrar();
+                    }}
+                  >
+                    Sí, eliminar
+                  </div>
+                </div>
               </Popup>
             </div>
             <div>
@@ -374,15 +231,8 @@ class HistorialLista extends Component {
                   width: "100%",
                   color: "#00000080"
                 }}
-                placeholder={"Buscar en el historial de reproducción"}
+                placeholder={"Buscar en la lista de reproducción"}
               />
-              <div
-                style={{ cursor: "pointer", fontSize: "14px" }}
-                onClick={this.props.borrar}
-                className="tit-prof"
-              >
-                BORRAR TODO EL HISTORIAL
-              </div>
               <Popup
                 open={this.state.popUp}
                 onOpen={this.abrirPopUp}
@@ -402,15 +252,46 @@ class HistorialLista extends Component {
                 }}
                 trigger={
                   <div
-                    style={{ cursor: "pointer", fontSize: "14px" }}
-                    onClick={this.props.anyadir}
+                    style={{
+                      cursor: "pointer",
+                      fontSize: "14px"
+                    }}
                     className="tit-prof"
                   >
-                    AÑADIR TODOS LOS VÍDEOS A
+                    BORRAR LA LISTA COMPLETA
                   </div>
                 }
               >
-                <ContenidoPopUp listaRepro={listasRepro} />
+                <div style={{ padding: "5px 10px" }}>
+                  <div
+                    style={{
+                      fontWeight: "550",
+                      fontSize: "16px",
+                      borderBottom: "1px solid lightgrey"
+                    }}
+                  >
+                    ¿Estás seguro?
+                  </div>
+                  <div style={{ fontSize: "13px", paddingTop: "10px" }}>
+                    Una vez eliminada no habrá vuelta atrás.
+                  </div>
+                  <div
+                    style={{
+                      color: "red",
+                      fontSize: "14px",
+                      paddingTop: "10px",
+                      width: "fit-content",
+                      height: "fit-content",
+                      cursor: "pointer"
+                    }}
+                    onClick={() => {
+                      this.cerrarPopUp();
+                      this.props.borrar();
+                    }}
+                  >
+                    Sí, eliminar
+                  </div>
+                </div>
               </Popup>
             </div>
           </div>
@@ -420,7 +301,7 @@ class HistorialLista extends Component {
   }
 }
 
-class HistorialFiltrado extends Component {
+class ListaFiltrada extends Component {
   constructor(props) {
     super(props);
     this.state = { popUp: false };
@@ -459,37 +340,22 @@ class HistorialFiltrado extends Component {
                   width: "calc(100% - 67%)",
                   color: "#00000080"
                 }}
-                placeholder={"Buscar en el historial de reproducción"}
+                placeholder={"Buscar en la lista de reproducción"}
               />
-              <div
-                style={{
-                  cursor: "pointer",
-                  fontSize: "14px",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  display: "-webkit-box",
-                  WebkitLineClamp: "1",
-                  WebkitBoxOrient: "vertical"
-                }}
-                onClick={this.props.borrar}
-                className="tit-prof"
-              >
-                BORRAR TODO EL HISTORIAL
-              </div>
               <Popup
                 open={this.state.popUp}
                 onOpen={this.abrirPopUp}
                 onClose={this.cerrarPopUp}
                 repositionOnResize
-                position="right center"
+                position="bottom left"
                 arrow={false}
                 contentStyle={{
                   width: "250px",
                   maxHeight: "300px",
                   overflow: "scroll",
                   padding: "16px 20px",
+                  marginTop: "10px",
                   border: "0",
-                  marginLeft: "10px",
                   boxShadow:
                     "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4)"
                 }}
@@ -505,14 +371,42 @@ class HistorialFiltrado extends Component {
                       WebkitBoxOrient: "vertical",
                       width: "fit-content"
                     }}
-                    onClick={this.props.anyadir}
                     className="tit-prof"
                   >
-                    AÑADIR TODOS LOS VÍDEOS A
+                    BORRAR LA LISTA COMPLETA
                   </div>
                 }
               >
-                <ContenidoPopUp listaRepro={listasRepro} />
+                <div style={{ padding: "5px 10px" }}>
+                  <div
+                    style={{
+                      fontWeight: "550",
+                      fontSize: "16px",
+                      borderBottom: "1px solid lightgrey"
+                    }}
+                  >
+                    ¿Estás seguro?
+                  </div>
+                  <div style={{ fontSize: "13px", paddingTop: "10px" }}>
+                    Una vez eliminada no habrá vuelta atrás.
+                  </div>
+                  <div
+                    style={{
+                      color: "red",
+                      fontSize: "14px",
+                      paddingTop: "10px",
+                      width: "fit-content",
+                      height: "fit-content",
+                      cursor: "pointer"
+                    }}
+                    onClick={() => {
+                      this.cerrarPopUp();
+                      this.props.borrar();
+                    }}
+                  >
+                    Sí, eliminar
+                  </div>
+                </div>
               </Popup>
             </div>
             <div>
@@ -603,15 +497,8 @@ class HistorialFiltrado extends Component {
                   width: "100%",
                   color: "#00000080"
                 }}
-                placeholder={"Buscar en el historial de reproducción"}
+                placeholder={"Buscar en la lista de reproducción"}
               />
-              <div
-                style={{ cursor: "pointer", fontSize: "14px" }}
-                onClick={this.props.borrar}
-                className="tit-prof"
-              >
-                BORRAR TODO EL HISTORIAL
-              </div>
               <Popup
                 open={this.state.popUp}
                 onOpen={this.abrirPopUp}
@@ -631,15 +518,46 @@ class HistorialFiltrado extends Component {
                 }}
                 trigger={
                   <div
-                    style={{ cursor: "pointer", fontSize: "14px" }}
-                    onClick={this.props.anyadir}
+                    style={{
+                      cursor: "pointer",
+                      fontSize: "14px"
+                    }}
                     className="tit-prof"
                   >
-                    AÑADIR TODOS LOS VÍDEOS A
+                    BORRAR LA LISTA COMPLETA
                   </div>
                 }
               >
-                <ContenidoPopUp listaRepro={listasRepro} />
+                <div style={{ padding: "5px 10px" }}>
+                  <div
+                    style={{
+                      fontWeight: "550",
+                      fontSize: "16px",
+                      borderBottom: "1px solid lightgrey"
+                    }}
+                  >
+                    ¿Estás seguro?
+                  </div>
+                  <div style={{ fontSize: "13px", paddingTop: "10px" }}>
+                    Una vez eliminada no habrá vuelta atrás.
+                  </div>
+                  <div
+                    style={{
+                      color: "red",
+                      fontSize: "14px",
+                      paddingTop: "10px",
+                      width: "fit-content",
+                      height: "fit-content",
+                      cursor: "pointer"
+                    }}
+                    onClick={() => {
+                      this.cerrarPopUp();
+                      this.props.borrar();
+                    }}
+                  >
+                    Sí, eliminar
+                  </div>
+                </div>
               </Popup>
             </div>
           </div>
@@ -649,7 +567,7 @@ class HistorialFiltrado extends Component {
   }
 }
 
-class HistorialListaBorrado extends Component {
+class ListaBorrada extends Component {
   constructor(props) {
     super(props);
     this.state = { popUp: false };
@@ -688,37 +606,22 @@ class HistorialListaBorrado extends Component {
                   width: "calc(100% - 67%)",
                   color: "#00000080"
                 }}
-                placeholder={"Buscar en el historial de reproducción"}
+                placeholder={"Buscar en la lista de reproducción"}
               />
-              <div
-                style={{
-                  cursor: "pointer",
-                  fontSize: "14px",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  display: "-webkit-box",
-                  WebkitLineClamp: "1",
-                  WebkitBoxOrient: "vertical"
-                }}
-                onClick={this.props.borrar}
-                className="tit-prof"
-              >
-                BORRAR TODO EL HISTORIAL
-              </div>
               <Popup
                 open={this.state.popUp}
                 onOpen={this.abrirPopUp}
                 onClose={this.cerrarPopUp}
                 repositionOnResize
-                position="right center"
+                position="bottom left"
                 arrow={false}
                 contentStyle={{
                   width: "250px",
                   maxHeight: "300px",
                   overflow: "scroll",
                   padding: "16px 20px",
+                  marginTop: "10px",
                   border: "0",
-                  marginLeft: "10px",
                   boxShadow:
                     "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4)"
                 }}
@@ -734,14 +637,42 @@ class HistorialListaBorrado extends Component {
                       WebkitBoxOrient: "vertical",
                       width: "fit-content"
                     }}
-                    onClick={this.props.anyadir}
                     className="tit-prof"
                   >
-                    AÑADIR TODOS LOS VÍDEOS A
+                    BORRAR LA LISTA COMPLETA
                   </div>
                 }
               >
-                <ContenidoPopUp listaRepro={listasRepro} />
+                <div style={{ padding: "5px 10px" }}>
+                  <div
+                    style={{
+                      fontWeight: "550",
+                      fontSize: "16px",
+                      borderBottom: "1px solid lightgrey"
+                    }}
+                  >
+                    ¿Estás seguro?
+                  </div>
+                  <div style={{ fontSize: "13px", paddingTop: "10px" }}>
+                    Una vez eliminada no habrá vuelta atrás.
+                  </div>
+                  <div
+                    style={{
+                      color: "red",
+                      fontSize: "14px",
+                      paddingTop: "10px",
+                      width: "fit-content",
+                      height: "fit-content",
+                      cursor: "pointer"
+                    }}
+                    onClick={() => {
+                      this.cerrarPopUp();
+                      this.props.borrar();
+                    }}
+                  >
+                    Sí, eliminar
+                  </div>
+                </div>
               </Popup>
             </div>
             <div>
@@ -832,15 +763,8 @@ class HistorialListaBorrado extends Component {
                   width: "100%",
                   color: "#00000080"
                 }}
-                placeholder={"Buscar en el historial de reproducción"}
+                placeholder={"Buscar en la lisa de reproducción"}
               />
-              <div
-                style={{ cursor: "pointer", fontSize: "14px" }}
-                onClick={this.props.borrar}
-                className="tit-prof"
-              >
-                BORRAR TODO EL HISTORIAL
-              </div>
               <Popup
                 open={this.state.popUp}
                 onOpen={this.abrirPopUp}
@@ -860,15 +784,46 @@ class HistorialListaBorrado extends Component {
                 }}
                 trigger={
                   <div
-                    style={{ cursor: "pointer", fontSize: "14px" }}
-                    onClick={this.props.anyadir}
+                    style={{
+                      cursor: "pointer",
+                      fontSize: "14px"
+                    }}
                     className="tit-prof"
                   >
-                    AÑADIR TODOS LOS VÍDEOS A
+                    BORRAR LA LISTA COMPLETA
                   </div>
                 }
               >
-                <ContenidoPopUp listaRepro={listasRepro} />
+                <div style={{ padding: "5px 10px" }}>
+                  <div
+                    style={{
+                      fontWeight: "550",
+                      fontSize: "16px",
+                      borderBottom: "1px solid lightgrey"
+                    }}
+                  >
+                    ¿Estás seguro?
+                  </div>
+                  <div style={{ fontSize: "13px", paddingTop: "10px" }}>
+                    Una vez eliminada no habrá vuelta atrás.
+                  </div>
+                  <div
+                    style={{
+                      color: "red",
+                      fontSize: "14px",
+                      paddingTop: "10px",
+                      width: "fit-content",
+                      height: "fit-content",
+                      cursor: "pointer"
+                    }}
+                    onClick={() => {
+                      this.cerrarPopUp();
+                      this.props.borrar();
+                    }}
+                  >
+                    Sí, eliminar
+                  </div>
+                </div>
               </Popup>
             </div>
           </div>
@@ -878,7 +833,7 @@ class HistorialListaBorrado extends Component {
   }
 }
 
-class Historial extends Component {
+class ListaConcreta extends Component {
   constructor() {
     super();
     this.state = {
@@ -888,24 +843,49 @@ class Historial extends Component {
       miHistorial: list,
       historialFiltrado: [],
       filtrado: false,
+      notif: false,
+      videoBorrado: null,
+      tiempo: 0,
+      mensajeNotif: "",
       borrado: false,
-      nombreBorrado: "",
-      tiempo: 0
+      deshacer: false,
+      borradoCompleto: false
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleResize = this.handleResize.bind(this);
     this.borrarHistorial = this.borrarHistorial.bind(this);
     this.buscarHistorial = this.buscarHistorial.bind(this);
     this.keyDown = this.keyDown.bind(this);
-    this.borrarVideo = this.borrarVideo.bind(this);
     this.anyadirVideoALista = this.anyadirVideoALista.bind(this);
+    this.borrarVideo = this.borrarVideo.bind(this);
     this.iniciarReloj = this.iniciarReloj.bind(this);
     this.pararReloj = this.pararReloj.bind(this);
     this.tick = this.tick.bind(this);
+    this.deshacer = this.deshacer.bind(this);
+  }
+
+  deshacer() {
+    const { v, index, index2 } = this.state.videoBorrado;
+    var nuevoHistorial = this.state.miHistorial.slice();
+    nuevoHistorial.splice(index, 0, v);
+    this.setState({
+      videoBorrado: null,
+      miHistorial: nuevoHistorial,
+      notif: false,
+      borrado: false
+    });
+    if (index2 !== -1) {
+      //Deshacer en el filtrado también
+      var nuevoHistorialFiltrado = this.state.historialFiltrado.slice();
+      nuevoHistorialFiltrado.splice(index2, 0, v);
+      this.setState({ historialFiltrado: nuevoHistorialFiltrado });
+    }
+    clearInterval(this.timerID);
   }
 
   borrarHistorial() {
-    this.setState({ miHistorial: [], fixed: false });
+    //Borrar la lista en el servidor
+    this.setState({ borradoCompleto: true });
   }
 
   buscarHistorial(e) {
@@ -940,28 +920,43 @@ class Historial extends Component {
     }
   }
 
-  anyadirVideoALista(nombreVideo) {
-    console.log("Añadir vídeo " + nombreVideo + " a lista X");
+  anyadirVideoALista(nombreVideo, mensaje, lista, anyadir) {
+    //Añadir o borrar de la lista lista, dependiendo del parametro anyadir
+    if (anyadir) {
+      //Añadir el video
+    } else {
+      //Borrar el video
+    }
+    this.setState({ notif: true, mensajeNotif: mensaje, deshacer: false });
+    this.iniciarReloj();
   }
 
   borrarVideo(nombreVideo) {
     var nuevoHistorial = this.state.miHistorial.slice();
     const index = nuevoHistorial.findIndex(e => e.name === nombreVideo);
+    const v = nuevoHistorial[index];
+    var index2 = -1;
     nuevoHistorial.splice(index, 1);
     this.setState({
       miHistorial: nuevoHistorial,
+      notif: true,
+      deshacer: true,
       borrado: true,
-      nombreBorrado: nombreVideo
+      videoBorrado: { v, index, index2 },
+      mensajeNotif: `Vídeo ${nombreVideo.toUpperCase()} eliminado de la lista`
     });
     this.iniciarReloj();
     if (this.state.filtrado) {
       //Borrar también de filtrado
       var nuevoFiltrado = this.state.historialFiltrado.slice();
-      const index2 = nuevoFiltrado.findIndex(e => e.name === nombreVideo);
+      index2 = nuevoFiltrado.findIndex(e => e.name === nombreVideo);
       if (index2 !== -1) {
         //Borrarlo
         nuevoFiltrado.splice(index2, 1);
-        this.setState({ historialFiltrado: nuevoFiltrado });
+        this.setState({
+          historialFiltrado: nuevoFiltrado,
+          videoBorrado: { v, index, index2 }
+        });
       }
     }
   }
@@ -1007,7 +1002,7 @@ class Historial extends Component {
     if (t === 3) {
       t = -1;
       this.pararReloj();
-      this.setState({ borrado: false });
+      this.setState({ notif: false, borrado: false });
     }
     this.setState({ tiempo: t + 1 });
   }
@@ -1015,103 +1010,105 @@ class Historial extends Component {
   render() {
     return (
       <div>
-        <Helmet>
-          <title>Historial</title>
-          <style>{"body { background-color: #fafafa; }"}</style>
-        </Helmet>
-        <BarraNavegacion
-          logOut={this.props.logOut}
-          onChange={this.handleChange}
-          activar={"historial"}
-          displaySide={true}
-          hide={false}
-        />
-        <div
-          className="transform"
-          style={{
-            marginLeft: this.state.contentMargin,
-            marginTop: "80px"
-          }}
-        >
-          <div className="cabecera-asignatura">
-            <div>
-              <h5 style={{ fontWeight: "bold" }}>
-                Historial de reproducciones
-              </h5>
-            </div>
-          </div>{" "}
-          {this.state.miHistorial.length === 0 ? (
+        {this.state.borradoCompleto ? (
+          <Redirect to="/listas" />
+        ) : (
+          <div>
+            <Helmet>
+              <title>Lista</title>
+              <style>{"body { background-color: #fafafa; }"}</style>
+            </Helmet>
+            <BarraNavegacion
+              logOut={this.props.logOut}
+              onChange={this.handleChange}
+              activar={""}
+              displaySide={true}
+              hide={false}
+            />
             <div
+              className="transform"
               style={{
-                color: "#00000080",
-                padding: "10px",
-                fontSize: "14px",
-                textAlign: "center"
+                marginLeft: this.state.contentMargin,
+                marginTop: "80px"
               }}
             >
-              Historial vacío, conforme visualices vídeos se irán guardando
-              aquí.
+              <div className="cabecera-asignatura">
+                <div>
+                  <h5 style={{ fontWeight: "bold" }}>
+                    Lista de reproducción concreta
+                  </h5>
+                </div>
+              </div>{" "}
+              {this.state.miHistorial.length === 0 ? (
+                <div
+                  style={{
+                    color: "#00000080",
+                    padding: "10px",
+                    fontSize: "14px",
+                    textAlign: "center"
+                  }}
+                >
+                  Lista vacía, añade vídeos a esta lista para agurparlos.
+                </div>
+              ) : !this.state.filtrado ? (
+                !this.state.borrado ? (
+                  <Lista
+                    fixed={this.state.fixed}
+                    borrar={this.borrarHistorial}
+                    handleChange={this.buscarHistorial}
+                    keyDown={this.keyDown}
+                    historial={this.state.miHistorial}
+                    busqueda={this.state.busqueda}
+                    borrarVideo={this.borrarVideo}
+                    anyadirVideoALista={this.anyadirVideoALista}
+                  />
+                ) : (
+                  <ListaBorrada
+                    fixed={this.state.fixed}
+                    borrar={this.borrarHistorial}
+                    handleChange={this.buscarHistorial}
+                    keyDown={this.keyDown}
+                    historial={this.state.miHistorial}
+                    busqueda={this.state.busqueda}
+                    borrarVideo={this.borrarVideo}
+                    anyadirVideoALista={this.anyadirVideoALista}
+                  />
+                )
+              ) : !this.state.borrado ? (
+                <ListaFiltrada
+                  fixed={this.state.fixed}
+                  borrar={this.borrarHistorial}
+                  handleChange={this.buscarHistorial}
+                  keyDown={this.keyDown}
+                  historial={this.state.historialFiltrado}
+                  busqueda={this.state.busqueda}
+                  borrarVideo={this.borrarVideo}
+                  anyadirVideoALista={this.anyadirVideoALista}
+                />
+              ) : (
+                <ListaBorrada
+                  fixed={this.state.fixed}
+                  borrar={this.borrarHistorial}
+                  handleChange={this.buscarHistorial}
+                  keyDown={this.keyDown}
+                  historial={this.state.historialFiltrado}
+                  busqueda={this.state.busqueda}
+                  borrarVideo={this.borrarVideo}
+                  anyadirVideoALista={this.anyadirVideoALista}
+                />
+              )}
             </div>
-          ) : !this.state.filtrado ? (
-            !this.state.borrado ? (
-              <HistorialLista
-                fixed={this.state.fixed}
-                borrar={this.borrarHistorial}
-                handleChange={this.buscarHistorial}
-                keyDown={this.keyDown}
-                anyadir={this.anyadirHistorialA}
-                historial={this.state.miHistorial}
-                busqueda={this.state.busqueda}
-                borrarVideo={this.borrarVideo}
-                anyadirVideoALista={this.anyadirVideoALista}
-              />
-            ) : (
-              <HistorialListaBorrado
-                fixed={this.state.fixed}
-                borrar={this.borrarHistorial}
-                handleChange={this.buscarHistorial}
-                keyDown={this.keyDown}
-                anyadir={this.anyadirHistorialA}
-                historial={this.state.miHistorial}
-                busqueda={this.state.busqueda}
-                borrarVideo={this.borrarVideo}
-                anyadirVideoALista={this.anyadirVideoALista}
-              />
-            )
-          ) : !this.state.borrado ? (
-            <HistorialFiltrado
-              fixed={this.state.fixed}
-              borrar={this.borrarHistorial}
-              handleChange={this.buscarHistorial}
-              keyDown={this.keyDown}
-              anyadir={this.anyadirHistorialA}
-              historial={this.state.historialFiltrado}
-              busqueda={this.state.busqueda}
-              borrarVideo={this.borrarVideo}
-              anyadirVideoALista={this.anyadirVideoALista}
+            <Notificacion
+              mostrar={this.state.notif}
+              mensaje={this.state.mensajeNotif}
+              deshacer={this.state.deshacer}
+              handleClick={this.deshacer}
             />
-          ) : (
-            <HistorialListaBorrado
-              fixed={this.state.fixed}
-              borrar={this.borrarHistorial}
-              handleChange={this.buscarHistorial}
-              keyDown={this.keyDown}
-              anyadir={this.anyadirHistorialA}
-              historial={this.state.historialFiltrado}
-              busqueda={this.state.busqueda}
-              borrarVideo={this.borrarVideo}
-              anyadirVideoALista={this.anyadirVideoALista}
-            />
-          )}
-        </div>
-        <Notificacion
-          mostrar={this.state.borrado}
-          mensaje={`Vídeo ${this.state.nombreBorrado.toUpperCase()} eliminado del historial`}
-          deshacer={false}
-        />
+          </div>
+        )}
       </div>
     );
   }
 }
 
-export default Historial;
+export default ListaConcreta;
