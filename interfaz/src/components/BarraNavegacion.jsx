@@ -12,7 +12,6 @@ class BarraNavegacion extends Component {
    * Constructor
    * @param none
    */
-  _isMounted = false;
   constructor(props) {
     super(props);
     this.state = {
@@ -31,17 +30,13 @@ class BarraNavegacion extends Component {
   }
 
   componentDidMount() {
-    if (!this._isMounted) {
-      this.resize();
-      window.addEventListener("resize", this.resize);
-      return;
-    }
-    this._isMounted = true;
+    window.addEventListener("resize", this.resize);
   }
 
   componentWillUnmount() {
-    this._isMounted = false;
     window.removeEventListener("resize", this.resize);
+    document.removeEventListener("click", this.hideDropdown);
+    document.removeEventListener("click", this.hideDropdownNotif);
   }
 
   resize() {
@@ -175,7 +170,6 @@ class BarraNavegacion extends Component {
                 {this.state.displayMenu ? (
                   <div className="dropdown-content">
                     <Link to="/perfil">Mi perfil</Link>
-                    <Link to="/about">Información</Link>
                     <Link to="/" onClick={this.props.logOut}>
                       Cerrar Sesión
                     </Link>

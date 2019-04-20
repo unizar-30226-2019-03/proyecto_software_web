@@ -7,7 +7,6 @@ import {
 } from "react-router-dom";
 import "./App.css";
 import Inicio from "./components/Inicio";
-import Informacion from "./components/Informacion";
 import Asignaturas from "./components/Asignaturas";
 import EditarPerfil from "./components/EditarPerfil";
 import SubirVideo from "./components/SubirVideo";
@@ -85,16 +84,7 @@ class App extends Component {
               )
             }
           />
-          <Route
-            path={"/info"}
-            render={() =>
-              this.state.user !== undefined ? (
-                <Informacion logOut={this.logOut} />
-              ) : (
-                <Redirect to={"/"} />
-              )
-            }
-          />
+
           <Route
             path={"/subir-video"}
             render={() =>
