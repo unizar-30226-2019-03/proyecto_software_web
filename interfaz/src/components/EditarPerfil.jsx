@@ -18,7 +18,8 @@ const FormularioDatos = (
   universidad,
   carrera,
   asignaturas,
-  clasePass
+  clasePass,
+  img_valida
 ) => {
   return (
     <div style={{ margin: "0 20% 0 0" }}>
@@ -120,7 +121,7 @@ const FormularioDatos = (
         <Form.Group controlId="formGridFoto">
           <Form.Label>Foto de usuario</Form.Label>
           <div style={{ display: "flex" }}>
-            <Form.Control type="file" ref={foto} />
+            <Form.Control type="file" accept="image/*" ref={foto} />
             <img
               src={User_img}
               alt="Foto de perfil"
@@ -129,6 +130,11 @@ const FormularioDatos = (
               style={{ marginTop: "-10px" }}
             />
           </div>
+          {img_valida === 0 ? (
+            <p class="text-danger">Introduzca un formato de imagen válido</p>
+          ) : (
+            ""
+          )}
         </Form.Group>
 
         <Form.Group controlId="exampleForm.ControlTextarea1">
@@ -172,7 +178,8 @@ class EditarPerfil extends Component {
     this.state = {
       contentMargin: "300px",
       datosValidados: false,
-      passValida: -1
+      passValida: -1,
+      img_valida: -1
     };
     this.nombre = React.createRef();
     this.apellidos = React.createRef();
@@ -188,7 +195,13 @@ class EditarPerfil extends Component {
     this.handleSubmitDatos = this.handleSubmitDatos.bind(this);
     this.getBorder = this.getBorder.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.checkFileExtensionImage = this.checkFileExtensionImage.bind(this);
   }
+  checkFileExtensionImage(filename) {
+    var ext = filename.split(".").pop();
+    return ext === "jpg" || ext === "jpeg" || ext === "png" || ext === "bmp";
+  }
+
   handleSubmitDatos(event) {
     event.preventDefault();
     const nombre = this.nombre.current.value;
@@ -202,7 +215,11 @@ class EditarPerfil extends Component {
     const universidad = this.universidad.current.value;
     const carrera = this.universidad.current.value;
     const asignaturas = this.asignaturas.current.value;
-    if (pass === pass2) {
+    if (pass !== pass2) {
+      this.setState({ passValida: 0 });
+    } else if (!this.checkFileExtensionImage(foto) && foto !== "") {
+      this.setState({ img_valida: 0 });
+    } else {
       this.setState({ datosValidados: true });
       console.log(
         nombre,
@@ -215,8 +232,6 @@ class EditarPerfil extends Component {
         carrera,
         asignaturas
       );
-    } else {
-      this.setState({ passValida: 0 });
     }
   }
   getBorder(key) {
@@ -279,7 +294,8 @@ class EditarPerfil extends Component {
                   this.universidad,
                   this.carrera,
                   this.asignaturas,
-                  { border: this.getBorder(this.state.passValida) }
+                  { border: this.getBorder(this.state.passValida) },
+                  this.state.img_valida
                 )}
               </div>
             </div>
