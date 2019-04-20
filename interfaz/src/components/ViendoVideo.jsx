@@ -17,10 +17,7 @@ const profesores = [
 const Profesor = ({ foto, nombre }) => {
   return (
     <div style={{ marginRight: "20px", textAlign: "center" }}>
-      <Link
-        to="/profesores/X"
-        style={{ textDecoration: "none", color: "black" }}
-      >
+      <Link to="/profesor/X" style={{ textDecoration: "none", color: "black" }}>
         <img
           src={foto}
           alt="profesor"

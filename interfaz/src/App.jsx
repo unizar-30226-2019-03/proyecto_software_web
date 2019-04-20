@@ -24,6 +24,7 @@ import Login from "./components/Login";
 import SignIn from "./components/SignIn";
 import ViendoVideo from "./components/ViendoVideo";
 import RecuperarPass from "./components/RecuperarPass";
+import Profesor from "./components/Profesor";
 
 class App extends Component {
   constructor(props) {
@@ -98,6 +99,17 @@ class App extends Component {
             render={() =>
               this.state.user !== undefined ? (
                 <SubirVideo logOut={this.logOut} />
+              ) : (
+                <Redirect to={"/"} />
+              )
+            }
+          />
+
+          <Route
+            path={"/profesor"}
+            render={() =>
+              this.state.user !== undefined ? (
+                <Profesor logOut={this.logOut} />
               ) : (
                 <Redirect to={"/"} />
               )
