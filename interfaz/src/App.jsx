@@ -25,6 +25,7 @@ import ViendoVideo from "./components/ViendoVideo";
 import RecuperarPass from "./components/RecuperarPass";
 import Profesor from "./components/Profesor";
 import ListaConcreta from "./components/ListaConcreta";
+import ResultadoBusqueda from "./components/ResultadoBusqueda";
 
 class App extends Component {
   constructor(props) {
@@ -237,6 +238,7 @@ class App extends Component {
             }
           />
           <Route path={"/recuperacion"} component={RecuperarPass} />
+          <Route path={"/busqueda/:valor"} component={ResultadoBusqueda} />
         </Switch>
       </Router>
     );

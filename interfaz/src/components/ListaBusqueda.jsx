@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { FaTimes, FaPlus } from "react-icons/fa";
+import { FaPlus } from "react-icons/fa";
 import { FormCheck } from "react-bootstrap";
 import Popup from "reactjs-popup";
 
@@ -277,11 +277,6 @@ class MenuItem extends Component {
                 enviarPadre={this.recibirHijo}
               />
             </Popup>
-            <FaTimes
-              color={"#00000080"}
-              onClick={() => this.props.borrar(this.props.url)}
-              style={{ cursor: "pointer" }}
-            />
           </div>
         ) : null}
       </div>
@@ -291,7 +286,7 @@ class MenuItem extends Component {
 
 // All items component
 // Important! add unique key
-export const MenuVertical = (list, borrar, anyadir, listaRepro) =>
+export const MenuVertical = (list, anyadir, listaRepro) =>
   list.map(el => {
     const { name, canal, image } = el;
 
@@ -300,7 +295,6 @@ export const MenuVertical = (list, borrar, anyadir, listaRepro) =>
         url={name}
         canal={canal}
         key={name}
-        borrar={borrar}
         anyadirALista={anyadir}
         img={image}
         listaRepro={listaRepro}
@@ -308,12 +302,11 @@ export const MenuVertical = (list, borrar, anyadir, listaRepro) =>
     );
   });
 
-class ListaVertical extends Component {
+class ListaBusqueda extends Component {
   constructor(props) {
     super(props);
     this.menu = MenuVertical(
       this.props.lista,
-      this.props.borrar,
       this.props.anyadirALista,
       this.props.listaRepro
     );
@@ -323,4 +316,4 @@ class ListaVertical extends Component {
   }
 }
 
-export default ListaVertical;
+export default ListaBusqueda;
