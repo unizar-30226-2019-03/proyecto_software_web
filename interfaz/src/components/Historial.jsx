@@ -3,9 +3,11 @@ import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
 import ListaVertical from "./ListaVertical";
 import imagenPrueba from "../assets/landscape.jpg";
+import { Redirect } from "react-router-dom";
 import Popup from "reactjs-popup";
 import { Notificacion } from "./Listas";
 import { getTime } from "./ViendoVideo";
+import { sesionValida } from "../App";
 
 const list = [
   {
@@ -33,7 +35,7 @@ const list = [
     duracion: getTime(800)
   },
   {
-    name: "Física: ¿ Heroína o villana ?",
+    name: "Física: ¿Heroína o villana?",
     canal: "Asignatura E",
     image: imagenPrueba,
     duracion: getTime(900)
@@ -1000,14 +1002,15 @@ class Historial extends Component {
   }
 
   render() {
-    return (
+    return !sesionValida() ? (
+      <Redirect to="/" />
+    ) : (
       <div>
         <Helmet>
           <title>Historial</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         <BarraNavegacion
-          logOut={this.props.logOut}
           onChange={this.handleChange}
           activar={"historial"}
           displaySide={true}

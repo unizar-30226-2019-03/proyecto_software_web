@@ -4,7 +4,8 @@ import { Helmet } from "react-helmet";
 import User_img from "../assets/user.png";
 import { Button, Form } from "react-bootstrap";
 import Popup from "reactjs-popup";
-import Link from "react-router-dom/Link";
+import { Link, Redirect } from "react-router-dom";
+import { sesionValida } from "../App";
 
 class CamposMostrar extends Component {
   renderCampo(nombre, contenido) {
@@ -123,14 +124,15 @@ class Perfil extends Component {
 
   render() {
     let clasePass = { border: this.getBorder(this.state.passValida) };
-    return (
+    return !sesionValida() ? (
+      <Redirect to="/" />
+    ) : (
       <div>
         <Helmet>
           <title>Perfil</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         <BarraNavegacion
-          logOut={this.props.logOut}
           onChange={this.handleChange}
           activar={""}
           displaySide={true}

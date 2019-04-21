@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import BarraAdmi from "./BarraAdmi";
 import { Helmet } from "react-helmet";
 import { Button, Form, Col, Modal } from "react-bootstrap";
+import { Redirect } from "react-router-dom";
+import { getUser } from "../App";
 
 const FormularioProfesor = (
   handleProfesor,
@@ -383,13 +385,15 @@ class AdministradorCrear extends Component {
   }
 
   render() {
-    return (
+    return getUser() !== "admin@gmail.com" ? (
+      <Redirect to="/" />
+    ) : (
       <div>
         <Helmet>
           <title>Añadir</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
-        <BarraAdmi logOut={this.props.logOut} />
+        <BarraAdmi />
         <div
           className="transform"
           style={{

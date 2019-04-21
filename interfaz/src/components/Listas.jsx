@@ -5,7 +5,8 @@ import ListaHorizontal from "./ListaHorizontal";
 import { FaPlus, FaPencilAlt, FaRegTrashAlt } from "react-icons/fa";
 import Popup from "reactjs-popup";
 import { Form, Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
+import { sesionValida } from "../App";
 
 const lista = [
   { titulo: "Lista de reproducción A" },
@@ -272,14 +273,15 @@ class Listas extends Component {
   }
 
   render() {
-    return (
+    return !sesionValida() ? (
+      <Redirect to="/" />
+    ) : (
       <div>
         <Helmet>
           <title>Mis Listas</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         <BarraNavegacion
-          logOut={this.props.logOut}
           onChange={this.handleChange}
           activar={"listas"}
           displaySide={true}

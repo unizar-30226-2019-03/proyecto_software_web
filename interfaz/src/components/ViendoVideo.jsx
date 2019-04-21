@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import Video from "./Video";
 import vid from "../assets/VideoPrueba.mp4";
 import { FaShareAlt, FaRegBookmark, FaRegStar } from "react-icons/fa";
 import icono from "../assets/favicon.ico";
+import { sesionValida } from "../App";
 
 function generadorColores() {
   var letras = "0123456789ABCDEF";
@@ -313,14 +314,15 @@ class ViendoVideo extends Component {
   }
 
   render() {
-    return (
+    return !sesionValida() ? (
+      <Redirect to="/" />
+    ) : (
       <div>
         <Helmet>
           <title>Inicio</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         <BarraNavegacion
-          logOut={this.props.logOut}
           onChange={this.handleChange}
           displaySide={false}
           hide={true}
@@ -337,7 +339,7 @@ class ViendoVideo extends Component {
             <Video src={vid} enviarEstado={this.recibirEstadoVideo} />
             <div className="datos-video">
               <p className="titulo-video">
-                Vídeo de prueba de página Viendo Vídeo
+                {this.props.match.params.nombreVideo}
               </p>
               <div style={{ display: "flex" }}>
                 <p className="fecha-subida-video">Subido hace X tiempo</p>

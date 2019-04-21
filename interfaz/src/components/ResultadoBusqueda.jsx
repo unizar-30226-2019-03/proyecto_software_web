@@ -5,6 +5,8 @@ import { Notificacion } from "./Listas";
 import { Helmet } from "react-helmet";
 import BarraNavegacion from "./BarraNavegacion";
 import { getTime } from "./ViendoVideo";
+import { sesionValida } from "../App";
+import { Redirect } from "react-router-dom";
 
 const list = [
   {
@@ -137,14 +139,15 @@ class ResultadoBusqueda extends Component {
   }
 
   render() {
-    return (
+    return !sesionValida() ? (
+      <Redirect to="/" />
+    ) : (
       <div>
         <Helmet>
           <title>Resultados Búsqueda</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         <BarraNavegacion
-          logOut={this.props.logOut}
           onChange={this.handleChange}
           activar={""}
           displaySide={true}

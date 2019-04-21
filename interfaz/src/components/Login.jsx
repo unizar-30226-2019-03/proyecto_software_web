@@ -3,6 +3,7 @@ import { Button, Form } from "react-bootstrap";
 import { Redirect, Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import uni from "../assets/UnicastNombre.png";
+import { setUser } from "../App";
 
 class Login extends Component {
   constructor(props) {
@@ -36,10 +37,10 @@ class Login extends Component {
       this.setState({ passValida: 0 });
     }
     if ((email === "david@gmail.com") & (pass === "1234")) {
-      this.props.logUser(email);
+      setUser(email);
     } else if ((email === "admin@gmail.com") & (pass === "admin")) {
       this.setState({ admi: 1 });
-      this.props.logUser(email);
+      setUser(email);
     }
   }
 

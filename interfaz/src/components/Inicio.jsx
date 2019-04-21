@@ -1,8 +1,9 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import BarraNavegacion from "./BarraNavegacion";
 import ListaHorizontal from "./ListaHorizontal";
 import { Helmet } from "react-helmet";
+import { sesionValida } from "../App";
 
 class Inicio extends Component {
   constructor() {
@@ -31,14 +32,15 @@ class Inicio extends Component {
   }
 
   render() {
-    return (
+    return !sesionValida() ? (
+      <Redirect to="/" />
+    ) : (
       <div>
         <Helmet>
           <title>Inicio</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         <BarraNavegacion
-          logOut={this.props.logOut}
           onChange={this.handleChange}
           activar={"inicio"}
           displaySide={true}

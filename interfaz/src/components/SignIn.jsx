@@ -3,6 +3,7 @@ import { Button, Form, Col } from "react-bootstrap";
 import { Redirect, Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import uni from "../assets/UnicastNombre.png";
+import { setUser } from "../App";
 
 const FormularioDatos = (
   handleSubmit,
@@ -236,7 +237,7 @@ class SignIn extends Component {
     const asignaturas = this.asignaturas.current.value;
     console.log(foto + descripcion + universidad + carrera + asignaturas);
     this.setState({ infoValidada: true });
-    this.props.logUser(this.email);
+    setUser(this.email);
   }
 
   getBorder(key) {

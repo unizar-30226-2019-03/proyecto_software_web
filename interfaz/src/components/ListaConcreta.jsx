@@ -8,6 +8,7 @@ import { Notificacion } from "./Listas";
 import { RemoveAccents } from "./Historial";
 import Popup from "reactjs-popup";
 import { getTime } from "./ViendoVideo";
+import { sesionValida } from "../App";
 
 const list = [
   {
@@ -1017,7 +1018,9 @@ class ListaConcreta extends Component {
   }
 
   render() {
-    return (
+    return !sesionValida() ? (
+      <Redirect to="/" />
+    ) : (
       <div>
         {this.state.borradoCompleto ? (
           <Redirect to="/listas" />
@@ -1028,7 +1031,6 @@ class ListaConcreta extends Component {
               <style>{"body { background-color: #fafafa; }"}</style>
             </Helmet>
             <BarraNavegacion
-              logOut={this.props.logOut}
               onChange={this.handleChange}
               activar={""}
               displaySide={true}
@@ -1044,7 +1046,7 @@ class ListaConcreta extends Component {
               <div className="cabecera-asignatura">
                 <div>
                   <h5 style={{ fontWeight: "bold" }}>
-                    Lista de reproducción concreta
+                    {this.props.match.params.nombre}
                   </h5>
                 </div>
               </div>{" "}

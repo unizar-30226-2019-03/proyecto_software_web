@@ -46,34 +46,34 @@ class BarraLateral extends Component {
         </div>
         <div className="asignaturas">
           <h4>Asignaturas</h4>
-          <Link className={this.active("asignatura1")} to="/asig/a1">
+          <Link className={this.active("asignatura1")} to="/asig/asignatura1">
             Asignatura 1
           </Link>
-          <Link className={this.active("asignatura2")} to="/asig/a2">
+          <Link className={this.active("asignatura2")} to="/asig/asignatura2">
             Asignatura 2
           </Link>
-          <Link className={this.active("asignatura3")} to="/asig/a3">
+          <Link className={this.active("asignatura3")} to="/asig/asignatura3">
             Asignatura 3
           </Link>
-          <Link className={this.active("asignatura4")} to="/asig/a4">
+          <Link className={this.active("asignatura4")} to="/asig/asignatura4">
             Asignatura 4
           </Link>
-          <Link className={this.active("asignatura5")} to="/asig/a5">
+          <Link className={this.active("asignatura5")} to="/asig/asignatura5">
             Asignatura 5
           </Link>
-          <Link className={this.active("asignatura6")} to="/asig/a6">
+          <Link className={this.active("asignatura6")} to="/asig/asignatura6">
             Asignatura 6
           </Link>
-          <Link className={this.active("asignatura7")} to="/asig/a7">
+          <Link className={this.active("asignatura7")} to="/asig/asignatura7">
             Asignatura 7
           </Link>
-          <Link className={this.active("asignatura8")} to="/asig/a8">
+          <Link className={this.active("asignatura8")} to="/asig/asignatura8">
             Asignatura 8
           </Link>
-          <Link className={this.active("asignatura9")} to="/asig/a9">
+          <Link className={this.active("asignatura9")} to="/asig/asignatura9">
             Asignatura 9
           </Link>
-          <Link className={this.active("asignatura10")} to="/asig/a10">
+          <Link className={this.active("asignatura10")} to="/asig/asignatura10">
             Asignatura 10
           </Link>
         </div>

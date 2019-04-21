@@ -4,8 +4,9 @@ import { Helmet } from "react-helmet";
 import icono from "../assets/favicon.ico";
 import imagenPrueba from "../assets/landscape.jpg";
 import { Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { Menu } from "./ListaHorizontal";
+import { sesionValida } from "../App";
 
 const profesores = [
   { foto: icono, nombre: "Jorge Pérez" },
@@ -84,16 +85,17 @@ class Asignatura extends Component {
     }
   }
   render() {
-    return (
+    return !sesionValida() ? (
+      <Redirect to="/" />
+    ) : (
       <div>
         <Helmet>
           <title>Asignatura</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         <BarraNavegacion
-          logOut={this.props.logOut}
           onChange={this.handleChange}
-          activar={"asignatura1"}
+          activar={this.props.match.params.nombre}
           displaySide={true}
           hide={false}
         />
@@ -113,7 +115,7 @@ class Asignatura extends Component {
                 width="60"
                 height="60"
               />
-              Asignatura concreta
+              {this.props.match.params.nombre}
             </div>
             <div className="universidad">
               <Button

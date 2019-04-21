@@ -2,10 +2,11 @@ import React, { Component } from "react";
 import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
 import { ListGroup, Dropdown, Button, FormControl } from "react-bootstrap";
-import Link from "react-router-dom/Link";
+import { Link, Redirect } from "react-router-dom";
 import foto from "../assets/favicon.ico";
 import CustomToggle from "./CustomToggle";
 import { FaTrophy } from "react-icons/fa";
+import { sesionValida } from "../App";
 
 const asignaturas = [
   {
@@ -156,14 +157,15 @@ class Rankings extends Component {
   render() {
     const asignaturasFiltradas = this.filtrar(asignaturas);
     const listaAsign = ListaAsignaturas(asignaturasFiltradas);
-    return (
+    return !sesionValida() ? (
+      <Redirect to="/" />
+    ) : (
       <div>
         <Helmet>
           <title>Ránkings</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         <BarraNavegacion
-          logOut={this.props.logOut}
           onChange={this.handleChange}
           activar={"rankings"}
           displaySide={true}

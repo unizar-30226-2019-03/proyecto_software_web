@@ -4,6 +4,7 @@ import { Helmet } from "react-helmet";
 import User_img from "../assets/user.png";
 import { Button, Form, Col } from "react-bootstrap";
 import { Redirect, Link } from "react-router-dom";
+import { sesionValida } from "../App";
 
 const FormularioDatos = (
   handleSubmit,
@@ -255,7 +256,9 @@ class EditarPerfil extends Component {
   }
 
   render() {
-    return (
+    return !sesionValida() ? (
+      <Redirect to="/" />
+    ) : (
       <div>
         <Helmet>
           <title>Editar Perfil</title>
@@ -266,7 +269,6 @@ class EditarPerfil extends Component {
         ) : (
           <div>
             <BarraNavegacion
-              logOut={this.props.logOut}
               onChange={this.handleChange}
               activar={""}
               displaySide={true}

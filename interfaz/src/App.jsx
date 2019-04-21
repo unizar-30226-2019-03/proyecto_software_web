@@ -1,10 +1,5 @@
 import React, { Component } from "react";
-import {
-  BrowserRouter as Router,
-  Route,
-  Switch,
-  Redirect
-} from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import "./App.css";
 import Inicio from "./components/Inicio";
 import Asignaturas from "./components/Asignaturas";
@@ -15,7 +10,6 @@ import Historial from "./components/Historial";
 import Listas from "./components/Listas";
 import Perfil from "./components/Perfil";
 import Mensajes from "./components/Mensajes";
-import Notificaciones from "./components/Notificaciones";
 import Asignatura from "./components/Asignatura";
 import AdministradorCrear from "./components/AdministradorCrear";
 import AdministradorBorrar from "./components/AdministradorBorrar";
@@ -27,31 +21,43 @@ import Profesor from "./components/Profesor";
 import ListaConcreta from "./components/ListaConcreta";
 import ResultadoBusqueda from "./components/ResultadoBusqueda";
 
+/**
+ * Crea una cookie de sesión para el usuario con correo newUser
+ * @param {*} newUser Correo electrónico del usuario registrado
+ */
+export function setUser(newUser) {
+  var d = new Date();
+  d.setTime(d.getTime() + 60 * 60 * 1000);
+  var expires = "expires=" + d.toUTCString();
+  document.cookie = `user=${newUser};` + expires;
+}
+
+/**
+ * Borra la cookie de sesión del usuario
+ * @param {*} usuario Nombre de la cookie de sesión
+ */
+export function logOut(usuario) {
+  document.cookie = `user=${usuario}; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
+}
+
+/**
+ * Devuelve cierto si y solo si hay una cookie de sesión
+ * creada, es decir, si el usuario se ha loggeado previamente
+ */
+export function sesionValida() {
+  return document.cookie !== "";
+}
+
+/**
+ * Devuelve el nombre asociado a la cookie de sesión
+ */
+export function getUser() {
+  return document.cookie.split("=")[1];
+}
+
 class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { user: document.cookie.split("=")[1] };
-    this.setUser = this.setUser.bind(this);
-    this.logOut = this.logOut.bind(this);
-  }
-
-  setUser(newUser) {
-    var d = new Date();
-    d.setTime(d.getTime() + 30 * 60 * 1000);
-    var expires = "expires=" + d.toUTCString();
-    document.cookie = `user=${newUser};` + expires;
-    this.setState({ user: newUser });
-  }
-
-  logOut() {
-    document.cookie = `user=${
-      this.state.user
-    }; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-    this.setState({ user: undefined });
-  }
-
   componentWillUnmount() {
-    this.setState({ user: undefined });
+    logOut(getUser());
   }
 
   render() {
@@ -62,181 +68,36 @@ class App extends Component {
             exact
             path={"/"}
             render={() =>
-              this.state.user === undefined ? (
-                <Login logUser={this.setUser} />
-              ) : this.state.user === "admin@gmail.com" ? (
-                <AdministradorCrear logOut={this.logOut} />
+              !sesionValida() ? (
+                <Login />
+              ) : getUser() === "admin@gmail.com" ? (
+                <AdministradorCrear />
               ) : (
-                <Inicio logOut={this.logOut} />
+                <Inicio />
               )
             }
           />
-          <Route
-            path={"/registro"}
-            render={() => <SignIn logUser={this.setUser} />}
-          />
-          <Route
-            path={"/inicio"}
-            render={() =>
-              this.state.user !== undefined ? (
-                <Inicio logOut={this.logOut} />
-              ) : (
-                <Redirect to={"/"} />
-              )
-            }
-          />
+          <Route path={"/registro"} component={SignIn} />
+          <Route path={"/inicio"} component={Inicio} />
+          <Route path={"/subir-video"} component={SubirVideo} />
 
-          <Route
-            path={"/subir-video"}
-            render={() =>
-              this.state.user !== undefined ? (
-                <SubirVideo logOut={this.logOut} />
-              ) : (
-                <Redirect to={"/"} />
-              )
-            }
-          />
-
-          <Route
-            path={"/profesor"}
-            render={() =>
-              this.state.user !== undefined ? (
-                <Profesor logOut={this.logOut} />
-              ) : (
-                <Redirect to={"/"} />
-              )
-            }
-          />
-          <Route
-            path={"/administrador-crear"}
-            render={() =>
-              this.state.user === "admin@gmail.com" ? (
-                <AdministradorCrear logOut={this.logOut} />
-              ) : (
-                <Redirect to={"/"} />
-              )
-            }
-          />
+          <Route path={"/profesor"} component={Profesor} />
+          <Route path={"/administrador-crear"} component={AdministradorCrear} />
           <Route
             path={"/administrador-borrar"}
-            render={() =>
-              this.state.user === "admin@gmail.com" ? (
-                <AdministradorBorrar logOut={this.logOut} />
-              ) : (
-                <Redirect to={"/"} />
-              )
-            }
+            component={AdministradorBorrar}
           />
-          <Route
-            path={"/asignaturas"}
-            render={() =>
-              this.state.user !== undefined ? (
-                <Asignaturas logOut={this.logOut} />
-              ) : (
-                <Redirect to={"/"} />
-              )
-            }
-          />
-          <Route
-            path={"/editar-perfil"}
-            render={() =>
-              this.state.user !== undefined ? (
-                <EditarPerfil logOut={this.logOut} />
-              ) : (
-                <Redirect to={"/"} />
-              )
-            }
-          />
-          <Route
-            path={"/rankings"}
-            render={() =>
-              this.state.user !== undefined ? (
-                <Rankings logOut={this.logOut} />
-              ) : (
-                <Redirect to={"/"} />
-              )
-            }
-          />
-          <Route
-            path={"/historial"}
-            render={() =>
-              this.state.user !== undefined ? (
-                <Historial logOut={this.logOut} />
-              ) : (
-                <Redirect to={"/"} />
-              )
-            }
-          />
-          <Route
-            path={"/listas"}
-            render={() =>
-              this.state.user !== undefined ? (
-                <Listas logOut={this.logOut} />
-              ) : (
-                <Redirect to={"/"} />
-              )
-            }
-          />
-          <Route
-            path={"/lista/:nombre"}
-            render={() =>
-              this.state.user !== undefined ? (
-                <ListaConcreta logOut={this.logOut} />
-              ) : (
-                <Redirect to={"/"} />
-              )
-            }
-          />
-          <Route
-            path={"/perfil"}
-            render={() =>
-              this.state.user !== undefined ? (
-                <Perfil logOut={this.logOut} />
-              ) : (
-                <Redirect to={"/"} />
-              )
-            }
-          />
-          <Route
-            path={"/notificaciones"}
-            render={() =>
-              this.state.user !== undefined ? (
-                <Notificaciones logOut={this.logOut} />
-              ) : (
-                <Redirect to={"/"} />
-              )
-            }
-          />
-          <Route
-            path={"/mensajes"}
-            render={() =>
-              this.state.user !== undefined ? (
-                <Mensajes logOut={this.logOut} />
-              ) : (
-                <Redirect to={"/"} />
-              )
-            }
-          />
-          <Route
-            path={"/asig"}
-            render={() =>
-              this.state.user !== undefined ? (
-                <Asignatura logOut={this.logOut} />
-              ) : (
-                <Redirect to={"/"} />
-              )
-            }
-          />
-          <Route
-            path={"/video"}
-            render={() =>
-              this.state.user !== undefined ? (
-                <ViendoVideo logOut={this.logOut} />
-              ) : (
-                <Redirect to={"/"} />
-              )
-            }
-          />
+          <Route path={"/asignaturas"} component={Asignaturas} />
+          <Route path={"/editar-perfil"} component={EditarPerfil} />
+          <Route path={"/rankings"} component={Rankings} />
+          <Route path={"/historial"} component={Historial} />
+          <Route path={"/listas"} component={Listas} />
+          <Route path={"/lista/:nombre"} component={ListaConcreta} />
+          <Route path={"/perfil"} component={Perfil} />
+
+          <Route path={"/mensajes"} component={Mensajes} />
+          <Route path={"/asig/:nombre"} component={Asignatura} />
+          <Route path={"/video/:nombreVideo"} component={ViendoVideo} />
           <Route path={"/recuperacion"} component={RecuperarPass} />
           <Route path={"/busqueda/:valor"} component={ResultadoBusqueda} />
         </Switch>

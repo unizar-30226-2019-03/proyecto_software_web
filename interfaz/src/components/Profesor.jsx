@@ -3,8 +3,9 @@ import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
 import User_img from "../assets/user.png";
 import { Button } from "react-bootstrap";
-import Link from "react-router-dom/Link";
+import { Link, Redirect } from "react-router-dom";
 import icono from "../assets/favicon.ico";
+import { sesionValida } from "../App";
 
 class CamposMostrar extends Component {
   renderCampo(nombre, contenido) {
@@ -28,7 +29,9 @@ class CamposMostrar extends Component {
     );
   }
   render() {
-    return (
+    return !sesionValida() ? (
+      <Redirect to="/" />
+    ) : (
       <div>
         <div>
           <h6
@@ -88,7 +91,6 @@ class Profesor extends Component {
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         <BarraNavegacion
-          logOut={this.props.logOut}
           onChange={this.handleChange}
           activar={""}
           displaySide={true}
