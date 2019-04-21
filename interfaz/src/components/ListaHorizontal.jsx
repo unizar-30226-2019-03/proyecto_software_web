@@ -4,35 +4,114 @@ import imagenPrueba from "../assets/landscape.jpg";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import iconoAsign from "../assets/favicon.ico";
 import { Link } from "react-router-dom";
+import { getTime } from "./ViendoVideo";
 
 // list of items
 const list = [
-  { name: "item1", image: imagenPrueba },
-  { name: "item2", image: imagenPrueba },
-  { name: "item3", image: imagenPrueba },
-  { name: "item4", image: imagenPrueba },
-  { name: "item5", image: imagenPrueba },
-  { name: "item6", image: imagenPrueba },
-  { name: "item7", image: imagenPrueba },
-  { name: "item8", image: imagenPrueba },
-  { name: "item9", image: imagenPrueba },
-  { name: "item10", image: imagenPrueba },
-  { name: "item11", image: imagenPrueba },
-  { name: "item12", image: imagenPrueba }
+  {
+    name: "item1",
+    canal: "Asignatura A",
+    image: imagenPrueba,
+    duracion: getTime(500)
+  },
+  {
+    name: "item2",
+    canal: "Asignatura B",
+    image: imagenPrueba,
+    duracion: getTime(600)
+  },
+  {
+    name: "item3",
+    canal: "Asignatura C",
+    image: imagenPrueba,
+    duracion: getTime(700)
+  },
+  {
+    name: "item4",
+    canal: "Asignatura D",
+    image: imagenPrueba,
+    duracion: getTime(800)
+  },
+  {
+    name: "item5",
+    canal: "Asignatura E",
+    image: imagenPrueba,
+    duracion: getTime(900)
+  },
+  {
+    name: "item6",
+    canal: "Asignatura F",
+    image: imagenPrueba,
+    duracion: getTime(1000)
+  },
+  {
+    name: "item7",
+    canal: "Asignatura G",
+    image: imagenPrueba,
+    duracion: getTime(1100)
+  },
+  {
+    name: "item8",
+    canal: "Asignatura H",
+    image: imagenPrueba,
+    duracion: getTime(1200)
+  },
+  {
+    name: "item9",
+    canal: "Asignatura I",
+    image: imagenPrueba,
+    duracion: getTime(1300)
+  },
+  {
+    name: "item10",
+    canal: "Asignatura J",
+    image: imagenPrueba,
+    duracion: getTime(1400)
+  },
+  {
+    name: "item11",
+    canal: "Asignatura K",
+    image: imagenPrueba,
+    duracion: getTime(1500)
+  },
+  {
+    name: "item12",
+    canal: "Asignatura L",
+    image: imagenPrueba,
+    duracion: getTime(1600)
+  }
 ];
 
 // One item component
 // selected prop will be passed
-const MenuItem = ({ url, img }) => {
+const MenuItem = ({ url, canal, img, duracion }) => {
   return (
     <div>
       <div className="menu-item">
-        <Link to={`/video/${url}`}>
+        <Link to={`/video/${url}`} style={{ position: "relative" }}>
           <img src={img} width="210" height="118" alt="videoX" />
+          <div
+            style={{
+              color: "white",
+              fontSize: "12px",
+              textAlign: "center",
+              backgroundColor: "rgba(0,0,0,0.7)",
+              textDecoration: "none",
+              width: "40px",
+              height: "16px",
+              position: "absolute",
+              right: "4px",
+              top: "49px",
+              borderRadius: "3px",
+              zIndex: "100"
+            }}
+          >
+            {duracion}
+          </div>
         </Link>
         <div>
           <div style={{ float: "left", marginTop: "5px" }}>
-            <Link to={`/asig/X`}>
+            <Link to={`/asig/${canal}`}>
               <img
                 src={iconoAsign}
                 alt={url}
@@ -68,9 +147,17 @@ const MenuItem = ({ url, img }) => {
 // Important! add unique key
 export const Menu = list =>
   list.map(el => {
-    const { name, image } = el;
+    const { name, canal, image, duracion } = el;
 
-    return <MenuItem url={name} key={name} img={image} />;
+    return (
+      <MenuItem
+        url={name}
+        key={name}
+        img={image}
+        canal={canal}
+        duracion={duracion}
+      />
+    );
   });
 
 const ArrowL = () => {

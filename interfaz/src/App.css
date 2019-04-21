@@ -152,9 +152,17 @@
 /* Menú horizontal CSS */
 .menu-item {
   width: 214px;
-  padding-right: 10px;
+  padding-right: 4px;
   padding-bottom: 20px;
   white-space: normal;
+}
+
+.duracion-video  {
+  color: white;
+  background-color: black;
+  text-decoration: none;
+  width: fit-content;
+  height: fit-content;
 }
 
 .fecha-subida {

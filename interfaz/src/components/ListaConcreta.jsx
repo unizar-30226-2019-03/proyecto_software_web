@@ -7,52 +7,62 @@ import imagenPrueba from "../assets/landscape.jpg";
 import { Notificacion } from "./Listas";
 import { RemoveAccents } from "./Historial";
 import Popup from "reactjs-popup";
+import { getTime } from "./ViendoVideo";
 
 const list = [
   {
     name: "La paradoja de los Gemelos RESUELTA!",
     canal: "Asignatura A",
-    image: imagenPrueba
+    image: imagenPrueba,
+    duracion: getTime(500)
   },
   {
     name: "La tierra no gira en círculos aleredor del SOL",
     canal: "Asignatura B",
-    image: imagenPrueba
+    image: imagenPrueba,
+    duracion: getTime(600)
   },
   {
     name: "¿ Cómo será el futuro de la física ?",
     canal: "Asignatura C",
-    image: imagenPrueba
+    image: imagenPrueba,
+    duracion: getTime(700)
   },
   {
     name: "10 cosas que no sabías del SISTEMA SOLAR",
     canal: "Asignatura D",
-    image: imagenPrueba
+    image: imagenPrueba,
+    duracion: getTime(800)
   },
   {
     name: "Física: ¿ Heroína o villana ?",
     canal: "Asignatura E",
-    image: imagenPrueba
+    image: imagenPrueba,
+    duracion: getTime(900)
   },
   {
     name: "¿ Hasta donde llega el SISTEMA SOLAR ?",
     canal: "Asignatura F",
-    image: imagenPrueba
+    image: imagenPrueba,
+    duracion: getTime(1000)
   },
   {
     name: "Las 8 ecuaciones más importantes de la física",
     canal: "Asignatura G",
-    image: imagenPrueba
+    image: imagenPrueba,
+    duracion: getTime(1100)
   },
   {
     name: "La psicología de los genios",
     canal: "Asignatura H",
-    image: imagenPrueba
+    image: imagenPrueba,
+    duracion: getTime(1200)
   },
   {
     name: "Superhéroes y radioactividad",
     canal: "Asignatura I",
-    image: imagenPrueba
+    image: imagenPrueba,
+    duracion: getTime(1300)
   }
 ];
 

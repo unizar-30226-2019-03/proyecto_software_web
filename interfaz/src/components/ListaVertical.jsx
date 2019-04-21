@@ -155,8 +155,29 @@ class MenuItem extends Component {
         }}
       >
         <div>
-          <Link to={`/video/${this.props.url}`}>
+          <Link
+            to={`/video/${this.props.url}`}
+            style={{ position: "relative" }}
+          >
             <img src={this.props.img} width="240" height="140" alt="videoX" />
+            <div
+              style={{
+                color: "white",
+                fontSize: "12px",
+                textAlign: "center",
+                backgroundColor: "rgba(0,0,0,0.7)",
+                textDecoration: "none",
+                width: "40px",
+                height: "16px",
+                position: "absolute",
+                right: "3px",
+                top: "60px",
+                borderRadius: "3px",
+                zIndex: "100"
+              }}
+            >
+              {this.props.duracion}
+            </div>
           </Link>
         </div>
         <div style={{ marginTop: "5px" }}>
@@ -293,7 +314,7 @@ class MenuItem extends Component {
 // Important! add unique key
 export const MenuVertical = (list, borrar, anyadir, listaRepro) =>
   list.map(el => {
-    const { name, canal, image } = el;
+    const { name, canal, image, duracion } = el;
 
     return (
       <MenuItem
@@ -304,6 +325,7 @@ export const MenuVertical = (list, borrar, anyadir, listaRepro) =>
         anyadirALista={anyadir}
         img={image}
         listaRepro={listaRepro}
+        duracion={duracion}
       />
     );
   });

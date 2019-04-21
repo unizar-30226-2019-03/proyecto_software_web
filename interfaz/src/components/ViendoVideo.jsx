@@ -17,6 +17,23 @@ function generadorColores() {
   return color;
 }
 
+export function getTime(t) {
+  const tiempoAux = Math.trunc(t);
+  var minutos = Math.trunc(tiempoAux / 60);
+  if (minutos < 10) {
+    minutos = "0" + minutos.toString();
+  } else {
+    minutos = minutos.toString();
+  }
+  var segundos = tiempoAux % 60;
+  if (segundos < 10) {
+    segundos = "0" + segundos.toString();
+  } else {
+    segundos = segundos.toString();
+  }
+  return minutos + ":" + segundos;
+}
+
 const profesores = [
   { foto: icono, nombre: "Jorge" },
   { foto: icono, nombre: "Javier" },
@@ -175,7 +192,6 @@ class ViendoVideo extends Component {
     this.recibirEstadoVideo = this.recibirEstadoVideo.bind(this);
     this.irAUltimoComentario = this.irAUltimoComentario.bind(this);
     this.handleScroll = this.handleScroll.bind(this);
-    this.getTime = this.getTime.bind(this);
     this.comentar = this.comentar.bind(this);
     this.comentario = React.createRef();
   }
@@ -277,23 +293,6 @@ class ViendoVideo extends Component {
     } else {
       this.setState({ fijarComentarios: true });
     }
-  }
-
-  getTime(t) {
-    const tiempoAux = Math.trunc(t);
-    var minutos = Math.trunc(tiempoAux / 60);
-    if (minutos < 10) {
-      minutos = "0" + minutos.toString();
-    } else {
-      minutos = minutos.toString();
-    }
-    var segundos = tiempoAux % 60;
-    if (segundos < 10) {
-      segundos = "0" + segundos.toString();
-    } else {
-      segundos = segundos.toString();
-    }
-    return minutos + ":" + segundos;
   }
 
   comentar(e) {
@@ -470,7 +469,7 @@ class ViendoVideo extends Component {
                       }}
                     >
                       <span style={{ fontSize: "12px" }}>
-                        {this.getTime(tiempo)}
+                        {getTime(tiempo)}
                       </span>
                     </div>
                     <div
@@ -512,7 +511,7 @@ class ViendoVideo extends Component {
                     fontSize: "14px",
                     resize: "none"
                   }}
-                  placeholder={`Publicar comentario en ${this.getTime(
+                  placeholder={`Publicar comentario en ${getTime(
                     this.state.tiempoVideo
                   )}`}
                 />
