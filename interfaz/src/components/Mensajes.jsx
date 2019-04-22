@@ -1,11 +1,12 @@
 import React, { Component } from "react";
 import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
-import { Button } from "react-bootstrap";
 import ListaVerticalMensajes from "./ListaVerticalMensajes";
 import imagenUsuario from "../assets/user.png";
 import Popup from "reactjs-popup";
 import { Notificacion } from "./Listas";
+import { sesionValida, RemoveAccents } from "../App";
+import { Redirect, Link } from "react-router-dom";
 
 const list = [
   {
@@ -46,25 +47,7 @@ const list = [
   }
 ];
 
-
-export function RemoveAccents(str) {
-  var accents =
-    "ÀÁÂÃÄÅàáâãäåÒÓÔÕÕÖØòóôõöøÈÉÊËèéêëðÇçÐÌÍÎÏìíîïÙÚÛÜùúûüÑñŠšŸÿýŽž";
-  var accentsOut =
-    "AAAAAAaaaaaaOOOOOOOooooooEEEEeeeeeCcDIIIIiiiiUUUUuuuuNnSsYyyZz";
-  str = str.split("");
-  var strLen = str.length;
-  var i, x;
-  for (i = 0; i < strLen; i++) {
-    if ((x = accents.indexOf(str[i])) !== -1) {
-      str[i] = accentsOut[x];
-    }
-  }
-  return str.join("");
-}
-
 class HistorialLista extends Component {
-
   render() {
     return (
       <div>
@@ -92,7 +75,6 @@ class HistorialLista extends Component {
               />
               <Popup
                 open={this.state.popUp}
-
                 repositionOnResize
                 position="bottom left"
                 arrow={false}
@@ -163,7 +145,7 @@ class HistorialLista extends Component {
                   marginTop: "25px"
                 }}
               >
-              <ListaVerticalMensajes
+                <ListaVerticalMensajes
                   lista={this.props.historial}
                   borrar={this.props.borrarMensaje}
                 />
@@ -183,9 +165,7 @@ class HistorialLista extends Component {
                 >
                   <ListaVerticalMensajes
                     lista={this.props.historial}
-        
                     borrar={this.props.borrarMensaje}
-      
                   />
                 </div>
               </div>
@@ -214,8 +194,6 @@ class HistorialLista extends Component {
                 placeholder={"Buscar chat"}
               />
               <Popup
-       
-
                 repositionOnResize
                 position="bottom center"
                 arrow={false}
@@ -321,7 +299,6 @@ class HistorialFiltrado extends Component {
                 placeholder={"Buscar chat"}
               />
               <Popup
-
                 repositionOnResize
                 position="bottom left"
                 arrow={false}
@@ -396,9 +373,7 @@ class HistorialFiltrado extends Component {
                 {this.props.historial.length > 0 ? (
                   <ListaVerticalMensajes
                     lista={this.props.historial}
-    
                     borrar={this.props.borrarMensaje}
-          
                   />
                 ) : (
                   <div
@@ -474,7 +449,6 @@ class HistorialFiltrado extends Component {
                 placeholder={"Buscar chat"}
               />
               <Popup
-
                 repositionOnResize
                 position="bottom center"
                 arrow={false}
@@ -540,7 +514,6 @@ class HistorialFiltrado extends Component {
 }
 
 class HistorialListaBorrado extends Component {
-
   render() {
     return (
       <div>
@@ -567,7 +540,6 @@ class HistorialListaBorrado extends Component {
                 placeholder={"Buscar chat"}
               />
               <Popup
-
                 repositionOnResize
                 position="bottom left"
                 arrow={false}
@@ -642,7 +614,6 @@ class HistorialListaBorrado extends Component {
                 {this.props.historial.length > 0 ? (
                   <ListaVerticalMensajes
                     lista={this.props.historial}
-      
                     borrar={this.props.borrarMensaje}
                   />
                 ) : (
@@ -676,9 +647,7 @@ class HistorialListaBorrado extends Component {
                   {this.props.historial.length > 0 ? (
                     <ListaVerticalMensajes
                       lista={this.props.historial}
-
                       borrar={this.props.borrarMensaje}
-
                     />
                   ) : (
                     <div
@@ -721,7 +690,6 @@ class HistorialListaBorrado extends Component {
                 placeholder={"Buscar chat"}
               />
               <Popup
-
                 repositionOnResize
                 position="bottom center"
                 arrow={false}
@@ -807,7 +775,6 @@ class Mensajes extends Component {
     this.buscarHistorial = this.buscarHistorial.bind(this);
     this.keyDown = this.keyDown.bind(this);
     this.borrarMensaje = this.borrarMensaje.bind(this);
-
   }
 
   borrarHistorial() {
@@ -856,7 +823,7 @@ class Mensajes extends Component {
       borrado: true,
       mensajeNotif: `Mensaje ${nombreMensaje.toUpperCase()} eliminado del historial`
     });
-   
+
     if (this.state.filtrado) {
       //Borrar también de filtrado
       var nuevoFiltrado = this.state.historialFiltrado.slice();
@@ -884,7 +851,6 @@ class Mensajes extends Component {
   }
 
   componentWillUnmount() {
- 
     window.removeEventListener("resize", this.handleResize);
   }
 
@@ -896,11 +862,13 @@ class Mensajes extends Component {
     }
   }
   render() {
-    return (
+    return !sesionValida() ? (
+      <Redirect to="/" />
+    ) : (
       <div>
         <Helmet>
           <title>Mensajes</title>
-          <style>{"body { background-color: #fafafa;Â }"}</style>
+          <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         <BarraNavegacion
           logOut={this.props.logOut}
@@ -916,37 +884,55 @@ class Mensajes extends Component {
           }}
         >
           <div>
-          
-            <Button variant="secondary" href="/Mensajes">
-              {"Mensajes"}
-            </Button>
-            <Button variant="primary" href="/MensajesProfes">
-             {"Profesores"}
-            </Button>
+            <Link to="/mensajes">{"Mensajes"}</Link>
+            <Link to="/mensajes-profesores">{"Profesores"}</Link>
 
-          {this.state.miHistorial.length === 0 ? (
-            <div
-              style={{
-                color: "#00000080",
-                padding: "10px",
-                fontSize: "14px",
-                textAlign: "center"
-              }}
-            >
-              No hay chats actualmente.
-            </div>
-          ) : !this.state.filtrado ? (
-            !this.state.borrado ? (
-              <HistorialLista
+            {this.state.miHistorial.length === 0 ? (
+              <div
+                style={{
+                  color: "#00000080",
+                  padding: "10px",
+                  fontSize: "14px",
+                  textAlign: "center"
+                }}
+              >
+                No hay chats actualmente.
+              </div>
+            ) : !this.state.filtrado ? (
+              !this.state.borrado ? (
+                <HistorialLista
+                  fixed={this.state.fixed}
+                  borrar={this.borrarHistorial}
+                  handleChange={this.buscarHistorial}
+                  keyDown={this.keyDown}
+                  anyadir={this.anyadirHistorialA}
+                  historial={this.state.miHistorial}
+                  busqueda={this.state.busqueda}
+                  borrarMensaje={this.borrarMensaje}
+                />
+              ) : (
+                <HistorialListaBorrado
+                  fixed={this.state.fixed}
+                  borrar={this.borrarHistorial}
+                  handleChange={this.buscarHistorial}
+                  keyDown={this.keyDown}
+                  anyadir={this.anyadirHistorialA}
+                  historial={this.state.miHistorial}
+                  busqueda={this.state.busqueda}
+                  borrarMensaje={this.borrarMensaje}
+                />
+              )
+            ) : !this.state.borrado ? (
+              <HistorialFiltrado
                 fixed={this.state.fixed}
                 borrar={this.borrarHistorial}
                 handleChange={this.buscarHistorial}
                 keyDown={this.keyDown}
                 anyadir={this.anyadirHistorialA}
-                historial={this.state.miHistorial}
+                historial={this.state.historialFiltrado}
                 busqueda={this.state.busqueda}
                 borrarMensaje={this.borrarMensaje}
-
+                anyadirVideoALista={this.anyadirVideoALista}
               />
             ) : (
               <HistorialListaBorrado
@@ -955,45 +941,19 @@ class Mensajes extends Component {
                 handleChange={this.buscarHistorial}
                 keyDown={this.keyDown}
                 anyadir={this.anyadirHistorialA}
-                historial={this.state.miHistorial}
+                historial={this.state.historialFiltrado}
                 busqueda={this.state.busqueda}
                 borrarMensaje={this.borrarMensaje}
               />
-            )
-          ) : !this.state.borrado ? (
-            <HistorialFiltrado
-              fixed={this.state.fixed}
-              borrar={this.borrarHistorial}
-              handleChange={this.buscarHistorial}
-              keyDown={this.keyDown}
-              anyadir={this.anyadirHistorialA}
-              historial={this.state.historialFiltrado}
-              busqueda={this.state.busqueda}
-              borrarMensaje={this.borrarMensaje}
-              anyadirVideoALista={this.anyadirVideoALista}
-            />
-          ) : (
-            <HistorialListaBorrado
-              fixed={this.state.fixed}
-              borrar={this.borrarHistorial}
-              handleChange={this.buscarHistorial}
-              keyDown={this.keyDown}
-              anyadir={this.anyadirHistorialA}
-              historial={this.state.historialFiltrado}
-              busqueda={this.state.busqueda}
-              borrarMensaje={this.borrarMensaje}
-            />
-          )}
-        </div>
-        <Notificacion
-          mostrar={this.state.notif}
-          mensaje={this.state.mensajeNotif}
-          deshacer={false}
-        />
-      </div>
+            )}
           </div>
-
-
+          <Notificacion
+            mostrar={this.state.notif}
+            mensaje={this.state.mensajeNotif}
+            deshacer={false}
+          />
+        </div>
+      </div>
     );
   }
 }

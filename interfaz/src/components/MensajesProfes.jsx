@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
-import { Button } from "react-bootstrap";
 import ListaVerticalProfes from "./ListaVerticalProfes";
 import imagenUsuario from "../assets/user.png";
 import { Notificacion } from "./Listas";
+import { RemoveAccents, sesionValida } from "../App";
+import { Redirect, Link } from "react-router-dom";
 
 const list = [
   {
@@ -45,23 +46,6 @@ const list = [
   }
 ];
 
-
-export function RemoveAccents(str) {
-  var accents =
-    "ÀÁÂÃÄÅàáâãäåÒÓÔÕÕÖØòóôõöøÈÉÊËèéêëðÇçÐÌÍÎÏìíîïÙÚÛÜùúûüÑñŠšŸÿýŽž";
-  var accentsOut =
-    "AAAAAAaaaaaaOOOOOOOooooooEEEEeeeeeCcDIIIIiiiiUUUUuuuuNnSsYyyZz";
-  str = str.split("");
-  var strLen = str.length;
-  var i, x;
-  for (i = 0; i < strLen; i++) {
-    if ((x = accents.indexOf(str[i])) !== -1) {
-      str[i] = accentsOut[x];
-    }
-  }
-  return str.join("");
-}
-
 class ProfesoresLista extends Component {
   render() {
     return (
@@ -88,7 +72,6 @@ class ProfesoresLista extends Component {
                 }}
                 placeholder={"Buscar en la lista de profesores"}
               />
-              
             </div>
             <div>
               <div
@@ -98,10 +81,7 @@ class ProfesoresLista extends Component {
                   marginTop: "25px"
                 }}
               >
-              <ListaVerticalProfes
-                  lista={this.props.historial}
-          
-                />
+                <ListaVerticalProfes lista={this.props.historial} />
               </div>
             </div>
           </div>
@@ -116,9 +96,7 @@ class ProfesoresLista extends Component {
                     marginTop: "25px"
                   }}
                 >
-                  <ListaVerticalProfes
-                    lista={this.props.historial}
-                  />
+                  <ListaVerticalProfes lista={this.props.historial} />
                 </div>
               </div>
             </div>
@@ -145,7 +123,6 @@ class ProfesoresLista extends Component {
                 }}
                 placeholder={"Buscar en la lista de profesores"}
               />
-              
             </div>
           </div>
         )}
@@ -153,8 +130,6 @@ class ProfesoresLista extends Component {
     );
   }
 }
-
-
 
 class MensajesProfes extends Component {
   constructor() {
@@ -176,7 +151,6 @@ class MensajesProfes extends Component {
     this.borrarHistorial = this.borrarHistorial.bind(this);
     this.buscarHistorial = this.buscarHistorial.bind(this);
     this.keyDown = this.keyDown.bind(this);
-
   }
 
   borrarHistorial() {
@@ -241,11 +215,13 @@ class MensajesProfes extends Component {
     }
   }
   render() {
-    return (
+    return !sesionValida() ? (
+      <Redirect to="/" />
+    ) : (
       <div>
         <Helmet>
-          <title>Mensajes_profes</title>
-          <style>{"body { background-color: #fafafa;Â }"}</style>
+          <title>Mensajes | Profesores</title>
+          <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         <BarraNavegacion
           logOut={this.props.logOut}
@@ -261,13 +237,8 @@ class MensajesProfes extends Component {
           }}
         >
           <div>
-          
-            <Button variant="primary" href="/Mensajes">
-              {"Mensajes"}
-            </Button>
-            <Button variant="secondary" href="/MensajesProfes">
-             {"Profesores"}
-            </Button>
+            <Link to="/mensajes">{"Mensajes"}</Link>
+            <Link to="/mensajes-profesores">{"Profesores"}</Link>
           </div>
           {this.state.miHistorial.length === 0 ? (
             <div
@@ -278,22 +249,23 @@ class MensajesProfes extends Component {
                 textAlign: "center"
               }}
             >
-              Lista vacía, conforme añadas asignaturas, sus profesores irán apareciendo aqui.
+              Lista vacía, conforme añadas asignaturas, sus profesores irán
+              apareciendo aqui.
             </div>
           ) : (
-              <ProfesoresLista
-                fixed={this.state.fixed}
-                borrar={this.borrarHistorial}
-                handleChange={this.buscarHistorial}
-                keyDown={this.keyDown}
-                anyadir={this.anyadirHistorialA}
-                historial={
-                  !this.state.filtrado
-                    ? this.state.miHistorial
-                    : this.state.historialFiltrado
-                }
-                busqueda={this.state.busqueda}
-              />
+            <ProfesoresLista
+              fixed={this.state.fixed}
+              borrar={this.borrarHistorial}
+              handleChange={this.buscarHistorial}
+              keyDown={this.keyDown}
+              anyadir={this.anyadirHistorialA}
+              historial={
+                !this.state.filtrado
+                  ? this.state.miHistorial
+                  : this.state.historialFiltrado
+              }
+              busqueda={this.state.busqueda}
+            />
           )}
         </div>
         <Notificacion

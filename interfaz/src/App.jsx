@@ -23,7 +23,6 @@ import ResultadoBusqueda from "./components/ResultadoBusqueda";
 import MensajesProfes from "./components/MensajesProfes";
 import Chat from "./components/Chat";
 
-
 /**
  * Crea una cookie de sesión para el usuario con correo newUser
  * @param {*} newUser Correo electrónico del usuario registrado
@@ -56,6 +55,26 @@ export function sesionValida() {
  */
 export function getUser() {
   return document.cookie.split("=")[1];
+}
+
+/**
+ * Devuelve la cadena str sin acentos
+ * @param {*} str Cadena de texto a quitar acentos
+ */
+export function RemoveAccents(str) {
+  var accents =
+    "ÀÁÂÃÄÅàáâãäåÒÓÔÕÕÖØòóôõöøÈÉÊËèéêëðÇçÐÌÍÎÏìíîïÙÚÛÜùúûüÑñŠšŸÿýŽž";
+  var accentsOut =
+    "AAAAAAaaaaaaOOOOOOOooooooEEEEeeeeeCcDIIIIiiiiUUUUuuuuNnSsYyyZz";
+  str = str.split("");
+  var strLen = str.length;
+  var i, x;
+  for (i = 0; i < strLen; i++) {
+    if ((x = accents.indexOf(str[i])) !== -1) {
+      str[i] = accentsOut[x];
+    }
+  }
+  return str.join("");
 }
 
 class App extends Component {
@@ -97,7 +116,7 @@ class App extends Component {
           <Route path={"/listas"} component={Listas} />
           <Route path={"/lista/:nombre"} component={ListaConcreta} />
           <Route path={"/perfil"} component={Perfil} />
-          <Route path={"/mensajesprofes"} component={MensajesProfes} />
+          <Route path={"/mensajes-profesores"} component={MensajesProfes} />
           <Route path={"/mensajes"} component={Mensajes} />
           <Route path={"/asig/:nombre"} component={Asignatura} />
           <Route path={"/video/:nombreVideo"} component={ViendoVideo} />

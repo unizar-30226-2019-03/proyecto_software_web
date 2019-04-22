@@ -7,7 +7,7 @@ import { Redirect } from "react-router-dom";
 import Popup from "reactjs-popup";
 import { Notificacion } from "./Listas";
 import { getTime } from "./ViendoVideo";
-import { sesionValida } from "../App";
+import { sesionValida, RemoveAccents } from "../App";
 
 const list = [
   {
@@ -73,22 +73,6 @@ const listasRepro = [
   "Lista de reproducción 4",
   "Lista de reproduccióndasds aadsasdsadasadsdasdasasddasdsaddsadas 5"
 ];
-
-export function RemoveAccents(str) {
-  var accents =
-    "ÀÁÂÃÄÅàáâãäåÒÓÔÕÕÖØòóôõöøÈÉÊËèéêëðÇçÐÌÍÎÏìíîïÙÚÛÜùúûüÑñŠšŸÿýŽž";
-  var accentsOut =
-    "AAAAAAaaaaaaOOOOOOOooooooEEEEeeeeeCcDIIIIiiiiUUUUuuuuNnSsYyyZz";
-  str = str.split("");
-  var strLen = str.length;
-  var i, x;
-  for (i = 0; i < strLen; i++) {
-    if ((x = accents.indexOf(str[i])) !== -1) {
-      str[i] = accentsOut[x];
-    }
-  }
-  return str.join("");
-}
 
 class HistorialLista extends Component {
   constructor(props) {

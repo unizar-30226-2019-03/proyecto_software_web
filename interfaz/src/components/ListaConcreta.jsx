@@ -5,10 +5,9 @@ import { Helmet } from "react-helmet";
 import ListaVertical from "./ListaVertical";
 import imagenPrueba from "../assets/landscape.jpg";
 import { Notificacion } from "./Listas";
-import { RemoveAccents } from "./Historial";
 import Popup from "reactjs-popup";
 import { getTime } from "./ViendoVideo";
-import { sesionValida } from "../App";
+import { sesionValida, RemoveAccents } from "../App";
 
 const list = [
   {

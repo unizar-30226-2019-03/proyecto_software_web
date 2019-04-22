@@ -2,10 +2,10 @@ import React, { Component } from "react";
 import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
 import imagenUsuario from "../assets/user.png";
-import Messages from './Messages';
-import ChatInput from './ChatInput';
-
-require('../Chat.css');
+import Messages from "./Messages";
+import ChatInput from "./ChatInput";
+import { sesionValida } from "../App";
+import { Redirect } from "react-router-dom";
 
 class Chat extends Component {
   socket = {};
@@ -13,7 +13,6 @@ class Chat extends Component {
     super(props);
     this.state = { messages: [] };
     this.sendHandler = this.sendHandler.bind(this);
-    
   }
 
   sendHandler(message) {
@@ -33,11 +32,13 @@ class Chat extends Component {
     this.setState({ messages });
   }
   render() {
-    return (
+    return !sesionValida() ? (
+      <Redirect to="/" />
+    ) : (
       <div>
         <Helmet>
-          <title>Mensajes_profes</title>
-          <style>{"body { background-color: #fafafa;Â }"}</style>
+          <title>Chat</title>
+          <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         <BarraNavegacion
           logOut={this.props.logOut}
@@ -46,7 +47,7 @@ class Chat extends Component {
           displaySide={true}
           hide={false}
         />
- <div
+        <div
           className="transform"
           style={{
             marginLeft: "300px",
@@ -55,21 +56,22 @@ class Chat extends Component {
         >
           <div>
             <div className="cabecera-asignatura">
-            <div className="titulo-asignatura">
-              <img
-                src={imagenUsuario}
-                alt="icono usuario"
-                style={{ marginRight: "25px", borderRadius: "50%" }}
-                width="60"
-                height="40"
-              />
-              Béjar Hernández, Ruben
-            </div>
+              <div className="titulo-asignatura">
+                <img
+                  src={imagenUsuario}
+                  alt="icono usuario"
+                  style={{ marginRight: "25px", borderRadius: "50%" }}
+                  width="60"
+                  height="40"
+                />
+                Béjar Hernández, Ruben
+              </div>
             </div>
             <Messages messages={this.state.messages} />
-            <ChatInput onSend={this.sendHandler} /></div>
+            <ChatInput onSend={this.sendHandler} />
           </div>
-    </div>
+        </div>
+      </div>
     );
   }
 }
