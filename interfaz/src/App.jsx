@@ -20,6 +20,9 @@ import RecuperarPass from "./components/RecuperarPass";
 import Profesor from "./components/Profesor";
 import ListaConcreta from "./components/ListaConcreta";
 import ResultadoBusqueda from "./components/ResultadoBusqueda";
+import MensajesProfes from "./components/MensajesProfes";
+import Chat from "./components/Chat";
+
 
 /**
  * Crea una cookie de sesión para el usuario con correo newUser
@@ -94,11 +97,12 @@ class App extends Component {
           <Route path={"/listas"} component={Listas} />
           <Route path={"/lista/:nombre"} component={ListaConcreta} />
           <Route path={"/perfil"} component={Perfil} />
-
+          <Route path={"/mensajesprofes"} component={MensajesProfes} />
           <Route path={"/mensajes"} component={Mensajes} />
           <Route path={"/asig/:nombre"} component={Asignatura} />
           <Route path={"/video/:nombreVideo"} component={ViendoVideo} />
           <Route path={"/recuperacion"} component={RecuperarPass} />
+          <Route path={"/chat"} component={Chat} />
           <Route path={"/busqueda/:valor"} component={ResultadoBusqueda} />
         </Switch>
       </Router>
