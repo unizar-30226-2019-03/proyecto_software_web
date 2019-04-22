@@ -340,6 +340,16 @@ class ListaVertical extends Component {
       this.props.listaRepro
     );
   }
+
+  componentWillReceiveProps(newProps) {
+    this.menu = MenuVertical(
+      newProps.lista,
+      newProps.borrar,
+      newProps.anyadirALista,
+      newProps.listaRepro
+    );
+  }
+
   render() {
     return <div>{this.menu}</div>;
   }

@@ -78,9 +78,13 @@ const listasRepro = [
 class Lista extends Component {
   constructor(props) {
     super(props);
-    this.state = { popUp: false };
+    this.state = { popUp: false, listaVideos: this.props.historial };
     this.abrirPopUp = this.abrirPopUp.bind(this);
     this.cerrarPopUp = this.cerrarPopUp.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({ listaVideos: nextProps.historial });
   }
 
   abrirPopUp() {
@@ -192,7 +196,7 @@ class Lista extends Component {
                 }}
               >
                 <ListaVertical
-                  lista={this.props.historial}
+                  lista={this.state.listaVideos}
                   anyadirALista={this.props.anyadirVideoALista}
                   borrar={this.props.borrarVideo}
                   listaRepro={listasRepro}
@@ -212,7 +216,7 @@ class Lista extends Component {
                   }}
                 >
                   <ListaVertical
-                    lista={this.props.historial}
+                    lista={this.state.listaVideos}
                     anyadirALista={this.props.anyadirVideoALista}
                     borrar={this.props.borrarVideo}
                     listaRepro={listasRepro}
@@ -242,538 +246,6 @@ class Lista extends Component {
                   color: "#00000080"
                 }}
                 placeholder={"Buscar en la lista de reproducción"}
-              />
-              <Popup
-                open={this.state.popUp}
-                onOpen={this.abrirPopUp}
-                onClose={this.cerrarPopUp}
-                repositionOnResize
-                position="bottom center"
-                arrow={false}
-                contentStyle={{
-                  width: "250px",
-                  maxHeight: "300px",
-                  overflow: "scroll",
-                  padding: "16px 20px",
-                  border: "0",
-                  marginTop: "10px",
-                  boxShadow:
-                    "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4)"
-                }}
-                trigger={
-                  <div
-                    style={{
-                      cursor: "pointer",
-                      fontSize: "14px"
-                    }}
-                    className="tit-prof"
-                  >
-                    BORRAR LA LISTA COMPLETA
-                  </div>
-                }
-              >
-                <div style={{ padding: "5px 10px" }}>
-                  <div
-                    style={{
-                      fontWeight: "550",
-                      fontSize: "16px",
-                      borderBottom: "1px solid lightgrey"
-                    }}
-                  >
-                    ¿Estás seguro?
-                  </div>
-                  <div style={{ fontSize: "13px", paddingTop: "10px" }}>
-                    Una vez eliminada no habrá vuelta atrás.
-                  </div>
-                  <div
-                    style={{
-                      color: "red",
-                      fontSize: "14px",
-                      paddingTop: "10px",
-                      width: "fit-content",
-                      height: "fit-content",
-                      cursor: "pointer"
-                    }}
-                    onClick={() => {
-                      this.cerrarPopUp();
-                      this.props.borrar();
-                    }}
-                  >
-                    Sí, eliminar
-                  </div>
-                </div>
-              </Popup>
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  }
-}
-
-class ListaFiltrada extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { popUp: false };
-    this.abrirPopUp = this.abrirPopUp.bind(this);
-    this.cerrarPopUp = this.cerrarPopUp.bind(this);
-  }
-
-  abrirPopUp() {
-    this.setState({ popUp: true });
-  }
-
-  cerrarPopUp() {
-    this.setState({ popUp: false });
-  }
-
-  render() {
-    return (
-      <div>
-        {!this.props.fixed ? (
-          <div style={{ display: "block", marginRight: "70px" }}>
-            <div className="profesores-asignatura">
-              <input
-                onChange={this.props.handleChange}
-                onKeyDown={this.props.keyDown}
-                defaultValue={this.props.busqueda}
-                style={{
-                  fontSize: "14px",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  display: "-webkit-box",
-                  WebkitLineClamp: "1",
-                  WebkitBoxOrient: "vertical",
-                  backgroundColor: "#fafafa",
-                  borderWidth: "0px 0px 1px 0px",
-                  borderColor: "lightgrey",
-                  width: "calc(100% - 67%)",
-                  color: "#00000080"
-                }}
-                placeholder={"Buscar en la lista de reproducción"}
-              />
-              <Popup
-                open={this.state.popUp}
-                onOpen={this.abrirPopUp}
-                onClose={this.cerrarPopUp}
-                repositionOnResize
-                position="bottom left"
-                arrow={false}
-                contentStyle={{
-                  width: "250px",
-                  maxHeight: "300px",
-                  overflow: "scroll",
-                  padding: "16px 20px",
-                  marginTop: "10px",
-                  border: "0",
-                  boxShadow:
-                    "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4)"
-                }}
-                trigger={
-                  <div
-                    style={{
-                      cursor: "pointer",
-                      fontSize: "14px",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      display: "-webkit-box",
-                      WebkitLineClamp: "1",
-                      WebkitBoxOrient: "vertical",
-                      width: "fit-content"
-                    }}
-                    className="tit-prof"
-                  >
-                    BORRAR LA LISTA COMPLETA
-                  </div>
-                }
-              >
-                <div style={{ padding: "5px 10px" }}>
-                  <div
-                    style={{
-                      fontWeight: "550",
-                      fontSize: "16px",
-                      borderBottom: "1px solid lightgrey"
-                    }}
-                  >
-                    ¿Estás seguro?
-                  </div>
-                  <div style={{ fontSize: "13px", paddingTop: "10px" }}>
-                    Una vez eliminada no habrá vuelta atrás.
-                  </div>
-                  <div
-                    style={{
-                      color: "red",
-                      fontSize: "14px",
-                      paddingTop: "10px",
-                      width: "fit-content",
-                      height: "fit-content",
-                      cursor: "pointer"
-                    }}
-                    onClick={() => {
-                      this.cerrarPopUp();
-                      this.props.borrar();
-                    }}
-                  >
-                    Sí, eliminar
-                  </div>
-                </div>
-              </Popup>
-            </div>
-            <div>
-              <div
-                style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  marginTop: "25px"
-                }}
-              >
-                {this.props.historial.length > 0 ? (
-                  <ListaVertical
-                    lista={this.props.historial}
-                    anyadirALista={this.props.anyadirVideoALista}
-                    borrar={this.props.borrarVideo}
-                    listaRepro={listasRepro}
-                  />
-                ) : (
-                  <div
-                    style={{
-                      fontSize: "14px",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      display: "-webkit-box",
-                      WebkitLineClamp: "1",
-                      WebkitBoxOrient: "vertical"
-                    }}
-                  >
-                    Ningún título coincide con la consulta.
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div style={{ display: "flex", marginRight: "70px" }}>
-            <div style={{ paddingRight: "300px" }}>
-              <div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    marginTop: "25px"
-                  }}
-                >
-                  {this.props.historial.length > 0 ? (
-                    <ListaVertical
-                      lista={this.props.historial}
-                      anyadirALista={this.props.anyadirVideoALista}
-                      borrar={this.props.borrarVideo}
-                      listaRepro={listasRepro}
-                    />
-                  ) : (
-                    <div
-                      style={{
-                        fontSize: "14px",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        display: "-webkit-box",
-                        WebkitLineClamp: "1",
-                        WebkitBoxOrient: "vertical"
-                      }}
-                    >
-                      Ningún título coincide con la consulta.
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-            <div
-              className="profesores-asignatura"
-              style={{ position: "fixed", right: "70px" }}
-            >
-              <input
-                onChange={this.props.handleChange}
-                onKeyDown={this.props.keyDown}
-                defaultValue={this.props.busqueda}
-                style={{
-                  fontSize: "14px",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  display: "-webkit-box",
-                  WebkitLineClamp: "1",
-                  WebkitBoxOrient: "vertical",
-                  backgroundColor: "#fafafa",
-                  borderWidth: "0px 0px 1px 0px",
-                  borderColor: "lightgrey",
-                  width: "100%",
-                  color: "#00000080"
-                }}
-                placeholder={"Buscar en la lista de reproducción"}
-              />
-              <Popup
-                open={this.state.popUp}
-                onOpen={this.abrirPopUp}
-                onClose={this.cerrarPopUp}
-                repositionOnResize
-                position="bottom center"
-                arrow={false}
-                contentStyle={{
-                  width: "250px",
-                  maxHeight: "300px",
-                  overflow: "scroll",
-                  padding: "16px 20px",
-                  border: "0",
-                  marginTop: "10px",
-                  boxShadow:
-                    "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4)"
-                }}
-                trigger={
-                  <div
-                    style={{
-                      cursor: "pointer",
-                      fontSize: "14px"
-                    }}
-                    className="tit-prof"
-                  >
-                    BORRAR LA LISTA COMPLETA
-                  </div>
-                }
-              >
-                <div style={{ padding: "5px 10px" }}>
-                  <div
-                    style={{
-                      fontWeight: "550",
-                      fontSize: "16px",
-                      borderBottom: "1px solid lightgrey"
-                    }}
-                  >
-                    ¿Estás seguro?
-                  </div>
-                  <div style={{ fontSize: "13px", paddingTop: "10px" }}>
-                    Una vez eliminada no habrá vuelta atrás.
-                  </div>
-                  <div
-                    style={{
-                      color: "red",
-                      fontSize: "14px",
-                      paddingTop: "10px",
-                      width: "fit-content",
-                      height: "fit-content",
-                      cursor: "pointer"
-                    }}
-                    onClick={() => {
-                      this.cerrarPopUp();
-                      this.props.borrar();
-                    }}
-                  >
-                    Sí, eliminar
-                  </div>
-                </div>
-              </Popup>
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  }
-}
-
-class ListaBorrada extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { popUp: false };
-    this.abrirPopUp = this.abrirPopUp.bind(this);
-    this.cerrarPopUp = this.cerrarPopUp.bind(this);
-  }
-
-  abrirPopUp() {
-    this.setState({ popUp: true });
-  }
-
-  cerrarPopUp() {
-    this.setState({ popUp: false });
-  }
-
-  render() {
-    return (
-      <div>
-        {!this.props.fixed ? (
-          <div style={{ display: "block", marginRight: "70px" }}>
-            <div className="profesores-asignatura">
-              <input
-                onChange={this.props.handleChange}
-                onKeyDown={this.props.keyDown}
-                defaultValue={this.props.busqueda}
-                style={{
-                  fontSize: "14px",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  display: "-webkit-box",
-                  WebkitLineClamp: "1",
-                  WebkitBoxOrient: "vertical",
-                  backgroundColor: "#fafafa",
-                  borderWidth: "0px 0px 1px 0px",
-                  borderColor: "lightgrey",
-                  width: "calc(100% - 67%)",
-                  color: "#00000080"
-                }}
-                placeholder={"Buscar en la lista de reproducción"}
-              />
-              <Popup
-                open={this.state.popUp}
-                onOpen={this.abrirPopUp}
-                onClose={this.cerrarPopUp}
-                repositionOnResize
-                position="bottom left"
-                arrow={false}
-                contentStyle={{
-                  width: "250px",
-                  maxHeight: "300px",
-                  overflow: "scroll",
-                  padding: "16px 20px",
-                  marginTop: "10px",
-                  border: "0",
-                  boxShadow:
-                    "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4)"
-                }}
-                trigger={
-                  <div
-                    style={{
-                      cursor: "pointer",
-                      fontSize: "14px",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      display: "-webkit-box",
-                      WebkitLineClamp: "1",
-                      WebkitBoxOrient: "vertical",
-                      width: "fit-content"
-                    }}
-                    className="tit-prof"
-                  >
-                    BORRAR LA LISTA COMPLETA
-                  </div>
-                }
-              >
-                <div style={{ padding: "5px 10px" }}>
-                  <div
-                    style={{
-                      fontWeight: "550",
-                      fontSize: "16px",
-                      borderBottom: "1px solid lightgrey"
-                    }}
-                  >
-                    ¿Estás seguro?
-                  </div>
-                  <div style={{ fontSize: "13px", paddingTop: "10px" }}>
-                    Una vez eliminada no habrá vuelta atrás.
-                  </div>
-                  <div
-                    style={{
-                      color: "red",
-                      fontSize: "14px",
-                      paddingTop: "10px",
-                      width: "fit-content",
-                      height: "fit-content",
-                      cursor: "pointer"
-                    }}
-                    onClick={() => {
-                      this.cerrarPopUp();
-                      this.props.borrar();
-                    }}
-                  >
-                    Sí, eliminar
-                  </div>
-                </div>
-              </Popup>
-            </div>
-            <div>
-              <div
-                style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  marginTop: "25px"
-                }}
-              >
-                {this.props.historial.length > 0 ? (
-                  <ListaVertical
-                    lista={this.props.historial}
-                    anyadirALista={this.props.anyadirVideoALista}
-                    borrar={this.props.borrarVideo}
-                    listaRepro={listasRepro}
-                  />
-                ) : (
-                  <div
-                    style={{
-                      fontSize: "14px",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      display: "-webkit-box",
-                      WebkitLineClamp: "1",
-                      WebkitBoxOrient: "vertical"
-                    }}
-                  >
-                    Ningún título coincide con la consulta.
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div style={{ display: "flex", marginRight: "70px" }}>
-            <div style={{ paddingRight: "300px" }}>
-              <div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    marginTop: "25px"
-                  }}
-                >
-                  {this.props.historial.length > 0 ? (
-                    <ListaVertical
-                      lista={this.props.historial}
-                      anyadirALista={this.props.anyadirVideoALista}
-                      borrar={this.props.borrarVideo}
-                      listaRepro={listasRepro}
-                    />
-                  ) : (
-                    <div
-                      style={{
-                        fontSize: "14px",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        display: "-webkit-box",
-                        WebkitLineClamp: "1",
-                        WebkitBoxOrient: "vertical"
-                      }}
-                    >
-                      Ningún título coincide con la consulta.
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-            <div
-              className="profesores-asignatura"
-              style={{ position: "fixed", right: "70px" }}
-            >
-              <input
-                onChange={this.props.handleChange}
-                onKeyDown={this.props.keyDown}
-                defaultValue={this.props.busqueda}
-                style={{
-                  fontSize: "14px",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  display: "-webkit-box",
-                  WebkitLineClamp: "1",
-                  WebkitBoxOrient: "vertical",
-                  backgroundColor: "#fafafa",
-                  borderWidth: "0px 0px 1px 0px",
-                  borderColor: "lightgrey",
-                  width: "100%",
-                  color: "#00000080"
-                }}
-                placeholder={"Buscar en la lisa de reproducción"}
               />
               <Popup
                 open={this.state.popUp}
@@ -857,7 +329,6 @@ class ListaConcreta extends Component {
       videoBorrado: null,
       tiempo: 0,
       mensajeNotif: "",
-      borrado: false,
       deshacer: false,
       borradoCompleto: false
     };
@@ -881,8 +352,7 @@ class ListaConcreta extends Component {
     this.setState({
       videoBorrado: null,
       miHistorial: nuevoHistorial,
-      notif: false,
-      borrado: false
+      notif: false
     });
     if (index2 !== -1) {
       //Deshacer en el filtrado también
@@ -912,7 +382,7 @@ class ListaConcreta extends Component {
         const palabras = this.state.busqueda.split(" ");
         var resultado = [];
         this.state.miHistorial.forEach(e => {
-          const { name, canal, image } = e;
+          const { name, canal, image, duracion } = e;
           for (let index = 0; index < palabras.length; index++) {
             const element = palabras[index];
             if (
@@ -920,7 +390,7 @@ class ListaConcreta extends Component {
                 .toLowerCase()
                 .includes(RemoveAccents(element).toLowerCase())
             ) {
-              resultado.push({ name, canal, image });
+              resultado.push({ name, canal, image, duracion });
               break;
             }
           }
@@ -951,7 +421,6 @@ class ListaConcreta extends Component {
       miHistorial: nuevoHistorial,
       notif: true,
       deshacer: true,
-      borrado: true,
       videoBorrado: { v, index, index2 },
       mensajeNotif: `Vídeo ${nombreVideo.toUpperCase()} eliminado de la lista`
     });
@@ -1012,7 +481,7 @@ class ListaConcreta extends Component {
     if (t === 3) {
       t = -1;
       this.pararReloj();
-      this.setState({ notif: false, borrado: false });
+      this.setState({ notif: false });
     }
     this.setState({ tiempo: t + 1 });
   }
@@ -1061,48 +530,17 @@ class ListaConcreta extends Component {
                 >
                   Lista vacía, añade vídeos a esta lista para agurparlos.
                 </div>
-              ) : !this.state.filtrado ? (
-                !this.state.borrado ? (
-                  <Lista
-                    fixed={this.state.fixed}
-                    borrar={this.borrarHistorial}
-                    handleChange={this.buscarHistorial}
-                    keyDown={this.keyDown}
-                    historial={this.state.miHistorial}
-                    busqueda={this.state.busqueda}
-                    borrarVideo={this.borrarVideo}
-                    anyadirVideoALista={this.anyadirVideoALista}
-                  />
-                ) : (
-                  <ListaBorrada
-                    fixed={this.state.fixed}
-                    borrar={this.borrarHistorial}
-                    handleChange={this.buscarHistorial}
-                    keyDown={this.keyDown}
-                    historial={this.state.miHistorial}
-                    busqueda={this.state.busqueda}
-                    borrarVideo={this.borrarVideo}
-                    anyadirVideoALista={this.anyadirVideoALista}
-                  />
-                )
-              ) : !this.state.borrado ? (
-                <ListaFiltrada
-                  fixed={this.state.fixed}
-                  borrar={this.borrarHistorial}
-                  handleChange={this.buscarHistorial}
-                  keyDown={this.keyDown}
-                  historial={this.state.historialFiltrado}
-                  busqueda={this.state.busqueda}
-                  borrarVideo={this.borrarVideo}
-                  anyadirVideoALista={this.anyadirVideoALista}
-                />
               ) : (
-                <ListaBorrada
+                <Lista
                   fixed={this.state.fixed}
                   borrar={this.borrarHistorial}
                   handleChange={this.buscarHistorial}
                   keyDown={this.keyDown}
-                  historial={this.state.historialFiltrado}
+                  historial={
+                    !this.state.filtrado
+                      ? this.state.miHistorial
+                      : this.state.historialFiltrado
+                  }
                   busqueda={this.state.busqueda}
                   borrarVideo={this.borrarVideo}
                   anyadirVideoALista={this.anyadirVideoALista}
