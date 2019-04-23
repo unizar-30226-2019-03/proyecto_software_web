@@ -858,7 +858,7 @@ class Mensajes extends Component {
     if (display) {
       this.setState({ contentMargin: "300px" });
     } else {
-      this.setState({ contentMargin: "70px" });
+      this.setState({ contentMargin: "71px" });
     }
   }
   render() {
@@ -878,6 +878,7 @@ class Mensajes extends Component {
           hide={false}
         />
         <div
+          className="transform"
           style={{
             marginLeft: this.state.contentMargin,
             marginTop: "80px"

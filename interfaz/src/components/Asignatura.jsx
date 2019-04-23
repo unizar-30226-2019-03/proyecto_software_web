@@ -6,7 +6,7 @@ import imagenPrueba from "../assets/landscape.jpg";
 import { Button } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
 import { Menu } from "./ListaHorizontal";
-import { sesionValida } from "../App";
+import { sesionValida, getTime } from "../App";
 
 const profesores = [
   { foto: icono, nombre: "Jorge Pérez" },
@@ -15,26 +15,78 @@ const profesores = [
 ];
 
 const list = [
-  { name: "item1", image: imagenPrueba },
-  { name: "item2", image: imagenPrueba },
-  { name: "item3", image: imagenPrueba },
-  { name: "item4", image: imagenPrueba },
-  { name: "item5", image: imagenPrueba },
-  { name: "item6", image: imagenPrueba },
-  { name: "item7", image: imagenPrueba },
-  { name: "item8", image: imagenPrueba },
-  { name: "item9", image: imagenPrueba },
-  { name: "item10", image: imagenPrueba },
-  { name: "item11", image: imagenPrueba },
-  { name: "item12", image: imagenPrueba },
-  { name: "item13", image: imagenPrueba },
-  { name: "item14", image: imagenPrueba },
-  { name: "item15", image: imagenPrueba },
-  { name: "item16", image: imagenPrueba },
-  { name: "item17", image: imagenPrueba },
-  { name: "item18", image: imagenPrueba },
-  { name: "item19", image: imagenPrueba },
-  { name: "item20", image: imagenPrueba }
+  {
+    name: "item1",
+    canal: "Asignatura A",
+    image: imagenPrueba,
+    duracion: getTime(500)
+  },
+  {
+    name: "item2",
+    canal: "Asignatura B",
+    image: imagenPrueba,
+    duracion: getTime(600)
+  },
+  {
+    name: "item3",
+    canal: "Asignatura C",
+    image: imagenPrueba,
+    duracion: getTime(700)
+  },
+  {
+    name: "item4",
+    canal: "Asignatura D",
+    image: imagenPrueba,
+    duracion: getTime(800)
+  },
+  {
+    name: "item5",
+    canal: "Asignatura E",
+    image: imagenPrueba,
+    duracion: getTime(900)
+  },
+  {
+    name: "item6",
+    canal: "Asignatura F",
+    image: imagenPrueba,
+    duracion: getTime(1000)
+  },
+  {
+    name: "item7",
+    canal: "Asignatura G",
+    image: imagenPrueba,
+    duracion: getTime(1100)
+  },
+  {
+    name: "item8",
+    canal: "Asignatura H",
+    image: imagenPrueba,
+    duracion: getTime(1200)
+  },
+  {
+    name: "item9",
+    canal: "Asignatura I",
+    image: imagenPrueba,
+    duracion: getTime(1300)
+  },
+  {
+    name: "item10",
+    canal: "Asignatura J",
+    image: imagenPrueba,
+    duracion: getTime(1400)
+  },
+  {
+    name: "item11",
+    canal: "Asignatura K",
+    image: imagenPrueba,
+    duracion: getTime(1500)
+  },
+  {
+    name: "item12",
+    canal: "Asignatura L",
+    image: imagenPrueba,
+    duracion: getTime(1600)
+  }
 ];
 
 export const Profesor = ({ foto, nombre }) => {

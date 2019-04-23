@@ -77,6 +77,27 @@ export function RemoveAccents(str) {
   return str.join("");
 }
 
+/**
+ * Devuelve el tiempo t en formato mm:ss
+ * @param {*} t Tiempo en segundos
+ */
+export function getTime(t) {
+  const tiempoAux = Math.trunc(t);
+  var minutos = Math.trunc(tiempoAux / 60);
+  if (minutos < 10) {
+    minutos = "0" + minutos.toString();
+  } else {
+    minutos = minutos.toString();
+  }
+  var segundos = tiempoAux % 60;
+  if (segundos < 10) {
+    segundos = "0" + segundos.toString();
+  } else {
+    segundos = segundos.toString();
+  }
+  return minutos + ":" + segundos;
+}
+
 class App extends Component {
   componentWillUnmount() {
     logOut(getUser());

@@ -114,7 +114,8 @@ class Lista extends Component {
                   backgroundColor: "#fafafa",
                   border: "0",
                   overflow: "visible",
-                  pointerEvents: "none"
+                  pointerEvents: "none",
+                  outline: "none"
                 }}
               />
             </h6>

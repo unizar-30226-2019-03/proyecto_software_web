@@ -4,7 +4,7 @@ import imagenPrueba from "../assets/landscape.jpg";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import iconoAsign from "../assets/favicon.ico";
 import { Link } from "react-router-dom";
-import { getTime } from "./ViendoVideo";
+import { getTime } from "../App";
 
 // list of items
 const list = [

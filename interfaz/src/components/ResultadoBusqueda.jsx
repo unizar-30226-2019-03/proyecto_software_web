@@ -4,8 +4,7 @@ import imagenPrueba from "../assets/landscape.jpg";
 import { Notificacion } from "./Listas";
 import { Helmet } from "react-helmet";
 import BarraNavegacion from "./BarraNavegacion";
-import { getTime } from "./ViendoVideo";
-import { sesionValida } from "../App";
+import { sesionValida, getTime } from "../App";
 import { Redirect } from "react-router-dom";
 
 const list = [

@@ -211,7 +211,7 @@ class MensajesProfes extends Component {
     if (display) {
       this.setState({ contentMargin: "300px" });
     } else {
-      this.setState({ contentMargin: "70px" });
+      this.setState({ contentMargin: "71px" });
     }
   }
   render() {
@@ -231,6 +231,7 @@ class MensajesProfes extends Component {
           hide={false}
         />
         <div
+          className="transform"
           style={{
             marginLeft: this.state.contentMargin,
             marginTop: "80px"

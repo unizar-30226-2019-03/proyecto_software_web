@@ -7,7 +7,7 @@ import Video from "./Video";
 import vid from "../assets/VideoPrueba.mp4";
 import { FaShareAlt, FaRegBookmark, FaRegStar } from "react-icons/fa";
 import icono from "../assets/favicon.ico";
-import { sesionValida } from "../App";
+import { sesionValida, getTime } from "../App";
 
 function generadorColores() {
   var letras = "0123456789ABCDEF";
@@ -16,23 +16,6 @@ function generadorColores() {
     color += letras[Math.floor(Math.random() * 16)];
   }
   return color;
-}
-
-export function getTime(t) {
-  const tiempoAux = Math.trunc(t);
-  var minutos = Math.trunc(tiempoAux / 60);
-  if (minutos < 10) {
-    minutos = "0" + minutos.toString();
-  } else {
-    minutos = minutos.toString();
-  }
-  var segundos = tiempoAux % 60;
-  if (segundos < 10) {
-    segundos = "0" + segundos.toString();
-  } else {
-    segundos = segundos.toString();
-  }
-  return minutos + ":" + segundos;
 }
 
 const profesores = [
@@ -511,7 +494,8 @@ class ViendoVideo extends Component {
                     border: "0",
                     width: "100%",
                     fontSize: "14px",
-                    resize: "none"
+                    resize: "none",
+                    outline: "none"
                   }}
                   placeholder={`Publicar comentario en ${getTime(
                     this.state.tiempoVideo

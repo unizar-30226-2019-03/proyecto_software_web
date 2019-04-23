@@ -6,8 +6,7 @@ import imagenPrueba from "../assets/landscape.jpg";
 import { Redirect } from "react-router-dom";
 import Popup from "reactjs-popup";
 import { Notificacion } from "./Listas";
-import { getTime } from "./ViendoVideo";
-import { sesionValida, RemoveAccents } from "../App";
+import { sesionValida, RemoveAccents, getTime } from "../App";
 
 const list = [
   {
@@ -115,7 +114,8 @@ class HistorialLista extends Component {
                   borderWidth: "0px 0px 1px 0px",
                   borderColor: "lightgrey",
                   width: "calc(100% - 67%)",
-                  color: "#00000080"
+                  color: "#00000080",
+                  outline: "none"
                 }}
                 placeholder={"Buscar en el historial de reproducción"}
               />
@@ -242,7 +242,8 @@ class HistorialLista extends Component {
                   borderWidth: "0px 0px 1px 0px",
                   borderColor: "lightgrey",
                   width: "100%",
-                  color: "#00000080"
+                  color: "#00000080",
+                  outline: "none"
                 }}
                 placeholder={"Buscar en el historial de reproducción"}
               />
