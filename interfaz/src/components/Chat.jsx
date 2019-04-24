@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet";
 import imagenUsuario from "../assets/user.png";
 import Messages from "./Messages";
 import { sesionValida, getUser } from "../App";
-import { Redirect } from "react-router-dom";
+import { Redirect, Link } from "react-router-dom";
 
 class Chat extends Component {
   constructor(props) {
@@ -67,7 +67,11 @@ class Chat extends Component {
           }}
         >
           <div className="cabecera-asignatura">
-            <div className="titulo-asignatura">
+            <Link
+              to={`/profesor/${this.props.match.params.nombre}`}
+              className="titulo-asignatura"
+              style={{ color: "black", textDecoration: "none" }}
+            >
               <img
                 src={imagenUsuario}
                 alt="icono usuario"
@@ -75,8 +79,8 @@ class Chat extends Component {
                 width="60"
                 height="40"
               />
-              Béjar Hernández, Ruben
-            </div>
+              {this.props.match.params.nombre}
+            </Link>
           </div>
           <Messages messages={this.state.messages} onSend={this.sendHandler} />
         </div>

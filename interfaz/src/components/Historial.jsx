@@ -133,6 +133,7 @@ class HistorialLista extends Component {
                   padding: "16px 20px",
                   marginTop: "10px",
                   border: "0",
+                  zIndex: "200",
                   boxShadow:
                     "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4)"
                 }}
@@ -261,6 +262,7 @@ class HistorialLista extends Component {
                   padding: "16px 20px",
                   border: "0",
                   marginTop: "10px",
+                  zIndex: "200",
                   boxShadow:
                     "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4)"
                 }}

@@ -2,41 +2,17 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 
 class MenuItem extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      mostrarOpciones: false,
-      popUp: false,
-      tiempo: 0,
-      mostrarNotif: false,
-      mensaje: ""
-    };
-
-  }
-
-  recibirHijo(mostrar, lista, mensaje, anyadir) {
-    this.setState({ mostrarNotif: mostrar, mensaje: mensaje });
-    //SI anyadir = true, anyadir a la lista lista, sino borrar de la lista lista
-    this.props.anyadirALista(this.props.url, mensaje, lista, anyadir);
-  }
-
   render() {
     return (
       <div
-        onMouseEnter={() => {
-          this.setState({ mostrarOpciones: true });
-        }}
-        onMouseLeave={() => {
-          this.setState({ mostrarOpciones: false });
-        }}
         style={{
           marginBottom: "16px",
           display: "flex"
         }}
       >
         <div>
-          <Link to={`/Chat`}>
-            <img src={this.props.img} width="120" height="80" alt="videoX" />
+          <Link to={`/chat/${this.props.url}`}>
+            <img src={this.props.img} width="120" height="80" alt="mensajeX" />
           </Link>
         </div>
         <div style={{ marginTop: "0px" }}>
@@ -61,7 +37,7 @@ class MenuItem extends Component {
                 wordWrap: "break-word",
                 width: "90%"
               }}
-              to={`/chat`}
+              to={`/chat/${this.props.url}`}
             >
               {this.props.url}
             </Link>
@@ -73,7 +49,6 @@ class MenuItem extends Component {
               marginBottom: "3px"
             }}
           >
-           
             <div style={{ marginTop: "10px", width: "90%" }}>
               <div
                 style={{
@@ -89,26 +64,10 @@ class MenuItem extends Component {
                 }}
               >
                 Asignaturas del profesor. Proyecto sofware. IA. Programación I.
-
               </div>
             </div>
           </div>
         </div>
-        {this.state.mostrarOpciones ? (
-          <div
-            style={{
-              position: "relative",
-              right: "0",
-              top: "0",
-              width: "fit-content",
-              height: "fit-content",
-              display: "flex"
-            }}
-          >
-            {" "}
-
-          </div>
-        ) : null}
       </div>
     );
   }
@@ -116,26 +75,23 @@ class MenuItem extends Component {
 
 // All items component
 // Important! add unique key
-export const MenuVertical = (list) =>
+export const MenuVertical = list =>
   list.map(el => {
     const { name, image } = el;
 
-    return (
-      <MenuItem
-        url={name}
-        key={name}
-        img={image}
-      />
-    );
+    return <MenuItem url={name} key={name} img={image} />;
   });
 
 class ListaVerticalProfes extends Component {
   constructor(props) {
     super(props);
-    this.menu = MenuVertical(
-      this.props.lista,
-    );
+    this.menu = MenuVertical(this.props.lista);
   }
+
+  componentWillReceiveProps(newProps) {
+    this.menu = MenuVertical(newProps.lista);
+  }
+
   render() {
     return <div>{this.menu}</div>;
   }

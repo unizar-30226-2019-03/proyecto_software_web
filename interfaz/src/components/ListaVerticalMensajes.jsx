@@ -6,29 +6,8 @@ class MenuItem extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      mostrarOpciones: false,
-      popUp: false,
-      tiempo: 0,
-      mostrarNotif: false,
-      mensaje: ""
+      mostrarOpciones: false
     };
-    this.abrirPopUp = this.abrirPopUp.bind(this);
-    this.cerrarPopUp = this.cerrarPopUp.bind(this);
-    this.recibirHijo = this.recibirHijo.bind(this);
-  }
-
-  recibirHijo(mostrar, lista, mensaje, anyadir) {
-    this.setState({ mostrarNotif: mostrar, mensaje: mensaje });
-    //SI anyadir = true, anyadir a la lista lista, sino borrar de la lista lista
-    this.props.anyadirALista(this.props.url, mensaje, lista, anyadir);
-  }
-
-  abrirPopUp() {
-    this.setState({ popUp: true });
-  }
-
-  cerrarPopUp() {
-    this.setState({ popUp: false, mostrarOpciones: false });
   }
 
   render() {
@@ -46,7 +25,7 @@ class MenuItem extends Component {
         }}
       >
         <div>
-          <Link to={`/chat`}>
+          <Link to={`/chat/${this.props.url}`}>
             <img src={this.props.img} width="120" height="80" alt="mensajeX" />
           </Link>
         </div>
@@ -72,7 +51,7 @@ class MenuItem extends Component {
                 wordWrap: "break-word",
                 width: "90%"
               }}
-              to={`/Chat`}
+              to={`/chat/${this.props.url}`}
             >
               {this.props.url}
             </Link>
@@ -84,7 +63,6 @@ class MenuItem extends Component {
               marginBottom: "3px"
             }}
           >
-           
             <div style={{ marginTop: "10px", width: "90%" }}>
               <div
                 style={{
@@ -99,12 +77,12 @@ class MenuItem extends Component {
                   fontWeight: "500"
                 }}
               >
-                Contenido del mensaje. Saludos y motivos del mensaje, es el último mensaje
-                enviado por la persona "Apellido Apellido, Nombre" al usuario, 
-                mientras llegue a verse en las dos lineas reservadas. El contenido 
-                total del mensaje se podrá ver haciendo click sobre cualquier parte 
-                del mensaje, donde se accederá al chat completo entre las dos personas.
-
+                Contenido del mensaje. Saludos y motivos del mensaje, es el
+                último mensaje enviado por la persona "Apellido Apellido,
+                Nombre" al usuario, mientras llegue a verse en las dos lineas
+                reservadas. El contenido total del mensaje se podrá ver haciendo
+                click sobre cualquier parte del mensaje, donde se accederá al
+                chat completo entre las dos personas.
               </div>
             </div>
           </div>
@@ -121,7 +99,6 @@ class MenuItem extends Component {
             }}
           >
             {" "}
-
             <FaTimes
               color={"#00000080"}
               onClick={() => this.props.borrar(this.props.url)}
@@ -140,24 +117,19 @@ export const MenuVertical = (list, borrar) =>
   list.map(el => {
     const { name, image } = el;
 
-    return (
-      <MenuItem
-        url={name}
-        key={name}
-        borrar={borrar}
-        img={image}
-      />
-    );
+    return <MenuItem url={name} key={name} borrar={borrar} img={image} />;
   });
 
 class ListaVerticalMensajes extends Component {
   constructor(props) {
     super(props);
-    this.menu = MenuVertical(
-      this.props.lista,
-      this.props.borrar,
-    );
+    this.menu = MenuVertical(this.props.lista, this.props.borrar);
   }
+
+  componentWillReceiveProps(newProps) {
+    this.menu = MenuVertical(newProps.lista, newProps.borrar);
+  }
+
   render() {
     return <div>{this.menu}</div>;
   }

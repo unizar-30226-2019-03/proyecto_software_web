@@ -809,6 +809,17 @@
   background: transparent;
 }
 
+.link-mensajes {
+  font-weight: 300;
+  margin-right: 10px;
+}
+
+.link-mensajes-activo {
+  margin-right: 10px;
+  font-weight: 550;
+  text-decoration: underline;
+}
+
 h3 {
   text-align: center;
   padding: 20px 0;

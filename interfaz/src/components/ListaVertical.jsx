@@ -11,7 +11,6 @@ class ContenidoPopUp extends Component {
       listas: this.props.listaRepro,
       anyadido: false,
       lista: "",
-      tiempo: 0,
       mensaje: "",
       crearLista: false,
       nombreNuevaLista: ""
@@ -116,7 +115,6 @@ class MenuItem extends Component {
     this.state = {
       mostrarOpciones: false,
       popUp: false,
-      tiempo: 0,
       mostrarNotif: false,
       mensaje: ""
     };

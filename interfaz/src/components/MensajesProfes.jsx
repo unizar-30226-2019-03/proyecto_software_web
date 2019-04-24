@@ -3,7 +3,6 @@ import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
 import ListaVerticalProfes from "./ListaVerticalProfes";
 import imagenUsuario from "../assets/user.png";
-import { Notificacion } from "./Listas";
 import { RemoveAccents, sesionValida } from "../App";
 import { Redirect, Link } from "react-router-dom";
 
@@ -47,6 +46,15 @@ const list = [
 ];
 
 class ProfesoresLista extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { listaProfesores: this.props.historial };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({ listaProfesores: nextProps.historial });
+  }
+
   render() {
     return (
       <div>
@@ -68,9 +76,10 @@ class ProfesoresLista extends Component {
                   borderWidth: "0px 0px 1px 0px",
                   borderColor: "lightgrey",
                   width: "calc(100% - 67%)",
-                  color: "#00000080"
+                  color: "#00000080",
+                  outline: "none"
                 }}
-                placeholder={"Buscar en la lista de profesores"}
+                placeholder={"Buscar profesor..."}
               />
             </div>
             <div>
@@ -81,7 +90,7 @@ class ProfesoresLista extends Component {
                   marginTop: "25px"
                 }}
               >
-                <ListaVerticalProfes lista={this.props.historial} />
+                <ListaVerticalProfes lista={this.state.listaProfesores} />
               </div>
             </div>
           </div>
@@ -96,7 +105,7 @@ class ProfesoresLista extends Component {
                     marginTop: "25px"
                   }}
                 >
-                  <ListaVerticalProfes lista={this.props.historial} />
+                  <ListaVerticalProfes lista={this.state.listaProfesores} />
                 </div>
               </div>
             </div>
@@ -119,9 +128,10 @@ class ProfesoresLista extends Component {
                   borderWidth: "0px 0px 1px 0px",
                   borderColor: "lightgrey",
                   width: "100%",
-                  color: "#00000080"
+                  color: "#00000080",
+                  outline: "none"
                 }}
-                placeholder={"Buscar en la lista de profesores"}
+                placeholder={"Buscar profesor..."}
               />
             </div>
           </div>
@@ -140,11 +150,7 @@ class MensajesProfes extends Component {
       busqueda: "",
       miHistorial: list,
       historialFiltrado: [],
-      filtrado: false,
-      borrado: false,
-      notif: false,
-      mensajeNotif: "",
-      tiempo: 0
+      filtrado: false
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleResize = this.handleResize.bind(this);
@@ -214,6 +220,7 @@ class MensajesProfes extends Component {
       this.setState({ contentMargin: "71px" });
     }
   }
+
   render() {
     return !sesionValida() ? (
       <Redirect to="/" />
@@ -224,7 +231,6 @@ class MensajesProfes extends Component {
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         <BarraNavegacion
-          logOut={this.props.logOut}
           onChange={this.handleChange}
           activar={""}
           displaySide={true}
@@ -237,9 +243,21 @@ class MensajesProfes extends Component {
             marginTop: "80px"
           }}
         >
-          <div>
-            <Link to="/mensajes">{"Mensajes"}</Link>
-            <Link to="/mensajes-profesores">{"Profesores"}</Link>
+          <div style={{ marginBottom: "10px" }}>
+            <Link
+              to="/mensajes"
+              className="link-mensajes"
+              style={{ textDecoration: "none", color: "black" }}
+            >
+              {"Mensajes"}
+            </Link>
+            <Link
+              to="/mensajes-profesores"
+              className="link-mensajes-activo"
+              style={{ color: "black" }}
+            >
+              {"Profesores"}
+            </Link>
           </div>
           {this.state.miHistorial.length === 0 ? (
             <div
@@ -269,11 +287,6 @@ class MensajesProfes extends Component {
             />
           )}
         </div>
-        <Notificacion
-          mostrar={this.state.notif}
-          mensaje={this.state.mensajeNotif}
-          deshacer={false}
-        />
       </div>
     );
   }

@@ -47,7 +47,25 @@ const list = [
   }
 ];
 
-class HistorialLista extends Component {
+class MensajesLista extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { popUp: false, listaChats: this.props.historial };
+    this.abrirPopUp = this.abrirPopUp.bind(this);
+    this.cerrarPopUp = this.cerrarPopUp.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({ listaChats: nextProps.historial });
+  }
+
+  abrirPopUp() {
+    this.setState({ popUp: true });
+  }
+
+  cerrarPopUp() {
+    this.setState({ popUp: false });
+  }
   render() {
     return (
       <div>
@@ -69,12 +87,15 @@ class HistorialLista extends Component {
                   borderWidth: "0px 0px 1px 0px",
                   borderColor: "lightgrey",
                   width: "calc(100% - 67%)",
-                  color: "#00000080"
+                  color: "#00000080",
+                  outline: "none"
                 }}
-                placeholder={"Buscar chat"}
+                placeholder={"Buscar chat..."}
               />
               <Popup
                 open={this.state.popUp}
+                onOpen={this.abrirPopUp}
+                onClose={this.cerrarPopUp}
                 repositionOnResize
                 position="bottom left"
                 arrow={false}
@@ -85,6 +106,7 @@ class HistorialLista extends Component {
                   padding: "16px 20px",
                   marginTop: "10px",
                   border: "0",
+                  zIndex: "200",
                   boxShadow:
                     "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4)"
                 }}
@@ -102,7 +124,7 @@ class HistorialLista extends Component {
                     }}
                     className="tit-prof"
                   >
-                    BORRAR TODO EL HISTORIAL
+                    BORRAR TODOS LOS CHATS
                   </div>
                 }
               >
@@ -117,7 +139,7 @@ class HistorialLista extends Component {
                     ¿Estás seguro?
                   </div>
                   <div style={{ fontSize: "13px", paddingTop: "10px" }}>
-                    Una vez eliminada no habrá vuelta atrás.
+                    Una vez eliminados no habrá vuelta atrás.
                   </div>
                   <div
                     style={{
@@ -129,6 +151,7 @@ class HistorialLista extends Component {
                       cursor: "pointer"
                     }}
                     onClick={() => {
+                      this.cerrarPopUp();
                       this.props.borrar();
                     }}
                   >
@@ -146,7 +169,7 @@ class HistorialLista extends Component {
                 }}
               >
                 <ListaVerticalMensajes
-                  lista={this.props.historial}
+                  lista={this.state.listaChats}
                   borrar={this.props.borrarMensaje}
                 />
               </div>
@@ -164,7 +187,7 @@ class HistorialLista extends Component {
                   }}
                 >
                   <ListaVerticalMensajes
-                    lista={this.props.historial}
+                    lista={this.state.listaChats}
                     borrar={this.props.borrarMensaje}
                   />
                 </div>
@@ -189,11 +212,15 @@ class HistorialLista extends Component {
                   borderWidth: "0px 0px 1px 0px",
                   borderColor: "lightgrey",
                   width: "100%",
-                  color: "#00000080"
+                  color: "#00000080",
+                  outline: "none"
                 }}
-                placeholder={"Buscar chat"}
+                placeholder={"Buscar chat..."}
               />
               <Popup
+                open={this.state.popUp}
+                onOpen={this.abrirPopUp}
+                onClose={this.cerrarPopUp}
                 repositionOnResize
                 position="bottom center"
                 arrow={false}
@@ -204,261 +231,7 @@ class HistorialLista extends Component {
                   padding: "16px 20px",
                   border: "0",
                   marginTop: "10px",
-                  boxShadow:
-                    "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4)"
-                }}
-                trigger={
-                  <div
-                    style={{
-                      cursor: "pointer",
-                      fontSize: "14px"
-                    }}
-                    className="tit-prof"
-                  >
-                    BORRAR TODO EL HISTORIAL
-                  </div>
-                }
-              >
-                <div style={{ padding: "5px 10px" }}>
-                  <div
-                    style={{
-                      fontWeight: "550",
-                      fontSize: "16px",
-                      borderBottom: "1px solid lightgrey"
-                    }}
-                  >
-                    ¿Estás seguro?
-                  </div>
-                  <div style={{ fontSize: "13px", paddingTop: "10px" }}>
-                    Una vez eliminada no habrá vuelta atrás.
-                  </div>
-                  <div
-                    style={{
-                      color: "red",
-                      fontSize: "14px",
-                      paddingTop: "10px",
-                      width: "fit-content",
-                      height: "fit-content",
-                      cursor: "pointer"
-                    }}
-                    onClick={() => {
-                      this.props.borrar();
-                    }}
-                  >
-                    Sí, eliminar
-                  </div>
-                </div>
-              </Popup>
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  }
-}
-
-class HistorialFiltrado extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { popUp: false };
-    this.abrirPopUp = this.abrirPopUp.bind(this);
-    this.cerrarPopUp = this.cerrarPopUp.bind(this);
-  }
-
-  abrirPopUp() {
-    this.setState({ popUp: true });
-  }
-
-  cerrarPopUp() {
-    this.setState({ popUp: false });
-  }
-
-  render() {
-    return (
-      <div>
-        {!this.props.fixed ? (
-          <div style={{ display: "block", marginRight: "70px" }}>
-            <div className="profesores-asignatura">
-              <input
-                onChange={this.props.handleChange}
-                onKeyDown={this.props.keyDown}
-                defaultValue={this.props.busqueda}
-                style={{
-                  fontSize: "14px",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  display: "-webkit-box",
-                  WebkitLineClamp: "1",
-                  WebkitBoxOrient: "vertical",
-                  backgroundColor: "#fafafa",
-                  borderWidth: "0px 0px 1px 0px",
-                  borderColor: "lightgrey",
-                  width: "calc(100% - 67%)",
-                  color: "#00000080"
-                }}
-                placeholder={"Buscar chat"}
-              />
-              <Popup
-                repositionOnResize
-                position="bottom left"
-                arrow={false}
-                contentStyle={{
-                  width: "250px",
-                  maxHeight: "300px",
-                  overflow: "scroll",
-                  padding: "16px 20px",
-                  marginTop: "10px",
-                  border: "0",
-                  boxShadow:
-                    "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4)"
-                }}
-                trigger={
-                  <div
-                    style={{
-                      cursor: "pointer",
-                      fontSize: "14px",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      display: "-webkit-box",
-                      WebkitLineClamp: "1",
-                      WebkitBoxOrient: "vertical",
-                      width: "fit-content"
-                    }}
-                    className="tit-prof"
-                  >
-                    BORRAR TODO EL HISTORIAL
-                  </div>
-                }
-              >
-                <div style={{ padding: "5px 10px" }}>
-                  <div
-                    style={{
-                      fontWeight: "550",
-                      fontSize: "16px",
-                      borderBottom: "1px solid lightgrey"
-                    }}
-                  >
-                    ¿Estás seguro?
-                  </div>
-                  <div style={{ fontSize: "13px", paddingTop: "10px" }}>
-                    Una vez eliminada no habrá vuelta atrás.
-                  </div>
-                  <div
-                    style={{
-                      color: "red",
-                      fontSize: "14px",
-                      paddingTop: "10px",
-                      width: "fit-content",
-                      height: "fit-content",
-                      cursor: "pointer"
-                    }}
-                    onClick={() => {
-                      this.cerrarPopUp();
-                      this.props.borrar();
-                    }}
-                  >
-                    Sí, eliminar
-                  </div>
-                </div>
-              </Popup>
-            </div>
-            <div>
-              <div
-                style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  marginTop: "25px"
-                }}
-              >
-                {this.props.historial.length > 0 ? (
-                  <ListaVerticalMensajes
-                    lista={this.props.historial}
-                    borrar={this.props.borrarMensaje}
-                  />
-                ) : (
-                  <div
-                    style={{
-                      fontSize: "14px",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      display: "-webkit-box",
-                      WebkitLineClamp: "1",
-                      WebkitBoxOrient: "vertical"
-                    }}
-                  >
-                    Ningún título coincide con la consulta.
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div style={{ display: "flex", marginRight: "70px" }}>
-            <div style={{ paddingRight: "300px" }}>
-              <div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    marginTop: "25px"
-                  }}
-                >
-                  {this.props.historial.length > 0 ? (
-                    <ListaVerticalMensajes
-                      lista={this.props.historial}
-                      borrar={this.props.borrarMensaje}
-                    />
-                  ) : (
-                    <div
-                      style={{
-                        fontSize: "14px",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        display: "-webkit-box",
-                        WebkitLineClamp: "1",
-                        WebkitBoxOrient: "vertical"
-                      }}
-                    >
-                      Ningún título coincide con la consulta.
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-            <div
-              className="profesores-asignatura"
-              style={{ position: "fixed", right: "70px" }}
-            >
-              <input
-                onChange={this.props.handleChange}
-                onKeyDown={this.props.keyDown}
-                defaultValue={this.props.busqueda}
-                style={{
-                  fontSize: "14px",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  display: "-webkit-box",
-                  WebkitLineClamp: "1",
-                  WebkitBoxOrient: "vertical",
-                  backgroundColor: "#fafafa",
-                  borderWidth: "0px 0px 1px 0px",
-                  borderColor: "lightgrey",
-                  width: "100%",
-                  color: "#00000080"
-                }}
-                placeholder={"Buscar chat"}
-              />
-              <Popup
-                repositionOnResize
-                position="bottom center"
-                arrow={false}
-                contentStyle={{
-                  width: "250px",
-                  maxHeight: "300px",
-                  overflow: "scroll",
-                  padding: "16px 20px",
-                  border: "0",
-                  marginTop: "10px",
+                  zIndex: "200",
                   boxShadow:
                     "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4)"
                 }}
@@ -485,248 +258,7 @@ class HistorialFiltrado extends Component {
                     ¿Estás seguro?
                   </div>
                   <div style={{ fontSize: "13px", paddingTop: "10px" }}>
-                    Una vez eliminada no habrá vuelta atrás.
-                  </div>
-                  <div
-                    style={{
-                      color: "red",
-                      fontSize: "14px",
-                      paddingTop: "10px",
-                      width: "fit-content",
-                      height: "fit-content",
-                      cursor: "pointer"
-                    }}
-                    onClick={() => {
-                      this.cerrarPopUp();
-                      this.props.borrar();
-                    }}
-                  >
-                    Sí, eliminar
-                  </div>
-                </div>
-              </Popup>
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  }
-}
-
-class HistorialListaBorrado extends Component {
-  render() {
-    return (
-      <div>
-        {!this.props.fixed ? (
-          <div style={{ display: "block", marginRight: "70px" }}>
-            <div className="profesores-asignatura">
-              <input
-                onChange={this.props.handleChange}
-                onKeyDown={this.props.keyDown}
-                defaultValue={this.props.busqueda}
-                style={{
-                  fontSize: "14px",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  display: "-webkit-box",
-                  WebkitLineClamp: "1",
-                  WebkitBoxOrient: "vertical",
-                  backgroundColor: "#fafafa",
-                  borderWidth: "0px 0px 1px 0px",
-                  borderColor: "lightgrey",
-                  width: "calc(100% - 67%)",
-                  color: "#00000080"
-                }}
-                placeholder={"Buscar chat"}
-              />
-              <Popup
-                repositionOnResize
-                position="bottom left"
-                arrow={false}
-                contentStyle={{
-                  width: "250px",
-                  maxHeight: "300px",
-                  overflow: "scroll",
-                  padding: "16px 20px",
-                  marginTop: "10px",
-                  border: "0",
-                  boxShadow:
-                    "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4)"
-                }}
-                trigger={
-                  <div
-                    style={{
-                      cursor: "pointer",
-                      fontSize: "14px",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      display: "-webkit-box",
-                      WebkitLineClamp: "1",
-                      WebkitBoxOrient: "vertical",
-                      width: "fit-content"
-                    }}
-                    className="tit-prof"
-                  >
-                    BORRAR TODOS LOS CHATS
-                  </div>
-                }
-              >
-                <div style={{ padding: "5px 10px" }}>
-                  <div
-                    style={{
-                      fontWeight: "550",
-                      fontSize: "16px",
-                      borderBottom: "1px solid lightgrey"
-                    }}
-                  >
-                    ¿Estás seguro?
-                  </div>
-                  <div style={{ fontSize: "13px", paddingTop: "10px" }}>
-                    Una vez eliminada no habrá vuelta atrás.
-                  </div>
-                  <div
-                    style={{
-                      color: "red",
-                      fontSize: "14px",
-                      paddingTop: "10px",
-                      width: "fit-content",
-                      height: "fit-content",
-                      cursor: "pointer"
-                    }}
-                    onClick={() => {
-                      this.cerrarPopUp();
-                      this.props.borrar();
-                    }}
-                  >
-                    Sí, eliminar
-                  </div>
-                </div>
-              </Popup>
-            </div>
-            <div>
-              <div
-                style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  marginTop: "25px"
-                }}
-              >
-                {this.props.historial.length > 0 ? (
-                  <ListaVerticalMensajes
-                    lista={this.props.historial}
-                    borrar={this.props.borrarMensaje}
-                  />
-                ) : (
-                  <div
-                    style={{
-                      fontSize: "14px",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      display: "-webkit-box",
-                      WebkitLineClamp: "1",
-                      WebkitBoxOrient: "vertical"
-                    }}
-                  >
-                    Ningún título coincide con la consulta.
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div style={{ display: "flex", marginRight: "70px" }}>
-            <div style={{ paddingRight: "300px" }}>
-              <div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    marginTop: "25px"
-                  }}
-                >
-                  {this.props.historial.length > 0 ? (
-                    <ListaVerticalMensajes
-                      lista={this.props.historial}
-                      borrar={this.props.borrarMensaje}
-                    />
-                  ) : (
-                    <div
-                      style={{
-                        fontSize: "14px",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        display: "-webkit-box",
-                        WebkitLineClamp: "1",
-                        WebkitBoxOrient: "vertical"
-                      }}
-                    >
-                      Ningún título coincide con la consulta.
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-            <div
-              className="profesores-asignatura"
-              style={{ position: "fixed", right: "70px" }}
-            >
-              <input
-                onChange={this.props.handleChange}
-                onKeyDown={this.props.keyDown}
-                defaultValue={this.props.busqueda}
-                style={{
-                  fontSize: "14px",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  display: "-webkit-box",
-                  WebkitLineClamp: "1",
-                  WebkitBoxOrient: "vertical",
-                  backgroundColor: "#fafafa",
-                  borderWidth: "0px 0px 1px 0px",
-                  borderColor: "lightgrey",
-                  width: "100%",
-                  color: "#00000080"
-                }}
-                placeholder={"Buscar chat"}
-              />
-              <Popup
-                repositionOnResize
-                position="bottom center"
-                arrow={false}
-                contentStyle={{
-                  width: "250px",
-                  maxHeight: "300px",
-                  overflow: "scroll",
-                  padding: "16px 20px",
-                  border: "0",
-                  marginTop: "10px",
-                  boxShadow:
-                    "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4)"
-                }}
-                trigger={
-                  <div
-                    style={{
-                      cursor: "pointer",
-                      fontSize: "14px"
-                    }}
-                    className="tit-prof"
-                  >
-                    BORRAR TODOS LOS CHATS
-                  </div>
-                }
-              >
-                <div style={{ padding: "5px 10px" }}>
-                  <div
-                    style={{
-                      fontWeight: "550",
-                      fontSize: "16px",
-                      borderBottom: "1px solid lightgrey"
-                    }}
-                  >
-                    ¿Estás seguro?
-                  </div>
-                  <div style={{ fontSize: "13px", paddingTop: "10px" }}>
-                    Una vez eliminada no habrá vuelta atrás.
+                    Una vez eliminados no habrá vuelta atrás.
                   </div>
                   <div
                     style={{
@@ -764,7 +296,6 @@ class Mensajes extends Component {
       miHistorial: list,
       historialFiltrado: [],
       filtrado: false,
-      borrado: false,
       notif: false,
       mensajeNotif: "",
       tiempo: 0
@@ -775,6 +306,9 @@ class Mensajes extends Component {
     this.buscarHistorial = this.buscarHistorial.bind(this);
     this.keyDown = this.keyDown.bind(this);
     this.borrarMensaje = this.borrarMensaje.bind(this);
+    this.iniciarReloj = this.iniciarReloj.bind(this);
+    this.pararReloj = this.pararReloj.bind(this);
+    this.tick = this.tick.bind(this);
   }
 
   borrarHistorial() {
@@ -795,7 +329,7 @@ class Mensajes extends Component {
         const palabras = this.state.busqueda.split(" ");
         var resultado = [];
         this.state.miHistorial.forEach(e => {
-          const { name, canal, image } = e;
+          const { name, image } = e;
           for (let index = 0; index < palabras.length; index++) {
             const element = palabras[index];
             if (
@@ -803,7 +337,7 @@ class Mensajes extends Component {
                 .toLowerCase()
                 .includes(RemoveAccents(element).toLowerCase())
             ) {
-              resultado.push({ name, canal, image });
+              resultado.push({ name, image });
               break;
             }
           }
@@ -820,8 +354,7 @@ class Mensajes extends Component {
     this.setState({
       miHistorial: nuevoHistorial,
       notif: true,
-      borrado: true,
-      mensajeNotif: `Mensaje ${nombreMensaje.toUpperCase()} eliminado del historial`
+      mensajeNotif: `Chat ${nombreMensaje.toUpperCase()} eliminado de mensajes`
     });
 
     if (this.state.filtrado) {
@@ -851,6 +384,7 @@ class Mensajes extends Component {
   }
 
   componentWillUnmount() {
+    this.pararReloj();
     window.removeEventListener("resize", this.handleResize);
   }
 
@@ -861,6 +395,26 @@ class Mensajes extends Component {
       this.setState({ contentMargin: "71px" });
     }
   }
+
+  iniciarReloj() {
+    this.pararReloj();
+    this.timerID = setInterval(() => this.tick(), 1000);
+  }
+
+  pararReloj() {
+    clearInterval(this.timerID);
+  }
+
+  tick() {
+    let t = this.state.tiempo;
+    if (t === 3) {
+      t = -1;
+      this.pararReloj();
+      this.setState({ notif: false });
+    }
+    this.setState({ tiempo: t + 1 });
+  }
+
   render() {
     return !sesionValida() ? (
       <Redirect to="/" />
@@ -871,7 +425,6 @@ class Mensajes extends Component {
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         <BarraNavegacion
-          logOut={this.props.logOut}
           onChange={this.handleChange}
           activar={""}
           displaySide={true}
@@ -885,9 +438,22 @@ class Mensajes extends Component {
           }}
         >
           <div>
-            <Link to="/mensajes">{"Mensajes"}</Link>
-            <Link to="/mensajes-profesores">{"Profesores"}</Link>
-
+            <div style={{ marginBottom: "10px" }}>
+              <Link
+                to="/mensajes"
+                className="link-mensajes-activo"
+                style={{ color: "black" }}
+              >
+                {"Mensajes"}
+              </Link>
+              <Link
+                to="/mensajes-profesores"
+                className="link-mensajes"
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                {"Profesores"}
+              </Link>
+            </div>
             {this.state.miHistorial.length === 0 ? (
               <div
                 style={{
@@ -899,50 +465,18 @@ class Mensajes extends Component {
               >
                 No hay chats actualmente.
               </div>
-            ) : !this.state.filtrado ? (
-              !this.state.borrado ? (
-                <HistorialLista
-                  fixed={this.state.fixed}
-                  borrar={this.borrarHistorial}
-                  handleChange={this.buscarHistorial}
-                  keyDown={this.keyDown}
-                  anyadir={this.anyadirHistorialA}
-                  historial={this.state.miHistorial}
-                  busqueda={this.state.busqueda}
-                  borrarMensaje={this.borrarMensaje}
-                />
-              ) : (
-                <HistorialListaBorrado
-                  fixed={this.state.fixed}
-                  borrar={this.borrarHistorial}
-                  handleChange={this.buscarHistorial}
-                  keyDown={this.keyDown}
-                  anyadir={this.anyadirHistorialA}
-                  historial={this.state.miHistorial}
-                  busqueda={this.state.busqueda}
-                  borrarMensaje={this.borrarMensaje}
-                />
-              )
-            ) : !this.state.borrado ? (
-              <HistorialFiltrado
-                fixed={this.state.fixed}
-                borrar={this.borrarHistorial}
-                handleChange={this.buscarHistorial}
-                keyDown={this.keyDown}
-                anyadir={this.anyadirHistorialA}
-                historial={this.state.historialFiltrado}
-                busqueda={this.state.busqueda}
-                borrarMensaje={this.borrarMensaje}
-                anyadirVideoALista={this.anyadirVideoALista}
-              />
             ) : (
-              <HistorialListaBorrado
+              <MensajesLista
                 fixed={this.state.fixed}
                 borrar={this.borrarHistorial}
                 handleChange={this.buscarHistorial}
                 keyDown={this.keyDown}
                 anyadir={this.anyadirHistorialA}
-                historial={this.state.historialFiltrado}
+                historial={
+                  !this.state.filtrado
+                    ? this.state.miHistorial
+                    : this.state.historialFiltrado
+                }
                 busqueda={this.state.busqueda}
                 borrarMensaje={this.borrarMensaje}
               />

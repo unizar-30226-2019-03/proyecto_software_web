@@ -124,7 +124,7 @@ class App extends Component {
           <Route path={"/inicio"} component={Inicio} />
           <Route path={"/subir-video"} component={SubirVideo} />
 
-          <Route path={"/profesor"} component={Profesor} />
+          <Route path={"/profesor/:nombre"} component={Profesor} />
           <Route path={"/administrador-crear"} component={AdministradorCrear} />
           <Route
             path={"/administrador-borrar"}
@@ -142,7 +142,7 @@ class App extends Component {
           <Route path={"/asig/:nombre"} component={Asignatura} />
           <Route path={"/video/:nombreVideo"} component={ViendoVideo} />
           <Route path={"/recuperacion"} component={RecuperarPass} />
-          <Route path={"/chat"} component={Chat} />
+          <Route path={"/chat/:nombre"} component={Chat} />
           <Route path={"/busqueda/:valor"} component={ResultadoBusqueda} />
         </Switch>
       </Router>
