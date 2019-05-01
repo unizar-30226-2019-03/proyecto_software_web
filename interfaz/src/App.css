@@ -192,7 +192,7 @@
 
 .arrow-horizontal-list-renderer {
   cursor: pointer;
-  top: -23px;
+  top: -35px;
   margin-right: -20px;
   margin-left: -20px;
   position: relative;
@@ -866,4 +866,29 @@ h3 {
   border: 1px;
   border-radius: 20px;
   overflow-wrap: break-word;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  border: 1px solid black;
+  border-radius: 20px;
+  width: 72px;
+  padding: 0;
+}
+.nombreContainer {
+  color: black;
+  padding-left: 3px;
+  padding-top: 1px;
+}
+
+.universidadIcon {
+  width: 25px;
+  height: 25px;
+  align-self: center;
+  border-radius: 50%;
+}
+.asignaturaNombre {
+  font-size: 14px;
+  align-self: center;
 }

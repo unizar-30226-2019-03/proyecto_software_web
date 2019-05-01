@@ -178,6 +178,24 @@ class MenuItem extends Component {
             >
               {this.props.duracion}
             </div>
+            <div
+              style={{
+                color: "green",
+                fontSize: "12px",
+                textAlign: "center",
+                backgroundColor: "rgba(0,0,0,0.7)",
+                textDecoration: "none",
+                width: "40px",
+                height: "16px",
+                position: "absolute",
+                left: "4px",
+                top: "60px",
+                borderRadius: "3px",
+                zIndex: "100"
+              }}
+            >
+              {this.props.rating}
+            </div>
           </Link>
         </div>
         <div style={{ marginTop: "5px" }}>
@@ -309,7 +327,7 @@ class MenuItem extends Component {
 // Important! add unique key
 export const MenuVertical = (list, anyadir, listaRepro) =>
   list.map(el => {
-    const { name, canal, image, duracion } = el;
+    const { name, canal, image, duracion, rating } = el;
 
     return (
       <MenuItem
@@ -320,6 +338,7 @@ export const MenuVertical = (list, anyadir, listaRepro) =>
         img={image}
         listaRepro={listaRepro}
         duracion={duracion}
+        rating={rating}
       />
     );
   });

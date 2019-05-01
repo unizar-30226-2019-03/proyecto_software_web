@@ -19,73 +19,85 @@ const list = [
     name: "item1",
     canal: "Asignatura A",
     image: imagenPrueba,
-    duracion: getTime(500)
+    duracion: getTime(500),
+    rating: "98%"
   },
   {
     name: "item2",
     canal: "Asignatura B",
     image: imagenPrueba,
-    duracion: getTime(600)
+    duracion: getTime(600),
+    rating: "98.2%"
   },
   {
     name: "item3",
     canal: "Asignatura C",
     image: imagenPrueba,
-    duracion: getTime(700)
+    duracion: getTime(700),
+    rating: "92%"
   },
   {
     name: "item4",
     canal: "Asignatura D",
     image: imagenPrueba,
-    duracion: getTime(800)
+    duracion: getTime(800),
+    rating: "88%"
   },
   {
     name: "item5",
     canal: "Asignatura E",
     image: imagenPrueba,
-    duracion: getTime(900)
+    duracion: getTime(900),
+    rating: "77.9%"
   },
   {
     name: "item6",
     canal: "Asignatura F",
     image: imagenPrueba,
-    duracion: getTime(1000)
+    duracion: getTime(1000),
+    rating: "90%"
   },
   {
     name: "item7",
     canal: "Asignatura G",
     image: imagenPrueba,
-    duracion: getTime(1100)
+    duracion: getTime(1100),
+    rating: "84%"
   },
   {
     name: "item8",
     canal: "Asignatura H",
     image: imagenPrueba,
-    duracion: getTime(1200)
+    duracion: getTime(1200),
+    rating: "87.7%"
   },
   {
     name: "item9",
     canal: "Asignatura I",
     image: imagenPrueba,
-    duracion: getTime(1300)
+    duracion: getTime(1300),
+    rating: "93%"
   },
   {
     name: "item10",
     canal: "Asignatura J",
     image: imagenPrueba,
-    duracion: getTime(1400)
+    duracion: getTime(1400),
+    rating: "91%"
   },
   {
     name: "item11",
     canal: "Asignatura K",
     image: imagenPrueba,
-    duracion: getTime(1500)
+    duracion: getTime(1500),
+    rating: "91.1%"
   },
   {
     name: "item12",
     canal: "Asignatura L",
     image: imagenPrueba,
-    duracion: getTime(1600)
+    duracion: getTime(1600),
+    rating: "90%"
   }
 ];
 

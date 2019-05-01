@@ -103,7 +103,7 @@ class Profesor extends Component {
             marginTop: "80px"
           }}
         >
-          <h5>David Solanas Sanz</h5>
+          <h5>{this.props.match.params.nombre}</h5>
           <div style={{ marginTop: "40px" }}>
             <div
               style={{
@@ -124,7 +124,10 @@ class Profesor extends Component {
               }}
             >
               <div>
-                <Link to="/mensajes" className="universidad">
+                <Link
+                  to={`/chat/${this.props.match.params.nombre}`}
+                  className="universidad"
+                >
                   <Button className="boton-filtro">Enviar un mensaje</Button>
                 </Link>
               </div>

@@ -5,6 +5,7 @@ import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import iconoAsign from "../assets/favicon.ico";
 import { Link } from "react-router-dom";
 import { getTime } from "../App";
+import IconoAsignaturaUniversidad from "./IconoAsignaturaUniversidad";
 
 // list of items
 const list = [
@@ -12,79 +13,91 @@ const list = [
     name: "item1",
     canal: "Asignatura A",
     image: imagenPrueba,
-    duracion: getTime(500)
+    duracion: getTime(500),
+    rating: "98%"
   },
   {
     name: "item2",
     canal: "Asignatura B",
     image: imagenPrueba,
-    duracion: getTime(600)
+    duracion: getTime(600),
+    rating: "98.2%"
   },
   {
     name: "item3",
     canal: "Asignatura C",
     image: imagenPrueba,
-    duracion: getTime(700)
+    duracion: getTime(700),
+    rating: "92%"
   },
   {
     name: "item4",
     canal: "Asignatura D",
     image: imagenPrueba,
-    duracion: getTime(800)
+    duracion: getTime(800),
+    rating: "88%"
   },
   {
     name: "item5",
     canal: "Asignatura E",
     image: imagenPrueba,
-    duracion: getTime(900)
+    duracion: getTime(900),
+    rating: "77.9%"
   },
   {
     name: "item6",
     canal: "Asignatura F",
     image: imagenPrueba,
-    duracion: getTime(1000)
+    duracion: getTime(1000),
+    rating: "90%"
   },
   {
     name: "item7",
     canal: "Asignatura G",
     image: imagenPrueba,
-    duracion: getTime(1100)
+    duracion: getTime(1100),
+    rating: "84%"
   },
   {
     name: "item8",
     canal: "Asignatura H",
     image: imagenPrueba,
-    duracion: getTime(1200)
+    duracion: getTime(1200),
+    rating: "87.7%"
   },
   {
     name: "item9",
     canal: "Asignatura I",
     image: imagenPrueba,
-    duracion: getTime(1300)
+    duracion: getTime(1300),
+    rating: "93%"
   },
   {
     name: "item10",
     canal: "Asignatura J",
     image: imagenPrueba,
-    duracion: getTime(1400)
+    duracion: getTime(1400),
+    rating: "91%"
   },
   {
     name: "item11",
     canal: "Asignatura K",
     image: imagenPrueba,
-    duracion: getTime(1500)
+    duracion: getTime(1500),
+    rating: "91.1%"
   },
   {
     name: "item12",
     canal: "Asignatura L",
     image: imagenPrueba,
-    duracion: getTime(1600)
+    duracion: getTime(1600),
+    rating: "90%"
   }
 ];
 
 // One item component
 // selected prop will be passed
-const MenuItem = ({ url, canal, img, duracion }) => {
+const MenuItem = ({ url, canal, img, duracion, rating }) => {
   return (
     <div>
       <div className="menu-item">
@@ -108,26 +121,43 @@ const MenuItem = ({ url, canal, img, duracion }) => {
           >
             {duracion}
           </div>
+          <div
+            style={{
+              color: "green",
+              fontSize: "12px",
+              textAlign: "center",
+              backgroundColor: "rgba(0,0,0,0.7)",
+              textDecoration: "none",
+              width: "40px",
+              height: "16px",
+              position: "absolute",
+              left: "4px",
+              top: "49px",
+              borderRadius: "3px",
+              zIndex: "100"
+            }}
+          >
+            {rating}
+          </div>
         </Link>
         <div>
           <div style={{ float: "left", marginTop: "5px" }}>
-            <Link to={`/asig/${canal}`}>
-              <img
-                src={iconoAsign}
-                alt={url}
-                width="25px"
-                height="25px"
-                style={{ borderRadius: "50%" }}
-              />
+            <Link to={`/asig/${canal}`} style={{ textDecoration: "none" }}>
+              <IconoAsignaturaUniversidad name={canal} image={iconoAsign} />
             </Link>
           </div>
-          <div style={{ marginLeft: "30px", lineHeight: "normal" }}>
+          <div style={{ marginLeft: "75px", lineHeight: "normal" }}>
             {" "}
             <Link
               style={{
                 textDecoration: "none",
                 color: "black",
                 fontSize: "14px",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                display: "-webkit-box",
+                WebkitLineClamp: "2",
+                WebkitBoxOrient: "vertical",
                 overflowWrap: "break-word",
                 fontWeight: "bold"
               }}
@@ -137,7 +167,12 @@ const MenuItem = ({ url, canal, img, duracion }) => {
             </Link>
           </div>
         </div>
-        <div className="fecha-subida">Hace X min</div>
+        <div
+          className="fecha-subida"
+          style={{ marginLeft: "0", marginTop: "2px" }}
+        >
+          Subido hace X min
+        </div>
       </div>
     </div>
   );
@@ -147,7 +182,7 @@ const MenuItem = ({ url, canal, img, duracion }) => {
 // Important! add unique key
 export const Menu = list =>
   list.map(el => {
-    const { name, canal, image, duracion } = el;
+    const { name, canal, image, duracion, rating } = el;
 
     return (
       <MenuItem
@@ -156,6 +191,7 @@ export const Menu = list =>
         img={image}
         canal={canal}
         duracion={duracion}
+        rating={rating}
       />
     );
   });
