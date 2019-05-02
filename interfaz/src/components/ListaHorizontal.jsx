@@ -14,84 +14,84 @@ const list = [
     canal: "Asignatura A",
     image: imagenPrueba,
     duracion: getTime(500),
-    rating: "98%"
+    rating: 98
   },
   {
     name: "item2",
     canal: "Asignatura B",
     image: imagenPrueba,
     duracion: getTime(600),
-    rating: "98.2%"
+    rating: 98
   },
   {
     name: "item3",
     canal: "Asignatura C",
     image: imagenPrueba,
     duracion: getTime(700),
-    rating: "92%"
+    rating: 92
   },
   {
     name: "item4",
     canal: "Asignatura D",
     image: imagenPrueba,
     duracion: getTime(800),
-    rating: "88%"
+    rating: 88
   },
   {
     name: "item5",
     canal: "Asignatura E",
     image: imagenPrueba,
     duracion: getTime(900),
-    rating: "77.9%"
+    rating: 77
   },
   {
     name: "item6",
     canal: "Asignatura F",
     image: imagenPrueba,
     duracion: getTime(1000),
-    rating: "90%"
+    rating: 90
   },
   {
     name: "item7",
     canal: "Asignatura G",
     image: imagenPrueba,
     duracion: getTime(1100),
-    rating: "84%"
+    rating: 84
   },
   {
     name: "item8",
     canal: "Asignatura H",
     image: imagenPrueba,
     duracion: getTime(1200),
-    rating: "87.7%"
+    rating: 87
   },
   {
     name: "item9",
     canal: "Asignatura I",
     image: imagenPrueba,
     duracion: getTime(1300),
-    rating: "93%"
+    rating: 93
   },
   {
     name: "item10",
     canal: "Asignatura J",
     image: imagenPrueba,
     duracion: getTime(1400),
-    rating: "91%"
+    rating: 91
   },
   {
     name: "item11",
     canal: "Asignatura K",
     image: imagenPrueba,
     duracion: getTime(1500),
-    rating: "91.1%"
+    rating: 91
   },
   {
     name: "item12",
     canal: "Asignatura L",
     image: imagenPrueba,
     duracion: getTime(1600),
-    rating: "90%"
+    rating: 90
   }
 ];
 
@@ -123,7 +123,7 @@ const MenuItem = ({ url, canal, img, duracion, rating }) => {
           </div>
           <div
             style={{
-              color: "green",
+              color: rating >= 50 ? "#228B22" : "#DC143C",
               fontSize: "12px",
               textAlign: "center",
               backgroundColor: "rgba(0,0,0,0.7)",
@@ -137,7 +137,7 @@ const MenuItem = ({ url, canal, img, duracion, rating }) => {
               zIndex: "100"
             }}
           >
-            {rating}
+            {rating + "%"}
           </div>
         </Link>
         <div>

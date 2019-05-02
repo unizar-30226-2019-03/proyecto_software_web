@@ -9,11 +9,34 @@ import { FaShareAlt, FaRegBookmark, FaRegStar } from "react-icons/fa";
 import icono from "../assets/favicon.ico";
 import { sesionValida, getTime } from "../App";
 
-function generadorColores() {
-  var letras = "0123456789ABCDEF";
+/**
+ * Shuffles array in place.
+ * @param {Array} a items An array containing the items.
+ */
+function shuffle(a) {
+  var j, x, i;
+  for (i = a.length - 1; i > 0; i--) {
+    j = Math.floor(Math.random() * (i + 1));
+    x = a[i];
+    a[i] = a[j];
+    a[j] = x;
+  }
+  return a;
+}
+
+let tabla_Pearson = shuffle([...new Array(256)].map((_, i) => i));
+
+function generadorColores(usuario) {
+  var hash = 0;
+  if (usuario.length === 0) return hash;
+  for (let i = 0; i < usuario.length; i++) {
+    hash = usuario.charCodeAt(i) + ((hash << 5) - hash);
+    hash = hash & hash;
+  }
   var color = "#";
-  for (var i = 0; i < 6; i++) {
-    color += letras[Math.floor(Math.random() * 16)];
+  for (let i = 0; i < 3; i++) {
+    var value = (hash >> (i * 8)) & 255;
+    color += ("00" + value.toString(16)).substr(-2);
   }
   return color;
 }
@@ -28,110 +51,110 @@ const comentariosVideo = [
   {
     tiempo: 5,
     comentario: "Comentario de prueba en segundo 5",
-    usuario: "usuario1",
-    color: generadorColores()
+    usuario: "david",
+    color: generadorColores("david")
   },
   {
     tiempo: 6,
     comentario: "Comentario de prueba en segundo 6",
-    usuario: "usuario2",
-    color: generadorColores()
+    usuario: "juan",
+    color: generadorColores("juan")
   },
   {
     tiempo: 8,
     comentario: "Comentario de prueba en segundo 8",
-    usuario: "usuario3",
-    color: generadorColores()
+    usuario: "diego",
+    color: generadorColores("diego")
   },
   {
     tiempo: 10,
     comentario: "Comentario de prueba en segundo 10",
-    usuario: "usuario4",
-    color: generadorColores()
+    usuario: "paula",
+    color: generadorColores("paula")
   },
   {
     tiempo: 12,
     comentario: "Comentario de prueba en segundo 12",
-    usuario: "usuario5",
-    color: generadorColores()
+    usuario: "isaac",
+    color: generadorColores("isaac")
   },
   {
     tiempo: 13,
     comentario: "Comentario de prueba en segundo 13",
-    usuario: "usuario6",
-    color: generadorColores()
+    usuario: "lorien",
+    color: generadorColores("lorien")
   },
   {
     tiempo: 15,
     comentario: "Comentario de prueba en segundo 15",
-    usuario: "usuario7",
-    color: generadorColores()
+    usuario: "raquel",
+    color: generadorColores("raquel")
   },
   {
     tiempo: 16,
     comentario: "Comentario de prueba en segundo 16",
-    usuario: "usuario8",
-    color: generadorColores()
+    usuario: "adrian",
+    color: generadorColores("adrian")
   },
   {
     tiempo: 18,
     comentario: "Comentario de prueba en segundo 18",
-    usuario: "usuario9",
-    color: generadorColores()
+    usuario: "ruben",
+    color: generadorColores("ruben")
   },
   {
     tiempo: 20,
     comentario: "Comentario de prueba en segundo 20",
-    usuario: "usuario10",
-    color: generadorColores()
+    usuario: "jose",
+    color: generadorColores("jose")
   },
   {
     tiempo: 22,
     comentario: "Comentario de prueba en segundo 22",
-    usuario: "usuario11",
-    color: generadorColores()
+    usuario: "david",
+    color: generadorColores("david")
   },
   {
     tiempo: 23,
     comentario: "Comentario de prueba en segundo 23",
-    usuario: "usuario11",
-    color: generadorColores()
+    usuario: "david",
+    color: generadorColores("david")
   },
   {
     tiempo: 24,
     comentario: "Comentario de prueba en segundo 24",
-    usuario: "usuario11",
-    color: generadorColores()
+    usuario: "juan",
+    color: generadorColores("juan")
   },
   {
     tiempo: 25,
     comentario: "Comentario de prueba en segundo 25",
-    usuario: "usuario11",
-    color: generadorColores()
+    usuario: "juan",
+    color: generadorColores("juan")
   },
   {
     tiempo: 26,
     comentario: "Comentario de prueba en segundo 26",
-    usuario: "usuario11",
-    color: generadorColores()
+    usuario: "diego",
+    color: generadorColores("diego")
   },
   {
     tiempo: 27,
     comentario: "Comentario de prueba en segundo 27",
-    usuario: "usuario11",
-    color: generadorColores()
+    usuario: "diego",
+    color: generadorColores("diego")
   },
   {
     tiempo: 28,
     comentario: "Comentario de prueba en segundo 28",
-    usuario: "usuario11",
-    color: generadorColores()
+    usuario: "paula",
+    color: generadorColores("paula")
   },
   {
     tiempo: 29,
     comentario: "Comentario de prueba en segundo 29",
-    usuario: "usuario11",
-    color: generadorColores()
+    usuario: "isaac",
+    color: generadorColores("isaac")
   }
 ];
 
@@ -287,7 +310,7 @@ class ViendoVideo extends Component {
         var nuevosComentarios = this.state.comentarios.slice();
         const usuario = document.cookie.split("=")[1].split("@")[0];
         const tiempo = this.state.tiempoVideo;
-        const color = generadorColores();
+        const color = generadorColores(usuario);
         nuevosComentarios.push({ tiempo, comentario, usuario, color });
         this.comentario.current.value = "";
         this.setState({ comentarios: nuevosComentarios });

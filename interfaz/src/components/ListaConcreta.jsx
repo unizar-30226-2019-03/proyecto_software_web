@@ -14,63 +14,63 @@ const list = [
     canal: "Asignatura A",
     image: imagenPrueba,
     duracion: getTime(500),
-    rating: "99%"
+    rating: 99
   },
   {
     name: "La tierra no gira en círculos aleredor del SOL",
     canal: "Asignatura B",
     image: imagenPrueba,
     duracion: getTime(600),
-    rating: "95%"
+    rating: 95
   },
   {
     name: "¿ Cómo será el futuro de la física ?",
     canal: "Asignatura C",
     image: imagenPrueba,
     duracion: getTime(700),
-    rating: "96%"
+    rating: 96
   },
   {
     name: "10 cosas que no sabías del SISTEMA SOLAR",
     canal: "Asignatura D",
     image: imagenPrueba,
     duracion: getTime(800),
-    rating: "98%"
+    rating: 98
   },
   {
     name: "Física: ¿Heroína o villana?",
     canal: "Asignatura E",
     image: imagenPrueba,
     duracion: getTime(900),
-    rating: "97%"
+    rating: 97
   },
   {
     name: "¿ Hasta donde llega el SISTEMA SOLAR ?",
     canal: "Asignatura F",
     image: imagenPrueba,
     duracion: getTime(1000),
-    rating: "91%"
+    rating: 91
   },
   {
     name: "Las 8 ecuaciones más importantes de la física",
     canal: "Asignatura G",
     image: imagenPrueba,
     duracion: getTime(1100),
-    rating: "92%"
+    rating: 92
   },
   {
     name: "La psicología de los genios",
     canal: "Asignatura H",
     image: imagenPrueba,
     duracion: getTime(1200),
-    rating: "94%"
+    rating: 94
   },
   {
     name: "Superhéroes y radioactividad",
     canal: "Asignatura I",
     image: imagenPrueba,
     duracion: getTime(1300),
-    rating: "93%"
+    rating: 93
   }
 ];
 

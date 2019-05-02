@@ -22,6 +22,7 @@ import ListaConcreta from "./components/ListaConcreta";
 import ResultadoBusqueda from "./components/ResultadoBusqueda";
 import MensajesProfes from "./components/MensajesProfes";
 import Chat from "./components/Chat";
+import MisVideos from "./components/MisVideos";
 
 /**
  * Crea una cookie de sesión para el usuario con correo newUser
@@ -123,6 +124,7 @@ class App extends Component {
           <Route path={"/registro"} component={SignIn} />
           <Route path={"/inicio"} component={Inicio} />
           <Route path={"/subir-video"} component={SubirVideo} />
+          <Route path={"/mis-videos"} component={MisVideos} />
 
           <Route path={"/profesor/:nombre"} component={Profesor} />
           <Route path={"/administrador-crear"} component={AdministradorCrear} />

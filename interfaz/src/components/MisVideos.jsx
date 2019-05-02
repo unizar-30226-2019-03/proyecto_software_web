@@ -8,12 +8,6 @@ import { Link, Redirect } from "react-router-dom";
 import { Menu } from "./ListaHorizontal";
 import { sesionValida, getTime } from "../App";
 
-const profesores = [
-  { foto: icono, nombre: "Jorge Pérez" },
-  { foto: icono, nombre: "Javier Molina" },
-  { foto: icono, nombre: "Juan García" }
-];
-
 const list = [
   {
     name: "item1",
@@ -101,38 +95,7 @@ const list = [
   }
 ];
 
-export const Profesor = ({ foto, nombre }) => {
-  return (
-    <div
-      style={{ marginRight: "20px", textAlign: "center", marginBottom: "10px" }}
-    >
-      <Link
-        to="/profesor/X"
-        style={{ textDecoration: "none", color: "black", display: "flex" }}
-      >
-        <img
-          src={foto}
-          alt="profesor"
-          width="30"
-          height="30"
-          style={{ borderRadius: "50%" }}
-        />
-        <p style={{ marginLeft: "10px", marginTop: "3px", fontWeight: "500" }}>
-          {nombre}
-        </p>
-      </Link>
-    </div>
-  );
-};
-
-export const ListaProfesores = list =>
-  list.map(el => {
-    const { foto, nombre } = el;
-
-    return <Profesor nombre={nombre} key={nombre} foto={foto} />;
-  });
-
-class Asignatura extends Component {
+class MisVideos extends Component {
   constructor() {
     super();
     this.state = {
@@ -159,7 +122,7 @@ class Asignatura extends Component {
         </Helmet>
         <BarraNavegacion
           onChange={this.handleChange}
-          activar={this.props.match.params.nombre}
+          activar={""}
           displaySide={true}
           hide={false}
         />
@@ -179,31 +142,28 @@ class Asignatura extends Component {
                 width="60"
                 height="60"
               />
-              {this.props.match.params.nombre}
+              Vídeos subidos
             </div>
             <div className="universidad">
-              <Button
-                style={{
-                  backgroundColor: "#235da9",
-                  borderColor: "#235da9"
-                }}
-              >
-                Seguir asignatura
-              </Button>
+              <Link to="/subir-video">
+                <Button
+                  style={{
+                    backgroundColor: "#235da9",
+                    borderColor: "#235da9"
+                  }}
+                >
+                  Subir nuevo vídeo
+                </Button>
+              </Link>
             </div>
           </div>
-          <div style={{ display: "flex", marginRight: "70px" }}>
-            <div style={{ flex: "85%" }}>
+          <div style={{ marginRight: "70px" }}>
+            <div>
               <div>
-                <p style={{ fontWeight: "550" }}>Vídeos subidos</p>
                 <div style={{ display: "flex", flexWrap: "wrap" }}>
                   {Menu(list)}
                 </div>
               </div>
-            </div>
-            <div className="profesores-asignatura" style={{ flex: "15%" }}>
-              <div className="tit-prof">Profesorado</div>
-              <div className="prof">{ListaProfesores(profesores)}</div>
             </div>
           </div>
         </div>
@@ -212,4 +172,4 @@ class Asignatura extends Component {
   }
 }
 
-export default Asignatura;
+export default MisVideos;

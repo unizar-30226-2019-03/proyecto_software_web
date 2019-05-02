@@ -180,7 +180,7 @@ class MenuItem extends Component {
             </div>
             <div
               style={{
-                color: "green",
+                color: this.props.rating >= 50 ? "#228B22" : "#DC143C",
                 fontSize: "12px",
                 textAlign: "center",
                 backgroundColor: "rgba(0,0,0,0.7)",
@@ -194,7 +194,7 @@ class MenuItem extends Component {
                 zIndex: "100"
               }}
             >
-              {this.props.rating}
+              {this.props.rating + "%"}
             </div>
           </Link>
         </div>

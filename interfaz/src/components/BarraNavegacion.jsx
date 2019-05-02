@@ -171,6 +171,7 @@ class BarraNavegacion extends Component {
                 {this.state.displayMenu ? (
                   <div className="dropdown-content">
                     <Link to="/perfil">Mi perfil</Link>
+                    <Link to="/mis-videos">Mis vídeos</Link>
                     <Link to="/" onClick={() => logOut(getUser())}>
                       Cerrar Sesión
                     </Link>
