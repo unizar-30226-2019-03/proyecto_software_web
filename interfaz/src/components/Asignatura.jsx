@@ -6,7 +6,8 @@ import imagenPrueba from "../assets/landscape.jpg";
 import { Button } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
 import { Menu } from "./ListaHorizontal";
-import { sesionValida, getTime } from "../App";
+import { getTime } from "../config/Procesar";
+import { isSignedIn } from "../config/Auth";
 
 const profesores = [
   { foto: icono, nombre: "Jorge Pérez" },
@@ -149,7 +150,7 @@ class Asignatura extends Component {
     }
   }
   render() {
-    return !sesionValida() ? (
+    return !isSignedIn() ? (
       <Redirect to="/" />
     ) : (
       <div>

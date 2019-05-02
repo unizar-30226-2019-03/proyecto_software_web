@@ -6,7 +6,8 @@ import ListaVertical from "./ListaVertical";
 import imagenPrueba from "../assets/landscape.jpg";
 import { Notificacion } from "./Listas";
 import Popup from "reactjs-popup";
-import { sesionValida, RemoveAccents, getTime } from "../App";
+import { RemoveAccents, getTime } from "../config/Procesar";
+import { isSignedIn } from "../config/Auth";
 
 const list = [
   {
@@ -496,7 +497,7 @@ class ListaConcreta extends Component {
   }
 
   render() {
-    return !sesionValida() ? (
+    return !isSignedIn() ? (
       <Redirect to="/" />
     ) : (
       <div>

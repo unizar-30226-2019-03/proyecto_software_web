@@ -5,7 +5,7 @@ import User_img from "../assets/user.png";
 import { Button } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
 import icono from "../assets/favicon.ico";
-import { sesionValida } from "../App";
+import { isSignedIn } from "../config/Auth";
 
 class CamposMostrar extends Component {
   renderCampo(nombre, contenido) {
@@ -29,7 +29,7 @@ class CamposMostrar extends Component {
     );
   }
   render() {
-    return !sesionValida() ? (
+    return !isSignedIn() ? (
       <Redirect to="/" />
     ) : (
       <div>

@@ -3,7 +3,7 @@ import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
 import { Button, Form, Col } from "react-bootstrap";
 import { Redirect, Link } from "react-router-dom";
-import { sesionValida } from "../App";
+import { isSignedIn } from "../config/Auth";
 
 const FormularioDatos = (
   handleSubmit,
@@ -153,7 +153,7 @@ class SubirVideo extends Component {
   }
 
   render() {
-    return !sesionValida() ? (
+    return !isSignedIn() ? (
       <Redirect to="/" />
     ) : (
       <div>

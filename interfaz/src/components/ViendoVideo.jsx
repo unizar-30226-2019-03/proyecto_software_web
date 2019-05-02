@@ -7,25 +7,12 @@ import Video from "./Video";
 import vid from "../assets/VideoPrueba.mp4";
 import { FaShareAlt, FaRegBookmark, FaRegStar } from "react-icons/fa";
 import icono from "../assets/favicon.ico";
-import { sesionValida, getTime } from "../App";
+import { getTime } from "../config/Procesar";
 import Popup from "reactjs-popup";
 import { ContenidoPopUp } from "./ListaVertical";
 import { Notificacion } from "./Listas";
-
-function generadorColores(usuario) {
-  var hash = 0;
-  if (usuario.length === 0) return hash;
-  for (let i = 0; i < usuario.length; i++) {
-    hash = usuario.charCodeAt(i) + ((hash << 5) - hash);
-    hash = hash & hash;
-  }
-  var color = "#";
-  for (let i = 0; i < 3; i++) {
-    var value = (hash >> (i * 8)) & 255;
-    color += ("00" + value.toString(16)).substr(-2);
-  }
-  return color;
-}
+import { isSignedIn } from "../config/Auth";
+import { generadorColores, scrollFunc } from "../config/VideoFunc";
 
 const profesores = [
   { foto: icono, nombre: "Jorge" },
@@ -228,25 +215,6 @@ class ViendoVideo extends Component {
         }
       }
     }
-    function scrollFunc(elemento) {
-      var docPos = f_scrollTop();
-      elemento.scrollIntoView();
-      window.scrollTo(0, docPos);
-    }
-
-    function f_scrollTop() {
-      return f_filterResults(
-        window.pageYOffset ? window.pageYOffset : 0,
-        document.documentElement ? document.documentElement.scrollTop : 0,
-        document.body ? document.body.scrollTop : 0
-      );
-    }
-
-    function f_filterResults(n_win, n_docel, n_body) {
-      var n_result = n_win ? n_win : 0;
-      if (n_docel && (!n_result || n_result > n_docel)) n_result = n_docel;
-      return n_body && (!n_result || n_result > n_body) ? n_body : n_result;
-    }
   }
 
   recibirEstadoVideo(estado) {
@@ -311,7 +279,7 @@ class ViendoVideo extends Component {
       if (e.keyCode === 13) {
         //Enviar comentario
         var nuevosComentarios = this.state.comentarios.slice();
-        const usuario = document.cookie.split("=")[1].split("@")[0];
+        const usuario = "david";
         const tiempo = this.state.tiempoVideo;
         const color = generadorColores(usuario);
         nuevosComentarios.push({ tiempo, comentario, usuario, color });
@@ -356,7 +324,7 @@ class ViendoVideo extends Component {
   }
 
   render() {
-    return !sesionValida() ? (
+    return !isSignedIn() ? (
       <Redirect to="/" />
     ) : (
       <div>
@@ -398,7 +366,7 @@ class ViendoVideo extends Component {
                     onOpen={() => this.setState({ popUpPuntuar: true })}
                     onClose={() => this.setState({ popUpPuntuar: false })}
                     arrow={false}
-                    position="left center"
+                    position="top left"
                     contentStyle={{
                       width: "250px",
                       maxHeight: "300px",
@@ -475,7 +443,7 @@ class ViendoVideo extends Component {
                     onOpen={() => this.setState({ popUpGuardar: true })}
                     onClose={() => this.setState({ popUpGuardar: false })}
                     arrow={false}
-                    position="left center"
+                    position="top left"
                     contentStyle={{
                       width: "250px",
                       maxHeight: "300px",

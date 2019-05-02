@@ -3,7 +3,7 @@ import { Link, Redirect } from "react-router-dom";
 import BarraNavegacion from "./BarraNavegacion";
 import ListaHorizontal from "./ListaHorizontal";
 import { Helmet } from "react-helmet";
-import { sesionValida } from "../App";
+import { isSignedIn } from "../config/Auth";
 
 class Inicio extends Component {
   constructor() {
@@ -32,7 +32,7 @@ class Inicio extends Component {
   }
 
   render() {
-    return !sesionValida() ? (
+    return !isSignedIn() ? (
       <Redirect to="/" />
     ) : (
       <div>

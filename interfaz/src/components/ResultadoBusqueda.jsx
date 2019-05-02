@@ -4,9 +4,10 @@ import imagenPrueba from "../assets/landscape.jpg";
 import { Notificacion } from "./Listas";
 import { Helmet } from "react-helmet";
 import BarraNavegacion from "./BarraNavegacion";
-import { sesionValida, getTime } from "../App";
 import { Redirect } from "react-router-dom";
 import BusquedaProfesores from "./BusquedaProfesores";
+import { getTime } from "../config/Procesar";
+import { isSignedIn } from "../config/Auth";
 
 const list = [
   {
@@ -202,7 +203,7 @@ class ResultadoBusqueda extends Component {
   }
 
   render() {
-    return !sesionValida() ? (
+    return !isSignedIn() ? (
       <Redirect to="/" />
     ) : (
       <div>

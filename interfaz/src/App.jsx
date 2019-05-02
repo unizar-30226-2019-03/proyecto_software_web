@@ -23,87 +23,9 @@ import ResultadoBusqueda from "./components/ResultadoBusqueda";
 import MensajesProfes from "./components/MensajesProfes";
 import Chat from "./components/Chat";
 import MisVideos from "./components/MisVideos";
-
-/**
- * Crea una cookie de sesión para el usuario con correo newUser
- * @param {*} newUser Correo electrónico del usuario registrado
- */
-export function setUser(newUser) {
-  var d = new Date();
-  d.setTime(d.getTime() + 60 * 60 * 1000);
-  var expires = "expires=" + d.toUTCString();
-  document.cookie = `user=${newUser};` + expires;
-}
-
-/**
- * Borra la cookie de sesión del usuario
- * @param {*} usuario Nombre de la cookie de sesión
- */
-export function logOut(usuario) {
-  document.cookie = `user=${usuario}; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
-}
-
-/**
- * Devuelve cierto si y solo si hay una cookie de sesión
- * creada, es decir, si el usuario se ha loggeado previamente
- */
-export function sesionValida() {
-  return document.cookie !== "";
-}
-
-/**
- * Devuelve el nombre asociado a la cookie de sesión
- */
-export function getUser() {
-  return document.cookie.split("=")[1];
-}
-
-/**
- * Devuelve la cadena str sin acentos
- * @param {*} str Cadena de texto a quitar acentos
- */
-export function RemoveAccents(str) {
-  var accents =
-    "ÀÁÂÃÄÅàáâãäåÒÓÔÕÕÖØòóôõöøÈÉÊËèéêëðÇçÐÌÍÎÏìíîïÙÚÛÜùúûüÑñŠšŸÿýŽž";
-  var accentsOut =
-    "AAAAAAaaaaaaOOOOOOOooooooEEEEeeeeeCcDIIIIiiiiUUUUuuuuNnSsYyyZz";
-  str = str.split("");
-  var strLen = str.length;
-  var i, x;
-  for (i = 0; i < strLen; i++) {
-    if ((x = accents.indexOf(str[i])) !== -1) {
-      str[i] = accentsOut[x];
-    }
-  }
-  return str.join("");
-}
-
-/**
- * Devuelve el tiempo t en formato mm:ss
- * @param {*} t Tiempo en segundos
- */
-export function getTime(t) {
-  const tiempoAux = Math.trunc(t);
-  var minutos = Math.trunc(tiempoAux / 60);
-  if (minutos < 10) {
-    minutos = "0" + minutos.toString();
-  } else {
-    minutos = minutos.toString();
-  }
-  var segundos = tiempoAux % 60;
-  if (segundos < 10) {
-    segundos = "0" + segundos.toString();
-  } else {
-    segundos = segundos.toString();
-  }
-  return minutos + ":" + segundos;
-}
+import { isSignedIn } from "./config/Auth";
 
 class App extends Component {
-  componentWillUnmount() {
-    logOut(getUser());
-  }
-
   render() {
     return (
       <Router>
@@ -111,15 +33,7 @@ class App extends Component {
           <Route
             exact
             path={"/"}
-            render={() =>
-              !sesionValida() ? (
-                <Login />
-              ) : getUser() === "admin@gmail.com" ? (
-                <AdministradorCrear />
-              ) : (
-                <Inicio />
-              )
-            }
+            render={() => (!isSignedIn() ? <Login /> : <Inicio />)}
           />
           <Route path={"/registro"} component={SignIn} />
           <Route path={"/inicio"} component={Inicio} />

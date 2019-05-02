@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import brand from "../assets/imgUnicast.jpg";
 import { Navbar, Nav, Button } from "react-bootstrap";
-import { logOut, getUser } from "../App";
+import { signOut } from "../config/Auth";
 
 class BarraAdmi extends Component {
   render() {
@@ -43,7 +43,7 @@ class BarraAdmi extends Component {
               </Link>
             </Nav.Item>
             <Nav.Item>
-              <Link to="/" onClick={() => logOut(getUser())}>
+              <Link to="/" onClick={() => signOut()}>
                 <Button
                   variant="link"
                   style={{ color: "#00000080", textDecoration: "none" }}

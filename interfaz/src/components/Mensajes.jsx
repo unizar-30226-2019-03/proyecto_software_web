@@ -5,7 +5,8 @@ import ListaVerticalMensajes from "./ListaVerticalMensajes";
 import imagenUsuario from "../assets/user.png";
 import Popup from "reactjs-popup";
 import { Notificacion } from "./Listas";
-import { sesionValida, RemoveAccents } from "../App";
+import { RemoveAccents } from "../config/Procesar";
+import { isSignedIn } from "../config/Auth";
 import { Redirect, Link } from "react-router-dom";
 
 const list = [
@@ -416,7 +417,7 @@ class Mensajes extends Component {
   }
 
   render() {
-    return !sesionValida() ? (
+    return !isSignedIn() ? (
       <Redirect to="/" />
     ) : (
       <div>

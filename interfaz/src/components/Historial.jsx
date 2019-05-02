@@ -6,7 +6,8 @@ import imagenPrueba from "../assets/landscape.jpg";
 import { Redirect } from "react-router-dom";
 import Popup from "reactjs-popup";
 import { Notificacion } from "./Listas";
-import { sesionValida, RemoveAccents, getTime } from "../App";
+import { RemoveAccents, getTime } from "../config/Procesar";
+import { isSignedIn } from "../config/Auth";
 
 const list = [
   {
@@ -468,7 +469,7 @@ class Historial extends Component {
   }
 
   render() {
-    return !sesionValida() ? (
+    return !isSignedIn() ? (
       <Redirect to="/" />
     ) : (
       <div>

@@ -3,8 +3,9 @@ import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
 import ListaVerticalProfes from "./ListaVerticalProfes";
 import imagenUsuario from "../assets/user.png";
-import { RemoveAccents, sesionValida } from "../App";
+import { RemoveAccents } from "../config/Procesar";
 import { Redirect, Link } from "react-router-dom";
+import { isSignedIn } from "../config/Auth";
 
 const list = [
   {
@@ -222,7 +223,7 @@ class MensajesProfes extends Component {
   }
 
   render() {
-    return !sesionValida() ? (
+    return !isSignedIn() ? (
       <Redirect to="/" />
     ) : (
       <div>

@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet";
 import User_img from "../assets/user.png";
 import { Button, Form, Col } from "react-bootstrap";
 import { Redirect, Link } from "react-router-dom";
-import { sesionValida } from "../App";
+import { isSignedIn } from "../config/Auth";
 
 const FormularioDatos = (
   handleSubmit,
@@ -256,7 +256,7 @@ class EditarPerfil extends Component {
   }
 
   render() {
-    return !sesionValida() ? (
+    return !isSignedIn() ? (
       <Redirect to="/" />
     ) : (
       <div>

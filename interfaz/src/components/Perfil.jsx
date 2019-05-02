@@ -5,7 +5,7 @@ import User_img from "../assets/user.png";
 import { Button, Form } from "react-bootstrap";
 import Popup from "reactjs-popup";
 import { Link, Redirect } from "react-router-dom";
-import { sesionValida } from "../App";
+import { isSignedIn } from "../config/Auth";
 
 class CamposMostrar extends Component {
   renderCampo(nombre, contenido) {
@@ -124,7 +124,7 @@ class Perfil extends Component {
 
   render() {
     let clasePass = { border: this.getBorder(this.state.passValida) };
-    return !sesionValida() ? (
+    return !isSignedIn() ? (
       <Redirect to="/" />
     ) : (
       <div>

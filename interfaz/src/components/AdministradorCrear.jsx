@@ -3,7 +3,7 @@ import BarraAdmi from "./BarraAdmi";
 import { Helmet } from "react-helmet";
 import { Button, Form, Col, Modal } from "react-bootstrap";
 import { Redirect } from "react-router-dom";
-import { getUser } from "../App";
+import { isSignedIn } from "../config/Auth";
 
 const FormularioProfesor = (
   handleProfesor,
@@ -385,7 +385,7 @@ class AdministradorCrear extends Component {
   }
 
   render() {
-    return getUser() !== "admin@gmail.com" ? (
+    return !isSignedIn() ? (
       <Redirect to="/" />
     ) : (
       <div>

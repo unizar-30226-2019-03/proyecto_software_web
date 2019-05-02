@@ -3,7 +3,7 @@ import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
 import imagenUsuario from "../assets/user.png";
 import Messages from "./Messages";
-import { sesionValida, getUser } from "../App";
+import { isSignedIn } from "../config/Auth";
 import { Redirect, Link } from "react-router-dom";
 
 class Chat extends Component {
@@ -25,7 +25,7 @@ class Chat extends Component {
 
   sendHandler(message) {
     const messageObject = {
-      username: getUser(),
+      username: "david",
       message
     };
     messageObject.fromMe = this.state.me;
@@ -41,7 +41,7 @@ class Chat extends Component {
   }
 
   render() {
-    return !sesionValida() ? (
+    return !isSignedIn() ? (
       <Redirect to="/" />
     ) : (
       <div>

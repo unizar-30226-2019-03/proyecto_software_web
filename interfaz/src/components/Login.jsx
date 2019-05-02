@@ -3,46 +3,37 @@ import { Button, Form } from "react-bootstrap";
 import { Redirect, Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import uni from "../assets/UnicastNombre.png";
-import { setUser } from "../App";
+import { UserApi } from "swagger_unicast";
+import { signIn } from "../config/Auth";
 
 class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      emailValido: -1,
-      email: "",
-      pass: "",
-      passValida: -1,
-      admi: -1
+      error: false,
+      validado: -1
     };
-    this.email = React.createRef();
+    this.userID = React.createRef();
     this.pass = React.createRef();
     this.handleSubmit = this.handleSubmit.bind(this);
     this.getBorder = this.getBorder.bind(this);
   }
 
-  handleSubmit(event) {
-    const email = this.email.current.value;
+  handleSubmit = event => {
+    const userID = this.userID.current.value;
     const pass = this.pass.current.value;
     event.preventDefault();
-    this.setState({ email: email, pass: pass });
-    if (email === "david@gmail.com") {
-      this.setState({ emailValido: 1 });
-    } else {
-      this.setState({ emailValido: 0 });
-    }
-    if (pass === "1234") {
-      this.setState({ passValida: 1 });
-    } else {
-      this.setState({ passValida: 0 });
-    }
-    if ((email === "david@gmail.com") & (pass === "1234")) {
-      setUser(email);
-    } else if ((email === "admin@gmail.com") & (pass === "admin")) {
-      this.setState({ admi: 1 });
-      setUser(email);
-    }
-  }
+    let apiInstance = new UserApi();
+    apiInstance.authUser(userID, pass, (error, data, response) => {
+      if (error) {
+        this.setState({ error: true });
+      } else {
+        const validacion = signIn(data);
+        // validacion será 1 si es admin, y 0 si es un usuario normal
+        this.setState({ validado: validacion });
+      }
+    });
+  };
 
   getBorder(key) {
     switch (key) {
@@ -54,17 +45,16 @@ class Login extends Component {
   }
 
   render() {
-    let clasePass = { border: this.getBorder(this.state.passValida) };
     return (
       <div>
         <Helmet>
           <title>UniCast</title>
         </Helmet>
-        {(this.state.emailValido === 1) & (this.state.passValida === 1) ? (
+        {this.state.validado === 0 ? (
           <Redirect to={"/inicio"} />
         ) : (
           <div>
-            {this.state.admi === 1 ? (
+            {this.state.validado === 1 ? (
               <Redirect to={"/administrador-crear"} />
             ) : (
               <div>
@@ -72,12 +62,20 @@ class Login extends Component {
                   <img className="userIcon" src={uni} alt="UniCast" />
                   <Form onSubmit={e => this.handleSubmit(e)}>
                     <Form.Group controlId="formBasicEmail">
-                      <Form.Label>Correo electrónico</Form.Label>
+                      {this.state.error ? (
+                        <Form.Text style={{ color: "red" }}>
+                          Nombre de usuario o contraseña incorrectos
+                        </Form.Text>
+                      ) : (
+                        <Form.Label>Nombre de usuario</Form.Label>
+                      )}
+
                       <Form.Control
                         required
-                        type="email"
-                        placeholder="Email"
-                        ref={this.email}
+                        ref={this.userID}
+                        onChange={() => this.setState({ error: false })}
+                        type="text"
+                        placeholder="Nombre de usuario"
                       />
                       <Form.Text className="text-muted">
                         Nunca compartiremos tus datos.
@@ -88,10 +86,10 @@ class Login extends Component {
                       <Form.Label>Constraseña</Form.Label>
                       <Form.Control
                         required
+                        ref={this.pass}
+                        onChange={() => this.setState({ error: false })}
                         type="password"
                         placeholder="Constraseña"
-                        ref={this.pass}
-                        style={clasePass}
                       />
                     </Form.Group>
 

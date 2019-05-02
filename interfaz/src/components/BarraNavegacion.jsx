@@ -6,7 +6,7 @@ import { Navbar, Nav } from "react-bootstrap";
 import { FaBell, FaEnvelope, FaBars } from "react-icons/fa";
 import BarraBusqueda from "./BarraBusqueda";
 import BarraLateral from "./BarraLateral";
-import { logOut, getUser } from "../App";
+import { signOut } from "../config/Auth";
 
 class BarraNavegacion extends Component {
   /**
@@ -172,7 +172,7 @@ class BarraNavegacion extends Component {
                   <div className="dropdown-content">
                     <Link to="/perfil">Mi perfil</Link>
                     <Link to="/mis-videos">Mis vídeos</Link>
-                    <Link to="/" onClick={() => logOut(getUser())}>
+                    <Link to="/" onClick={() => signOut()}>
                       Cerrar Sesión
                     </Link>
                   </div>

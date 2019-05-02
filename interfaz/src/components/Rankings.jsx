@@ -6,7 +6,7 @@ import { Link, Redirect } from "react-router-dom";
 import foto from "../assets/favicon.ico";
 import CustomToggle from "./CustomToggle";
 import { FaTrophy } from "react-icons/fa";
-import { sesionValida } from "../App";
+import { isSignedIn } from "../config/Auth";
 
 const asignaturas = [
   {
@@ -157,7 +157,7 @@ class Rankings extends Component {
   render() {
     const asignaturasFiltradas = this.filtrar(asignaturas);
     const listaAsign = ListaAsignaturas(asignaturasFiltradas);
-    return !sesionValida() ? (
+    return !isSignedIn() ? (
       <Redirect to="/" />
     ) : (
       <div>

@@ -6,7 +6,7 @@ import { FaPlus, FaPencilAlt, FaRegTrashAlt } from "react-icons/fa";
 import Popup from "reactjs-popup";
 import { Form, Button } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
-import { sesionValida } from "../App";
+import { isSignedIn } from "../config/Auth";
 
 const lista = [
   { titulo: "Lista de reproducción A" },
@@ -274,7 +274,7 @@ class Listas extends Component {
   }
 
   render() {
-    return !sesionValida() ? (
+    return !isSignedIn() ? (
       <Redirect to="/" />
     ) : (
       <div>
