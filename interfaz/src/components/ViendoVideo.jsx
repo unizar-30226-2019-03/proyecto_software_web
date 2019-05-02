@@ -5,10 +5,17 @@ import { Link, Redirect } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import Video from "./Video";
 import vid from "../assets/VideoPrueba.mp4";
-import { FaShareAlt, FaRegBookmark, FaRegStar } from "react-icons/fa";
+import {
+  FaShareAlt,
+  FaRegBookmark,
+  FaRegStar,
+  FaStar,
+  FaStarHalf
+} from "react-icons/fa";
 import icono from "../assets/favicon.ico";
 import { getTime } from "../config/Procesar";
 import Popup from "reactjs-popup";
+import StarRatingComponent from "react-star-rating-component";
 import { ContenidoPopUp } from "./ListaVertical";
 import { Notificacion } from "./Listas";
 import { isSignedIn } from "../config/Auth";
@@ -139,6 +146,36 @@ const comentariosVideo = [
   }
 ];
 
+const StarRating = ({ nombre, puntuacion, onStarClick, size }) => {
+  return (
+    <StarRatingComponent
+      name={nombre}
+      starCount={5}
+      value={puntuacion}
+      onStarClick={onStarClick}
+      renderStarIcon={() => {
+        return (
+          <span>
+            <FaStar size={size} />
+          </span>
+        );
+      }}
+      renderStarIconHalf={() => {
+        return (
+          <span>
+            <span style={{ position: "absolute", zIndex: "-1" }}>
+              <FaStar size={size} />
+            </span>
+            <span>
+              <FaStarHalf size={size} color={"#ffb400"} />
+            </span>
+          </span>
+        );
+      }}
+    />
+  );
+};
+
 const Profesor = ({ foto, nombre }) => {
   return (
     <div style={{ marginRight: "20px", textAlign: "center" }}>
@@ -178,7 +215,10 @@ class ViendoVideo extends Component {
       mensajeNotif: "",
       tiempoNotif: 0,
       popUpGuardar: false,
-      popUpPuntuar: false
+      popUpPuntuar: false,
+      calidad: 2.5,
+      adecuacion: 2.5,
+      claridad: 2.5
     };
     this.handleChange = this.handleChange.bind(this);
     this.recogerComentarios = this.recogerComentarios.bind(this);
@@ -190,6 +230,10 @@ class ViendoVideo extends Component {
     this.iniciarReloj = this.iniciarReloj.bind(this);
     this.pararReloj = this.pararReloj.bind(this);
     this.tick = this.tick.bind(this);
+    this.onStarClickAdecuacion = this.onStarClickAdecuacion.bind(this);
+    this.onStarClickCalidad = this.onStarClickCalidad.bind(this);
+    this.onStarClickClaridad = this.onStarClickClaridad.bind(this);
+    this.puntuar = this.puntuar.bind(this);
     this.comentario = React.createRef();
   }
 
@@ -323,6 +367,44 @@ class ViendoVideo extends Component {
     this.pararReloj();
   }
 
+  onStarClickClaridad(nextValue, prevValue, name, e) {
+    const xPos =
+      (e.pageX - e.currentTarget.getBoundingClientRect().left) /
+      e.currentTarget.offsetWidth;
+
+    if (xPos <= 0.5) {
+      nextValue -= 0.5;
+    }
+    this.setState({ claridad: nextValue });
+  }
+
+  onStarClickCalidad(nextValue, prevValue, name, e) {
+    const xPos =
+      (e.pageX - e.currentTarget.getBoundingClientRect().left) /
+      e.currentTarget.offsetWidth;
+
+    if (xPos <= 0.5) {
+      nextValue -= 0.5;
+    }
+    this.setState({ calidad: nextValue });
+  }
+
+  onStarClickAdecuacion(nextValue, prevValue, name, e) {
+    const xPos =
+      (e.pageX - e.currentTarget.getBoundingClientRect().left) /
+      e.currentTarget.offsetWidth;
+
+    if (xPos <= 0.5) {
+      nextValue -= 0.5;
+    }
+    this.setState({ adecuacion: nextValue });
+  }
+
+  puntuar() {
+    //Enviar al servidor la puntuación actual
+    //console.log(this.state.claridad, this.state.calidad, this.state.adecuacion);
+  }
+
   render() {
     return !isSignedIn() ? (
       <Redirect to="/" />
@@ -417,7 +499,65 @@ class ViendoVideo extends Component {
                           fontSize: "14px",
                           borderBottom: "1px solid lightgrey"
                         }}
-                      />
+                      >
+                        <div style={{ display: "flex" }}>
+                          <div
+                            style={{
+                              marginTop: "2px",
+                              marginRight: "10px",
+                              fontWeight: "500"
+                            }}
+                          >
+                            Claridad:
+                          </div>
+                          <div style={{ marginLeft: "auto", marginRight: "0" }}>
+                            <StarRating
+                              nombre="claridad"
+                              puntuacion={this.state.claridad}
+                              onStarClick={this.onStarClickClaridad}
+                              size={20}
+                            />
+                          </div>
+                        </div>
+                        <div style={{ display: "flex" }}>
+                          <div
+                            style={{
+                              marginTop: "2px",
+                              marginRight: "10px",
+                              fontWeight: "500"
+                            }}
+                          >
+                            Calidad:
+                          </div>
+                          <div style={{ marginLeft: "auto", marginRight: "0" }}>
+                            <StarRating
+                              nombre="calidad"
+                              puntuacion={this.state.calidad}
+                              onStarClick={this.onStarClickCalidad}
+                              size={20}
+                            />
+                          </div>
+                        </div>
+                        <div style={{ display: "flex" }}>
+                          <div
+                            style={{
+                              marginTop: "2px",
+                              marginRight: "10px",
+                              fontWeight: "500"
+                            }}
+                          >
+                            Adecuación:
+                          </div>
+                          <div style={{ marginLeft: "auto", marginRight: "0" }}>
+                            <StarRating
+                              nombre="adecuacion"
+                              puntuacion={this.state.adecuacion}
+                              onStarClick={this.onStarClickAdecuacion}
+                              size={20}
+                            />
+                          </div>
+                        </div>
+                      </div>
                       <div
                         style={{
                           paddingTop: "15px",
@@ -426,7 +566,10 @@ class ViendoVideo extends Component {
                           float: "right",
                           color: "#235da9"
                         }}
-                        onClick={() => this.setState({ popUpPuntuar: false })}
+                        onClick={() => {
+                          this.puntuar();
+                          this.setState({ popUpPuntuar: false });
+                        }}
                       >
                         Puntuar
                       </div>
