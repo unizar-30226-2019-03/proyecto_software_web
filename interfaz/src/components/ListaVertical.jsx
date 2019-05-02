@@ -4,7 +4,7 @@ import { FaTimes, FaPlus } from "react-icons/fa";
 import { FormCheck } from "react-bootstrap";
 import Popup from "reactjs-popup";
 
-class ContenidoPopUp extends Component {
+export class ContenidoPopUp extends Component {
   constructor(props) {
     super(props);
     this.state = {

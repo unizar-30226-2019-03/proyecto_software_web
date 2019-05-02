@@ -8,23 +8,9 @@ import vid from "../assets/VideoPrueba.mp4";
 import { FaShareAlt, FaRegBookmark, FaRegStar } from "react-icons/fa";
 import icono from "../assets/favicon.ico";
 import { sesionValida, getTime } from "../App";
-
-/**
- * Shuffles array in place.
- * @param {Array} a items An array containing the items.
- */
-function shuffle(a) {
-  var j, x, i;
-  for (i = a.length - 1; i > 0; i--) {
-    j = Math.floor(Math.random() * (i + 1));
-    x = a[i];
-    a[i] = a[j];
-    a[j] = x;
-  }
-  return a;
-}
-
-let tabla_Pearson = shuffle([...new Array(256)].map((_, i) => i));
+import Popup from "reactjs-popup";
+import { ContenidoPopUp } from "./ListaVertical";
+import { Notificacion } from "./Listas";
 
 function generadorColores(usuario) {
   var hash = 0;
@@ -45,6 +31,14 @@ const profesores = [
   { foto: icono, nombre: "Jorge" },
   { foto: icono, nombre: "Javier" },
   { foto: icono, nombre: "Juan" }
+];
+
+const listasRepro = [
+  "Lista de reproducción 1",
+  "Lista de reproducción 2",
+  "Lista de reproducción 3",
+  "Lista de reproducción 4",
+  "Lista de reproduccióndasds aadsasdsadasadsdasdasasddasdsaddsadas 5"
 ];
 
 const comentariosVideo = [
@@ -192,7 +186,12 @@ class ViendoVideo extends Component {
       fijarComentarios: false,
       alturaComentarios: 0,
       anchuraComentarios: 0,
-      tiempoVideo: 0
+      tiempoVideo: 0,
+      notif: false,
+      mensajeNotif: "",
+      tiempoNotif: 0,
+      popUpGuardar: false,
+      popUpPuntuar: false
     };
     this.handleChange = this.handleChange.bind(this);
     this.recogerComentarios = this.recogerComentarios.bind(this);
@@ -200,6 +199,10 @@ class ViendoVideo extends Component {
     this.irAUltimoComentario = this.irAUltimoComentario.bind(this);
     this.handleScroll = this.handleScroll.bind(this);
     this.comentar = this.comentar.bind(this);
+    this.guardarVideo = this.guardarVideo.bind(this);
+    this.iniciarReloj = this.iniciarReloj.bind(this);
+    this.pararReloj = this.pararReloj.bind(this);
+    this.tick = this.tick.bind(this);
     this.comentario = React.createRef();
   }
 
@@ -319,6 +322,39 @@ class ViendoVideo extends Component {
     }
   }
 
+  guardarVideo(mostrar, lista, mensaje, anyadir) {
+    if (anyadir) {
+      //Añadir a la lista lista
+    } else {
+      //Borrar de la lista lista
+    }
+    this.setState({ notif: mostrar, mensajeNotif: mensaje });
+    this.iniciarReloj();
+  }
+
+  iniciarReloj() {
+    this.pararReloj();
+    this.timerID = setInterval(() => this.tick(), 1000);
+  }
+
+  pararReloj() {
+    clearInterval(this.timerID);
+  }
+
+  tick() {
+    let t = this.state.tiempoNotif;
+    if (t === 3) {
+      t = -1;
+      this.pararReloj();
+      this.setState({ notif: false });
+    }
+    this.setState({ tiempoNotif: t + 1 });
+  }
+
+  componentWillUnmount() {
+    this.pararReloj();
+  }
+
   render() {
     return !sesionValida() ? (
       <Redirect to="/" />
@@ -357,38 +393,113 @@ class ViendoVideo extends Component {
                     top: "-5px"
                   }}
                 >
-                  <div
-                    style={{
-                      color: "black",
-                      textDecoration: "none",
-                      float: "left",
-                      cursor: "pointer",
-                      marginRight: "20px"
+                  <Popup
+                    open={this.state.popUpPuntuar}
+                    onOpen={() => this.setState({ popUpPuntuar: true })}
+                    onClose={() => this.setState({ popUpPuntuar: false })}
+                    arrow={false}
+                    position="left center"
+                    contentStyle={{
+                      width: "250px",
+                      maxHeight: "300px",
+                      overflow: "scroll",
+                      padding: "16px 20px",
+                      border: "0",
+                      marginTop: "10px",
+                      boxShadow:
+                        "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4)"
                     }}
+                    trigger={
+                      <div
+                        style={{
+                          color: "black",
+                          textDecoration: "none",
+                          float: "left",
+                          cursor: "pointer",
+                          marginRight: "20px"
+                        }}
+                      >
+                        <p
+                          style={{
+                            marginRight: "5px",
+                            float: "left",
+                            color: "#00000080",
+                            fontWeight: "500",
+                            fontSize: "18px"
+                          }}
+                        >
+                          Valorar
+                        </p>
+                        <FaRegStar size={30} color={"#00000080"} />
+                      </div>
+                    }
                   >
-                    <p
-                      style={{
-                        marginRight: "5px",
-                        float: "left",
-                        color: "#00000080",
-                        fontWeight: "500",
-                        fontSize: "18px"
-                      }}
-                    >
-                      Valorar
-                    </p>
-                    <FaRegStar size={30} color={"#00000080"} />
-                  </div>
+                    <div>
+                      <div
+                        style={{
+                          borderBottom: "1px solid lightgrey",
+                          fontWeight: "450"
+                        }}
+                      >
+                        Puntuar vídeo...
+                      </div>
+                      <div
+                        style={{
+                          paddingTop: "15px",
+                          fontSize: "14px",
+                          borderBottom: "1px solid lightgrey"
+                        }}
+                      />
+                      <div
+                        style={{
+                          paddingTop: "15px",
+                          fontSize: "14px",
+                          cursor: "pointer",
+                          float: "right",
+                          color: "#235da9"
+                        }}
+                        onClick={() => this.setState({ popUpPuntuar: false })}
+                      >
+                        Puntuar
+                      </div>
+                    </div>
+                  </Popup>
+
                   <FaShareAlt
                     size={30}
                     color={"#00000080"}
                     style={{ marginRight: "20px", cursor: "pointer" }}
                   />
-                  <FaRegBookmark
-                    size={30}
-                    color={"#00000080"}
-                    style={{ cursor: "pointer" }}
-                  />
+                  <Popup
+                    open={this.state.popUpGuardar}
+                    onOpen={() => this.setState({ popUpGuardar: true })}
+                    onClose={() => this.setState({ popUpGuardar: false })}
+                    arrow={false}
+                    position="left center"
+                    contentStyle={{
+                      width: "250px",
+                      maxHeight: "300px",
+                      overflow: "scroll",
+                      padding: "16px 20px",
+                      border: "0",
+                      marginTop: "10px",
+                      boxShadow:
+                        "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4)"
+                    }}
+                    trigger={
+                      <FaRegBookmark
+                        size={30}
+                        color={"#00000080"}
+                        style={{ cursor: "pointer" }}
+                      />
+                    }
+                  >
+                    <ContenidoPopUp
+                      video={this.props.match.params.nombreVideo}
+                      listaRepro={listasRepro}
+                      enviarPadre={this.guardarVideo}
+                    />
+                  </Popup>
                 </div>
               </div>
             </div>
@@ -528,6 +639,11 @@ class ViendoVideo extends Component {
             </div>
           </div>
         </div>
+        <Notificacion
+          mostrar={this.state.notif}
+          mensaje={this.state.mensajeNotif}
+          deshacer={false}
+        />
       </div>
     );
   }
