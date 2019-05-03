@@ -5,6 +5,7 @@ import { Helmet } from "react-helmet";
 import uni from "../assets/UnicastNombre.png";
 import { UserApi } from "swagger_unicast";
 import { checkFileExtensionImage } from "../config/Procesar";
+import { signIn } from "../config/Auth";
 
 const FormularioDatos = (
   handleSubmit,
@@ -186,7 +187,8 @@ const FormularioInfo = (
   universidad,
   carrera,
   cancelar,
-  errorFoto
+  errorFoto,
+  handleFileSelect
 ) => {
   return (
     <Form onSubmit={e => handleSubmit(e)}>
@@ -228,7 +230,12 @@ const FormularioInfo = (
         ) : (
           <Form.Label>Foto de usuario*</Form.Label>
         )}
-        <Form.Control type="file" ref={foto} />
+        <Form.Control
+          type="file"
+          ref={foto}
+          required
+          onChange={handleFileSelect}
+        />
       </Form.Group>
 
       <Form.Group controlId="exampleForm.ControlTextarea1">
@@ -280,7 +287,9 @@ class SignIn extends Component {
       apellidos: "",
       email: "",
       userID: "",
-      pass: ""
+      pass: "",
+      imgData: [],
+      nombreFoto: ""
     };
     this.nombre = React.createRef();
     this.apellidos = React.createRef();
@@ -294,11 +303,23 @@ class SignIn extends Component {
     this.carrera = React.createRef();
     this.handleSubmitDatos = this.handleSubmitDatos.bind(this);
     this.handleSubmitInfo = this.handleSubmitInfo.bind(this);
+    this.handleFileSelect = this.handleFileSelect.bind(this);
     this.back = this.back.bind(this);
   }
 
   back() {
     this.setState({ datosValidados: false, infoValidada: false });
+  }
+
+  handleFileSelect() {
+    var f = this.foto.current.files[0];
+    this.setState({ nombreFoto: f.name });
+    var reader = new FileReader();
+    reader.onloadend = () => {
+      var dataURL = reader.result;
+      this.setState({ imgData: dataURL });
+    };
+    reader.readAsDataURL(f);
   }
 
   handleSubmitDatos(event) {
@@ -373,9 +394,8 @@ class SignIn extends Component {
   handleSubmitInfo(event) {
     event.preventDefault();
     let ok = true;
-    const foto = this.foto.current.value.split("\\")[2];
 
-    if (!checkFileExtensionImage(foto)) {
+    if (!checkFileExtensionImage(this.state.nombreFoto)) {
       ok = false;
       this.setState({ errorFoto: true });
     } else {
@@ -384,8 +404,9 @@ class SignIn extends Component {
 
     if (ok) {
       const descripcion = this.descripcion.current.value;
-      const universidad = this.universidad.current.value;
-      const carrera = this.universidad.current.value;
+      const universidad = 1;
+      const carrera = 1;
+      const foto = new File([this.state.imgData], this.state.nombreFoto);
       let apiInstance = new UserApi();
       apiInstance.addUser(
         this.state.userID,
@@ -401,8 +422,17 @@ class SignIn extends Component {
           if (error) {
             console.error("ERROR");
           } else {
-            console.log("DATOS");
-            this.setState({ infoValidada: true });
+            apiInstance.authUser(
+              data.username,
+              this.state.pass,
+              (error, data2, response) => {
+                if (error) {
+                } else {
+                  signIn(data2);
+                  this.setState({ infoValidada: true });
+                }
+              }
+            );
           }
         }
       );
@@ -447,7 +477,8 @@ class SignIn extends Component {
                     this.universidad,
                     this.carrera,
                     this.back,
-                    this.state.errorFoto
+                    this.state.errorFoto,
+                    this.handleFileSelect
                   )}
             </div>
           </div>
