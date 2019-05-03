@@ -3,6 +3,7 @@ import { Button, Form, Col } from "react-bootstrap";
 import { Redirect, Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import uni from "../assets/UnicastNombre.png";
+import { UserApi } from "swagger_unicast";
 
 const FormularioDatos = (
   handleSubmit,
@@ -11,13 +12,27 @@ const FormularioDatos = (
   userID,
   email,
   passwd,
-  passwd2
+  passwd2,
+  estado
 ) => {
   return (
     <Form onSubmit={e => handleSubmit(e)}>
       <Form.Row>
         <Form.Group as={Col} controlId="formGridName">
-          <Form.Label>Nombre*</Form.Label>
+          {estado.nombreInvalido ? (
+            <Form.Label
+              style={{
+                color: "red",
+                fontSize: "12px",
+                marginBottom: ".55rem"
+              }}
+            >
+              Nombre inválido
+            </Form.Label>
+          ) : (
+            <Form.Label>Nombre*</Form.Label>
+          )}
+
           <Form.Control
             type="text"
             placeholder="Nombre"
@@ -27,7 +42,19 @@ const FormularioDatos = (
         </Form.Group>
 
         <Form.Group as={Col} controlId="formGridSurname">
-          <Form.Label>Apellidos*</Form.Label>
+          {estado.apellidoInvalido ? (
+            <Form.Label
+              style={{
+                color: "red",
+                fontSize: "12px",
+                marginBottom: ".55rem"
+              }}
+            >
+              Apellidos inválidos
+            </Form.Label>
+          ) : (
+            <Form.Label>Apellidos*</Form.Label>
+          )}
           <Form.Control
             type="text"
             placeholder="Apellidos"
@@ -38,7 +65,19 @@ const FormularioDatos = (
       </Form.Row>
 
       <Form.Group controlId="formGridUserID">
-        <Form.Label>Nombre de usuario*</Form.Label>
+        {estado.userInvalido ? (
+          <Form.Label
+            style={{
+              color: "red",
+              fontSize: "12px",
+              marginBottom: ".57rem"
+            }}
+          >
+            Nombre de usuario inválido
+          </Form.Label>
+        ) : (
+          <Form.Label>Nombre de usuario*</Form.Label>
+        )}
         <Form.Control
           type="text"
           placeholder="Nombre de usuario"
@@ -48,7 +87,19 @@ const FormularioDatos = (
       </Form.Group>
 
       <Form.Group controlId="formGridEmail">
-        <Form.Label>Email*</Form.Label>
+        {estado.emailInvalido ? (
+          <Form.Label
+            style={{
+              color: "red",
+              fontSize: "12px",
+              marginBottom: ".57rem"
+            }}
+          >
+            Correo electrónico inválido
+          </Form.Label>
+        ) : (
+          <Form.Label>Correo electrónico*</Form.Label>
+        )}
         <Form.Control
           placeholder="ejemplo@gmail.com"
           type="email"
@@ -58,7 +109,29 @@ const FormularioDatos = (
       </Form.Group>
       <Form.Row>
         <Form.Group as={Col} controlId="formGridPasswd">
-          <Form.Label>Contraseña*</Form.Label>
+          {estado.passNoValida ? (
+            <Form.Label
+              style={{
+                color: "red",
+                fontSize: "12px",
+                marginBottom: ".57rem"
+              }}
+            >
+              Contraseña inválida
+            </Form.Label>
+          ) : estado.passNoIguales ? (
+            <Form.Label
+              style={{
+                color: "red",
+                fontSize: "12px",
+                marginBottom: ".57rem"
+              }}
+            >
+              Contraseñas no iguales
+            </Form.Label>
+          ) : (
+            <Form.Label>Contraseña*</Form.Label>
+          )}
           <Form.Control
             placeholder="Contraseña"
             type="password"
@@ -111,7 +184,6 @@ const FormularioInfo = (
   descripcion,
   universidad,
   carrera,
-  asignaturas,
   cancelar
 ) => {
   return (
@@ -141,15 +213,6 @@ const FormularioInfo = (
           </Form.Control>
         </Form.Group>
       </Form.Row>
-
-      <Form.Group controlId="formGridAsignaturas">
-        <Form.Label>¿Qué asignaturas te interesan?</Form.Label>
-        <Form.Control
-          type="text"
-          placeholder="Introduce las asinaturas separadas por ,"
-          ref={asignaturas}
-        />
-      </Form.Group>
 
       <Form.Group controlId="formGridFoto">
         <Form.Label>Foto de usuario</Form.Label>
@@ -191,7 +254,16 @@ const FormularioInfo = (
 class SignIn extends Component {
   constructor(props) {
     super(props);
-    this.state = { datosValidados: false, infoValidada: false };
+    this.state = {
+      datosValidados: false,
+      infoValidada: false,
+      passNoIguales: false,
+      passNoValida: false,
+      nombreInvalido: false,
+      apellidoInvalido: false,
+      userInvalido: false,
+      emailInvalido: false
+    };
     this.nombre = React.createRef();
     this.apellidos = React.createRef();
     this.email = React.createRef();
@@ -202,29 +274,75 @@ class SignIn extends Component {
     this.descripcion = React.createRef();
     this.universidad = React.createRef();
     this.carrera = React.createRef();
-    this.asignaturas = React.createRef();
     this.handleSubmitDatos = this.handleSubmitDatos.bind(this);
     this.handleSubmitInfo = this.handleSubmitInfo.bind(this);
-    this.getBorder = this.getBorder.bind(this);
     this.back = this.back.bind(this);
   }
 
   back() {
-    this.email = React.createRef();
     this.setState({ datosValidados: false, infoValidada: false });
   }
 
   handleSubmitDatos(event) {
     event.preventDefault();
+    let ok = true;
+    let emailPattern = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+    let restriccion = /^(?=.*[A-Za-z])(?=.*[0-9])(?=.{8,})/;
+    let restriccionNombre = /^([A-Za-z\u00C0-\u017F]+(([ -][a-zA-Z\u00C0-\u017F])?[a-zA-Z\u00C0-\u017F]*)*){3,}$/;
+    let restriccionUser = /^(\w+){3,}/;
+    const pass = this.pass.current.value;
+    const pass2 = this.pass2.current.value;
     const nombre = this.nombre.current.value;
     const apellidos = this.apellidos.current.value;
     const userID = this.userID.current.value;
     const email = this.email.current.value;
-    const pass = this.pass.current.value;
-    const pass2 = this.pass2.current.value;
-    console.log(nombre + apellidos + userID + email + pass + pass2);
-    this.email = email;
-    this.setState({ datosValidados: true });
+
+    //Comporobar nombre y apellidos
+    if (!nombre.match(restriccionNombre)) {
+      ok = false;
+      this.setState({ nombreInvalido: true });
+    } else {
+      this.setState({ nombreInvalido: false });
+    }
+    if (!apellidos.match(restriccionNombre)) {
+      ok = false;
+      this.setState({ apellidoInvalido: true });
+    } else {
+      this.setState({ apellidoInvalido: false });
+    }
+
+    //Comprobar nombre de usuario
+    if (!userID.match(restriccionUser)) {
+      ok = false;
+      this.setState({ userInvalido: true });
+    } else {
+      this.setState({ userInvalido: false });
+    }
+
+    // Comprobar email
+    if (!email.match(emailPattern)) {
+      ok = false;
+      this.setState({ emailInvalido: true });
+    } else {
+      this.setState({ emailInvalido: false });
+    }
+
+    //Comprobar passwords
+    if (pass.match(restriccion)) {
+      if (pass !== pass2) {
+        ok = false;
+        this.setState({ passNoIguales: true, passNoValida: false });
+      } else {
+        this.setState({ passNoIguales: false, passNoValida: false });
+      }
+    } else {
+      ok = false;
+      this.setState({ passNoValida: true });
+    }
+
+    if (ok) {
+      this.setState({ datosValidados: true });
+    }
   }
 
   handleSubmitInfo(event) {
@@ -233,25 +351,21 @@ class SignIn extends Component {
     const descripcion = this.descripcion.current.value;
     const universidad = this.universidad.current.value;
     const carrera = this.universidad.current.value;
-    const asignaturas = this.asignaturas.current.value;
-    console.log(foto + descripcion + universidad + carrera + asignaturas);
+    console.log(foto + descripcion + universidad + carrera);
     this.setState({ infoValidada: true });
     //AQUI SE REGISTRARA EL USUARIO
     console.log("USUARIO REGISTRADO");
   }
 
-  getBorder(key) {
-    switch (key) {
-      case 0:
-        return "1px solid red";
-      default:
-        return "";
-    }
-  }
-
   render() {
-    //let claseEmail = { border: this.getBorder(this.state.emailValido) };
-    //let clasePass = { border: this.getBorder(this.state.passValida) };
+    const estadoValidacion = {
+      passNoIguales: this.state.passNoIguales,
+      passNoValida: this.state.passNoValida,
+      nombreInvalido: this.state.nombreInvalido,
+      apellidoInvalido: this.state.apellidoInvalido,
+      userInvalido: this.state.userInvalido,
+      emailInvalido: this.state.emailInvalido
+    };
     return (
       <div>
         <Helmet>
@@ -271,7 +385,8 @@ class SignIn extends Component {
                     this.userID,
                     this.email,
                     this.pass,
-                    this.pass2
+                    this.pass2,
+                    estadoValidacion
                   )
                 : FormularioInfo(
                     this.handleSubmitInfo,
@@ -279,7 +394,6 @@ class SignIn extends Component {
                     this.descripcion,
                     this.universidad,
                     this.carrera,
-                    this.asignaturas,
                     this.back
                   )}
             </div>
