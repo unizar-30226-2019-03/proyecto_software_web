@@ -3,7 +3,7 @@ import { Button, Form, Col } from "react-bootstrap";
 import { Redirect, Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import uni from "../assets/UnicastNombre.png";
-import { UserApi } from "swagger_unicast";
+import { UserApi, UniversityApi } from "swagger_unicast";
 import { checkFileExtensionImage } from "../config/Procesar";
 import { signIn } from "../config/Auth";
 
@@ -188,7 +188,8 @@ const FormularioInfo = (
   carrera,
   cancelar,
   errorFoto,
-  handleFileSelect
+  handleFileSelect,
+  universidades
 ) => {
   return (
     <Form onSubmit={e => handleSubmit(e)}>
@@ -196,11 +197,14 @@ const FormularioInfo = (
         <Form.Label>¿En qué universidad estudias?</Form.Label>
         <Form.Control as="select" ref={universidad}>
           <option value={0}>Elige una universidad...</option>
-          <option value={1}>Universidad de Zaragoza</option>
-          <option value={2}>Universidad de Madrid</option>
-          <option value={3}>Universidad de Valencia</option>
-          <option value={4}>Universidad de Barcelona</option>
-          <option value={5}>Otra...</option>
+          {universidades.map(e => {
+            const { id, name } = e;
+            return (
+              <option key={id} value={id}>
+                {name}
+              </option>
+            );
+          })}
         </Form.Control>
       </Form.Group>
 
@@ -289,7 +293,8 @@ class SignIn extends Component {
       userID: "",
       pass: "",
       imgData: [],
-      nombreFoto: ""
+      nombreFoto: "",
+      listaUniversidades: []
     };
     this.nombre = React.createRef();
     this.apellidos = React.createRef();
@@ -305,6 +310,20 @@ class SignIn extends Component {
     this.handleSubmitInfo = this.handleSubmitInfo.bind(this);
     this.handleFileSelect = this.handleFileSelect.bind(this);
     this.back = this.back.bind(this);
+  }
+
+  componentWillMount() {
+    let apiInstance = new UniversityApi();
+    let opts = {
+      name: "U" // String | Comienzo del nombre de la universidad a buscar
+    };
+    apiInstance.findUniversityStartsWith(opts, (error, data, response) => {
+      if (error) {
+        console.error(error);
+      } else {
+        this.setState({ listaUniversidades: data._embedded.universities });
+      }
+    });
   }
 
   back() {
@@ -478,7 +497,8 @@ class SignIn extends Component {
                     this.carrera,
                     this.back,
                     this.state.errorFoto,
-                    this.handleFileSelect
+                    this.handleFileSelect,
+                    this.state.listaUniversidades
                   )}
             </div>
           </div>
