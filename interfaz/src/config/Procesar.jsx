@@ -38,3 +38,30 @@ export function getTime(t) {
   }
   return minutos + ":" + segundos;
 }
+
+/**
+ * Comprueba si el fichero es una imagen, devuelve TRUE si lo es
+ * y FALSE en caso contrario
+ * @param {String} filename Nombre del fichero a subir
+ */
+export function checkFileExtensionImage(filename) {
+  var ext = filename.split(".").pop();
+  return ext === "jpg" || ext === "jpeg" || ext === "png" || ext === "bmp";
+}
+
+/**
+ * Comprueba si el fichero es un vídeo, devuelve TRUE si lo es
+ * y FALSE en caso contrario
+ * @param {String} filename Nombre del fichero a subir
+ */
+export function checkFileExtensionVideo(filename) {
+  var ext = filename.split(".").pop();
+  return (
+    ext === "mp4" ||
+    ext === "mov" ||
+    ext === "3gp" ||
+    ext === "wma" ||
+    ext === "flv" ||
+    ext === "avi"
+  );
+}

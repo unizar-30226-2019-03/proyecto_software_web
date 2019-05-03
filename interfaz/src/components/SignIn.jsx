@@ -188,31 +188,29 @@ const FormularioInfo = (
 ) => {
   return (
     <Form onSubmit={e => handleSubmit(e)}>
-      <Form.Row>
-        <Form.Group as={Col} controlId="formGridUni">
-          <Form.Label>¿En qué universidad estudias?</Form.Label>
-          <Form.Control as="select" ref={universidad}>
-            <option>Elige una universidad...</option>
-            <option>Universidad de Zaragoza</option>
-            <option>Universidad de Madrid</option>
-            <option>Universidad de Valencia</option>
-            <option>Universidad de Barcelona</option>
-            <option>Otra...</option>
-          </Form.Control>
-        </Form.Group>
+      <Form.Group controlId="formGridUni">
+        <Form.Label>¿En qué universidad estudias?</Form.Label>
+        <Form.Control as="select" ref={universidad}>
+          <option>Elige una universidad...</option>
+          <option>Universidad de Zaragoza</option>
+          <option>Universidad de Madrid</option>
+          <option>Universidad de Valencia</option>
+          <option>Universidad de Barcelona</option>
+          <option>Otra...</option>
+        </Form.Control>
+      </Form.Group>
 
-        <Form.Group as={Col} controlId="formGridCarrera">
-          <Form.Label>¿Qué carrera?</Form.Label>
-          <Form.Control as="select" ref={carrera}>
-            <option>Elige una carrera...</option>
-            <option>Ingeniería Informática</option>
-            <option>Medicina</option>
-            <option>Derecho</option>
-            <option>Veterinaria</option>
-            <option>Otra...</option>
-          </Form.Control>
-        </Form.Group>
-      </Form.Row>
+      <Form.Group controlId="formGridCarrera">
+        <Form.Label>¿Qué carrera?</Form.Label>
+        <Form.Control as="select" ref={carrera}>
+          <option>Elige una carrera...</option>
+          <option>Ingeniería Informática</option>
+          <option>Medicina</option>
+          <option>Derecho</option>
+          <option>Veterinaria</option>
+          <option>Otra...</option>
+        </Form.Control>
+      </Form.Group>
 
       <Form.Group controlId="formGridFoto">
         <Form.Label>Foto de usuario</Form.Label>
@@ -377,7 +375,7 @@ class SignIn extends Component {
           <div>
             <div className="signin transform">
               <img className="img-signin" src={uni} alt="UniCast" />
-              {!this.state.datosValidados
+              {this.state.datosValidados
                 ? FormularioDatos(
                     this.handleSubmitDatos,
                     this.nombre,

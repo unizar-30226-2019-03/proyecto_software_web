@@ -4,6 +4,10 @@ import { Helmet } from "react-helmet";
 import { Button, Form, Col } from "react-bootstrap";
 import { Redirect, Link } from "react-router-dom";
 import { isSignedIn } from "../config/Auth";
+import {
+  checkFileExtensionImage,
+  checkFileExtensionVideo
+} from "../config/Procesar";
 
 const FormularioDatos = (
   handleSubmit,
@@ -106,24 +110,8 @@ class SubirVideo extends Component {
     this.asignatura = React.createRef();
     this.handleSubmitDatos = this.handleSubmitDatos.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.checkFileExtensionImage = this.checkFileExtensionImage.bind(this);
-    this.checkFileExtensionVideo = this.checkFileExtensionVideo.bind(this);
   }
-  checkFileExtensionImage(filename) {
-    var ext = filename.split(".").pop();
-    return ext === "jpg" || ext === "jpeg" || ext === "png" || ext === "bmp";
-  }
-  checkFileExtensionVideo(filename) {
-    var ext = filename.split(".").pop();
-    return (
-      ext === "mp4" ||
-      ext === "mov" ||
-      ext === "3gp" ||
-      ext === "wma" ||
-      ext === "flv" ||
-      ext === "avi"
-    );
-  }
+
   handleSubmitDatos(event) {
     event.preventDefault();
     const titulo = this.titulo.current.value;
@@ -131,9 +119,9 @@ class SubirVideo extends Component {
     const descripcion = this.descripcion.current.value;
     const video = this.video.current.value;
     const asignatura = this.asignatura.current.value;
-    if (!this.checkFileExtensionImage(miniatura)) {
+    if (!checkFileExtensionImage(miniatura)) {
       this.setState({ img_valida: 0 });
-    } else if (!this.checkFileExtensionVideo(video)) {
+    } else if (!checkFileExtensionVideo(video)) {
       this.setState({ video_valido: 0 });
     } else {
       this.setState({ datosSubidos: true });
