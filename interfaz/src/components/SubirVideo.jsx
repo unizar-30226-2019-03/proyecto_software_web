@@ -3,11 +3,12 @@ import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
 import { Button, Form, Col } from "react-bootstrap";
 import { Redirect, Link } from "react-router-dom";
-import { isSignedIn } from "../config/Auth";
+import { isSignedIn, getUserToken } from "../config/Auth";
 import {
   checkFileExtensionImage,
   checkFileExtensionVideo
 } from "../config/Procesar";
+import { SubjectApi, ApiClient, VideoApi } from "swagger_unicast";
 
 const FormularioDatos = (
   handleSubmit,
@@ -17,7 +18,8 @@ const FormularioDatos = (
   video,
   asignatura,
   img_valida,
-  video_valido
+  video_valido,
+  listaAsignaturas
 ) => {
   return (
     <div style={{ margin: "0 20% 0 0" }}>
@@ -36,12 +38,21 @@ const FormularioDatos = (
         <Form.Row>
           <Form.Group as={Col} controlId="formGridAsingatura">
             <Form.Label>Asignatura del vídeo</Form.Label>
-            <Form.Control as="select" ref={asignatura}>
-              <option>Proyecto Software</option>
-              <option>Inteligencia Artificial</option>
-              <option>Aprendizaje Automático</option>
-              <option>Algoritmia Básica</option>
-            </Form.Control>
+            {console.log(listaAsignaturas)}
+            {false ? (
+              <Form.Control as="select" ref={asignatura}>
+                {listaAsignaturas.map(asig => {
+                  return <option key={asig}>{asig}</option>;
+                })}
+              </Form.Control>
+            ) : (
+              <Form.Control as="select" ref={asignatura}>
+                <option>Proyecto Software</option>
+                <option>Inteligencia Artificial</option>
+                <option>Aprendizaje Automático</option>
+                <option>Algoritmia Básica</option>
+              </Form.Control>
+            )}
           </Form.Group>
         </Form.Row>
 
@@ -101,7 +112,8 @@ class SubirVideo extends Component {
       contentMargin: "300px",
       datosSubidos: false,
       img_valida: -1,
-      video_valido: -1
+      video_valido: -1,
+      listaAsignaturas: []
     };
     this.titulo = React.createRef();
     this.miniatura = React.createRef();
@@ -110,6 +122,24 @@ class SubirVideo extends Component {
     this.asignatura = React.createRef();
     this.handleSubmitDatos = this.handleSubmitDatos.bind(this);
     this.handleChange = this.handleChange.bind(this);
+  }
+
+  componentWillMount() {
+    let defaultClient = ApiClient.instance;
+    // Configure Bearer (JWT) access token for authorization: bearerAuth
+    let bearerAuth = defaultClient.authentications["bearerAuth"];
+    bearerAuth.accessToken = getUserToken();
+    let apiInstance = new SubjectApi();
+    let opts = {
+      page: 56 // Number | Numero de la página a devolver
+    };
+    apiInstance.getSubjects(opts, (error, data, response) => {
+      if (error) {
+        console.error(error);
+      } else {
+        this.setState({ listaAsignaturas: data });
+      }
+    });
   }
 
   handleSubmitDatos(event) {
@@ -124,8 +154,22 @@ class SubirVideo extends Component {
     } else if (!checkFileExtensionVideo(video)) {
       this.setState({ video_valido: 0 });
     } else {
-      this.setState({ datosSubidos: true });
-      console.log(titulo, miniatura, descripcion, video, asignatura);
+      let apiInstance = new VideoApi();
+      let subjectId = 789;
+      apiInstance.addVideo(
+        video,
+        titulo,
+        descripcion,
+        subjectId,
+        (error, data, response) => {
+          if (error) {
+            console.error(error);
+          } else {
+            console.log("API called successfully.");
+            this.setState({ datosSubidos: true });
+          }
+        }
+      );
     }
   }
   handleChange(display) {
@@ -176,7 +220,8 @@ class SubirVideo extends Component {
                   this.video,
                   this.asignatura,
                   this.state.img_valida,
-                  this.state.video_valido
+                  this.state.video_valido,
+                  this.state.listaAsignaturas
                 )}
               </div>
             </div>

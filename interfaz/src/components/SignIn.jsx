@@ -4,6 +4,7 @@ import { Redirect, Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import uni from "../assets/UnicastNombre.png";
 import { UserApi } from "swagger_unicast";
+import { checkFileExtensionImage } from "../config/Procesar";
 
 const FormularioDatos = (
   handleSubmit,
@@ -184,36 +185,49 @@ const FormularioInfo = (
   descripcion,
   universidad,
   carrera,
-  cancelar
+  cancelar,
+  errorFoto
 ) => {
   return (
     <Form onSubmit={e => handleSubmit(e)}>
       <Form.Group controlId="formGridUni">
         <Form.Label>¿En qué universidad estudias?</Form.Label>
         <Form.Control as="select" ref={universidad}>
-          <option>Elige una universidad...</option>
-          <option>Universidad de Zaragoza</option>
-          <option>Universidad de Madrid</option>
-          <option>Universidad de Valencia</option>
-          <option>Universidad de Barcelona</option>
-          <option>Otra...</option>
+          <option value={0}>Elige una universidad...</option>
+          <option value={1}>Universidad de Zaragoza</option>
+          <option value={2}>Universidad de Madrid</option>
+          <option value={3}>Universidad de Valencia</option>
+          <option value={4}>Universidad de Barcelona</option>
+          <option value={5}>Otra...</option>
         </Form.Control>
       </Form.Group>
 
       <Form.Group controlId="formGridCarrera">
         <Form.Label>¿Qué carrera?</Form.Label>
         <Form.Control as="select" ref={carrera}>
-          <option>Elige una carrera...</option>
-          <option>Ingeniería Informática</option>
-          <option>Medicina</option>
-          <option>Derecho</option>
-          <option>Veterinaria</option>
-          <option>Otra...</option>
+          <option value={0}>Elige una carrera...</option>
+          <option value={1}>Ingeniería Informática</option>
+          <option value={2}>Medicina</option>
+          <option value={3}>Derecho</option>
+          <option value={4}>Veterinaria</option>
+          <option value={5}>Otra...</option>
         </Form.Control>
       </Form.Group>
 
       <Form.Group controlId="formGridFoto">
-        <Form.Label>Foto de usuario</Form.Label>
+        {errorFoto ? (
+          <Form.Label
+            style={{
+              color: "red",
+              fontSize: "12px",
+              marginBottom: ".57rem"
+            }}
+          >
+            Debe introducir una imagen
+          </Form.Label>
+        ) : (
+          <Form.Label>Foto de usuario*</Form.Label>
+        )}
         <Form.Control type="file" ref={foto} />
       </Form.Group>
 
@@ -260,7 +274,13 @@ class SignIn extends Component {
       nombreInvalido: false,
       apellidoInvalido: false,
       userInvalido: false,
-      emailInvalido: false
+      emailInvalido: false,
+      errorFoto: false,
+      nombre: "",
+      apellidos: "",
+      email: "",
+      userID: "",
+      pass: ""
     };
     this.nombre = React.createRef();
     this.apellidos = React.createRef();
@@ -339,20 +359,54 @@ class SignIn extends Component {
     }
 
     if (ok) {
-      this.setState({ datosValidados: true });
+      this.setState({
+        datosValidados: true,
+        nombre: nombre,
+        apellidos: apellidos,
+        email: email,
+        userID: userID,
+        pass: pass
+      });
     }
   }
 
   handleSubmitInfo(event) {
     event.preventDefault();
+    let ok = true;
     const foto = this.foto.current.value;
-    const descripcion = this.descripcion.current.value;
-    const universidad = this.universidad.current.value;
-    const carrera = this.universidad.current.value;
-    console.log(foto + descripcion + universidad + carrera);
-    this.setState({ infoValidada: true });
-    //AQUI SE REGISTRARA EL USUARIO
-    console.log("USUARIO REGISTRADO");
+
+    if (!checkFileExtensionImage(foto)) {
+      ok = false;
+      this.setState({ errorFoto: true });
+    } else {
+      this.setState({ errorFoto: false });
+    }
+
+    if (ok) {
+      const descripcion = this.descripcion.current.value;
+      const universidad = this.universidad.current.value;
+      const carrera = this.universidad.current.value;
+      let apiInstance = new UserApi();
+      apiInstance.addUser(
+        this.state.userID,
+        this.state.pass,
+        this.state.nombre,
+        this.state.apellidos,
+        this.state.email,
+        descripcion,
+        universidad,
+        carrera,
+        foto,
+        (error, data, response) => {
+          if (error) {
+            console.error("ERROR");
+          } else {
+            console.log("DATOS");
+            this.setState({ infoValidada: true });
+          }
+        }
+      );
+    }
   }
 
   render() {
@@ -375,7 +429,7 @@ class SignIn extends Component {
           <div>
             <div className="signin transform">
               <img className="img-signin" src={uni} alt="UniCast" />
-              {this.state.datosValidados
+              {!this.state.datosValidados
                 ? FormularioDatos(
                     this.handleSubmitDatos,
                     this.nombre,
@@ -392,7 +446,8 @@ class SignIn extends Component {
                     this.descripcion,
                     this.universidad,
                     this.carrera,
-                    this.back
+                    this.back,
+                    this.state.errorFoto
                   )}
             </div>
           </div>
