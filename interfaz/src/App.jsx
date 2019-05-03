@@ -25,6 +25,10 @@ import Chat from "./components/Chat";
 import MisVideos from "./components/MisVideos";
 import { isSignedIn } from "./config/Auth";
 
+/**
+ * Clase raíz, esta clase se encarga de renderizar todas las páginas
+ * de la aplicación.
+ */
 class App extends Component {
   render() {
     return (

@@ -9,20 +9,16 @@ class Inicio extends Component {
   constructor() {
     super();
     this.state = {
-      contentMargin: "300px",
-      user: ""
+      contentMargin: "300px"
     };
     this.handleChange = this.handleChange.bind(this);
   }
 
-  componentWillMount() {
-    if (document.cookie !== undefined) {
-      let userCookie = document.cookie;
-      let userID = userCookie.split("=")[1];
-      this.setState({ user: userID });
-    }
-  }
-
+  /**
+   * Aumenta o dimsinuye el margen izquierdo del contenido de la
+   * página dependiendo del parámetro display
+   * @param {Boolean} display Determina si aumentar o disminuir margen
+   */
   handleChange(display) {
     if (display) {
       this.setState({ contentMargin: "300px" });

@@ -12,6 +12,7 @@ export function signOut() {
  * @param {Token} data Contiene el Token de sesión y el id del usuario
  */
 export function signIn(data) {
+  console.log(data.token);
   localStorage.setItem("userToken", data.token);
   localStorage.setItem("userID", data.id);
   return 0;

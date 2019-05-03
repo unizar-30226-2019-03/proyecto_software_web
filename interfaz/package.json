@@ -17,10 +17,11 @@
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
     "react-scripts": "^3.0.0",
+    "braces": "^2.3.1",
     "react-star-rating-component": "^1.4.1",
     "reactjs-popup": "^1.3.2",
     "styled-components": "^4.1.3",
-    "swagger_unicast": "https://github.com/unizar-30226-2019-03/proyecto_software_cliente_api/releases/download/1.0.5/swagger_unicast-1.0.5.tgz",
+    "swagger_unicast": "https://github.com/unizar-30226-2019-03/proyecto_software_cliente_api/releases/download/1.0.9/swagger_unicast-1.0.9.tgz",
     "typescript": "^3.3.3333",
     "video-react": "^0.13.2"
   },

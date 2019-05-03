@@ -373,7 +373,7 @@ class SignIn extends Component {
   handleSubmitInfo(event) {
     event.preventDefault();
     let ok = true;
-    const foto = this.foto.current.value;
+    const foto = this.foto.current.value.split("\\")[2];
 
     if (!checkFileExtensionImage(foto)) {
       ok = false;
