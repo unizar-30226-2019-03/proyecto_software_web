@@ -63,9 +63,15 @@ class Login extends Component {
                   <Form onSubmit={e => this.handleSubmit(e)}>
                     <Form.Group controlId="formBasicEmail">
                       {this.state.error ? (
-                        <Form.Text style={{ color: "red" }}>
+                        <Form.Label
+                          style={{
+                            color: "red",
+                            fontSize: "12px",
+                            marginBottom: ".55rem"
+                          }}
+                        >
                           Nombre de usuario o contraseña incorrectos
-                        </Form.Text>
+                        </Form.Label>
                       ) : (
                         <Form.Label>Nombre de usuario</Form.Label>
                       )}
