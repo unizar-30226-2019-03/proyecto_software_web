@@ -106,7 +106,12 @@ const FormularioProfesor = (
   );
 };
 
-const FormularioUniversidad = (handleUniversidad, nombre) => {
+const FormularioUniversidad = (
+  handleUniversidad,
+  nombre,
+  fotoUni,
+  handleFileSelect
+) => {
   return (
     <div style={{ margin: "20px 20px 20px 20px" }}>
       <h6>Añadir universidad</h6>
@@ -127,6 +132,16 @@ const FormularioUniversidad = (handleUniversidad, nombre) => {
             />
           </Form.Group>
         </Form.Row>
+        <Form.Group controlId="formGridFotoUni">
+          <Form.Label>Foto de la Universidad</Form.Label>
+          <Form.Control
+            type="file"
+            accept="image/*"
+            ref={fotoUni}
+            required
+            onChange={handleFileSelect}
+          />
+        </Form.Group>
         <Button className="boton-filtro" type="reset">
           Cancelar
         </Button>
@@ -356,8 +371,12 @@ class AdministradorCrear extends Component {
       passValida: -1,
       show: false,
       listaCarreras: [],
-      listaUniversidades: []
+      listaUniversidades: [],
+      nombreFoto: "",
+      imgData: []
     };
+    this.UniversityApi = new UniversityApi();
+    this.DegreeApi = new DegreeApi();
     this.nombreProf = React.createRef();
     this.apellidosProf = React.createRef();
     this.userIDProf = React.createRef();
@@ -365,6 +384,7 @@ class AdministradorCrear extends Component {
     this.passwdProf = React.createRef();
     this.passwd2Prof = React.createRef();
     this.nombreUni = React.createRef();
+    this.fotoUni = React.createRef();
     this.nombreCarrera = React.createRef();
     this.uniAsig = React.createRef();
     this.uniCarr = React.createRef();
@@ -380,32 +400,34 @@ class AdministradorCrear extends Component {
     this.getBorder = this.getBorder.bind(this);
     this.handleShow = this.handleShow.bind(this);
     this.handleClose = this.handleClose.bind(this);
+    this.handleFileSelect = this.handleFileSelect.bind(this);
   }
 
   componentWillMount() {
-    let apiInstance = new UniversityApi();
     let opts = {
       cacheControl: "'no-cache, no-store, must-revalidate'", // String |
       pragma: "'no-cache'", // String |
       expires: "'0'", // String |
       name: "a" // String | String a buscar en el nombre
     };
-    apiInstance.findUniversitiesContaining(opts, (error, data, response) => {
-      if (error) {
-        console.error(error);
-      } else {
-        console.log(data);
-        this.setState({ listaUniversidades: data._embedded.universities });
+    this.UniversityApi.findUniversitiesContaining(
+      opts,
+      (error, data, response) => {
+        if (error) {
+          console.error(error);
+        } else {
+          console.log(data);
+          this.setState({ listaUniversidades: data._embedded.universities });
+        }
       }
-    });
-    apiInstance = new DegreeApi();
+    );
     opts = {
       cacheControl: "'no-cache, no-store, must-revalidate'", // String |
       pragma: "'no-cache'", // String |
       expires: "'0'", // String |
       name: "a" // String | String a buscar en el nombre de carreras
     };
-    apiInstance.findDegreesContainingName(opts, (error, data, response) => {
+    this.DegreeApi.findDegreesContainingName(opts, (error, data, response) => {
       if (error) {
         console.error(error);
       } else {
@@ -413,6 +435,17 @@ class AdministradorCrear extends Component {
         this.setState({ listaCarreras: data._embedded.degrees });
       }
     });
+  }
+
+  handleFileSelect() {
+    var f = this.fotoUni.current.files[0];
+    this.setState({ nombreFoto: f.name });
+    var reader = new FileReader();
+    reader.onloadend = () => {
+      var dataURL = reader.result;
+      this.setState({ imgData: dataURL });
+    };
+    reader.readAsDataURL(f);
   }
 
   handleClose() {
@@ -451,10 +484,16 @@ class AdministradorCrear extends Component {
   handleUniversidad(event, form) {
     event.preventDefault();
     const nombre = this.nombreUni.current.value;
-    //this.setState({ datosSubidos: true });
-    console.log(nombre);
-    form.reset();
-    this.handleShow();
+    const foto = new File([this.state.imgData], this.state.nombreFoto);
+    this.UniversityApi.addUniversity(nombre, foto, (error, data, response) => {
+      if (error) {
+        console.error(error);
+      } else {
+        console.log(data);
+        form.reset();
+        this.handleShow();
+      }
+    });
   }
 
   handleCarrera(event, form) {
@@ -467,9 +506,8 @@ class AdministradorCrear extends Component {
     let bearerAuth = defaultClient.authentications["bearerAuth"];
     bearerAuth.accessToken = getUserToken();
 
-    let apiInstance = new DegreeApi();
     let degree2 = new Degree2(carrera); // Degree2 | Carrera a añadir
-    apiInstance.addDegree(degree2, (error, data, response) => {
+    this.DegreeApi.addDegree(degree2, (error, data, response) => {
       if (error) {
         console.error(error);
       } else {
@@ -540,7 +578,12 @@ class AdministradorCrear extends Component {
             )}
           </div>
           <div className="boxed" style={{ marginTop: "20px" }} id="a">
-            {FormularioUniversidad(this.handleUniversidad, this.nombreUni)}
+            {FormularioUniversidad(
+              this.handleUniversidad,
+              this.nombreUni,
+              this.fotoUni,
+              this.handleFileSelect
+            )}
           </div>
           <div className="boxed" style={{ marginTop: "20px" }} id="a">
             {FormularioCarrera(
