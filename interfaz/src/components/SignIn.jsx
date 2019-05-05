@@ -6,6 +6,7 @@ import uni from "../assets/UnicastNombre.png";
 import { UserApi, UniversityApi } from "swagger_unicast";
 import { checkFileExtensionImage } from "../config/Procesar";
 import { signIn } from "../config/Auth";
+import DegreeApi from "swagger_unicast/dist/api/DegreeApi";
 
 const FormularioDatos = (
   handleSubmit,
@@ -189,7 +190,8 @@ const FormularioInfo = (
   cancelar,
   errorFoto,
   handleFileSelect,
-  universidades
+  universidades,
+  carreras
 ) => {
   return (
     <Form onSubmit={e => handleSubmit(e)}>
@@ -212,11 +214,14 @@ const FormularioInfo = (
         <Form.Label>¿Qué carrera?</Form.Label>
         <Form.Control as="select" ref={carrera}>
           <option value={0}>Elige una carrera...</option>
-          <option value={1}>Ingeniería Informática</option>
-          <option value={2}>Medicina</option>
-          <option value={3}>Derecho</option>
-          <option value={4}>Veterinaria</option>
-          <option value={5}>Otra...</option>
+          {carreras.map(e => {
+            const { id, name } = e;
+            return (
+              <option key={id} value={id}>
+                {name}
+              </option>
+            );
+          })}
         </Form.Control>
       </Form.Group>
 
@@ -294,7 +299,8 @@ class SignIn extends Component {
       pass: "",
       imgData: [],
       nombreFoto: "",
-      listaUniversidades: []
+      listaUniversidades: [],
+      listaCarreras: []
     };
     this.nombre = React.createRef();
     this.apellidos = React.createRef();
@@ -315,13 +321,33 @@ class SignIn extends Component {
   componentWillMount() {
     let apiInstance = new UniversityApi();
     let opts = {
-      name: "U" // String | Comienzo del nombre de la universidad a buscar
+      cacheControl: "'no-cache, no-store, must-revalidate'", // String |
+      pragma: "'no-cache'", // String |
+      expires: "'0'", // String |
+      name: "a" // String | String a buscar en el nombre
     };
-    apiInstance.findUniversityStartsWith(opts, (error, data, response) => {
+    apiInstance.findUniversitiesContaining(opts, (error, data, response) => {
       if (error) {
         console.error(error);
       } else {
+        console.log(data);
+
         this.setState({ listaUniversidades: data._embedded.universities });
+      }
+    });
+    apiInstance = new DegreeApi();
+    opts = {
+      cacheControl: "'no-cache, no-store, must-revalidate'", // String |
+      pragma: "'no-cache'", // String |
+      expires: "'0'", // String |
+      name: "a" // String | String a buscar en el nombre de carreras
+    };
+    apiInstance.findDegreesContainingName(opts, (error, data, response) => {
+      if (error) {
+        console.error(error);
+      } else {
+        console.log(data);
+        this.setState({ listaCarreras: data._embedded.degrees });
       }
     });
   }
@@ -423,8 +449,8 @@ class SignIn extends Component {
 
     if (ok) {
       const descripcion = this.descripcion.current.value;
-      const universidad = 1;
-      const carrera = 1;
+      const universidad = this.universidad.current.value;
+      const carrera = this.carrera.current.value;
       const foto = new File([this.state.imgData], this.state.nombreFoto);
       let apiInstance = new UserApi();
       apiInstance.addUser(
@@ -478,7 +504,7 @@ class SignIn extends Component {
           <div>
             <div className="signin transform">
               <img className="img-signin" src={uni} alt="UniCast" />
-              {!this.state.datosValidados
+              {this.state.datosValidados
                 ? FormularioDatos(
                     this.handleSubmitDatos,
                     this.nombre,
@@ -498,7 +524,8 @@ class SignIn extends Component {
                     this.back,
                     this.state.errorFoto,
                     this.handleFileSelect,
-                    this.state.listaUniversidades
+                    this.state.listaUniversidades,
+                    this.state.listaCarreras
                   )}
             </div>
           </div>
