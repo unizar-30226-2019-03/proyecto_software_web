@@ -1,6 +1,7 @@
 {
-  "name": "react-client",
-  "version": "0.1.0",
+  "name": "unicast_web",
+  "version": "1.0.0",
+  "description": "Documento_de_la_App_Web_de_Unicast",
   "private": true,
   "dependencies": {
     "braces": "^2.3.1",
