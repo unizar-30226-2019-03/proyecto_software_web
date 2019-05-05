@@ -3,7 +3,11 @@ import BarraAdmi from "./BarraAdmi";
 import { Helmet } from "react-helmet";
 import { Button, Form, Col, Modal } from "react-bootstrap";
 import { Redirect } from "react-router-dom";
-import { isSignedIn } from "../config/Auth";
+import { isSignedIn, getUserToken } from "../config/Auth";
+import UniversityApi from "swagger_unicast/dist/api/UniversityApi";
+import DegreeApi from "swagger_unicast/dist/api/DegreeApi";
+import ApiClient from "swagger_unicast/dist/ApiClient";
+import { Degree2 } from "swagger_unicast";
 
 const FormularioProfesor = (
   handleProfesor,
@@ -138,7 +142,64 @@ const FormularioUniversidad = (handleUniversidad, nombre) => {
   );
 };
 
-const FormularioAsignatura = (handleAsignatura, uni, asignatura) => {
+const FormularioCarrera = (handleCarrera, uni, carrera, universidades) => {
+  return (
+    <div style={{ margin: "20px 20px 20px 20px" }}>
+      <h6>Añadir Carrera</h6>
+      <Form
+        id="form-carrera"
+        onSubmit={e =>
+          handleCarrera(e, document.getElementById("form-carrera"))
+        }
+      >
+        <Form.Row>
+          <Form.Group as={Col} controlId="formGridUniCarr">
+            <Form.Label>Universidad</Form.Label>
+            <Form.Control as="select" ref={uni}>
+              {universidades.map(univ => {
+                const { id, name } = univ;
+                return (
+                  <option key={id} value={id}>
+                    {name}
+                  </option>
+                );
+              })}
+            </Form.Control>
+          </Form.Group>
+        </Form.Row>
+        <Form.Row>
+          <Form.Group as={Col} controlId="formGridCarrera">
+            <Form.Label>Carrera</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Nombre"
+              required
+              ref={carrera}
+            />
+          </Form.Group>
+        </Form.Row>
+        <Button className="boton-filtro" type="reset">
+          Cancelar
+        </Button>
+        <Button
+          className="boton-filtro"
+          style={{ float: "right" }}
+          type="submit"
+        >
+          Confirmar
+        </Button>
+      </Form>
+    </div>
+  );
+};
+
+const FormularioAsignatura = (
+  handleAsignatura,
+  uni,
+  asignatura,
+  universidades,
+  carreras
+) => {
   return (
     <div style={{ margin: "20px 20px 20px 20px" }}>
       <h6>Añadir asignatura</h6>
@@ -293,7 +354,9 @@ class AdministradorCrear extends Component {
     super(props);
     this.state = {
       passValida: -1,
-      show: false
+      show: false,
+      listaCarreras: [],
+      listaUniversidades: []
     };
     this.nombreProf = React.createRef();
     this.apellidosProf = React.createRef();
@@ -302,7 +365,9 @@ class AdministradorCrear extends Component {
     this.passwdProf = React.createRef();
     this.passwd2Prof = React.createRef();
     this.nombreUni = React.createRef();
+    this.nombreCarrera = React.createRef();
     this.uniAsig = React.createRef();
+    this.uniCarr = React.createRef();
     this.nombreAsig = React.createRef();
     this.uniUn = React.createRef();
     this.asignUn = React.createRef();
@@ -310,10 +375,44 @@ class AdministradorCrear extends Component {
     this.handleProfesor = this.handleProfesor.bind(this);
     this.handleUniversidad = this.handleUniversidad.bind(this);
     this.handleAsignatura = this.handleAsignatura.bind(this);
+    this.handleCarrera = this.handleCarrera.bind(this);
     this.handleProfeAsignatura = this.handleProfeAsignatura.bind(this);
     this.getBorder = this.getBorder.bind(this);
     this.handleShow = this.handleShow.bind(this);
     this.handleClose = this.handleClose.bind(this);
+  }
+
+  componentWillMount() {
+    let apiInstance = new UniversityApi();
+    let opts = {
+      cacheControl: "'no-cache, no-store, must-revalidate'", // String |
+      pragma: "'no-cache'", // String |
+      expires: "'0'", // String |
+      name: "a" // String | String a buscar en el nombre
+    };
+    apiInstance.findUniversitiesContaining(opts, (error, data, response) => {
+      if (error) {
+        console.error(error);
+      } else {
+        console.log(data);
+        this.setState({ listaUniversidades: data._embedded.universities });
+      }
+    });
+    apiInstance = new DegreeApi();
+    opts = {
+      cacheControl: "'no-cache, no-store, must-revalidate'", // String |
+      pragma: "'no-cache'", // String |
+      expires: "'0'", // String |
+      name: "a" // String | String a buscar en el nombre de carreras
+    };
+    apiInstance.findDegreesContainingName(opts, (error, data, response) => {
+      if (error) {
+        console.error(error);
+      } else {
+        console.log(data);
+        this.setState({ listaCarreras: data._embedded.degrees });
+      }
+    });
   }
 
   handleClose() {
@@ -357,6 +456,30 @@ class AdministradorCrear extends Component {
     form.reset();
     this.handleShow();
   }
+
+  handleCarrera(event, form) {
+    event.preventDefault();
+    //const uni = this.uniCarr.current.value;
+    const carrera = this.nombreCarrera.current.value;
+    //Añadir carrera
+    let defaultClient = ApiClient.instance;
+    // Configure Bearer (JWT) access token for authorization: bearerAuth
+    let bearerAuth = defaultClient.authentications["bearerAuth"];
+    bearerAuth.accessToken = getUserToken();
+
+    let apiInstance = new DegreeApi();
+    let degree2 = new Degree2(carrera); // Degree2 | Carrera a añadir
+    apiInstance.addDegree(degree2, (error, data, response) => {
+      if (error) {
+        console.error(error);
+      } else {
+        console.log(data);
+      }
+    });
+    form.reset();
+    this.handleShow();
+  }
+
   handleAsignatura(event, form) {
     event.preventDefault();
     const universidad = this.uniAsig.current.value;
@@ -419,11 +542,21 @@ class AdministradorCrear extends Component {
           <div className="boxed" style={{ marginTop: "20px" }} id="a">
             {FormularioUniversidad(this.handleUniversidad, this.nombreUni)}
           </div>
+          <div className="boxed" style={{ marginTop: "20px" }} id="a">
+            {FormularioCarrera(
+              this.handleCarrera,
+              this.uniCarr,
+              this.nombreCarrera,
+              this.state.listaUniversidades
+            )}
+          </div>
           <div className="boxed" style={{ marginTop: "20px" }}>
             {FormularioAsignatura(
               this.handleAsignatura,
               this.uniAsig,
-              this.nombreAsig
+              this.nombreAsig,
+              this.state.listaUniversidades,
+              this.state.listaCarreras
             )}
           </div>
           <div className="boxed" style={{ marginTop: "20px" }}>

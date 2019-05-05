@@ -15,7 +15,6 @@ export function signIn(data) {
   console.log(data.token);
   localStorage.setItem("userToken", data.token);
   localStorage.setItem("userID", data.id);
-  return 0;
 }
 
 /**

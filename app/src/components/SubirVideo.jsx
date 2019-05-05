@@ -3,12 +3,12 @@ import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
 import { Button, Form, Col } from "react-bootstrap";
 import { Redirect, Link } from "react-router-dom";
-import { isSignedIn, getUserToken } from "../config/Auth";
+import { isSignedIn, getUserToken, getUserID } from "../config/Auth";
 import {
   checkFileExtensionImage,
   checkFileExtensionVideo
 } from "../config/Procesar";
-import { SubjectApi, ApiClient, VideoApi } from "swagger_unicast";
+import { UserApi, ApiClient, VideoApi } from "swagger_unicast";
 
 const FormularioDatos = (
   handleSubmit,
@@ -146,15 +146,19 @@ class SubirVideo extends Component {
     // Configure Bearer (JWT) access token for authorization: bearerAuth
     let bearerAuth = defaultClient.authentications["bearerAuth"];
     bearerAuth.accessToken = getUserToken();
-    let apiInstance = new SubjectApi();
+    let apiInstance = new UserApi();
+    let id = getUserID(); // Number | Id del usuario
     let opts = {
-      page: 1 // Number | Numero de la página a devolver
+      cacheControl: "'no-cache, no-store, must-revalidate'", // String |
+      pragma: "'no-cache'", // String |
+      expires: "'0'" // String |
     };
-    apiInstance.getSubjects(opts, (error, data, response) => {
+    apiInstance.getSubjectsOfUser(id, opts, (error, data, response) => {
       if (error) {
         console.error(error);
       } else {
-        this.setState({ listaAsignaturas: data });
+        console.log(data);
+        this.setState({ listaAsignaturas: data._embedded.subjects });
       }
     });
   }

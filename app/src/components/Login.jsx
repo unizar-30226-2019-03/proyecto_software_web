@@ -28,9 +28,9 @@ class Login extends Component {
       if (error) {
         this.setState({ error: true });
       } else {
-        const validacion = signIn(data);
+        signIn(data);
         // validacion será 1 si es admin, y 0 si es un usuario normal
-        this.setState({ validado: validacion });
+        this.setState({ validado: userID === "admin" ? 1 : 0 });
       }
     });
   };
