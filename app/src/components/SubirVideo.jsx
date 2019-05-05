@@ -19,9 +19,7 @@ const FormularioDatos = (
   asignatura,
   img_valida,
   video_valido,
-  listaAsignaturas,
-  handleFileSelect,
-  handleVideoSelect
+  listaAsignaturas
 ) => {
   return (
     <div style={{ margin: "0 20% 0 0" }}>
@@ -59,13 +57,7 @@ const FormularioDatos = (
 
         <Form.Group controlId="formGridMiniatura">
           <Form.Label>Foto de miniatura del video</Form.Label>
-          <Form.Control
-            type="file"
-            accept="image/*"
-            ref={miniatura}
-            required
-            onChange={handleFileSelect}
-          />
+          <Form.Control type="file" accept="image/*" ref={miniatura} required />
         </Form.Group>
         {img_valida === 0 ? (
           <p class="text-danger">Introduzca un formato de imagen válido</p>
@@ -85,13 +77,7 @@ const FormularioDatos = (
         </Form.Group>
         <Form.Group controlId="formGridVideo">
           <Form.Label>Vídeo</Form.Label>
-          <Form.Control
-            type="file"
-            accept="video/*"
-            ref={video}
-            required
-            onChange={handleVideoSelect}
-          />
+          <Form.Control type="file" accept="video/*" ref={video} required />
         </Form.Group>
         {video_valido === 0 ? (
           <p class="text-danger">Introduzca un formato de imagen válido</p>
@@ -126,9 +112,7 @@ class SubirVideo extends Component {
       datosSubidos: false,
       img_valida: -1,
       video_valido: -1,
-      listaAsignaturas: [],
-      imgData: [],
-      vidData: []
+      listaAsignaturas: []
     };
     this.titulo = React.createRef();
     this.miniatura = React.createRef();
@@ -137,8 +121,6 @@ class SubirVideo extends Component {
     this.asignatura = React.createRef();
     this.handleSubmitDatos = this.handleSubmitDatos.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.handleFileSelect = this.handleFileSelect.bind(this);
-    this.handleVideoSelect = this.handleVideoSelect.bind(this);
   }
 
   componentWillMount() {
@@ -149,9 +131,9 @@ class SubirVideo extends Component {
     let apiInstance = new UserApi();
     let id = getUserID(); // Number | Id del usuario
     let opts = {
-      cacheControl: "'no-cache, no-store, must-revalidate'", // String |
-      pragma: "'no-cache'", // String |
-      expires: "'0'" // String |
+      cacheControl: "no-cache, no-store, must-revalidate", // String |
+      pragma: "no-cache", // String |
+      expires: "0" // String |
     };
     apiInstance.getSubjectsOfUser(id, opts, (error, data, response) => {
       if (error) {
@@ -163,46 +145,22 @@ class SubirVideo extends Component {
     });
   }
 
-  handleFileSelect() {
-    var f = this.miniatura.current.files[0];
-    this.setState({ nombreFoto: f.name });
-    var reader = new FileReader();
-    reader.onloadend = () => {
-      var dataURL = reader.result;
-      this.setState({ imgData: dataURL });
-    };
-    reader.readAsDataURL(f);
-  }
-
-  handleVideoSelect() {
-    var f = this.video.current.files[0];
-    this.setState({ nombreVideo: f.name });
-    var reader = new FileReader();
-    reader.onloadend = () => {
-      var dataURL = reader.result;
-      this.setState({ vidData: dataURL });
-    };
-    reader.readAsDataURL(f);
-  }
-
   handleSubmitDatos(event) {
     event.preventDefault();
     const titulo = this.titulo.current.value;
     const descripcion = this.descripcion.current.value;
-    const miniatura = this.state.nombreFoto;
-    const video = this.state.nombreVideo;
+    const miniatura = this.miniatura.current.value;
+    const video = this.video.current.value;
     if (!checkFileExtensionImage(miniatura)) {
       this.setState({ img_valida: 0 });
     } else if (!checkFileExtensionVideo(video)) {
       this.setState({ video_valido: 0 });
     } else {
-      const file = new File([this.state.vidData], video);
-      const thumbnail = new File([this.state.imgData], miniatura);
       let apiInstance = new VideoApi();
       let subjectId = 1;
       apiInstance.addVideo(
-        file,
-        thumbnail,
+        this.video.current.files[0],
+        this.miniatura.current.files[0],
         titulo,
         descripcion,
         subjectId,
@@ -266,9 +224,7 @@ class SubirVideo extends Component {
                   this.asignatura,
                   this.state.img_valida,
                   this.state.video_valido,
-                  this.state.listaAsignaturas,
-                  this.handleFileSelect,
-                  this.handleVideoSelect
+                  this.state.listaAsignaturas
                 )}
               </div>
             </div>

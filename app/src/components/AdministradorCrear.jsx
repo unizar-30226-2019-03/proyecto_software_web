@@ -106,12 +106,7 @@ const FormularioProfesor = (
   );
 };
 
-const FormularioUniversidad = (
-  handleUniversidad,
-  nombre,
-  fotoUni,
-  handleFileSelect
-) => {
+const FormularioUniversidad = (handleUniversidad, nombre, fotoUni) => {
   return (
     <div style={{ margin: "20px 20px 20px 20px" }}>
       <h6>Añadir universidad</h6>
@@ -134,13 +129,7 @@ const FormularioUniversidad = (
         </Form.Row>
         <Form.Group controlId="formGridFotoUni">
           <Form.Label>Foto de la Universidad</Form.Label>
-          <Form.Control
-            type="file"
-            accept="image/*"
-            ref={fotoUni}
-            required
-            onChange={handleFileSelect}
-          />
+          <Form.Control type="file" accept="image/*" ref={fotoUni} required />
         </Form.Group>
         <Button className="boton-filtro" type="reset">
           Cancelar
@@ -371,9 +360,7 @@ class AdministradorCrear extends Component {
       passValida: -1,
       show: false,
       listaCarreras: [],
-      listaUniversidades: [],
-      nombreFoto: "",
-      imgData: []
+      listaUniversidades: []
     };
     this.UniversityApi = new UniversityApi();
     this.DegreeApi = new DegreeApi();
@@ -400,14 +387,13 @@ class AdministradorCrear extends Component {
     this.getBorder = this.getBorder.bind(this);
     this.handleShow = this.handleShow.bind(this);
     this.handleClose = this.handleClose.bind(this);
-    this.handleFileSelect = this.handleFileSelect.bind(this);
   }
 
   componentWillMount() {
     let opts = {
-      cacheControl: "'no-cache, no-store, must-revalidate'", // String |
-      pragma: "'no-cache'", // String |
-      expires: "'0'", // String |
+      cacheControl: "no-cache, no-store, must-revalidate", // String |
+      pragma: "no-cache", // String |
+      expires: "0", // String |
       name: "a" // String | String a buscar en el nombre
     };
     this.UniversityApi.findUniversitiesContaining(
@@ -422,9 +408,9 @@ class AdministradorCrear extends Component {
       }
     );
     opts = {
-      cacheControl: "'no-cache, no-store, must-revalidate'", // String |
-      pragma: "'no-cache'", // String |
-      expires: "'0'", // String |
+      cacheControl: "no-cache, no-store, must-revalidate", // String |
+      pragma: "no-cache", // String |
+      expires: "0", // String |
       name: "a" // String | String a buscar en el nombre de carreras
     };
     this.DegreeApi.findDegreesContainingName(opts, (error, data, response) => {
@@ -435,17 +421,6 @@ class AdministradorCrear extends Component {
         this.setState({ listaCarreras: data._embedded.degrees });
       }
     });
-  }
-
-  handleFileSelect() {
-    var f = this.fotoUni.current.files[0];
-    this.setState({ nombreFoto: f.name });
-    var reader = new FileReader();
-    reader.onloadend = () => {
-      var dataURL = reader.result;
-      this.setState({ imgData: dataURL });
-    };
-    reader.readAsDataURL(f);
   }
 
   handleClose() {
@@ -484,16 +459,19 @@ class AdministradorCrear extends Component {
   handleUniversidad(event, form) {
     event.preventDefault();
     const nombre = this.nombreUni.current.value;
-    const foto = new File([this.state.imgData], this.state.nombreFoto);
-    this.UniversityApi.addUniversity(nombre, foto, (error, data, response) => {
-      if (error) {
-        console.error(error);
-      } else {
-        console.log(data);
-        form.reset();
-        this.handleShow();
+    this.UniversityApi.addUniversity(
+      nombre,
+      this.fotoUni.current.files[0],
+      (error, data, response) => {
+        if (error) {
+          console.error(error);
+        } else {
+          console.log(data);
+          form.reset();
+          this.handleShow();
+        }
       }
-    });
+    );
   }
 
   handleCarrera(event, form) {
@@ -581,8 +559,7 @@ class AdministradorCrear extends Component {
             {FormularioUniversidad(
               this.handleUniversidad,
               this.nombreUni,
-              this.fotoUni,
-              this.handleFileSelect
+              this.fotoUni
             )}
           </div>
           <div className="boxed" style={{ marginTop: "20px" }} id="a">

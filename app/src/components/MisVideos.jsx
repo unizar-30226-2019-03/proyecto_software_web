@@ -2,107 +2,151 @@ import React, { Component } from "react";
 import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
 import icono from "../assets/favicon.ico";
-import imagenPrueba from "../assets/landscape.jpg";
 import { Button } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
-import { Menu } from "./ListaHorizontal";
-import { getTime } from "../config/Procesar";
-import { isSignedIn } from "../config/Auth";
+import { isSignedIn, getUserToken, getUserID } from "../config/Auth";
+import { UserApi, ApiClient } from "swagger_unicast";
 
-const list = [
-  {
-    name: "item1",
-    canal: "Asignatura A",
-    image: imagenPrueba,
-    duracion: getTime(500),
-    rating: 98
-  },
-  {
-    name: "item2",
-    canal: "Asignatura B",
-    image: imagenPrueba,
-    duracion: getTime(600),
-    rating: 98
-  },
-  {
-    name: "item3",
-    canal: "Asignatura C",
-    image: imagenPrueba,
-    duracion: getTime(700),
-    rating: 92
-  },
-  {
-    name: "item4",
-    canal: "Asignatura D",
-    image: imagenPrueba,
-    duracion: getTime(800),
-    rating: 88
-  },
-  {
-    name: "item5",
-    canal: "Asignatura E",
-    image: imagenPrueba,
-    duracion: getTime(900),
-    rating: 77
-  },
-  {
-    name: "item6",
-    canal: "Asignatura F",
-    image: imagenPrueba,
-    duracion: getTime(1000),
-    rating: 90
-  },
-  {
-    name: "item7",
-    canal: "Asignatura G",
-    image: imagenPrueba,
-    duracion: getTime(1100),
-    rating: 84
-  },
-  {
-    name: "item8",
-    canal: "Asignatura H",
-    image: imagenPrueba,
-    duracion: getTime(1200),
-    rating: 87
-  },
-  {
-    name: "item9",
-    canal: "Asignatura I",
-    image: imagenPrueba,
-    duracion: getTime(1300),
-    rating: 93
-  },
-  {
-    name: "item10",
-    canal: "Asignatura J",
-    image: imagenPrueba,
-    duracion: getTime(1400),
-    rating: 91
-  },
-  {
-    name: "item11",
-    canal: "Asignatura K",
-    image: imagenPrueba,
-    duracion: getTime(1500),
-    rating: 91
-  },
-  {
-    name: "item12",
-    canal: "Asignatura L",
-    image: imagenPrueba,
-    duracion: getTime(1600),
-    rating: 90
-  }
-];
+import IconoAsignaturaUniversidad from "./IconoAsignaturaUniversidad";
+import iconoAsign from "../assets/favicon.ico";
+import { getTime } from "../config/Procesar";
+import { getTimePassed } from "../config/VideoFunc";
+
+// One item component
+// selected prop will be passed
+const MenuItem = ({ title, url, canal, img, duracion, rating, timestamp }) => {
+  return (
+    <div>
+      <div className="menu-item">
+        <Link to={`/video/${title}`} style={{ position: "relative" }}>
+          <img src={img} width="210" height="118" alt={title} />
+          <div
+            style={{
+              color: "white",
+              fontSize: "12px",
+              textAlign: "center",
+              backgroundColor: "rgba(0,0,0,0.7)",
+              textDecoration: "none",
+              width: "40px",
+              height: "16px",
+              position: "absolute",
+              right: "4px",
+              top: "49px",
+              borderRadius: "3px",
+              zIndex: "100"
+            }}
+          >
+            {duracion}
+          </div>
+          <div
+            style={{
+              color: rating >= 50 ? "#228B22" : "#DC143C",
+              fontSize: "12px",
+              textAlign: "center",
+              backgroundColor: "rgba(0,0,0,0.7)",
+              textDecoration: "none",
+              width: "40px",
+              height: "16px",
+              position: "absolute",
+              left: "4px",
+              top: "49px",
+              borderRadius: "3px",
+              zIndex: "100"
+            }}
+          >
+            {rating + "%"}
+          </div>
+        </Link>
+        <div>
+          <div style={{ float: "left", marginTop: "5px" }}>
+            <Link to={`/asig/${canal}`} style={{ textDecoration: "none" }}>
+              <IconoAsignaturaUniversidad name={canal} image={iconoAsign} />
+            </Link>
+          </div>
+          <div style={{ marginLeft: "75px", lineHeight: "normal" }}>
+            {" "}
+            <Link
+              style={{
+                textDecoration: "none",
+                color: "black",
+                fontSize: "14px",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                display: "-webkit-box",
+                WebkitLineClamp: "2",
+                WebkitBoxOrient: "vertical",
+                overflowWrap: "break-word",
+                fontWeight: "bold"
+              }}
+              to={`/video/${title}`}
+            >
+              {title}
+            </Link>
+          </div>
+        </div>
+        <div
+          className="fecha-subida"
+          style={{ marginLeft: "0", marginTop: "2px" }}
+        >
+          Subido hace {timestamp}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// All items component
+// Important! add unique key
+const Menu = list =>
+  list.map(el => {
+    const { title, url, thumbnailUrl, score, timestamp } = el;
+
+    return (
+      <MenuItem
+        title={title}
+        url={url}
+        key={title}
+        img={thumbnailUrl}
+        canal={title}
+        duracion={getTime(500)}
+        rating={score}
+        timestamp={getTimePassed(timestamp)}
+      />
+    );
+  });
 
 class MisVideos extends Component {
   constructor() {
     super();
     this.state = {
-      contentMargin: "300px"
+      contentMargin: "300px",
+      listaVideos: []
     };
     this.handleChange = this.handleChange.bind(this);
+    this.UserApi = new UserApi();
+  }
+
+  componentWillMount() {
+    let defaultClient = ApiClient.instance;
+    // Configure Bearer (JWT) access token for authorization: bearerAuth
+    let bearerAuth = defaultClient.authentications["bearerAuth"];
+    bearerAuth.accessToken = getUserToken();
+
+    const id = getUserID();
+    const opts = {
+      cacheControl: "no-cache, no-store, must-revalidate", // String |
+      pragma: "no-cache", // String |
+      expires: "0" // String |
+    };
+    this.UserApi.getVideosOfUser(id, opts, (error, data, response) => {
+      if (error) {
+        console.error(error);
+      } else {
+        console.log(data);
+
+        this.setState({ listaVideos: data._embedded.videos });
+      }
+    });
   }
 
   handleChange(display) {
@@ -162,7 +206,7 @@ class MisVideos extends Component {
             <div>
               <div>
                 <div style={{ display: "flex", flexWrap: "wrap" }}>
-                  {Menu(list)}
+                  {Menu(this.state.listaVideos)}
                 </div>
               </div>
             </div>

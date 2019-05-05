@@ -50,3 +50,40 @@ function f_filterResults(n_win, n_docel, n_body) {
   if (n_docel && (!n_result || n_result > n_docel)) n_result = n_docel;
   return n_body && (!n_result || n_result > n_body) ? n_body : n_result;
 }
+
+/**
+ * Devuelve un String indicando los minutos, horas, días, semanas, meses o años
+ * transcurridos desde que se subió hasta el momento.
+ * @param {Date} date1 Timestamp de un vídeo
+ */
+export function getTimePassed(date1) {
+  const now = new Date();
+  const diffMs = now - date1;
+  const diffMins = Math.round(diffMs / 60000);
+  if (diffMins > 60) {
+    const diffHrs = Math.floor(diffMs / 3600000);
+    if (diffHrs > 24) {
+      const diffDays = Math.floor(diffMs / 86400000);
+      if (diffDays > 7) {
+        const diffWeeks = Math.floor(diffMs / 604800000);
+        if (diffWeeks > 4) {
+          const diffMonths = Math.floor(diffMs / 2629800000);
+          if (diffMonths > 12) {
+            const diffYears = Math.floor(diffMs / 31556952000);
+            return `${diffYears} años`;
+          } else {
+            return `${diffMonths} meses`;
+          }
+        } else {
+          return `${diffWeeks} semanas`;
+        }
+      } else {
+        return `${diffDays} días`;
+      }
+    } else {
+      return `${diffHrs} horas`;
+    }
+  } else {
+    return `${diffMins} minutos`;
+  }
+}

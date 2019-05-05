@@ -189,7 +189,6 @@ const FormularioInfo = (
   carrera,
   cancelar,
   errorFoto,
-  handleFileSelect,
   universidades,
   carreras
 ) => {
@@ -239,12 +238,7 @@ const FormularioInfo = (
         ) : (
           <Form.Label>Foto de usuario*</Form.Label>
         )}
-        <Form.Control
-          type="file"
-          ref={foto}
-          required
-          onChange={handleFileSelect}
-        />
+        <Form.Control type="file" ref={foto} required />
       </Form.Group>
 
       <Form.Group controlId="exampleForm.ControlTextarea1">
@@ -297,8 +291,6 @@ class SignIn extends Component {
       email: "",
       userID: "",
       pass: "",
-      imgData: [],
-      nombreFoto: "",
       listaUniversidades: [],
       listaCarreras: []
     };
@@ -314,16 +306,15 @@ class SignIn extends Component {
     this.carrera = React.createRef();
     this.handleSubmitDatos = this.handleSubmitDatos.bind(this);
     this.handleSubmitInfo = this.handleSubmitInfo.bind(this);
-    this.handleFileSelect = this.handleFileSelect.bind(this);
     this.back = this.back.bind(this);
   }
 
   componentWillMount() {
     let apiInstance = new UniversityApi();
     let opts = {
-      cacheControl: "'no-cache, no-store, must-revalidate'", // String |
-      pragma: "'no-cache'", // String |
-      expires: "'0'", // String |
+      cacheControl: "no-cache, no-store, must-revalidate", // String |
+      pragma: "no-cache", // String |
+      expires: "0", // String |
       name: "a" // String | String a buscar en el nombre
     };
     apiInstance.findUniversitiesContaining(opts, (error, data, response) => {
@@ -337,9 +328,9 @@ class SignIn extends Component {
     });
     apiInstance = new DegreeApi();
     opts = {
-      cacheControl: "'no-cache, no-store, must-revalidate'", // String |
-      pragma: "'no-cache'", // String |
-      expires: "'0'", // String |
+      cacheControl: "no-cache, no-store, must-revalidate", // String |
+      pragma: "no-cache", // String |
+      expires: "0", // String |
       name: "a" // String | String a buscar en el nombre de carreras
     };
     apiInstance.findDegreesContainingName(opts, (error, data, response) => {
@@ -354,17 +345,6 @@ class SignIn extends Component {
 
   back() {
     this.setState({ datosValidados: false, infoValidada: false });
-  }
-
-  handleFileSelect() {
-    var f = this.foto.current.files[0];
-    this.setState({ nombreFoto: f.name });
-    var reader = new FileReader();
-    reader.onloadend = () => {
-      var dataURL = reader.result;
-      this.setState({ imgData: dataURL });
-    };
-    reader.readAsDataURL(f);
   }
 
   handleSubmitDatos(event) {
@@ -440,7 +420,7 @@ class SignIn extends Component {
     event.preventDefault();
     let ok = true;
 
-    if (!checkFileExtensionImage(this.state.nombreFoto)) {
+    if (!checkFileExtensionImage(this.foto.current.value)) {
       ok = false;
       this.setState({ errorFoto: true });
     } else {
@@ -451,7 +431,6 @@ class SignIn extends Component {
       const descripcion = this.descripcion.current.value;
       const universidad = this.universidad.current.value;
       const carrera = this.carrera.current.value;
-      const foto = new File([this.state.imgData], this.state.nombreFoto);
       let apiInstance = new UserApi();
       apiInstance.addUser(
         this.state.userID,
@@ -462,11 +441,12 @@ class SignIn extends Component {
         descripcion,
         universidad,
         carrera,
-        foto,
+        this.foto.current.files[0],
         (error, data, response) => {
           if (error) {
             console.error("ERROR");
           } else {
+            console.log(data);
             apiInstance.authUser(
               data.username,
               this.state.pass,
@@ -523,7 +503,6 @@ class SignIn extends Component {
                     this.carrera,
                     this.back,
                     this.state.errorFoto,
-                    this.handleFileSelect,
                     this.state.listaUniversidades,
                     this.state.listaCarreras
                   )}
