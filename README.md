@@ -2,13 +2,12 @@
 
 ## Instalación
 
-1. Clonar el proyecto.
-2. `cd proyecto_software_web`
-3. Descargar e instalar `Node.js y npm` desde [aquí](https://www.npmjs.com/get-npm) 
-4. `cd app`
-5. Ejecutar `npm install`para descargar todos los paquetes y dependencias automáticamente.
+1. Descargar e instalar `Node.js y npm` desde [aquí](https://www.npmjs.com/get-npm) 
+2. Clonar el proyecto.
+3. `cd proyecto_software_web/app`
+4. Ejecutar `npm install`para descargar todos los paquetes y dependencias automáticamente.
 
-## Start developing
+## Empezar a desarrollar
 
 1. `cd proyecto_software_web/app`
 2. Ejecutar `npm start`
@@ -27,5 +26,5 @@
 3. Poner `https://raw.githubusercontent.com/unizar-30226-2019-03/proyecto_software_backend/master/api_docs/api-spec.yml` en la barra de explorar.
 4. Ahora se puede ver la documentacion de la api (ejemplos de respuesta de métodos, parámetros de funciones etc) y ejecutar métodos en la api directamente en el buscador (añadir nuevos usuarios, asignaturas etc.)
 
-## Clone
+## Clonar
 Clonar el repositorio ejecutando `git clone https://github.com/unizar-30226-2019-03/proyecto_software_web.git`
