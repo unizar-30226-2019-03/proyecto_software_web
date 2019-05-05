@@ -504,7 +504,7 @@ class SignIn extends Component {
           <div>
             <div className="signin transform">
               <img className="img-signin" src={uni} alt="UniCast" />
-              {this.state.datosValidados
+              {!this.state.datosValidados
                 ? FormularioDatos(
                     this.handleSubmitDatos,
                     this.nombre,
