@@ -17,14 +17,16 @@ import Popup from "reactjs-popup";
 import StarRatingComponent from "react-star-rating-component";
 import { ContenidoPopUp } from "./ListaVertical";
 import { Notificacion } from "./Listas";
-import { isSignedIn, getUserToken } from "../config/Auth";
+import { isSignedIn, getUserToken, getUserID } from "../config/Auth";
 import {
   generadorColores,
   scrollFunc,
   getTimePassed
 } from "../config/VideoFunc";
 import ApiClient from "swagger_unicast/dist/ApiClient";
-import { VideoApi } from "swagger_unicast";
+import { VideoApi, VoteApi } from "swagger_unicast";
+import VoteId from "swagger_unicast/dist/model/VoteId";
+import Vote2 from "swagger_unicast/dist/model/Vote2";
 
 const profesores = [
   { foto: icono, nombre: "Jorge" },
@@ -210,7 +212,7 @@ class ViendoVideo extends Component {
     super();
     this.state = {
       contentMargin: "15%",
-      user: "",
+      user: -1,
       comentarios: [],
       fijarComentarios: false,
       alturaComentarios: 0,
@@ -228,9 +230,11 @@ class ViendoVideo extends Component {
       urlVid: "",
       titulo: "",
       descripcion: "",
-      timestamp: ""
+      timestamp: "",
+      videoID: -1
     };
     this.videoApi = new VideoApi();
+    this.voteApi = new VoteApi();
     this.handleChange = this.handleChange.bind(this);
     this.recogerComentarios = this.recogerComentarios.bind(this);
     this.recibirEstadoVideo = this.recibirEstadoVideo.bind(this);
@@ -308,24 +312,26 @@ class ViendoVideo extends Component {
     let bearerAuth = defaultClient.authentications["bearerAuth"];
     bearerAuth.accessToken = getUserToken();
 
-    let opts = {
+    const id = this.props.match.params.id;
+    const opts = {
       cacheControl: "no-cache, no-store, must-revalidate", // String |
       pragma: "no-cache", // String |
-      expires: "0", // String |
-      title: `${this.props.match.params.nombreVideo}` // String | Comienzo del nombre de los videos a buscar
+      expires: "0" // String |
     };
-    this.videoApi.findVideosContainingTitle(opts, (error, data, response) => {
+    this.videoApi.getVideo(id, opts, (error, data, response) => {
       if (error) {
         console.error(error);
       } else {
-        const video = data._embedded.videos[0];
+        const video = data;
         console.log(data);
         this.setState({
           thumbnailUrl: video.thumbnailUrl,
           urlVid: video.url,
           titulo: video.title,
           descripcion: video.description,
-          timestamp: getTimePassed(video.timestamp)
+          timestamp: getTimePassed(video.timestamp),
+          videoID: video.id,
+          user: getUserID()
         });
       }
     });
@@ -433,8 +439,25 @@ class ViendoVideo extends Component {
   }
 
   puntuar() {
+    let defaultClient = ApiClient.instance;
+    // Configure Bearer (JWT) access token for authorization: bearerAuth
+    let bearerAuth = defaultClient.authentications["bearerAuth"];
+    bearerAuth.accessToken = getUserToken();
     //Enviar al servidor la puntuación actual
-    //console.log(this.state.claridad, this.state.calidad, this.state.adecuacion);
+    const voteid = new VoteId(this.state.videoID, this.state.user);
+    const vote = new Vote2(
+      voteid,
+      this.state.claridad,
+      this.state.calidad,
+      this.state.adecuacion
+    );
+    this.voteApi.addVote(vote, (error, data, response) => {
+      if (error) {
+        console.error(error);
+      } else {
+        console.log(data);
+      }
+    });
   }
 
   render() {

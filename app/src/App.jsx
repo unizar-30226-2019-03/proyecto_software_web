@@ -60,7 +60,7 @@ class App extends Component {
           <Route path={"/mensajes-profesores"} component={MensajesProfes} />
           <Route path={"/mensajes"} component={Mensajes} />
           <Route path={"/asig/:nombre"} component={Asignatura} />
-          <Route path={"/video/:nombreVideo"} component={ViendoVideo} />
+          <Route path={"/video/:id"} component={ViendoVideo} />
           <Route path={"/recuperacion"} component={RecuperarPass} />
           <Route path={"/chat/:nombre"} component={Chat} />
           <Route path={"/busqueda/:valor"} component={ResultadoBusqueda} />

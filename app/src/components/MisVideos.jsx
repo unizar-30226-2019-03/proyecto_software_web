@@ -5,20 +5,30 @@ import icono from "../assets/favicon.ico";
 import { Button } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
 import { isSignedIn, getUserToken, getUserID } from "../config/Auth";
-import { UserApi, ApiClient } from "swagger_unicast";
+import { ApiClient } from "swagger_unicast";
 
 import IconoAsignaturaUniversidad from "./IconoAsignaturaUniversidad";
 import iconoAsign from "../assets/favicon.ico";
 import { getTime } from "../config/Procesar";
 import { getTimePassed } from "../config/VideoFunc";
+import VideoApi from "swagger_unicast/dist/api/VideoApi";
 
 // One item component
 // selected prop will be passed
-const MenuItem = ({ title, url, canal, img, duracion, rating, timestamp }) => {
+const MenuItem = ({
+  title,
+  id,
+  url,
+  canal,
+  img,
+  duracion,
+  rating,
+  timestamp
+}) => {
   return (
     <div>
       <div className="menu-item">
-        <Link to={`/video/${title}`} style={{ position: "relative" }}>
+        <Link to={`/video/${id}`} style={{ position: "relative" }}>
           <img src={img} width="210" height="118" alt={title} />
           <div
             style={{
@@ -78,7 +88,7 @@ const MenuItem = ({ title, url, canal, img, duracion, rating, timestamp }) => {
                 overflowWrap: "break-word",
                 fontWeight: "bold"
               }}
-              to={`/video/${title}`}
+              to={`/video/${id}`}
             >
               {title}
             </Link>
@@ -99,16 +109,17 @@ const MenuItem = ({ title, url, canal, img, duracion, rating, timestamp }) => {
 // Important! add unique key
 const Menu = list =>
   list.map(el => {
-    const { title, url, thumbnailUrl, score, timestamp } = el;
+    const { title, url, id, thumbnailUrl, score, timestamp, seconds } = el;
 
     return (
       <MenuItem
         title={title}
+        id={id}
         url={url}
         key={title}
         img={thumbnailUrl}
         canal={title}
-        duracion={getTime(500)}
+        duracion={getTime(seconds)}
         rating={score}
         timestamp={getTimePassed(timestamp)}
       />
@@ -123,7 +134,7 @@ class MisVideos extends Component {
       listaVideos: []
     };
     this.handleChange = this.handleChange.bind(this);
-    this.UserApi = new UserApi();
+    this.videoApi = new VideoApi();
   }
 
   componentWillMount() {
@@ -136,9 +147,11 @@ class MisVideos extends Component {
     const opts = {
       cacheControl: "no-cache, no-store, must-revalidate", // String |
       pragma: "no-cache", // String |
-      expires: "0" // String |
+      expires: "0", // String |
+      page: 0, // Number | Número de la página a devolver
+      sort: ["null"] // [String] | Parámetros en la forma `($propertyname,)+[asc|desc]?`
     };
-    this.UserApi.getVideosOfUser(id, opts, (error, data, response) => {
+    this.videoApi.getVideosFromUploader(id, opts, (error, data, response) => {
       if (error) {
         console.error(error);
       } else {

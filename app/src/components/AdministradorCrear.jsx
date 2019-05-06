@@ -379,6 +379,7 @@ class AdministradorCrear extends Component {
     this.uniUn = React.createRef();
     this.asignUn = React.createRef();
     this.userUn = React.createRef();
+    this.ligarUniCarr = this.ligarUniCarr.bind(this);
     this.handleProfesor = this.handleProfesor.bind(this);
     this.handleUniversidad = this.handleUniversidad.bind(this);
     this.handleAsignatura = this.handleAsignatura.bind(this);
@@ -458,6 +459,11 @@ class AdministradorCrear extends Component {
   }
   handleUniversidad(event, form) {
     event.preventDefault();
+    let defaultClient = ApiClient.instance;
+    // Configure Bearer (JWT) access token for authorization: bearerAuth
+    let bearerAuth = defaultClient.authentications["bearerAuth"];
+    bearerAuth.accessToken = getUserToken();
+
     const nombre = this.nombreUni.current.value;
     this.UniversityApi.addUniversity(
       nombre,
@@ -476,7 +482,7 @@ class AdministradorCrear extends Component {
 
   handleCarrera(event, form) {
     event.preventDefault();
-    //const uni = this.uniCarr.current.value;
+    const uni = this.uniCarr.current.value;
     const carrera = this.nombreCarrera.current.value;
     //Añadir carrera
     let defaultClient = ApiClient.instance;
@@ -488,12 +494,35 @@ class AdministradorCrear extends Component {
     this.DegreeApi.addDegree(degree2, (error, data, response) => {
       if (error) {
         console.error(error);
+        //Ya existe, conseguir el id de la carrera
       } else {
         console.log(data);
+        this.ligarUniCarr(uni, data.id);
       }
     });
+
     form.reset();
     this.handleShow();
+  }
+
+  ligarUniCarr(uniID, carreraID) {
+    let defaultClient = ApiClient.instance;
+    // Configure Bearer (JWT) access token for authorization: bearerAuth
+    let bearerAuth = defaultClient.authentications["bearerAuth"];
+    bearerAuth.accessToken = getUserToken();
+    //Ligar carrera a universidad
+    console.log(uniID, carreraID);
+    this.DegreeApi.putDegreeUniversity(
+      carreraID,
+      uniID,
+      (error, data, response) => {
+        if (error) {
+          console.error(error);
+        } else {
+          console.log("API called successfully.");
+        }
+      }
+    );
   }
 
   handleAsignatura(event, form) {
