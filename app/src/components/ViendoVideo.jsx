@@ -4,7 +4,6 @@ import { Helmet } from "react-helmet";
 import { Link, Redirect } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import Video from "./Video";
-import vid from "../assets/VideoPrueba.mp4";
 import {
   FaShareAlt,
   FaRegBookmark,
@@ -18,8 +17,14 @@ import Popup from "reactjs-popup";
 import StarRatingComponent from "react-star-rating-component";
 import { ContenidoPopUp } from "./ListaVertical";
 import { Notificacion } from "./Listas";
-import { isSignedIn } from "../config/Auth";
-import { generadorColores, scrollFunc } from "../config/VideoFunc";
+import { isSignedIn, getUserToken } from "../config/Auth";
+import {
+  generadorColores,
+  scrollFunc,
+  getTimePassed
+} from "../config/VideoFunc";
+import ApiClient from "swagger_unicast/dist/ApiClient";
+import { VideoApi } from "swagger_unicast";
 
 const profesores = [
   { foto: icono, nombre: "Jorge" },
@@ -218,8 +223,14 @@ class ViendoVideo extends Component {
       popUpPuntuar: false,
       calidad: 2.5,
       adecuacion: 2.5,
-      claridad: 2.5
+      claridad: 2.5,
+      thumbnailUrl: "",
+      urlVid: "",
+      titulo: "",
+      descripcion: "",
+      timestamp: ""
     };
+    this.videoApi = new VideoApi();
     this.handleChange = this.handleChange.bind(this);
     this.recogerComentarios = this.recogerComentarios.bind(this);
     this.recibirEstadoVideo = this.recibirEstadoVideo.bind(this);
@@ -292,11 +303,32 @@ class ViendoVideo extends Component {
   }
 
   componentWillMount() {
-    if (document.cookie !== undefined) {
-      let userCookie = document.cookie;
-      let userID = userCookie.split("=")[1];
-      this.setState({ user: userID });
-    }
+    let defaultClient = ApiClient.instance;
+    // Configure Bearer (JWT) access token for authorization: bearerAuth
+    let bearerAuth = defaultClient.authentications["bearerAuth"];
+    bearerAuth.accessToken = getUserToken();
+
+    let opts = {
+      cacheControl: "no-cache, no-store, must-revalidate", // String |
+      pragma: "no-cache", // String |
+      expires: "0", // String |
+      title: `${this.props.match.params.nombreVideo}` // String | Comienzo del nombre de los videos a buscar
+    };
+    this.videoApi.findVideosContainingTitle(opts, (error, data, response) => {
+      if (error) {
+        console.error(error);
+      } else {
+        const video = data._embedded.videos[0];
+        console.log(data);
+        this.setState({
+          thumbnailUrl: video.thumbnailUrl,
+          urlVid: video.url,
+          titulo: video.title,
+          descripcion: video.description,
+          timestamp: getTimePassed(video.timestamp)
+        });
+      }
+    });
   }
 
   handleChange(display) {
@@ -428,13 +460,17 @@ class ViendoVideo extends Component {
           }}
         >
           <div className="reproductor">
-            <Video src={vid} enviarEstado={this.recibirEstadoVideo} />
+            <Video
+              src={this.state.urlVid}
+              thumbnailUrl={this.state.thumbnailUrl}
+              enviarEstado={this.recibirEstadoVideo}
+            />
             <div className="datos-video">
-              <p className="titulo-video">
-                {this.props.match.params.nombreVideo}
-              </p>
+              <p className="titulo-video">{this.state.titulo}</p>
               <div style={{ display: "flex" }}>
-                <p className="fecha-subida-video">Subido hace X tiempo</p>
+                <p className="fecha-subida-video">
+                  Subido hace {this.state.timestamp}
+                </p>
                 <div
                   style={{
                     position: "relative",
@@ -631,12 +667,7 @@ class ViendoVideo extends Component {
                 <Button className="boton-seguir">SEGUIR ASIGNATURA</Button>
               </div>
               <div style={{ marginLeft: "48px" }}>
-                <p style={{ fontSize: "15px" }}>
-                  Descripción del vídeo que le haya puesto el correspondiente
-                  profesor, Descripción, Descripción, Descripción, Descripción,
-                  Descripción, Descripción, Descripción, Descripción,
-                  Descripción, Descripción.
-                </p>
+                <p style={{ fontSize: "15px" }}>{this.state.descripcion}</p>
               </div>
               <div style={{ marginLeft: "48px" }}>
                 <p style={{ fontWeight: "550" }}>Profesores de la asignatura</p>

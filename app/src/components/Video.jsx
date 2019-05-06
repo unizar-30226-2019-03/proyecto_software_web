@@ -15,11 +15,24 @@ import {
 export default class Video extends Component {
   constructor(props) {
     super(props);
-    this.state = { video: this.props.src, altura: 0 };
+    this.state = {
+      video: "",
+      thumbnailUrl: "",
+      altura: 0
+    };
     this.div = React.createRef();
     this.play_pause = this.play_pause.bind(this);
     this.maxPantalla = this.maxPantalla.bind(this);
     this.cambiarAltura = this.cambiarAltura.bind(this);
+  }
+
+  componentWillReceiveProps(newProps) {
+    if (this.props.src !== newProps.src) {
+      this.setState({
+        video: newProps.src,
+        thumbnailUrl: newProps.thumbnailUrl
+      });
+    }
   }
 
   componentDidMount() {
@@ -79,8 +92,9 @@ export default class Video extends Component {
           fluid={false}
           width={"100%"}
           height={this.state.altura}
+          poster={this.state.thumbnailUrl}
+          src={this.state.video}
         >
-          <source src={this.state.video} />
           <BigPlayButton position="center" />
 
           <ControlBar>
