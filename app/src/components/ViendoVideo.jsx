@@ -212,7 +212,7 @@ class ViendoVideo extends Component {
     super();
     this.state = {
       contentMargin: "15%",
-      user: -1,
+      user: getUserID(),
       comentarios: [],
       fijarComentarios: false,
       alturaComentarios: 0,
@@ -226,12 +226,8 @@ class ViendoVideo extends Component {
       calidad: 2.5,
       adecuacion: 2.5,
       claridad: 2.5,
-      thumbnailUrl: "",
-      urlVid: "",
-      titulo: "",
-      descripcion: "",
-      timestamp: "",
-      videoID: -1
+      asig: "",
+      video: ""
     };
     this.videoApi = new VideoApi();
     this.voteApi = new VoteApi();
@@ -249,6 +245,7 @@ class ViendoVideo extends Component {
     this.onStarClickCalidad = this.onStarClickCalidad.bind(this);
     this.onStarClickClaridad = this.onStarClickClaridad.bind(this);
     this.puntuar = this.puntuar.bind(this);
+    this.obtenerAsignaturaUni = this.obtenerAsignaturaUni.bind(this);
     this.comentario = React.createRef();
   }
 
@@ -322,17 +319,31 @@ class ViendoVideo extends Component {
       if (error) {
         console.error(error);
       } else {
-        const video = data;
         console.log(data);
-        this.setState({
-          thumbnailUrl: video.thumbnailUrl,
-          urlVid: video.url,
-          titulo: video.title,
-          descripcion: video.description,
-          timestamp: getTimePassed(video.timestamp),
-          videoID: video.id,
-          user: getUserID()
-        });
+        this.setState({ video: data });
+        this.obtenerAsignaturaUni(data);
+      }
+    });
+  }
+
+  obtenerAsignaturaUni(video) {
+    let defaultClient = ApiClient.instance;
+    // Configure Bearer (JWT) access token for authorization: bearerAuth
+    let bearerAuth = defaultClient.authentications["bearerAuth"];
+    bearerAuth.accessToken = getUserToken();
+
+    const opts = {
+      cacheControl: "no-cache, no-store, must-revalidate", // String |
+      pragma: "no-cache", // String |
+      expires: "0", // String |
+      projection: "subjectWithUniversity" // String | Incluir si se quiere obtener tambien la universidad en la respuesta
+    };
+    this.videoApi.getVideoSubject(video.id, opts, (error, data, response) => {
+      if (error) {
+        console.error(error);
+      } else {
+        console.log(data);
+        this.setState({ asig: data });
       }
     });
   }
@@ -484,15 +495,15 @@ class ViendoVideo extends Component {
         >
           <div className="reproductor">
             <Video
-              src={this.state.urlVid}
-              thumbnailUrl={this.state.thumbnailUrl}
+              src={this.state.video.url}
+              thumbnailUrl={this.state.video.thumbnailUrl}
               enviarEstado={this.recibirEstadoVideo}
             />
             <div className="datos-video">
-              <p className="titulo-video">{this.state.titulo}</p>
+              <p className="titulo-video">{this.state.video.title}</p>
               <div style={{ display: "flex" }}>
                 <p className="fecha-subida-video">
-                  Subido hace {this.state.timestamp}
+                  Subido hace {getTimePassed(this.state.video.timestamp)}
                 </p>
                 <div
                   style={{
@@ -684,13 +695,18 @@ class ViendoVideo extends Component {
                     alt="Canal"
                   />
                 </Link>
-                <Link className="nombre-canal" to="/asig/X">
-                  Asignatura concreta
+                <Link
+                  className="nombre-canal"
+                  to={`/asig/${this.state.asig.name}`}
+                >
+                  {this.state.asig.name}
                 </Link>
                 <Button className="boton-seguir">SEGUIR ASIGNATURA</Button>
               </div>
               <div style={{ marginLeft: "48px" }}>
-                <p style={{ fontSize: "15px" }}>{this.state.descripcion}</p>
+                <p style={{ fontSize: "15px" }}>
+                  {this.state.video.description}
+                </p>
               </div>
               <div style={{ marginLeft: "48px" }}>
                 <p style={{ fontWeight: "550" }}>Profesores de la asignatura</p>

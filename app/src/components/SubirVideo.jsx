@@ -114,6 +114,7 @@ class SubirVideo extends Component {
       video_valido: -1,
       listaAsignaturas: []
     };
+    this.userApi = new UserApi();
     this.titulo = React.createRef();
     this.miniatura = React.createRef();
     this.descripcion = React.createRef();
@@ -128,14 +129,13 @@ class SubirVideo extends Component {
     // Configure Bearer (JWT) access token for authorization: bearerAuth
     let bearerAuth = defaultClient.authentications["bearerAuth"];
     bearerAuth.accessToken = getUserToken();
-    let apiInstance = new UserApi();
     let id = getUserID(); // Number | Id del usuario
     let opts = {
       cacheControl: "no-cache, no-store, must-revalidate", // String |
       pragma: "no-cache", // String |
       expires: "0" // String |
     };
-    apiInstance.getSubjectsOfUser(id, opts, (error, data, response) => {
+    this.userApi.getSubjectsOfUser(id, opts, (error, data, response) => {
       if (error) {
         console.error(error);
       } else {
