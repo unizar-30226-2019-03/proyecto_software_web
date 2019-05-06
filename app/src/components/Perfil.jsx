@@ -1,11 +1,12 @@
 import React, { Component } from "react";
 import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
-import User_img from "../assets/user.png";
 import { Button, Form } from "react-bootstrap";
 import Popup from "reactjs-popup";
 import { Link, Redirect } from "react-router-dom";
-import { isSignedIn } from "../config/Auth";
+import { isSignedIn, getUserToken, getUserID } from "../config/Auth";
+import { ApiClient } from "swagger_unicast";
+import UserApi from "swagger_unicast/dist/api/UserApi";
 
 class CamposMostrar extends Component {
   renderCampo(nombre, contenido) {
@@ -44,18 +45,11 @@ class CamposMostrar extends Component {
               margin: "40px 40% 0 120px"
             }}
           >
-            <h6 style={{ textAlign: "justify" }}>
-              Un texto es una composición de signos codificados en un sistema de
-              escritura que forma una unidad de sentido. También es una
-              composición de caracteres imprimibles generados por un algoritmo
-              de cifrado que, aunque no tienen sentido para cualquier persona,
-              sí puede ser descifrado por su destinatario original
-            </h6>
+            <h6 style={{ textAlign: "justify" }}>{this.props.description}</h6>
           </div>
         </div>
         {this.renderCampo("Universidad:", "UNIZAR")}
         {this.renderCampo("Grado:", "Ingeniería Informática")}
-        {this.renderCampo("Intereses:", "Inteligencia Artificial, IoT")}
       </div>
     );
   }
@@ -69,8 +63,10 @@ class Perfil extends Component {
       popUp: false,
       popUpValidado: false,
       pass: "",
-      passValida: -1
+      passValida: -1,
+      user: ""
     };
+    this.userApi = new UserApi();
     this.pass = React.createRef();
     this.handleSubmit = this.handleSubmit.bind(this);
     this.getBorder = this.getBorder.bind(this);
@@ -79,18 +75,32 @@ class Perfil extends Component {
     this.cerrarPopUp = this.cerrarPopUp.bind(this);
   }
 
+  componentWillMount() {
+    let defaultClient = ApiClient.instance;
+    // Configure Bearer (JWT) access token for authorization: bearerAuth
+    let bearerAuth = defaultClient.authentications["bearerAuth"];
+    bearerAuth.accessToken = getUserToken();
+
+    let id = getUserID(); // Number | Id del usuario
+    let opts = {
+      cacheControl: "no-cache, no-store, must-revalidate", // String |
+      pragma: "no-cache", // String |
+      expires: "0" // String |
+    };
+    this.userApi.getUser(id, opts, (error, data, response) => {
+      if (error) {
+        console.error(error);
+      } else {
+        this.setState({ user: data });
+        console.log(data);
+      }
+    });
+  }
+
   handleSubmit(event) {
-    const pass = this.pass.current.value;
+    //const pass = this.pass.current.value;
     event.preventDefault();
-    this.setState({ pass: pass });
-    if (pass === "1234") {
-      this.setState({ passValida: 1 });
-    } else {
-      this.setState({ passValida: 0 });
-    }
-    if (pass === "1234") {
-      this.props.logOut();
-    }
+    //Comprobar contraseña con la BD y si es correcto borrar
   }
 
   handleChange(display) {
@@ -145,7 +155,7 @@ class Perfil extends Component {
             marginTop: "80px"
           }}
         >
-          <h5>David Solanas Sanz</h5>
+          <h5>{`${this.state.user.name} ${this.state.user.surnames}`}</h5>
           <div style={{ marginTop: "40px" }}>
             <div
               style={{
@@ -154,7 +164,7 @@ class Perfil extends Component {
               }}
             >
               <img
-                src={User_img}
+                src={this.state.user.photo}
                 alt="Foto de perfil"
                 width="160px"
                 height="160px"
@@ -193,7 +203,7 @@ class Perfil extends Component {
                 >
                   <strong>Nombre de usuario:</strong>
                 </h6>
-                <p>739999</p>
+                <p>{this.state.user.username}</p>
               </div>
               <div
                 style={{
@@ -208,11 +218,11 @@ class Perfil extends Component {
                 >
                   <strong>Dirección de correo:</strong>
                 </h6>
-                <h6>davidsolanas@gmail.com</h6>
+                <h6>{this.state.user.email}</h6>
               </div>
             </div>
           </div>
-          <CamposMostrar />
+          <CamposMostrar description={this.state.user.description} />
           <div
             style={{
               padding: "30px 20px 0px 0px"
