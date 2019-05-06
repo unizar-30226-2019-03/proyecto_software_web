@@ -5,13 +5,16 @@ import { Redirect } from "react-router-dom";
 class BarraBusqueda extends Component {
   constructor(props) {
     super(props);
-    this.state = { value: this.props.nuevoTit || "", buscar: false };
+    this.state = {
+      value: this.props.nuevoTit === undefined ? "" : this.props.nuevoTit,
+      buscar: false
+    };
     this.handleChange = this.handleChange.bind(this);
     this.keyPress = this.keyPress.bind(this);
   }
 
   componentWillReceiveProps(newProps) {
-    this.setState({ value: newProps.nuevoTit, buscar: false });
+    this.setState({ buscar: false });
   }
 
   handleChange(e) {

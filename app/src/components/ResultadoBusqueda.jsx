@@ -148,17 +148,23 @@ class ResultadoBusqueda extends Component {
       tiempo: 0,
       notif: false,
       mensajeNotif: "",
-      profesores: false
+      profesores: false,
+      timeNow: new Date()
     };
     this.VideoApi = new VideoApi();
     this.handleChange = this.handleChange.bind(this);
     this.anyadirVideoALista = this.anyadirVideoALista.bind(this);
     this.iniciarReloj = this.iniciarReloj.bind(this);
     this.pararReloj = this.pararReloj.bind(this);
+    this.buscarVideos = this.buscarVideos.bind(this);
     this.tick = this.tick.bind(this);
   }
 
   componentWillMount() {
+    this.buscarVideos();
+  }
+
+  buscarVideos() {
     //Aquí se recogerá la búsqueda realizada
     let defaultClient = ApiClient.instance;
     // Configure Bearer (JWT) access token for authorization: bearerAuth
@@ -175,11 +181,14 @@ class ResultadoBusqueda extends Component {
       if (error) {
         console.error(error);
       } else {
+        const now = ApiClient.parseDate(response.headers.date);
         console.log(data);
+        this.setState({
+          lista: data._embedded.videos,
+          timeNow: now
+        });
       }
     });
-
-    this.setState({ lista: list });
   }
 
   handleChange(display) {
@@ -225,6 +234,7 @@ class ResultadoBusqueda extends Component {
   }
 
   componentWillReceiveProps(newProps) {
+    this.buscarVideos();
     this.setState({ busqueda: newProps.match.params.valor });
   }
 
@@ -295,6 +305,7 @@ class ResultadoBusqueda extends Component {
                 anyadirALista={this.anyadirVideoALista}
                 borrar={this.props.borrarVideo}
                 listaRepro={listasRepro}
+                time={this.state.timeNow}
               />
             ) : (
               <BusquedaProfesores lista={listaProfesores} />
