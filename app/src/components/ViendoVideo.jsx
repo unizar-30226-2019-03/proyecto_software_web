@@ -227,7 +227,8 @@ class ViendoVideo extends Component {
       adecuacion: 2.5,
       claridad: 2.5,
       asig: "",
-      video: ""
+      video: "",
+      timeNow: null
     };
     this.videoApi = new VideoApi();
     this.voteApi = new VoteApi();
@@ -320,7 +321,8 @@ class ViendoVideo extends Component {
         console.error(error);
       } else {
         console.log(data);
-        this.setState({ video: data });
+        const now = ApiClient.parseDate(response.headers.date);
+        this.setState({ video: data, timeNow: now });
         this.obtenerAsignaturaUni(data);
       }
     });
@@ -455,7 +457,7 @@ class ViendoVideo extends Component {
     let bearerAuth = defaultClient.authentications["bearerAuth"];
     bearerAuth.accessToken = getUserToken();
     //Enviar al servidor la puntuación actual
-    const voteid = new VoteId(this.state.videoID, this.state.user);
+    const voteid = new VoteId(this.state.video.id, this.state.user);
     const vote = new Vote2(
       voteid,
       this.state.claridad,
@@ -503,7 +505,11 @@ class ViendoVideo extends Component {
               <p className="titulo-video">{this.state.video.title}</p>
               <div style={{ display: "flex" }}>
                 <p className="fecha-subida-video">
-                  Subido hace {getTimePassed(this.state.video.timestamp)}
+                  Subido hace{" "}
+                  {getTimePassed(
+                    this.state.video.timestamp,
+                    this.state.timeNow
+                  )}
                 </p>
                 <div
                   style={{

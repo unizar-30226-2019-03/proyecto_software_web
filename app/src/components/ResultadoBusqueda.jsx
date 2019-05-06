@@ -7,7 +7,9 @@ import BarraNavegacion from "./BarraNavegacion";
 import { Redirect } from "react-router-dom";
 import BusquedaProfesores from "./BusquedaProfesores";
 import { getTime } from "../config/Procesar";
-import { isSignedIn } from "../config/Auth";
+import { isSignedIn, getUserToken } from "../config/Auth";
+import ApiClient from "swagger_unicast/dist/ApiClient";
+import VideoApi from "swagger_unicast/dist/api/VideoApi";
 
 const list = [
   {
@@ -148,6 +150,7 @@ class ResultadoBusqueda extends Component {
       mensajeNotif: "",
       profesores: false
     };
+    this.VideoApi = new VideoApi();
     this.handleChange = this.handleChange.bind(this);
     this.anyadirVideoALista = this.anyadirVideoALista.bind(this);
     this.iniciarReloj = this.iniciarReloj.bind(this);
@@ -157,6 +160,25 @@ class ResultadoBusqueda extends Component {
 
   componentWillMount() {
     //Aquí se recogerá la búsqueda realizada
+    let defaultClient = ApiClient.instance;
+    // Configure Bearer (JWT) access token for authorization: bearerAuth
+    let bearerAuth = defaultClient.authentications["bearerAuth"];
+    bearerAuth.accessToken = getUserToken();
+
+    let opts = {
+      cacheControl: "no-cache, no-store, must-revalidate", // String |
+      pragma: "no-cache", // String |
+      expires: "0", // String |
+      title: this.props.match.params.valor // String | String a buscar en el titulo de videos
+    };
+    this.VideoApi.findVideosContainingTitle(opts, (error, data, response) => {
+      if (error) {
+        console.error(error);
+      } else {
+        console.log(data);
+      }
+    });
+
     this.setState({ lista: list });
   }
 
@@ -202,6 +224,10 @@ class ResultadoBusqueda extends Component {
     this.pararReloj();
   }
 
+  componentWillReceiveProps(newProps) {
+    this.setState({ busqueda: newProps.match.params.valor });
+  }
+
   render() {
     return !isSignedIn() ? (
       <Redirect to="/" />
@@ -216,6 +242,7 @@ class ResultadoBusqueda extends Component {
           activar={""}
           displaySide={true}
           hide={false}
+          nuevoTit={this.state.busqueda}
         />
         <div
           className="transform"

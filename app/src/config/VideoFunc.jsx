@@ -55,9 +55,9 @@ function f_filterResults(n_win, n_docel, n_body) {
  * Devuelve un String indicando los minutos, horas, días, semanas, meses o años
  * transcurridos desde que se subió hasta el momento.
  * @param {Date} date1 Timestamp de un vídeo
+ * @param {Date} now Tiempo actual del servidor
  */
-export function getTimePassed(date1) {
-  const now = new Date();
+export function getTimePassed(date1, now) {
   const diffMs = now - date1;
   const diffMins = Math.round(diffMs / 60000);
   if (diffMins > 60) {
@@ -86,4 +86,8 @@ export function getTimePassed(date1) {
   } else {
     return `${diffMins} minutos`;
   }
+}
+
+export function getScore(score) {
+  return Math.round((score * 100) / 5);
 }

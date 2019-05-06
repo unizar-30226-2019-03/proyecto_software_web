@@ -10,7 +10,7 @@ import { ApiClient } from "swagger_unicast";
 import IconoAsignaturaUniversidad from "./IconoAsignaturaUniversidad";
 import iconoAsign from "../assets/favicon.ico";
 import { getTime } from "../config/Procesar";
-import { getTimePassed } from "../config/VideoFunc";
+import { getTimePassed, getScore } from "../config/VideoFunc";
 import VideoApi from "swagger_unicast/dist/api/VideoApi";
 
 // One item component
@@ -67,13 +67,15 @@ const MenuItem = ({
             {rating + "%"}
           </div>
         </Link>
-        <div>
+        <div style={{ height: "32px" }}>
           <div style={{ float: "left", marginTop: "5px" }}>
             <Link to={`/asig/${canal}`} style={{ textDecoration: "none" }}>
               <IconoAsignaturaUniversidad name={canal} image={iconoAsign} />
             </Link>
           </div>
-          <div style={{ marginLeft: "75px", lineHeight: "normal" }}>
+          <div
+            style={{ marginLeft: "75px", height: "32px", lineHeight: "normal" }}
+          >
             {" "}
             <Link
               style={{
@@ -107,7 +109,7 @@ const MenuItem = ({
 
 // All items component
 // Important! add unique key
-const Menu = list =>
+const Menu = (list, now) =>
   list.map(el => {
     const { title, url, id, thumbnailUrl, score, timestamp, seconds } = el;
 
@@ -120,8 +122,8 @@ const Menu = list =>
         img={thumbnailUrl}
         canal={title}
         duracion={getTime(seconds)}
-        rating={score}
-        timestamp={getTimePassed(timestamp)}
+        rating={getScore(score)}
+        timestamp={getTimePassed(timestamp, now)}
       />
     );
   });
@@ -131,7 +133,8 @@ class MisVideos extends Component {
     super();
     this.state = {
       contentMargin: "300px",
-      listaVideos: []
+      listaVideos: [],
+      timestampNow: null
     };
     this.handleChange = this.handleChange.bind(this);
     this.videoApi = new VideoApi();
@@ -156,8 +159,11 @@ class MisVideos extends Component {
         console.error(error);
       } else {
         console.log(data);
-
-        this.setState({ listaVideos: data._embedded.videos });
+        const now = ApiClient.parseDate(response.headers.date);
+        this.setState({
+          listaVideos: data._embedded.videos,
+          timestampNow: now
+        });
       }
     });
   }
@@ -219,7 +225,7 @@ class MisVideos extends Component {
             <div>
               <div>
                 <div style={{ display: "flex", flexWrap: "wrap" }}>
-                  {Menu(this.state.listaVideos)}
+                  {Menu(this.state.listaVideos, this.state.timestampNow)}
                 </div>
               </div>
             </div>

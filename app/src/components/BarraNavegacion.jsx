@@ -20,7 +20,8 @@ class BarraNavegacion extends Component {
       displaySide: this.props.displaySide,
       windowWidth: window.innerWidth,
       displayNotif: false,
-      hide: this.props.hide
+      hide: this.props.hide,
+      busqueda: this.props.nuevoTit
     };
     this.showDropdown = this.showDropdown.bind(this);
     this.hideDropdown = this.hideDropdown.bind(this);
@@ -38,6 +39,11 @@ class BarraNavegacion extends Component {
     window.removeEventListener("resize", this.resize);
     document.removeEventListener("click", this.hideDropdown);
     document.removeEventListener("click", this.hideDropdownNotif);
+  }
+
+  componentWillReceiveProps(newProps) {
+    console.log(newProps.nuevoTit);
+    this.setState({ busqueda: newProps.nuevoTit });
   }
 
   resize() {
@@ -114,7 +120,7 @@ class BarraNavegacion extends Component {
             </Link>
           </Navbar.Brand>
 
-          <BarraBusqueda />
+          <BarraBusqueda nuevoTit={this.state.busqueda} />
 
           <Nav className="ml-auto">
             <Nav.Item

@@ -5,9 +5,13 @@ import { Redirect } from "react-router-dom";
 class BarraBusqueda extends Component {
   constructor(props) {
     super(props);
-    this.state = { value: "", buscar: false };
+    this.state = { value: this.props.nuevoTit || "", buscar: false };
     this.handleChange = this.handleChange.bind(this);
     this.keyPress = this.keyPress.bind(this);
+  }
+
+  componentWillReceiveProps(newProps) {
+    this.setState({ value: newProps.nuevoTit, buscar: false });
   }
 
   handleChange(e) {
@@ -29,10 +33,12 @@ class BarraBusqueda extends Component {
     ) : (
       <MDBCol md="6" className="mx-auto">
         <input
+          id="input-form"
           className="form-control"
           onKeyDown={this.keyPress}
           onChange={this.handleChange}
           type="text"
+          value={this.state.value}
           placeholder="Buscar..."
           aria-label="Search"
         />

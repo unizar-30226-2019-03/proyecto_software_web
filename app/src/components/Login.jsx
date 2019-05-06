@@ -89,13 +89,13 @@ class Login extends Component {
                     </Form.Group>
 
                     <Form.Group controlId="formBasicPassword">
-                      <Form.Label>Constraseña</Form.Label>
+                      <Form.Label>Contraseña</Form.Label>
                       <Form.Control
                         required
                         ref={this.pass}
                         onChange={() => this.setState({ error: false })}
                         type="password"
-                        placeholder="Constraseña"
+                        placeholder="Contraseña"
                       />
                     </Form.Group>
 
