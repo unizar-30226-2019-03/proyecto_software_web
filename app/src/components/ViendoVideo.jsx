@@ -24,7 +24,7 @@ import {
   getTimePassed
 } from "../config/VideoFunc";
 import ApiClient from "swagger_unicast/dist/ApiClient";
-import { VideoApi, VoteApi } from "swagger_unicast";
+import { VideoApi, VoteApi, CommentApi } from "swagger_unicast";
 import VoteId from "swagger_unicast/dist/model/VoteId";
 import Vote2 from "swagger_unicast/dist/model/Vote2";
 
@@ -213,6 +213,7 @@ class ViendoVideo extends Component {
     this.state = {
       contentMargin: "15%",
       user: getUserID(),
+      totalComentarios: [],
       comentarios: [],
       fijarComentarios: false,
       alturaComentarios: 0,
@@ -226,12 +227,13 @@ class ViendoVideo extends Component {
       calidad: 2.5,
       adecuacion: 2.5,
       claridad: 2.5,
-      asig: "",
-      video: "",
+      asig: {},
+      video: {},
       timeNow: null
     };
     this.videoApi = new VideoApi();
     this.voteApi = new VoteApi();
+    this.commentApi = new CommentApi();
     this.handleChange = this.handleChange.bind(this);
     this.recogerComentarios = this.recogerComentarios.bind(this);
     this.recibirEstadoVideo = this.recibirEstadoVideo.bind(this);
@@ -246,12 +248,13 @@ class ViendoVideo extends Component {
     this.onStarClickCalidad = this.onStarClickCalidad.bind(this);
     this.onStarClickClaridad = this.onStarClickClaridad.bind(this);
     this.puntuar = this.puntuar.bind(this);
+    this.obtenerComentarios = this.obtenerComentarios.bind(this);
     this.obtenerAsignaturaUni = this.obtenerAsignaturaUni.bind(this);
     this.comentario = React.createRef();
   }
 
   recogerComentarios(tiempoInicio, tiempoFin, lista) {
-    const res = comentariosVideo.filter(
+    const res = this.state.totalComentarios.filter(
       com => com.tiempo >= tiempoInicio && com.tiempo <= tiempoFin
     );
     res.forEach(e => {
@@ -324,8 +327,42 @@ class ViendoVideo extends Component {
         const now = ApiClient.parseDate(response.headers.date);
         this.setState({ video: data, timeNow: now });
         this.obtenerAsignaturaUni(data);
+        this.obtenerComentarios(data);
       }
     });
+  }
+
+  obtenerComentarios(video) {
+    let defaultClient = ApiClient.instance;
+    // Configure Bearer (JWT) access token for authorization: bearerAuth
+    let bearerAuth = defaultClient.authentications["bearerAuth"];
+    bearerAuth.accessToken = getUserToken();
+
+    let opts = {
+      cacheControl: "no-cache, no-store, must-revalidate", // String |
+      pragma: "no-cache", // String |
+      expires: "0", // String |
+      sort: ["asc"] // [String] | Parámetros en la forma `($propertyname,)+[asc|desc]?`
+    };
+    this.commentApi.getCommentsByVideo(
+      video.id,
+      opts,
+      (error, data, response) => {
+        if (error) {
+          console.error(error);
+        } else {
+          console.log(data);
+          let com = data._embedded.comments.map(c => {
+            const t = c.secondsFromBeginning;
+            const text = c.text;
+            const user = "david";
+            const color = generadorColores(user);
+            return { tiempo: t, comentario: text, usuario: user, color: color };
+          });
+          this.setState({ totalComentarios: com });
+        }
+      }
+    );
   }
 
   obtenerAsignaturaUni(video) {
@@ -380,6 +417,23 @@ class ViendoVideo extends Component {
         nuevosComentarios.push({ tiempo, comentario, usuario, color });
         this.comentario.current.value = "";
         this.setState({ comentarios: nuevosComentarios });
+        // Subir comentario al servidor
+        let defaultClient = ApiClient.instance;
+        // Configure Bearer (JWT) access token for authorization: bearerAuth
+        let bearerAuth = defaultClient.authentications["bearerAuth"];
+        bearerAuth.accessToken = getUserToken();
+        this.commentApi.addComment(
+          comentario,
+          Math.floor(tiempo),
+          this.state.video.id,
+          (error, data, response) => {
+            if (error) {
+              console.error(error);
+            } else {
+              console.log(data);
+            }
+          }
+        );
         e.preventDefault();
       }
     }
