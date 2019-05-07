@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { FaTimes, FaPlus } from "react-icons/fa";
 import { FormCheck } from "react-bootstrap";
 import Popup from "reactjs-popup";
+import { getScore, getTimePassed } from "../config/VideoFunc";
+import { getTime } from "../config/Procesar";
 
 export class ContenidoPopUp extends Component {
   constructor(props) {
@@ -153,10 +155,7 @@ class MenuItem extends Component {
         }}
       >
         <div>
-          <Link
-            to={`/video/${this.props.url}`}
-            style={{ position: "relative" }}
-          >
+          <Link to={`/video/${this.props.id}`} style={{ position: "relative" }}>
             <img src={this.props.img} width="240" height="140" alt="videoX" />
             <div
               style={{
@@ -218,7 +217,7 @@ class MenuItem extends Component {
                 wordWrap: "break-word",
                 width: "90%"
               }}
-              to={`/video/${this.props.url}`}
+              to={`/video/${this.props.id}`}
             >
               {this.props.url}
             </Link>
@@ -242,7 +241,7 @@ class MenuItem extends Component {
                 WebkitBoxOrient: "vertical",
                 fontWeight: "500"
               }}
-              to={`/asig/X`}
+              to={`/asig/${this.props.canal}`}
             >
               {this.props.canal}
             </Link>
@@ -260,14 +259,7 @@ class MenuItem extends Component {
                   fontWeight: "500"
                 }}
               >
-                Descripción del video. Un texto es una composición de signos
-                codificados en un sistema de escritura que forma una unidad de
-                sentido. También es una composición de caracteres imprimibles
-                (con grafema) generados por un algoritmo de cifrado que, aunque
-                no tienen sentido para cualquier persona, sí puede ser
-                descifrado por su destinatario original. En otras palabras, un
-                texto es un entramado de signos con una intención comunicativa
-                que adquiere sentido en determinado contexto.
+                {this.props.descripcion}
               </div>
             </div>
           </div>
@@ -328,21 +320,22 @@ class MenuItem extends Component {
 
 // All items component
 // Important! add unique key
-export const MenuVertical = (list, borrar, anyadir, listaRepro) =>
-  list.map(el => {
-    const { name, canal, image, duracion, rating } = el;
-
+export const MenuVertical = (list, borrar, anyadir, listaRepro, time) =>
+  list.map(video => {
     return (
       <MenuItem
-        url={name}
-        canal={canal}
-        key={name}
+        url={video.title}
+        canal={video.title}
+        key={video.id}
+        id={video.id}
         borrar={borrar}
         anyadirALista={anyadir}
-        img={image}
+        img={video.thumbnailUrl}
         listaRepro={listaRepro}
-        duracion={duracion}
-        rating={rating}
+        duracion={getTime(video.seconds)}
+        rating={getScore(video.score)}
+        timestamp={getTimePassed(video.timestamp, time)}
+        descripcion={video.description}
       />
     );
   });
@@ -354,7 +347,8 @@ class ListaVertical extends Component {
       this.props.lista,
       this.props.borrar,
       this.props.anyadirALista,
-      this.props.listaRepro
+      this.props.listaRepro,
+      this.props.time
     );
   }
 
@@ -363,7 +357,8 @@ class ListaVertical extends Component {
       newProps.lista,
       newProps.borrar,
       newProps.anyadirALista,
-      newProps.listaRepro
+      newProps.listaRepro,
+      newProps.time
     );
   }
 

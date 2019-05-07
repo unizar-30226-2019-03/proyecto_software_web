@@ -161,10 +161,10 @@ class ResultadoBusqueda extends Component {
   }
 
   componentWillMount() {
-    this.buscarVideos();
+    this.buscarVideos(this.props.match.params.valor);
   }
 
-  buscarVideos() {
+  buscarVideos(titulo) {
     //Aquí se recogerá la búsqueda realizada
     let defaultClient = ApiClient.instance;
     // Configure Bearer (JWT) access token for authorization: bearerAuth
@@ -175,7 +175,7 @@ class ResultadoBusqueda extends Component {
       cacheControl: "no-cache, no-store, must-revalidate", // String |
       pragma: "no-cache", // String |
       expires: "0", // String |
-      title: this.props.match.params.valor // String | String a buscar en el titulo de videos
+      title: titulo // String | String a buscar en el titulo de videos
     };
     this.VideoApi.findVideosContainingTitle(opts, (error, data, response) => {
       if (error) {
@@ -234,7 +234,7 @@ class ResultadoBusqueda extends Component {
   }
 
   componentWillReceiveProps(newProps) {
-    this.buscarVideos();
+    this.buscarVideos(newProps.match.params.valor);
     this.setState({ busqueda: newProps.match.params.valor });
   }
 
@@ -303,7 +303,6 @@ class ResultadoBusqueda extends Component {
               <ListaBusqueda
                 lista={this.state.lista}
                 anyadirALista={this.anyadirVideoALista}
-                borrar={this.props.borrarVideo}
                 listaRepro={listasRepro}
                 time={this.state.timeNow}
               />

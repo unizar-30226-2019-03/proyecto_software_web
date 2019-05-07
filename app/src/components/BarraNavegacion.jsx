@@ -42,7 +42,6 @@ class BarraNavegacion extends Component {
   }
 
   componentWillReceiveProps(newProps) {
-    console.log(newProps.nuevoTit);
     this.setState({ busqueda: newProps.nuevoTit });
   }
 
