@@ -8,6 +8,7 @@ import UniversityApi from "swagger_unicast/dist/api/UniversityApi";
 import DegreeApi from "swagger_unicast/dist/api/DegreeApi";
 import ApiClient from "swagger_unicast/dist/ApiClient";
 import { Degree2 } from "swagger_unicast";
+import { checkFileExtensionImage } from "../config/Procesar";
 
 const FormularioProfesor = (
   handleProfesor,
@@ -465,19 +466,23 @@ class AdministradorCrear extends Component {
     bearerAuth.accessToken = getUserToken();
 
     const nombre = this.nombreUni.current.value;
-    this.UniversityApi.addUniversity(
-      nombre,
-      this.fotoUni.current.files[0],
-      (error, data, response) => {
-        if (error) {
-          console.error(error);
-        } else {
-          console.log(data);
-          form.reset();
-          this.handleShow();
+    if (checkFileExtensionImage(this.fotoUni.current.value)) {
+      this.UniversityApi.addUniversity(
+        nombre,
+        this.fotoUni.current.files[0],
+        (error, data, response) => {
+          if (error) {
+            console.error(error);
+          } else {
+            console.log(data);
+            form.reset();
+            this.handleShow();
+          }
         }
-      }
-    );
+      );
+    } else {
+      alert("Debe introducir una imágen válida");
+    }
   }
 
   handleCarrera(event, form) {
@@ -495,8 +500,22 @@ class AdministradorCrear extends Component {
       if (error) {
         console.error(error);
         //Ya existe, conseguir el id de la carrera
+        let opts = {
+          cacheControl: "no-cache, no-store, must-revalidate", // String |
+          pragma: "no-cache", // String |
+          expires: "0", // String |
+          name: carrera // String | Nombre a buscar
+        };
+        this.DegreeApi.findDegreesByName(opts, (error, data, response) => {
+          if (error) {
+            console.error(error);
+          } else {
+            console.log(data);
+            this.ligarUniCarr(uni, data.id);
+          }
+        });
       } else {
-        console.log(data);
+        console.log("EXITO");
         this.ligarUniCarr(uni, data.id);
       }
     });
@@ -511,13 +530,14 @@ class AdministradorCrear extends Component {
     let bearerAuth = defaultClient.authentications["bearerAuth"];
     bearerAuth.accessToken = getUserToken();
     //Ligar carrera a universidad
-    console.log(uniID, carreraID);
+    const id = parseInt(uniID, 10);
+    console.log(id, carreraID);
     this.DegreeApi.putDegreeUniversity(
       carreraID,
-      uniID,
+      id,
       (error, data, response) => {
         if (error) {
-          console.error(error);
+          console.error("error");
         } else {
           console.log("API called successfully.");
         }

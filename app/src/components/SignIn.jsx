@@ -190,13 +190,18 @@ const FormularioInfo = (
   cancelar,
   errorFoto,
   universidades,
-  carreras
+  carreras,
+  handleChangeUni
 ) => {
   return (
     <Form onSubmit={e => handleSubmit(e)}>
       <Form.Group controlId="formGridUni">
         <Form.Label>¿En qué universidad estudias?</Form.Label>
-        <Form.Control as="select" ref={universidad}>
+        <Form.Control
+          as="select"
+          ref={universidad}
+          onChange={e => handleChangeUni(e)}
+        >
           <option value={0}>Elige una universidad...</option>
           {universidades.map(e => {
             const { id, name } = e;
@@ -416,6 +421,12 @@ class SignIn extends Component {
     }
   }
 
+  handleChangeUni(e) {
+    const uniId = e.target.value;
+    console.log(uniId);
+    //ACTUALIZAR LISTA DE CARRERAS (getDegreesFromUniversity)
+  }
+
   handleSubmitInfo(event) {
     event.preventDefault();
     let ok = true;
@@ -504,7 +515,8 @@ class SignIn extends Component {
                     this.back,
                     this.state.errorFoto,
                     this.state.listaUniversidades,
-                    this.state.listaCarreras
+                    this.state.listaCarreras,
+                    this.handleChangeUni
                   )}
             </div>
           </div>
