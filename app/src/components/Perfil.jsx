@@ -48,8 +48,8 @@ class CamposMostrar extends Component {
             <h6 style={{ textAlign: "justify" }}>{this.props.description}</h6>
           </div>
         </div>
-        {this.renderCampo("Universidad:", "UNIZAR")}
-        {this.renderCampo("Grado:", "Ingeniería Informática")}
+        {this.renderCampo("Universidad:", this.props.uni)}
+        {this.renderCampo("Grado:", this.props.degree)}
       </div>
     );
   }
@@ -64,7 +64,9 @@ class Perfil extends Component {
       popUpValidado: false,
       pass: "",
       passValida: -1,
-      user: ""
+      user: {},
+      uni: {},
+      degree: {}
     };
     this.userApi = new UserApi();
     this.pass = React.createRef();
@@ -73,9 +75,16 @@ class Perfil extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.abrirPopUp = this.abrirPopUp.bind(this);
     this.cerrarPopUp = this.cerrarPopUp.bind(this);
+    this.getUser = this.getUser.bind(this);
+    this.getUniFromUser = this.getUniFromUser.bind(this);
+    this.getDegreeFromUser = this.getDegreeFromUser.bind(this);
   }
 
   componentWillMount() {
+    this.getUser();
+  }
+
+  getUser() {
     let defaultClient = ApiClient.instance;
     // Configure Bearer (JWT) access token for authorization: bearerAuth
     let bearerAuth = defaultClient.authentications["bearerAuth"];
@@ -92,7 +101,46 @@ class Perfil extends Component {
         console.error(error);
       } else {
         this.setState({ user: data });
-        console.log(data);
+        this.getUniFromUser(data.id);
+        this.getDegreeFromUser(data.id);
+      }
+    });
+  }
+  getUniFromUser(id) {
+    let defaultClient = ApiClient.instance;
+    // Configure Bearer (JWT) access token for authorization: bearerAuth
+    let bearerAuth = defaultClient.authentications["bearerAuth"];
+    bearerAuth.accessToken = getUserToken();
+
+    let opts = {
+      cacheControl: "no-cache, no-store, must-revalidate", // String |
+      pragma: "no-cache", // String |
+      expires: "0" // String |
+    };
+    this.userApi.getUniversityOfUser(id, opts, (error, data, response) => {
+      if (error) {
+        console.error(error);
+      } else {
+        this.setState({ uni: data });
+      }
+    });
+  }
+  getDegreeFromUser(id) {
+    let defaultClient = ApiClient.instance;
+    // Configure Bearer (JWT) access token for authorization: bearerAuth
+    let bearerAuth = defaultClient.authentications["bearerAuth"];
+    bearerAuth.accessToken = getUserToken();
+
+    let opts = {
+      cacheControl: "no-cache, no-store, must-revalidate", // String |
+      pragma: "no-cache", // String |
+      expires: "0" // String |
+    };
+    this.userApi.getDegreeOfUser(id, opts, (error, data, response) => {
+      if (error) {
+        console.error(error);
+      } else {
+        this.setState({ degree: data });
       }
     });
   }
@@ -174,7 +222,8 @@ class Perfil extends Component {
               <div
                 style={{
                   padding: "20px 20px 0px 0px",
-                  float: "left"
+                  float: "left",
+                  marginBottom: "10px"
                 }}
               >
                 <Link to="/editar-perfil" className="universidad">
@@ -222,7 +271,11 @@ class Perfil extends Component {
               </div>
             </div>
           </div>
-          <CamposMostrar description={this.state.user.description} />
+          <CamposMostrar
+            description={this.state.user.description}
+            uni={this.state.uni.name}
+            degree={this.state.degree.name}
+          />
           <div
             style={{
               padding: "30px 20px 0px 0px"
