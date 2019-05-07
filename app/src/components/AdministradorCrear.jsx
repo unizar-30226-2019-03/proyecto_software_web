@@ -3,12 +3,11 @@ import BarraAdmi from "./BarraAdmi";
 import { Helmet } from "react-helmet";
 import { Button, Form, Col, Modal } from "react-bootstrap";
 import { Redirect } from "react-router-dom";
-import { isSignedIn, getUserToken } from "../config/Auth";
+import { isSignedIn } from "../config/Auth";
 import UniversityApi from "swagger_unicast/dist/api/UniversityApi";
 import DegreeApi from "swagger_unicast/dist/api/DegreeApi";
-import ApiClient from "swagger_unicast/dist/ApiClient";
-import { Degree2 } from "swagger_unicast";
 import { checkFileExtensionImage } from "../config/Procesar";
+import { crearUniversidad, crearCarreraYLigar } from "../config/Admin";
 
 const FormularioProfesor = (
   handleProfesor,
@@ -380,7 +379,6 @@ class AdministradorCrear extends Component {
     this.uniUn = React.createRef();
     this.asignUn = React.createRef();
     this.userUn = React.createRef();
-    this.ligarUniCarr = this.ligarUniCarr.bind(this);
     this.handleProfesor = this.handleProfesor.bind(this);
     this.handleUniversidad = this.handleUniversidad.bind(this);
     this.handleAsignatura = this.handleAsignatura.bind(this);
@@ -460,26 +458,10 @@ class AdministradorCrear extends Component {
   }
   handleUniversidad(event, form) {
     event.preventDefault();
-    let defaultClient = ApiClient.instance;
-    // Configure Bearer (JWT) access token for authorization: bearerAuth
-    let bearerAuth = defaultClient.authentications["bearerAuth"];
-    bearerAuth.accessToken = getUserToken();
-
-    const nombre = this.nombreUni.current.value;
     if (checkFileExtensionImage(this.fotoUni.current.value)) {
-      this.UniversityApi.addUniversity(
-        nombre,
-        this.fotoUni.current.files[0],
-        (error, data, response) => {
-          if (error) {
-            console.error(error);
-          } else {
-            console.log(data);
-            form.reset();
-            this.handleShow();
-          }
-        }
-      );
+      const uni = this.nombreUni.current.value;
+      const file = this.fotoUni.current.files[0];
+      crearUniversidad(uni, file, form, this.handleShow, this.UniversityApi);
     } else {
       alert("Debe introducir una imágen válida");
     }
@@ -487,62 +469,12 @@ class AdministradorCrear extends Component {
 
   handleCarrera(event, form) {
     event.preventDefault();
-    const uni = this.uniCarr.current.value;
+    const uni = parseInt(this.uniCarr.current.value);
     const carrera = this.nombreCarrera.current.value;
     //Añadir carrera
-    let defaultClient = ApiClient.instance;
-    // Configure Bearer (JWT) access token for authorization: bearerAuth
-    let bearerAuth = defaultClient.authentications["bearerAuth"];
-    bearerAuth.accessToken = getUserToken();
-
-    let degree2 = new Degree2(carrera); // Degree2 | Carrera a añadir
-    this.DegreeApi.addDegree(degree2, (error, data, response) => {
-      if (error) {
-        console.error(error);
-        //Ya existe, conseguir el id de la carrera
-        let opts = {
-          cacheControl: "no-cache, no-store, must-revalidate", // String |
-          pragma: "no-cache", // String |
-          expires: "0", // String |
-          name: carrera // String | Nombre a buscar
-        };
-        this.DegreeApi.findDegreesByName(opts, (error, data, response) => {
-          if (error) {
-            console.error(error);
-          } else {
-            console.log(data);
-            this.ligarUniCarr(uni, data.id);
-          }
-        });
-      } else {
-        console.log("EXITO");
-        this.ligarUniCarr(uni, data.id);
-      }
-    });
-
+    crearCarreraYLigar(this.DegreeApi, carrera, uni);
     form.reset();
     this.handleShow();
-  }
-
-  ligarUniCarr(uniID, carreraID) {
-    let defaultClient = ApiClient.instance;
-    // Configure Bearer (JWT) access token for authorization: bearerAuth
-    let bearerAuth = defaultClient.authentications["bearerAuth"];
-    bearerAuth.accessToken = getUserToken();
-    //Ligar carrera a universidad
-    const id = parseInt(uniID, 10);
-    console.log(id, carreraID);
-    this.DegreeApi.putDegreeUniversity(
-      carreraID,
-      id,
-      (error, data, response) => {
-        if (error) {
-          console.error("error");
-        } else {
-          console.log("API called successfully.");
-        }
-      }
-    );
   }
 
   handleAsignatura(event, form) {
