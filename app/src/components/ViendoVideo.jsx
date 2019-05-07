@@ -206,7 +206,8 @@ class ViendoVideo extends Component {
     const opts = {
       cacheControl: "no-cache, no-store, must-revalidate", // String |
       pragma: "no-cache", // String |
-      expires: "0" // String |
+      expires: "0", // String |
+      projection: "videoWithSubject" // String | Incluir si se quiere obtener tambien la universidad y/o la asignatura en la respuesta
     };
     this.videoApi.getVideo(id, opts, (error, data, response) => {
       if (error) {
