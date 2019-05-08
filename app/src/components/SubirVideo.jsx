@@ -46,10 +46,14 @@ const FormularioDatos = (
               </Form.Control>
             ) : (
               <Form.Control as="select" ref={asignatura}>
-                <option>Proyecto Software</option>
-                <option>Inteligencia Artificial</option>
-                <option>Aprendizaje Automático</option>
-                <option>Algoritmia Básica</option>
+                {listaAsignaturas.map(asig => {
+                  const { id, name } = asig;
+                  return (
+                    <option key={id} value={id}>
+                      {name}
+                    </option>
+                  );
+                })}
               </Form.Control>
             )}
           </Form.Group>
@@ -157,7 +161,7 @@ class SubirVideo extends Component {
       this.setState({ video_valido: 0 });
     } else {
       let apiInstance = new VideoApi();
-      let subjectId = 1;
+      let subjectId = parseInt(this.asignatura.current.value);
       apiInstance.addVideo(
         this.video.current.files[0],
         this.miniatura.current.files[0],

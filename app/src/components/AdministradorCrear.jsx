@@ -10,9 +10,12 @@ import { checkFileExtensionImage } from "../config/Procesar";
 import {
   crearUniversidad,
   crearCarreraYLigar,
-  crearAsigYLigar
+  crearAsigYLigar,
+  ligarUsuarioAsig
 } from "../config/Admin";
 import SubjectApi from "swagger_unicast/dist/api/SubjectApi";
+import { getSubjectsFromUniveristy } from "../config/University";
+import { getUserByUsername } from "../config/User";
 
 const FormularioProfesor = (
   handleProfesor,
@@ -272,39 +275,28 @@ class FormularioProfeAsignatura extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      uni: ""
+      uni: -1,
+      asignaturas: [],
+      showAsig: false
     };
     this.handleChange = this.handleChange.bind(this);
-    this.opcionesAsignaturas = this.opcionesAsignaturas.bind(this);
+    this.actualizarAsig = this.actualizarAsig.bind(this);
+  }
+
+  actualizarAsig(datos) {
+    this.setState({ asignaturas: datos });
   }
 
   handleChange(event) {
-    this.setState({ uni: event.target.value });
-  }
-
-  opcionesAsignaturas(nombre) {
-    if (nombre === "Universidad de Zaragoza") {
-      return (
-        <Form.Control as="select" ref={this.props.asignatura}>
-          <option>Inteligencia Artificial</option>
-          <option>Proyecto Software</option>
-        </Form.Control>
-      );
-    } else if (nombre === "Universidad de Alicante") {
-      return (
-        <Form.Control as="select" ref={this.props.asignatura}>
-          <option>Derecho Penal</option>
-          <option>Historia del derecho</option>
-        </Form.Control>
-      );
-    } else if (nombre === "Universidad de San Jorge") {
-      return (
-        <Form.Control as="select" ref={this.props.asignatura}>
-          <option>Psiquiatría</option>
-          <option>Oftalmología</option>
-        </Form.Control>
-      );
+    //Buscar asignaturas según la universidad
+    const uni = parseInt(event.target.value);
+    if (uni !== -1) {
+      getSubjectsFromUniveristy(uni, this.actualizarAsig);
+      this.setState({ showAsig: true });
+    } else {
+      this.setState({ showAsig: false, asignaturas: [] });
     }
+    this.setState({ uni: uni });
   }
 
   render() {
@@ -330,18 +322,33 @@ class FormularioProfeAsignatura extends React.Component {
                 onChange={e => this.handleChange(e)}
                 required
               >
-                <option>Seleccionar...</option>
-                <option>Universidad de Zaragoza</option>
-                <option>Universidad de Alicante</option>
-                <option>Universidad de San Jorge</option>
-                <option>Universidad de Navarra</option>
+                <option value={-1}>Elegir universidad...</option>
+                {this.props.universidades.map(univ => {
+                  const { id, name } = univ;
+                  return (
+                    <option key={id} value={id}>
+                      {name}
+                    </option>
+                  );
+                })}
               </Form.Control>
             </Form.Group>
           </Form.Row>
           <Form.Row>
             <Form.Group as={Col} controlId="formGridAsign" required>
               <Form.Label>Asignatura</Form.Label>
-              {this.opcionesAsignaturas(this.state.uni)}
+              {this.state.showAsig ? (
+                <Form.Control as="select" ref={this.props.asignatura}>
+                  {this.state.asignaturas.map(asig => {
+                    const { id, name } = asig;
+                    return (
+                      <option key={id} value={id}>
+                        {name}
+                      </option>
+                    );
+                  })}
+                </Form.Control>
+              ) : null}
             </Form.Group>
           </Form.Row>
           <Form.Row>
@@ -509,18 +516,28 @@ class AdministradorCrear extends Component {
 
   handleProfeAsignatura(event, form, that) {
     event.preventDefault();
-    if (
-      this.asignUn.current !== null &&
-      this.uniUn.current.value !== "Seleccionar..."
-    ) {
-      const universidad = this.uniUn.value;
-      const asignatura = this.asignUn.current.value;
-      const user = this.userUn.value;
-      //this.setState({ datosSubidos: true });
-      console.log(universidad, asignatura, user);
-      form.reset();
-      this.handleShow();
-      that.setState({ uni: "" });
+
+    const universidad = parseInt(this.uniUn.current.value);
+    if (universidad !== -1 || this.asignUn.current !== null) {
+      const asignatura = parseInt(this.asignUn.current.value);
+      if (!isNaN(asignatura)) {
+        const user = this.userUn.current.value;
+        console.log(universidad, asignatura, user);
+        getUserByUsername(user, data => {
+          if (data === false || data.length === 0) {
+            alert("El usuario especificado no existe");
+          } else {
+            ligarUsuarioAsig(data[0].id, asignatura, this.SubjectApi);
+            form.reset();
+            this.handleShow();
+            that.setState({ uni: -1 });
+          }
+        });
+      } else {
+        alert("Introduzca una asignatura");
+      }
+    } else {
+      alert("Debe introrucir todos los campos");
     }
   }
 
@@ -586,6 +603,7 @@ class AdministradorCrear extends Component {
               uni={this.uniUn}
               asignatura={this.asignUn}
               user={this.userUn}
+              universidades={this.state.listaUniversidades}
             />
           </div>
         </div>

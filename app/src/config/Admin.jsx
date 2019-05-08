@@ -147,3 +147,24 @@ function ligarUniAsig(uni, subject, SubjectApi) {
     }
   });
 }
+
+/**
+ * Asigna la asignatura especificada al usuario especificado
+ * @param {Number} idUser ID del usuario
+ * @param {Number} idSubj ID de la asignatura
+ * @param {SubjectApi} SubjectApi API de las asignaturas
+ */
+export function ligarUsuarioAsig(idUser, idSubj, SubjectApi) {
+  let defaultClient = ApiClient.instance;
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  SubjectApi.putUser(idSubj, idUser, (error, data, response) => {
+    if (error) {
+      console.error(error);
+    } else {
+      console.log("API called successfully.");
+    }
+  });
+}
