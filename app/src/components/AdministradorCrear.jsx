@@ -7,7 +7,12 @@ import { isSignedIn } from "../config/Auth";
 import UniversityApi from "swagger_unicast/dist/api/UniversityApi";
 import DegreeApi from "swagger_unicast/dist/api/DegreeApi";
 import { checkFileExtensionImage } from "../config/Procesar";
-import { crearUniversidad, crearCarreraYLigar } from "../config/Admin";
+import {
+  crearUniversidad,
+  crearCarreraYLigar,
+  crearAsigYLigar
+} from "../config/Admin";
+import SubjectApi from "swagger_unicast/dist/api/SubjectApi";
 
 const FormularioProfesor = (
   handleProfesor,
@@ -201,8 +206,8 @@ const FormularioAsignatura = (
   handleAsignatura,
   uni,
   asignatura,
-  universidades,
-  carreras
+  asignatura_corto,
+  universidades
 ) => {
   return (
     <div style={{ margin: "20px 20px 20px 20px" }}>
@@ -217,10 +222,14 @@ const FormularioAsignatura = (
           <Form.Group as={Col} controlId="formGridUni">
             <Form.Label>Universidad</Form.Label>
             <Form.Control as="select" ref={uni}>
-              <option>Universidad de Zaragoza</option>
-              <option>Universidad de Alicante</option>
-              <option>Universidad de Navarra</option>
-              <option>Universidad de San Jorge</option>
+              {universidades.map(univ => {
+                const { id, name } = univ;
+                return (
+                  <option key={id} value={id}>
+                    {name}
+                  </option>
+                );
+              })}
             </Form.Control>
           </Form.Group>
         </Form.Row>
@@ -232,6 +241,15 @@ const FormularioAsignatura = (
               placeholder="Nombre"
               required
               ref={asignatura}
+            />
+          </Form.Group>
+          <Form.Group as={Col} controlId="formGridAsignatura">
+            <Form.Label>Nombre corto</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Nombre"
+              required
+              ref={asignatura_corto}
             />
           </Form.Group>
         </Form.Row>
@@ -364,6 +382,7 @@ class AdministradorCrear extends Component {
     };
     this.UniversityApi = new UniversityApi();
     this.DegreeApi = new DegreeApi();
+    this.SubjectApi = new SubjectApi();
     this.nombreProf = React.createRef();
     this.apellidosProf = React.createRef();
     this.userIDProf = React.createRef();
@@ -376,6 +395,7 @@ class AdministradorCrear extends Component {
     this.uniAsig = React.createRef();
     this.uniCarr = React.createRef();
     this.nombreAsig = React.createRef();
+    this.nombreCortoAsig = React.createRef();
     this.uniUn = React.createRef();
     this.asignUn = React.createRef();
     this.userUn = React.createRef();
@@ -479,10 +499,10 @@ class AdministradorCrear extends Component {
 
   handleAsignatura(event, form) {
     event.preventDefault();
-    const universidad = this.uniAsig.current.value;
-    const asignatura = this.nombreAsig.current.value;
-    //this.setState({ datosSubidos: true });
-    console.log(universidad, asignatura);
+    const uni = parseInt(this.uniAsig.current.value);
+    const subj = this.nombreAsig.current.value;
+    const shortname = this.nombreCortoAsig.current.value;
+    crearAsigYLigar(this.SubjectApi, subj, shortname, uni);
     form.reset();
     this.handleShow();
   }
@@ -556,8 +576,8 @@ class AdministradorCrear extends Component {
               this.handleAsignatura,
               this.uniAsig,
               this.nombreAsig,
-              this.state.listaUniversidades,
-              this.state.listaCarreras
+              this.nombreCortoAsig,
+              this.state.listaUniversidades
             )}
           </div>
           <div className="boxed" style={{ marginTop: "20px" }}>
