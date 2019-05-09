@@ -3,7 +3,7 @@ import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
 import ListaVerticalProfes from "./ListaVerticalProfes";
 import imagenUsuario from "../assets/user.png";
-import { RemoveAccents } from "../config/Procesar";
+import { RemoveAccents } from "../config/Process";
 import { Redirect, Link } from "react-router-dom";
 import { isSignedIn } from "../config/Auth";
 

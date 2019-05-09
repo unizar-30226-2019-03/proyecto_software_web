@@ -2,6 +2,8 @@ import VideoApi from "swagger_unicast/dist/api/VideoApi";
 import ApiClient from "swagger_unicast/dist/ApiClient";
 import { getUserToken } from "./Auth";
 
+const apiInstance = new VideoApi(); //Instancia de la API de vídeos
+
 /**
  * Genera un color aleatorio a partir del nombre del usuario
  * @param {String} usuario Nombre del usuario
@@ -111,7 +113,6 @@ export function UploadVideo(video, img, title, description, subjectId, f) {
   let bearerAuth = defaultClient.authentications["bearerAuth"];
   bearerAuth.accessToken = getUserToken();
 
-  let apiInstance = new VideoApi();
   apiInstance.addVideo(
     video,
     img,
@@ -148,7 +149,6 @@ export function getVideosFromUploader(id, page, callback) {
     page: page, // Number | Número de la página a devolver
     sort: ["null"] // [String] | Parámetros en la forma `($propertyname,)+[asc|desc]?`
   };
-  let apiInstance = new VideoApi();
   apiInstance.getVideosFromUploader(id, opts, (error, data, response) => {
     if (error) {
       console.error(error);
@@ -156,6 +156,62 @@ export function getVideosFromUploader(id, page, callback) {
       console.log(data);
       const now = ApiClient.parseDate(response.headers.date);
       callback(data._embedded.videos, now);
+    }
+  });
+}
+
+/**
+ * Obtiene el vídeo con el id especificado
+ * @param {Number} id ID del vídeo
+ * @param {Function} callback Función a ejecutar tras obtener el vídeo
+ */
+export function getVideo(id, callback) {
+  let defaultClient = ApiClient.instance;
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  const opts = {
+    cacheControl: "no-cache, no-store, must-revalidate", // String |
+    pragma: "no-cache", // String |
+    expires: "0", // String |
+    projection: "videoWithSubject" // String | Incluir si se quiere obtener tambien la universidad y/o la asignatura en la respuesta
+  };
+
+  apiInstance.getVideo(id, opts, (error, data, response) => {
+    if (error) {
+      console.error(error);
+    } else {
+      console.log(data);
+      const now = ApiClient.parseDate(response.headers.date);
+      callback(data, now);
+    }
+  });
+}
+
+/**
+ * Obtiene la asignatura correspondiente al vídeo especificado
+ * @param {Number} id ID del vídeo
+ * @param {Function} callback Función a ejecutar tras obtener la asignatura
+ */
+export function getVideoSubject(id, callback) {
+  let defaultClient = ApiClient.instance;
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  const opts = {
+    cacheControl: "no-cache, no-store, must-revalidate", // String |
+    pragma: "no-cache", // String |
+    expires: "0", // String |
+    projection: "subjectWithUniversity" // String | Incluir si se quiere obtener tambien la universidad en la respuesta
+  };
+  apiInstance.getVideoSubject(id, opts, (error, data, response) => {
+    if (error) {
+      console.error(error);
+    } else {
+      console.log(data);
+      callback(data);
     }
   });
 }

@@ -4,7 +4,7 @@ import { Redirect, Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import uni from "../assets/UnicastNombre.png";
 import { UserApi, UniversityApi } from "swagger_unicast";
-import { checkFileExtensionImage } from "../config/Procesar";
+import { checkFileExtensionImage } from "../config/Process";
 import { signIn } from "../config/Auth";
 import DegreeApi from "swagger_unicast/dist/api/DegreeApi";
 

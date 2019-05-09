@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
 import { FormCheck } from "react-bootstrap";
 import Popup from "reactjs-popup";
-import { getTime } from "../config/Procesar";
+import { getTime } from "../config/Process";
 import { getScore, getTimePassed } from "../config/Video";
 
 class ContenidoPopUp extends Component {

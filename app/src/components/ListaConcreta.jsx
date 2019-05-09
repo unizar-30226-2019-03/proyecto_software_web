@@ -6,7 +6,7 @@ import ListaVertical from "./ListaVertical";
 import imagenPrueba from "../assets/landscape.jpg";
 import { Notificacion } from "./Listas";
 import Popup from "reactjs-popup";
-import { RemoveAccents, getTime } from "../config/Procesar";
+import { RemoveAccents, getTime } from "../config/Process";
 import { isSignedIn } from "../config/Auth";
 
 const list = [

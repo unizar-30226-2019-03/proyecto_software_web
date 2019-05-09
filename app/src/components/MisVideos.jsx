@@ -8,7 +8,7 @@ import { isSignedIn, getUserID } from "../config/Auth";
 
 import IconoAsignaturaUniversidad from "./IconoAsignaturaUniversidad";
 import iconoAsign from "../assets/favicon.ico";
-import { getTime } from "../config/Procesar";
+import { getTime } from "../config/Process";
 import {
   getTimePassed,
   getScore,

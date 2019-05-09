@@ -7,7 +7,7 @@ import { isSignedIn, getUserID } from "../config/Auth";
 import {
   checkFileExtensionImage,
   checkFileExtensionVideo
-} from "../config/Procesar";
+} from "../config/Process";
 import { UploadVideo } from "../config/Video";
 import { getSubjectsOfUser } from "../config/User";
 

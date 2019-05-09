@@ -6,7 +6,7 @@ import { Redirect } from "react-router-dom";
 import { isSignedIn } from "../config/Auth";
 import UniversityApi from "swagger_unicast/dist/api/UniversityApi";
 import DegreeApi from "swagger_unicast/dist/api/DegreeApi";
-import { checkFileExtensionImage } from "../config/Procesar";
+import { checkFileExtensionImage } from "../config/Process";
 import {
   crearUniversidad,
   crearCarreraYLigar,

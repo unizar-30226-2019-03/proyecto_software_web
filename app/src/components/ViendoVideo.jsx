@@ -12,17 +12,24 @@ import {
   FaStarHalf
 } from "react-icons/fa";
 import icono from "../assets/favicon.ico";
-import { getTime } from "../config/Procesar";
+import { getTime } from "../config/Process";
 import Popup from "reactjs-popup";
 import StarRatingComponent from "react-star-rating-component";
 import { ContenidoPopUp } from "./ListaVertical";
 import { Notificacion } from "./Listas";
 import { isSignedIn, getUserToken, getUserID } from "../config/Auth";
-import { generadorColores, scrollFunc, getTimePassed } from "../config/Video";
+import {
+  generadorColores,
+  scrollFunc,
+  getTimePassed,
+  getVideo,
+  getVideoSubject
+} from "../config/Video";
 import ApiClient from "swagger_unicast/dist/ApiClient";
 import { VideoApi, VoteApi, CommentApi } from "swagger_unicast";
 import VoteId from "swagger_unicast/dist/model/VoteId";
 import Vote2 from "swagger_unicast/dist/model/Vote2";
+import { getCommentsByVideo, addComment } from "../config/Comments";
 
 const profesores = [
   { foto: icono, nombre: "Jorge" },
@@ -193,83 +200,22 @@ class ViendoVideo extends Component {
   }
 
   componentWillMount() {
-    let defaultClient = ApiClient.instance;
-    // Configure Bearer (JWT) access token for authorization: bearerAuth
-    let bearerAuth = defaultClient.authentications["bearerAuth"];
-    bearerAuth.accessToken = getUserToken();
-
-    const id = this.props.match.params.id;
-    const opts = {
-      cacheControl: "no-cache, no-store, must-revalidate", // String |
-      pragma: "no-cache", // String |
-      expires: "0", // String |
-      projection: "videoWithSubject" // String | Incluir si se quiere obtener tambien la universidad y/o la asignatura en la respuesta
-    };
-    this.videoApi.getVideo(id, opts, (error, data, response) => {
-      if (error) {
-        console.error(error);
-      } else {
-        console.log(data);
-        const now = ApiClient.parseDate(response.headers.date);
-        this.setState({ video: data, timeNow: now });
-        this.obtenerAsignaturaUni(data);
-        this.obtenerComentarios(data);
-      }
+    getVideo(this.props.match.params.id, (video, time) => {
+      this.setState({ video: video, timeNow: time });
+      this.obtenerAsignaturaUni(video);
+      this.obtenerComentarios(video, 0);
     });
   }
 
-  obtenerComentarios(video) {
-    let defaultClient = ApiClient.instance;
-    // Configure Bearer (JWT) access token for authorization: bearerAuth
-    let bearerAuth = defaultClient.authentications["bearerAuth"];
-    bearerAuth.accessToken = getUserToken();
-
-    let opts = {
-      cacheControl: "no-cache, no-store, must-revalidate", // String |
-      pragma: "no-cache", // String |
-      expires: "0", // String |
-      sort: ["asc"] // [String] | Parámetros en la forma `($propertyname,)+[asc|desc]?`
-    };
-    this.commentApi.getCommentsByVideo(
-      video.id,
-      opts,
-      (error, data, response) => {
-        if (error) {
-          console.error(error);
-        } else {
-          console.log(data);
-          let com = data._embedded.comments.map(c => {
-            const t = c.secondsFromBeginning;
-            const text = c.text;
-            const user = "david";
-            const color = generadorColores(user);
-            return { tiempo: t, comentario: text, usuario: user, color: color };
-          });
-          this.setState({ totalComentarios: com });
-        }
-      }
-    );
+  obtenerComentarios(video, page) {
+    getCommentsByVideo(video.id, page, comentarios => {
+      this.setState({ totalComentarios: comentarios });
+    });
   }
 
   obtenerAsignaturaUni(video) {
-    let defaultClient = ApiClient.instance;
-    // Configure Bearer (JWT) access token for authorization: bearerAuth
-    let bearerAuth = defaultClient.authentications["bearerAuth"];
-    bearerAuth.accessToken = getUserToken();
-
-    const opts = {
-      cacheControl: "no-cache, no-store, must-revalidate", // String |
-      pragma: "no-cache", // String |
-      expires: "0", // String |
-      projection: "subjectWithUniversity" // String | Incluir si se quiere obtener tambien la universidad en la respuesta
-    };
-    this.videoApi.getVideoSubject(video.id, opts, (error, data, response) => {
-      if (error) {
-        console.error(error);
-      } else {
-        console.log(data);
-        this.setState({ asig: data });
-      }
+    getVideoSubject(video.id, asig => {
+      this.setState({ asig: asig });
     });
   }
 
@@ -304,22 +250,7 @@ class ViendoVideo extends Component {
         this.comentario.current.value = "";
         this.setState({ comentarios: nuevosComentarios });
         // Subir comentario al servidor
-        let defaultClient = ApiClient.instance;
-        // Configure Bearer (JWT) access token for authorization: bearerAuth
-        let bearerAuth = defaultClient.authentications["bearerAuth"];
-        bearerAuth.accessToken = getUserToken();
-        this.commentApi.addComment(
-          comentario,
-          Math.floor(tiempo),
-          this.state.video.id,
-          (error, data, response) => {
-            if (error) {
-              console.error(error);
-            } else {
-              console.log(data);
-            }
-          }
-        );
+        addComment(comentario, tiempo, this.state.video.id);
         e.preventDefault();
       }
     }

@@ -6,7 +6,7 @@ import imagenPrueba from "../assets/landscape.jpg";
 import { Button } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
 import { Menu } from "./ListaHorizontal";
-import { getTime } from "../config/Procesar";
+import { getTime } from "../config/Process";
 import { isSignedIn } from "../config/Auth";
 
 const profesores = [

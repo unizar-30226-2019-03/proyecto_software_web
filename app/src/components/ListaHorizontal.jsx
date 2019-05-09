@@ -4,7 +4,7 @@ import imagenPrueba from "../assets/landscape.jpg";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import iconoAsign from "../assets/favicon.ico";
 import { Link } from "react-router-dom";
-import { getTime } from "../config/Procesar";
+import { getTime } from "../config/Process";
 import IconoAsignaturaUniversidad from "./IconoAsignaturaUniversidad";
 
 // list of items
