@@ -2,6 +2,33 @@ import { ApiClient } from "swagger_unicast";
 import { getUserToken } from "./Auth";
 import UserApi from "swagger_unicast/dist/api/UserApi";
 
+const apiInstance = new UserApi(); //Instancia de la API de usuarios
+
+/**
+ * Obtiene el usuario con el id especificado
+ * @param {Number} id ID del usuario
+ * @param {Function} callback Función a ejecutar tras obtener el usuario
+ */
+export function getUser(id, callback) {
+  let defaultClient = ApiClient.instance;
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  let opts = {
+    cacheControl: "no-cache, no-store, must-revalidate", // String |
+    pragma: "no-cache", // String |
+    expires: "0" // String |
+  };
+  apiInstance.getUser(id, opts, (error, data, response) => {
+    if (error) {
+      console.error(error);
+    } else {
+      callback(data);
+    }
+  });
+}
+
 /**
  * Busca al usuario con nombre username y ejecuta el callback
  * tras obtener dicho usuario.
@@ -14,7 +41,6 @@ export function getUserByUsername(username, callback) {
   let bearerAuth = defaultClient.authentications["bearerAuth"];
   bearerAuth.accessToken = getUserToken();
 
-  let apiInstance = new UserApi();
   let opts = {
     cacheControl: "'no-cache, no-store, must-revalidate'", // String |
     pragma: "'no-cache'", // String |
@@ -40,12 +66,12 @@ export function getSubjectsOfUser(id, callback) {
   // Configure Bearer (JWT) access token for authorization: bearerAuth
   let bearerAuth = defaultClient.authentications["bearerAuth"];
   bearerAuth.accessToken = getUserToken();
+
   let opts = {
     cacheControl: "no-cache, no-store, must-revalidate", // String |
     pragma: "no-cache", // String |
     expires: "0" // String |
   };
-  let apiInstance = new UserApi();
   apiInstance.getSubjectsOfUser(id, opts, (error, data, response) => {
     if (error) {
       console.error(error);

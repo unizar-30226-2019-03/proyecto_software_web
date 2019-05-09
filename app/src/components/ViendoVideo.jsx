@@ -30,6 +30,7 @@ import { VideoApi, VoteApi, CommentApi } from "swagger_unicast";
 import VoteId from "swagger_unicast/dist/model/VoteId";
 import Vote2 from "swagger_unicast/dist/model/Vote2";
 import { getCommentsByVideo, addComment } from "../config/Comments";
+import { getUser } from "../config/User";
 
 const profesores = [
   { foto: icono, nombre: "Jorge" },
@@ -104,8 +105,10 @@ class ViendoVideo extends Component {
     super();
     this.state = {
       contentMargin: "15%",
-      user: getUserID(),
+      user: {},
       totalComentarios: [],
+      obtenerNuevosComentarios: false,
+      obteniendoComentarios: false,
       comentarios: [],
       fijarComentarios: false,
       alturaComentarios: 0,
@@ -121,7 +124,8 @@ class ViendoVideo extends Component {
       claridad: 2.5,
       asig: {},
       video: {},
-      timeNow: null
+      timeNow: null,
+      page: 0
     };
     this.videoApi = new VideoApi();
     this.voteApi = new VoteApi();
@@ -199,17 +203,39 @@ class ViendoVideo extends Component {
     });
   }
 
+  componentDidUpdate() {
+    if (
+      this.state.obtenerNuevosComentarios &&
+      !this.state.obteniendoComentarios
+    ) {
+      this.setState({ obteniendoComentarios: true });
+      this.obtenerComentarios(this.state.video, this.state.page + 1);
+    }
+  }
+
   componentWillMount() {
+    getUser(getUserID(), user => {
+      this.setState({ user: user });
+    });
     getVideo(this.props.match.params.id, (video, time) => {
       this.setState({ video: video, timeNow: time });
       this.obtenerAsignaturaUni(video);
-      this.obtenerComentarios(video, 0);
+      this.obtenerComentarios(video, this.state.page);
     });
   }
 
   obtenerComentarios(video, page) {
     getCommentsByVideo(video.id, page, comentarios => {
-      this.setState({ totalComentarios: comentarios });
+      let obtenerMas = false;
+      if (comentarios.length === 20) {
+        obtenerMas = true;
+      }
+      this.setState({
+        totalComentarios: [...this.state.totalComentarios, ...comentarios],
+        page: page,
+        obtenerNuevosComentarios: obtenerMas,
+        obteniendoComentarios: false
+      });
     });
   }
 
@@ -243,7 +269,7 @@ class ViendoVideo extends Component {
       if (e.keyCode === 13) {
         //Enviar comentario
         var nuevosComentarios = this.state.comentarios.slice();
-        const usuario = "david";
+        const usuario = this.state.user.username;
         const tiempo = this.state.tiempoVideo;
         const color = generadorColores(usuario);
         nuevosComentarios.push({ tiempo, comentario, usuario, color });
