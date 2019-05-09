@@ -10,7 +10,7 @@ import { ApiClient } from "swagger_unicast";
 import IconoAsignaturaUniversidad from "./IconoAsignaturaUniversidad";
 import iconoAsign from "../assets/favicon.ico";
 import { getTime } from "../config/Procesar";
-import { getTimePassed, getScore } from "../config/VideoFunc";
+import { getTimePassed, getScore } from "../config/Video";
 import VideoApi from "swagger_unicast/dist/api/VideoApi";
 
 // One item component

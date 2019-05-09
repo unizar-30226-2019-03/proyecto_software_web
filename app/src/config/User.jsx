@@ -29,3 +29,28 @@ export function getUserByUsername(username, callback) {
     }
   });
 }
+
+/**
+ * Obtiene las asignaturas del usuario especificado
+ * @param {Number} id ID del usuario
+ * @param {Function} callback Función a ejecutar tras obtener las asignaturas
+ */
+export function getSubjectsOfUser(id, callback) {
+  let defaultClient = ApiClient.instance;
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+  let opts = {
+    cacheControl: "no-cache, no-store, must-revalidate", // String |
+    pragma: "no-cache", // String |
+    expires: "0" // String |
+  };
+  let apiInstance = new UserApi();
+  apiInstance.getSubjectsOfUser(id, opts, (error, data, response) => {
+    if (error) {
+      console.error(error);
+    } else {
+      callback(data._embedded.subjects);
+    }
+  });
+}

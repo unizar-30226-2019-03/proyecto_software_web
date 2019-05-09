@@ -18,11 +18,7 @@ import StarRatingComponent from "react-star-rating-component";
 import { ContenidoPopUp } from "./ListaVertical";
 import { Notificacion } from "./Listas";
 import { isSignedIn, getUserToken, getUserID } from "../config/Auth";
-import {
-  generadorColores,
-  scrollFunc,
-  getTimePassed
-} from "../config/VideoFunc";
+import { generadorColores, scrollFunc, getTimePassed } from "../config/Video";
 import ApiClient from "swagger_unicast/dist/ApiClient";
 import { VideoApi, VoteApi, CommentApi } from "swagger_unicast";
 import VoteId from "swagger_unicast/dist/model/VoteId";

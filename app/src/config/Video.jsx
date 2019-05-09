@@ -1,3 +1,7 @@
+import VideoApi from "swagger_unicast/dist/api/VideoApi";
+import ApiClient from "swagger_unicast/dist/ApiClient";
+import { getUserToken } from "./Auth";
+
 /**
  * Genera un color aleatorio a partir del nombre del usuario
  * @param {String} usuario Nombre del usuario
@@ -90,4 +94,36 @@ export function getTimePassed(date1, now) {
 
 export function getScore(score) {
   return Math.round((score * 100) / 5);
+}
+
+/**
+ * Crea un vídeo y lo guarda en el servidor.
+ * @param {File} video Vídeo a subir
+ * @param {File} img Miniatura del vídeo
+ * @param {String} title Título del vídeo
+ * @param {String} description Descripción del vídeo
+ * @param {Number} subjectId ID de la asignatura del vídeo
+ * @param {Function} f Función a ejecutar tras petición a la API
+ */
+export function UploadVideo(video, img, title, description, subjectId, f) {
+  let defaultClient = ApiClient.instance;
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  let apiInstance = new VideoApi();
+  apiInstance.addVideo(
+    video,
+    img,
+    title,
+    description,
+    subjectId,
+    (error, data, response) => {
+      if (error) {
+        f(false);
+      } else {
+        f(true);
+      }
+    }
+  );
 }

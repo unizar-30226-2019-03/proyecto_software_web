@@ -3,12 +3,13 @@ import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
 import { Button, Form, Col } from "react-bootstrap";
 import { Redirect, Link } from "react-router-dom";
-import { isSignedIn, getUserToken, getUserID } from "../config/Auth";
+import { isSignedIn, getUserID } from "../config/Auth";
 import {
   checkFileExtensionImage,
   checkFileExtensionVideo
 } from "../config/Procesar";
-import { UserApi, ApiClient, VideoApi } from "swagger_unicast";
+import { UploadVideo } from "../config/Video";
+import { getSubjectsOfUser } from "../config/User";
 
 const FormularioDatos = (
   handleSubmit,
@@ -116,9 +117,9 @@ class SubirVideo extends Component {
       datosSubidos: false,
       img_valida: -1,
       video_valido: -1,
-      listaAsignaturas: []
+      listaAsignaturas: [],
+      error: false
     };
-    this.userApi = new UserApi();
     this.titulo = React.createRef();
     this.miniatura = React.createRef();
     this.descripcion = React.createRef();
@@ -129,23 +130,8 @@ class SubirVideo extends Component {
   }
 
   componentWillMount() {
-    let defaultClient = ApiClient.instance;
-    // Configure Bearer (JWT) access token for authorization: bearerAuth
-    let bearerAuth = defaultClient.authentications["bearerAuth"];
-    bearerAuth.accessToken = getUserToken();
-    let id = getUserID(); // Number | Id del usuario
-    let opts = {
-      cacheControl: "no-cache, no-store, must-revalidate", // String |
-      pragma: "no-cache", // String |
-      expires: "0" // String |
-    };
-    this.userApi.getSubjectsOfUser(id, opts, (error, data, response) => {
-      if (error) {
-        console.error(error);
-      } else {
-        console.log(data);
-        this.setState({ listaAsignaturas: data._embedded.subjects });
-      }
+    getSubjectsOfUser(getUserID(), asignaturas => {
+      this.setState({ listaAsignaturas: asignaturas });
     });
   }
 
@@ -160,19 +146,17 @@ class SubirVideo extends Component {
     } else if (!checkFileExtensionVideo(video)) {
       this.setState({ video_valido: 0 });
     } else {
-      let apiInstance = new VideoApi();
-      let subjectId = parseInt(this.asignatura.current.value);
-      apiInstance.addVideo(
+      UploadVideo(
         this.video.current.files[0],
         this.miniatura.current.files[0],
         titulo,
         descripcion,
-        subjectId,
-        (error, data, response) => {
-          if (error) {
-            console.error(error);
-          } else {
+        parseInt(this.asignatura.current.value),
+        ok => {
+          if (ok) {
             this.setState({ datosSubidos: true });
+          } else {
+            this.setState({ error: true });
           }
         }
       );
@@ -216,7 +200,11 @@ class SubirVideo extends Component {
                 marginTop: "80px"
               }}
             >
-              <h5>Subir Vídeo</h5>
+              <h5 style={{ color: this.state.error ? "red" : "black" }}>
+                {this.state.error
+                  ? "No se ha podido subir el vídeo"
+                  : "Subir vídeo"}
+              </h5>
               <img style={{ display: "none" }} id="output" alt="pep" />
               <div>
                 {FormularioDatos(
