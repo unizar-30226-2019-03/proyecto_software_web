@@ -4,13 +4,16 @@ import { Helmet } from "react-helmet";
 import icono from "../assets/favicon.ico";
 import { Button } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
-import { isSignedIn, getUserToken, getUserID } from "../config/Auth";
-import { ApiClient } from "swagger_unicast";
+import { isSignedIn, getUserID } from "../config/Auth";
 
 import IconoAsignaturaUniversidad from "./IconoAsignaturaUniversidad";
 import iconoAsign from "../assets/favicon.ico";
 import { getTime } from "../config/Procesar";
-import { getTimePassed, getScore } from "../config/Video";
+import {
+  getTimePassed,
+  getScore,
+  getVideosFromUploader
+} from "../config/Video";
 import VideoApi from "swagger_unicast/dist/api/VideoApi";
 
 // One item component
@@ -23,7 +26,8 @@ const MenuItem = ({
   img,
   duracion,
   rating,
-  timestamp
+  timestamp,
+  showRating
 }) => {
   return (
     <div>
@@ -48,24 +52,26 @@ const MenuItem = ({
           >
             {duracion}
           </div>
-          <div
-            style={{
-              color: rating >= 50 ? "#228B22" : "#DC143C",
-              fontSize: "12px",
-              textAlign: "center",
-              backgroundColor: "rgba(0,0,0,0.7)",
-              textDecoration: "none",
-              width: "40px",
-              height: "16px",
-              position: "absolute",
-              left: "4px",
-              top: "49px",
-              borderRadius: "3px",
-              zIndex: "100"
-            }}
-          >
-            {rating + "%"}
-          </div>
+          {showRating ? (
+            <div
+              style={{
+                color: rating >= 50 ? "#228B22" : "#DC143C",
+                fontSize: "12px",
+                textAlign: "center",
+                backgroundColor: "rgba(0,0,0,0.7)",
+                textDecoration: "none",
+                width: "40px",
+                height: "16px",
+                position: "absolute",
+                left: "4px",
+                top: "49px",
+                borderRadius: "3px",
+                zIndex: "100"
+              }}
+            >
+              {rating + "%"}
+            </div>
+          ) : null}
         </Link>
         <div style={{ height: "32px" }}>
           <div style={{ float: "left", marginTop: "5px" }}>
@@ -124,6 +130,7 @@ const Menu = (list, now) =>
         duracion={getTime(seconds)}
         rating={getScore(score)}
         timestamp={getTimePassed(timestamp, now)}
+        showRating={score === null ? false : true}
       />
     );
   });
@@ -141,30 +148,11 @@ class MisVideos extends Component {
   }
 
   componentWillMount() {
-    let defaultClient = ApiClient.instance;
-    // Configure Bearer (JWT) access token for authorization: bearerAuth
-    let bearerAuth = defaultClient.authentications["bearerAuth"];
-    bearerAuth.accessToken = getUserToken();
-
-    const id = getUserID();
-    const opts = {
-      cacheControl: "no-cache, no-store, must-revalidate", // String |
-      pragma: "no-cache", // String |
-      expires: "0", // String |
-      page: 0, // Number | Número de la página a devolver
-      sort: ["null"] // [String] | Parámetros en la forma `($propertyname,)+[asc|desc]?`
-    };
-    this.videoApi.getVideosFromUploader(id, opts, (error, data, response) => {
-      if (error) {
-        console.error(error);
-      } else {
-        console.log(data);
-        const now = ApiClient.parseDate(response.headers.date);
-        this.setState({
-          listaVideos: data._embedded.videos,
-          timestampNow: now
-        });
-      }
+    getVideosFromUploader(getUserID(), 0, (videos, time) => {
+      this.setState({
+        listaVideos: videos,
+        timestampNow: time
+      });
     });
   }
 

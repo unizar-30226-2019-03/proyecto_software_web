@@ -127,3 +127,35 @@ export function UploadVideo(video, img, title, description, subjectId, f) {
     }
   );
 }
+
+/**
+ * Obtiene los vídeos del usuario especificado, con un máximo
+ * de 20 vídeos (dichos vídeos serán elegidos según la página especificada).
+ * @param {Number} id ID del usuario
+ * @param {Number} page Número de página a obtener
+ * @param {Function} callback Función a ejecutar tras obtener los vídeos
+ */
+export function getVideosFromUploader(id, page, callback) {
+  let defaultClient = ApiClient.instance;
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  const opts = {
+    cacheControl: "no-cache, no-store, must-revalidate", // String |
+    pragma: "no-cache", // String |
+    expires: "0", // String |
+    page: page, // Number | Número de la página a devolver
+    sort: ["null"] // [String] | Parámetros en la forma `($propertyname,)+[asc|desc]?`
+  };
+  let apiInstance = new VideoApi();
+  apiInstance.getVideosFromUploader(id, opts, (error, data, response) => {
+    if (error) {
+      console.error(error);
+    } else {
+      console.log(data);
+      const now = ApiClient.parseDate(response.headers.date);
+      callback(data._embedded.videos, now);
+    }
+  });
+}
