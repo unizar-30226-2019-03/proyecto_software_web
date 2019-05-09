@@ -3,6 +3,8 @@ import ApiClient from "swagger_unicast/dist/ApiClient";
 import { Degree2 } from "swagger_unicast";
 import Subject2 from "swagger_unicast/dist/model/Subject2";
 
+const defaultClient = ApiClient.instance;
+
 /**
  * Crea la universidad cuyo nombre y foto son los especificados
  * en los parámetros. Si ya existe la universidad, muestra un
@@ -14,7 +16,6 @@ import Subject2 from "swagger_unicast/dist/model/Subject2";
  * @param {UniversityApi} api API de la universidad
  */
 export function crearUniversidad(uni, file, form, handleShow, api) {
-  let defaultClient = ApiClient.instance;
   // Configure Bearer (JWT) access token for authorization: bearerAuth
   let bearerAuth = defaultClient.authentications["bearerAuth"];
   bearerAuth.accessToken = getUserToken();
@@ -37,7 +38,6 @@ export function crearUniversidad(uni, file, form, handleShow, api) {
  * @param {Number} uni ID de la universidad
  */
 export function crearCarreraYLigar(DegreeApi, carrera, uni) {
-  let defaultClient = ApiClient.instance;
   // Configure Bearer (JWT) access token for authorization: bearerAuth
   let bearerAuth = defaultClient.authentications["bearerAuth"];
   bearerAuth.accessToken = getUserToken();
@@ -74,7 +74,6 @@ export function crearCarreraYLigar(DegreeApi, carrera, uni) {
  * @param {DegreeApi} DegreeApi API de las carreras
  */
 function ligarUniCarr(uniID, carreraID, DegreeApi) {
-  let defaultClient = ApiClient.instance;
   // Configure Bearer (JWT) access token for authorization: bearerAuth
   let bearerAuth = defaultClient.authentications["bearerAuth"];
   bearerAuth.accessToken = getUserToken();
@@ -97,7 +96,6 @@ function ligarUniCarr(uniID, carreraID, DegreeApi) {
  * @param {Number} uni ID de la universidad
  */
 export function crearAsigYLigar(SubjectApi, subject, shortname, uni) {
-  let defaultClient = ApiClient.instance;
   // Configure Bearer (JWT) access token for authorization: bearerAuth
   let bearerAuth = defaultClient.authentications["bearerAuth"];
   bearerAuth.accessToken = getUserToken();
@@ -134,7 +132,6 @@ export function crearAsigYLigar(SubjectApi, subject, shortname, uni) {
  * @param {SubjectApi} SubjectApi API de las asignaturas
  */
 function ligarUniAsig(uni, subject, SubjectApi) {
-  let defaultClient = ApiClient.instance;
   // Configure Bearer (JWT) access token for authorization: bearerAuth
   let bearerAuth = defaultClient.authentications["bearerAuth"];
   bearerAuth.accessToken = getUserToken();
@@ -155,7 +152,6 @@ function ligarUniAsig(uni, subject, SubjectApi) {
  * @param {SubjectApi} SubjectApi API de las asignaturas
  */
 export function ligarUsuarioAsig(idUser, idSubj, SubjectApi) {
-  let defaultClient = ApiClient.instance;
   // Configure Bearer (JWT) access token for authorization: bearerAuth
   let bearerAuth = defaultClient.authentications["bearerAuth"];
   bearerAuth.accessToken = getUserToken();

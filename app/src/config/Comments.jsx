@@ -3,6 +3,7 @@ import { ApiClient, CommentApi } from "swagger_unicast";
 import { generadorColores } from "./Video";
 
 const apiInstance = new CommentApi();
+const defaultClient = ApiClient.instance;
 
 /**
  * Obtiene los comentarios del vídeo especificado.
@@ -11,7 +12,6 @@ const apiInstance = new CommentApi();
  * @param {Function} callback Función a ejecutar tras obtener comentarios
  */
 export function getCommentsByVideo(id, page, callback) {
-  let defaultClient = ApiClient.instance;
   // Configure Bearer (JWT) access token for authorization: bearerAuth
   let bearerAuth = defaultClient.authentications["bearerAuth"];
   bearerAuth.accessToken = getUserToken();
@@ -48,7 +48,6 @@ export function getCommentsByVideo(id, page, callback) {
  * @param {Number} id ID del vídeo
  */
 export function addComment(comment, time, id) {
-  let defaultClient = ApiClient.instance;
   // Configure Bearer (JWT) access token for authorization: bearerAuth
   let bearerAuth = defaultClient.authentications["bearerAuth"];
   bearerAuth.accessToken = getUserToken();

@@ -4,9 +4,8 @@ import { Helmet } from "react-helmet";
 import { Button, Form } from "react-bootstrap";
 import Popup from "reactjs-popup";
 import { Link, Redirect } from "react-router-dom";
-import { isSignedIn, getUserToken, getUserID } from "../config/Auth";
-import { ApiClient } from "swagger_unicast";
-import UserApi from "swagger_unicast/dist/api/UserApi";
+import { isSignedIn, getUserID } from "../config/Auth";
+import { getUser, getUniversityOfUser, getDegreeOfUser } from "../config/User";
 
 class CamposMostrar extends Component {
   renderCampo(nombre, contenido) {
@@ -68,80 +67,32 @@ class Perfil extends Component {
       uni: {},
       degree: {}
     };
-    this.userApi = new UserApi();
     this.pass = React.createRef();
     this.handleSubmit = this.handleSubmit.bind(this);
     this.getBorder = this.getBorder.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.abrirPopUp = this.abrirPopUp.bind(this);
     this.cerrarPopUp = this.cerrarPopUp.bind(this);
-    this.getUser = this.getUser.bind(this);
     this.getUniFromUser = this.getUniFromUser.bind(this);
     this.getDegreeFromUser = this.getDegreeFromUser.bind(this);
   }
 
   componentWillMount() {
-    this.getUser();
-  }
-
-  getUser() {
-    let defaultClient = ApiClient.instance;
-    // Configure Bearer (JWT) access token for authorization: bearerAuth
-    let bearerAuth = defaultClient.authentications["bearerAuth"];
-    bearerAuth.accessToken = getUserToken();
-
-    let id = getUserID(); // Number | Id del usuario
-    let opts = {
-      cacheControl: "no-cache, no-store, must-revalidate", // String |
-      pragma: "no-cache", // String |
-      expires: "0" // String |
-    };
-    this.userApi.getUser(id, opts, (error, data, response) => {
-      if (error) {
-        console.error(error);
-      } else {
-        this.setState({ user: data });
-        this.getUniFromUser(data.id);
-        this.getDegreeFromUser(data.id);
-      }
+    getUser(getUserID(), data => {
+      this.setState({ user: data });
+      this.getUniFromUser(data.id);
+      this.getDegreeFromUser(data.id);
     });
   }
-  getUniFromUser(id) {
-    let defaultClient = ApiClient.instance;
-    // Configure Bearer (JWT) access token for authorization: bearerAuth
-    let bearerAuth = defaultClient.authentications["bearerAuth"];
-    bearerAuth.accessToken = getUserToken();
 
-    let opts = {
-      cacheControl: "no-cache, no-store, must-revalidate", // String |
-      pragma: "no-cache", // String |
-      expires: "0" // String |
-    };
-    this.userApi.getUniversityOfUser(id, opts, (error, data, response) => {
-      if (error) {
-        console.error(error);
-      } else {
-        this.setState({ uni: data });
-      }
+  getUniFromUser(id) {
+    getUniversityOfUser(id, data => {
+      this.setState({ uni: data });
     });
   }
   getDegreeFromUser(id) {
-    let defaultClient = ApiClient.instance;
-    // Configure Bearer (JWT) access token for authorization: bearerAuth
-    let bearerAuth = defaultClient.authentications["bearerAuth"];
-    bearerAuth.accessToken = getUserToken();
-
-    let opts = {
-      cacheControl: "no-cache, no-store, must-revalidate", // String |
-      pragma: "no-cache", // String |
-      expires: "0" // String |
-    };
-    this.userApi.getDegreeOfUser(id, opts, (error, data, response) => {
-      if (error) {
-        console.error(error);
-      } else {
-        this.setState({ degree: data });
-      }
+    getDegreeOfUser(id, data => {
+      this.setState({ degree: data });
     });
   }
 

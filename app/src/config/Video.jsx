@@ -3,6 +3,7 @@ import ApiClient from "swagger_unicast/dist/ApiClient";
 import { getUserToken } from "./Auth";
 
 const apiInstance = new VideoApi(); //Instancia de la API de vídeos
+const defaultClient = ApiClient.instance;
 
 /**
  * Genera un color aleatorio a partir del nombre del usuario
@@ -108,7 +109,6 @@ export function getScore(score) {
  * @param {Function} f Función a ejecutar tras petición a la API
  */
 export function UploadVideo(video, img, title, description, subjectId, f) {
-  let defaultClient = ApiClient.instance;
   // Configure Bearer (JWT) access token for authorization: bearerAuth
   let bearerAuth = defaultClient.authentications["bearerAuth"];
   bearerAuth.accessToken = getUserToken();
@@ -137,7 +137,6 @@ export function UploadVideo(video, img, title, description, subjectId, f) {
  * @param {Function} callback Función a ejecutar tras obtener los vídeos
  */
 export function getVideosFromUploader(id, page, callback) {
-  let defaultClient = ApiClient.instance;
   // Configure Bearer (JWT) access token for authorization: bearerAuth
   let bearerAuth = defaultClient.authentications["bearerAuth"];
   bearerAuth.accessToken = getUserToken();
@@ -166,7 +165,6 @@ export function getVideosFromUploader(id, page, callback) {
  * @param {Function} callback Función a ejecutar tras obtener el vídeo
  */
 export function getVideo(id, callback) {
-  let defaultClient = ApiClient.instance;
   // Configure Bearer (JWT) access token for authorization: bearerAuth
   let bearerAuth = defaultClient.authentications["bearerAuth"];
   bearerAuth.accessToken = getUserToken();
@@ -195,7 +193,6 @@ export function getVideo(id, callback) {
  * @param {Function} callback Función a ejecutar tras obtener la asignatura
  */
 export function getVideoSubject(id, callback) {
-  let defaultClient = ApiClient.instance;
   // Configure Bearer (JWT) access token for authorization: bearerAuth
   let bearerAuth = defaultClient.authentications["bearerAuth"];
   bearerAuth.accessToken = getUserToken();

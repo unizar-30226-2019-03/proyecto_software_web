@@ -30,7 +30,8 @@ import { VideoApi, VoteApi, CommentApi } from "swagger_unicast";
 import VoteId from "swagger_unicast/dist/model/VoteId";
 import Vote2 from "swagger_unicast/dist/model/Vote2";
 import { getCommentsByVideo, addComment } from "../config/Comments";
-import { getUser } from "../config/User";
+import { getUser, getSubjectsOfUser } from "../config/User";
+import { SubscribeSubject, UnsubscribeSubject } from "../config/Subject";
 
 const profesores = [
   { foto: icono, nombre: "Jorge" },
@@ -125,7 +126,8 @@ class ViendoVideo extends Component {
       asig: {},
       video: {},
       timeNow: null,
-      page: 0
+      page: 0,
+      siguiendoAsig: false
     };
     this.videoApi = new VideoApi();
     this.voteApi = new VoteApi();
@@ -146,6 +148,7 @@ class ViendoVideo extends Component {
     this.puntuar = this.puntuar.bind(this);
     this.obtenerComentarios = this.obtenerComentarios.bind(this);
     this.obtenerAsignaturaUni = this.obtenerAsignaturaUni.bind(this);
+    this.seguirAsig = this.seguirAsig.bind(this);
     this.comentario = React.createRef();
   }
 
@@ -242,6 +245,13 @@ class ViendoVideo extends Component {
   obtenerAsignaturaUni(video) {
     getVideoSubject(video.id, asig => {
       this.setState({ asig: asig });
+      getSubjectsOfUser(getUserID(), subjects => {
+        const found = subjects.find(s => {
+          return s.id === asig.id;
+        });
+        //Si no la ha encontrado -> No sigue la asignatura
+        this.setState({ siguiendoAsig: found === undefined ? false : true });
+      });
     });
   }
 
@@ -368,6 +378,13 @@ class ViendoVideo extends Component {
         console.log(data);
       }
     });
+  }
+
+  seguirAsig() {
+    !this.state.siguiendoAsig
+      ? SubscribeSubject(this.state.user.id, this.state.asig.id)
+      : UnsubscribeSubject(this.state.user.id, this.state.asig.id);
+    this.setState({ siguiendoAsig: !this.state.siguiendoAsig });
   }
 
   render() {
@@ -604,7 +621,11 @@ class ViendoVideo extends Component {
                 >
                   {this.state.asig.name}
                 </Link>
-                <Button className="boton-seguir">SEGUIR ASIGNATURA</Button>
+                <Button className="boton-seguir" onClick={this.seguirAsig}>
+                  {this.state.siguiendoAsig
+                    ? "DEJAR DE SEGUIR"
+                    : "SEGUIR ASIGNATURA"}
+                </Button>
               </div>
               <div style={{ marginLeft: "48px" }}>
                 <p style={{ fontSize: "15px" }}>

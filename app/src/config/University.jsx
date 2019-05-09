@@ -2,6 +2,8 @@ import ApiClient from "swagger_unicast/dist/ApiClient";
 import { getUserToken } from "./Auth";
 import { UniversityApi } from "swagger_unicast";
 
+const apiInstance = new UniversityApi();
+
 /**
  * Busca todas las asignaturas de la universidad dada y ejecuta
  * la función callback si hay éxito en la operación
@@ -14,7 +16,6 @@ export function getSubjectsFromUniveristy(id, callback) {
   let bearerAuth = defaultClient.authentications["bearerAuth"];
   bearerAuth.accessToken = getUserToken();
 
-  let apiInstance = new UniversityApi();
   let opts = {
     cacheControl: "no-cache, no-store, must-revalidate", // String |
     pragma: "no-cache", // String |
