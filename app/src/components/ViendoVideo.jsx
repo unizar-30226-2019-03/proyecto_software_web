@@ -364,7 +364,7 @@ class ViendoVideo extends Component {
     let bearerAuth = defaultClient.authentications["bearerAuth"];
     bearerAuth.accessToken = getUserToken();
     //Enviar al servidor la puntuación actual
-    const voteid = new VoteId(this.state.video.id, this.state.user);
+    const voteid = new VoteId(this.state.video.id, this.state.user.id);
     const vote = new Vote2(
       voteid,
       this.state.claridad,
