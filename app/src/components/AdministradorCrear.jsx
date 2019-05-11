@@ -284,7 +284,11 @@ class FormularioProfeAsignatura extends React.Component {
   }
 
   actualizarAsig(datos) {
-    this.setState({ asignaturas: datos });
+    const asigs = datos.map(a => {
+      a.name = a.name.split(":")[0];
+      return a;
+    });
+    this.setState({ asignaturas: asigs });
   }
 
   handleChange(event) {
@@ -507,7 +511,7 @@ class AdministradorCrear extends Component {
   handleAsignatura(event, form) {
     event.preventDefault();
     const uni = parseInt(this.uniAsig.current.value);
-    const subj = this.nombreAsig.current.value;
+    const subj = this.nombreAsig.current.value + ":" + uni;
     const shortname = this.nombreCortoAsig.current.value;
     crearAsigYLigar(this.SubjectApi, subj, shortname, uni);
     form.reset();
