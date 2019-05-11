@@ -24,10 +24,17 @@ export function RemoveAccents(str) {
  */
 export function getTime(t) {
   const tiempoAux = Math.trunc(t);
-  var minutos = Math.trunc(tiempoAux / 60);
+  var minutos = Math.trunc(tiempoAux / 60) % 60;
+  var horas = Math.trunc(tiempoAux / 3600);
   if (minutos < 10) {
     minutos = "0" + minutos.toString();
+    horas = "";
   } else {
+    if (horas > 0) {
+      horas = horas < 10 ? "0" + horas.toString() : horas.toString();
+    } else {
+      horas = "";
+    }
     minutos = minutos.toString();
   }
   var segundos = tiempoAux % 60;
@@ -36,7 +43,9 @@ export function getTime(t) {
   } else {
     segundos = segundos.toString();
   }
-  return minutos + ":" + segundos;
+  return horas === ""
+    ? minutos + ":" + segundos
+    : horas + ":" + minutos + ":" + segundos;
 }
 
 /**

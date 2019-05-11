@@ -164,7 +164,7 @@ class MenuItem extends Component {
                 textAlign: "center",
                 backgroundColor: "rgba(0,0,0,0.7)",
                 textDecoration: "none",
-                width: "40px",
+                width: "fit-content",
                 height: "16px",
                 position: "absolute",
                 right: "3px",
@@ -175,24 +175,26 @@ class MenuItem extends Component {
             >
               {this.props.duracion}
             </div>
-            <div
-              style={{
-                color: this.props.rating >= 50 ? "#228B22" : "#DC143C",
-                fontSize: "12px",
-                textAlign: "center",
-                backgroundColor: "rgba(0,0,0,0.7)",
-                textDecoration: "none",
-                width: "40px",
-                height: "16px",
-                position: "absolute",
-                left: "4px",
-                top: "60px",
-                borderRadius: "3px",
-                zIndex: "100"
-              }}
-            >
-              {this.props.rating + "%"}
-            </div>
+            {this.props.showRating ? (
+              <div
+                style={{
+                  color: this.props.rating >= 50 ? "#228B22" : "#DC143C",
+                  fontSize: "12px",
+                  textAlign: "center",
+                  backgroundColor: "rgba(0,0,0,0.7)",
+                  textDecoration: "none",
+                  width: "40px",
+                  height: "16px",
+                  position: "absolute",
+                  left: "4px",
+                  top: "60px",
+                  borderRadius: "3px",
+                  zIndex: "100"
+                }}
+              >
+                {this.props.rating + "%"}
+              </div>
+            ) : null}
           </Link>
         </div>
         <div style={{ marginTop: "5px" }}>
@@ -336,6 +338,7 @@ export const MenuVertical = (list, borrar, anyadir, listaRepro, time) =>
         rating={getScore(video.score)}
         timestamp={getTimePassed(video.timestamp, time)}
         descripcion={video.description}
+        showRating={video.score === null ? false : true}
       />
     );
   });

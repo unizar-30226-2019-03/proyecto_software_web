@@ -110,7 +110,7 @@ const MenuItem = ({ url, canal, img, duracion, rating }) => {
               textAlign: "center",
               backgroundColor: "rgba(0,0,0,0.7)",
               textDecoration: "none",
-              width: "40px",
+              width: "fit-content",
               height: "16px",
               position: "absolute",
               right: "4px",
