@@ -3,10 +3,10 @@ import { Button, Form, Col } from "react-bootstrap";
 import { Redirect, Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import uni from "../assets/UnicastNombre.png";
-import { UserApi, UniversityApi } from "swagger_unicast";
+import { UserApi } from "swagger_unicast";
 import { checkFileExtensionImage } from "../config/Process";
 import { signIn } from "../config/Auth";
-import DegreeApi from "swagger_unicast/dist/api/DegreeApi";
+import { getUnivesities, getDegreesFromUnivesity } from "../config/University";
 
 const FormularioDatos = (
   handleSubmit,
@@ -297,7 +297,8 @@ class SignIn extends Component {
       userID: "",
       pass: "",
       listaUniversidades: [],
-      listaCarreras: []
+      listaCarreras: [],
+      page: 0
     };
     this.nombre = React.createRef();
     this.apellidos = React.createRef();
@@ -312,38 +313,26 @@ class SignIn extends Component {
     this.handleSubmitDatos = this.handleSubmitDatos.bind(this);
     this.handleSubmitInfo = this.handleSubmitInfo.bind(this);
     this.back = this.back.bind(this);
+    this.getAllUniversities = this.getAllUniversities.bind(this);
   }
 
   componentWillMount() {
-    let apiInstance = new UniversityApi();
-    let opts = {
-      cacheControl: "no-cache, no-store, must-revalidate", // String |
-      pragma: "no-cache", // String |
-      expires: "0", // String |
-      name: "a" // String | String a buscar en el nombre
-    };
-    apiInstance.findUniversitiesContaining(opts, (error, data, response) => {
-      if (error) {
-        console.error(error);
+    getUnivesities(0, data => {
+      if (data._embedded.universities.length === 20) {
+        this.getAllUniversities(data._embedded.universities, 1);
       } else {
-        console.log(data);
-
         this.setState({ listaUniversidades: data._embedded.universities });
       }
     });
-    apiInstance = new DegreeApi();
-    opts = {
-      cacheControl: "no-cache, no-store, must-revalidate", // String |
-      pragma: "no-cache", // String |
-      expires: "0", // String |
-      name: "a" // String | String a buscar en el nombre de carreras
-    };
-    apiInstance.findDegreesContainingName(opts, (error, data, response) => {
-      if (error) {
-        console.error(error);
+  }
+
+  getAllUniversities(universities, page) {
+    getUnivesities(page, data => {
+      universities.push(data._embedded.universities);
+      if (data._embedded.universities.length === 20) {
+        this.getAllUniversities(universities, page + 1);
       } else {
-        console.log(data);
-        this.setState({ listaCarreras: data._embedded.degrees });
+        this.setState({ listaUniversidades: universities });
       }
     });
   }
@@ -425,6 +414,9 @@ class SignIn extends Component {
     const uniId = e.target.value;
     console.log(uniId);
     //ACTUALIZAR LISTA DE CARRERAS (getDegreesFromUniversity)
+    /*getDegreesFromUnivesity(uniId, data => {
+      this.setState({ listaCarreras: data });
+    });*/
   }
 
   handleSubmitInfo(event) {
