@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import brand from "../assets/imgUnicast.jpg";
-import logo from "../assets/favicon.ico";
 import { Navbar, Nav } from "react-bootstrap";
 import { FaBell, FaEnvelope, FaBars } from "react-icons/fa";
 import BarraBusqueda from "./BarraBusqueda";
 import BarraLateral from "./BarraLateral";
-import { signOut } from "../config/Auth";
+import { signOut, getUserID } from "../config/Auth";
+import { getUser } from "../config/User";
 
 class BarraNavegacion extends Component {
   /**
@@ -21,7 +21,8 @@ class BarraNavegacion extends Component {
       windowWidth: window.innerWidth,
       displayNotif: false,
       hide: this.props.hide,
-      busqueda: this.props.nuevoTit
+      busqueda: this.props.nuevoTit,
+      photo: {}
     };
     this.showDropdown = this.showDropdown.bind(this);
     this.hideDropdown = this.hideDropdown.bind(this);
@@ -29,6 +30,12 @@ class BarraNavegacion extends Component {
     this.resize = this.resize.bind(this);
     this.showDropdownNotif = this.showDropdownNotif.bind(this);
     this.hideDropdownNotif = this.hideDropdownNotif.bind(this);
+  }
+
+  componentWillMount() {
+    getUser(getUserID(), data => {
+      this.setState({ photo: data.photo });
+    });
   }
 
   componentDidMount() {
@@ -167,7 +174,7 @@ class BarraNavegacion extends Component {
               <div className="dropdown" style={{ top: "5px" }}>
                 <img
                   alt="usuario"
-                  src={logo}
+                  src={this.state.photo}
                   width="30"
                   height="30"
                   onClick={this.showDropdown}

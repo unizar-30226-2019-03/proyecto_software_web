@@ -8,9 +8,14 @@ class BarraLateral extends Component {
     super(props);
     this.state = { activar: this.props.show, asigs: [] };
     this.active = this.active.bind(this);
+    this.getData = this.getData.bind(this);
   }
 
   componentWillMount() {
+    this.getData();
+  }
+
+  getData() {
     getSubjectsOfUser(getUserID(), data => {
       const asigs = data.map(a => {
         a.name = a.name.split(":")[0];
@@ -22,6 +27,7 @@ class BarraLateral extends Component {
 
   componentWillReceiveProps(newProps) {
     this.setState({ activar: newProps.show });
+    this.getData();
   }
 
   active(name) {

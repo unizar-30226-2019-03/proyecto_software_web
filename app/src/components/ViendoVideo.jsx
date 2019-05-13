@@ -382,12 +382,23 @@ class ViendoVideo extends Component {
 
   seguirAsig() {
     !this.state.siguiendoAsig
-      ? SubscribeSubject(this.state.user.id, this.state.asig.id)
-      : UnsubscribeSubject(this.state.user.id, this.state.asig.id);
-    this.setState({ siguiendoAsig: !this.state.siguiendoAsig });
+      ? SubscribeSubject(this.state.user.id, this.state.asig.id, ok => {
+          if (ok) {
+            this.setState({ siguiendoAsig: !this.state.siguiendoAsig });
+          }
+        })
+      : UnsubscribeSubject(this.state.user.id, this.state.asig.id, ok => {
+          if (ok) {
+            this.setState({ siguiendoAsig: !this.state.siguiendoAsig });
+          }
+        });
   }
 
   render() {
+    const photo =
+      this.state.asig.university === undefined
+        ? ""
+        : this.state.asig.university.photo;
     return !isSignedIn() ? (
       <Redirect to="/" />
     ) : (
@@ -608,7 +619,7 @@ class ViendoVideo extends Component {
               <div style={{ display: "flex", marginBottom: "20px" }}>
                 <Link to="/asig/X">
                   <img
-                    src={icono}
+                    src={photo}
                     style={{ borderRadius: "50%" }}
                     height="40"
                     width="40"

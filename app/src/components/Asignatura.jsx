@@ -7,7 +7,13 @@ import { Button } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
 import { Menu } from "./ListaHorizontal";
 import { getTime } from "../config/Process";
-import { isSignedIn } from "../config/Auth";
+import { isSignedIn, getUserID } from "../config/Auth";
+import {
+  SubscribeSubject,
+  UnsubscribeSubject,
+  findSubjectByName
+} from "../config/Subject";
+import { getUser, getSubjectsOfUser } from "../config/User";
 
 const profesores = [
   { foto: icono, nombre: "Jorge Pérez" },
@@ -137,9 +143,29 @@ class Asignatura extends Component {
   constructor() {
     super();
     this.state = {
-      contentMargin: "300px"
+      contentMargin: "300px",
+      siguiendoAsig: false,
+      user: {},
+      asig: {}
     };
+    this.seguirAsig = this.seguirAsig.bind(this);
     this.handleChange = this.handleChange.bind(this);
+  }
+
+  componentWillMount() {
+    getUser(getUserID(), data => {
+      this.setState({ user: data });
+    });
+    findSubjectByName(this.props.match.params.nombre, data => {
+      this.setState({ asig: data });
+      getSubjectsOfUser(getUserID(), subjects => {
+        const found = subjects.find(s => {
+          return s.id === data.id;
+        });
+        //Si no la ha encontrado -> No sigue la asignatura
+        this.setState({ siguiendoAsig: found === undefined ? false : true });
+      });
+    });
   }
 
   handleChange(display) {
@@ -149,7 +175,26 @@ class Asignatura extends Component {
       this.setState({ contentMargin: "70px" });
     }
   }
+
+  seguirAsig() {
+    !this.state.siguiendoAsig
+      ? SubscribeSubject(this.state.user.id, this.state.asig.id, ok => {
+          if (ok) {
+            this.setState({ siguiendoAsig: !this.state.siguiendoAsig });
+          }
+        })
+      : UnsubscribeSubject(this.state.user.id, this.state.asig.id, ok => {
+          if (ok) {
+            this.setState({ siguiendoAsig: !this.state.siguiendoAsig });
+          }
+        });
+  }
+
   render() {
+    const photo =
+      this.state.asig.university === undefined
+        ? ""
+        : this.state.asig.university.photo;
     return !isSignedIn() ? (
       <Redirect to="/" />
     ) : (
@@ -160,7 +205,9 @@ class Asignatura extends Component {
         </Helmet>
         <BarraNavegacion
           onChange={this.handleChange}
-          activar={this.props.match.params.nombre}
+          activar={
+            this.state.siguiendoAsig ? this.props.match.params.nombre : ""
+          }
           displaySide={true}
           hide={false}
         />
@@ -174,7 +221,7 @@ class Asignatura extends Component {
           <div className="cabecera-asignatura">
             <div className="titulo-asignatura">
               <img
-                src={icono}
+                src={photo}
                 alt="icono asignatura"
                 style={{ marginRight: "25px", borderRadius: "50%" }}
                 width="60"
@@ -184,12 +231,15 @@ class Asignatura extends Component {
             </div>
             <div className="universidad">
               <Button
+                onClick={this.seguirAsig}
                 style={{
                   backgroundColor: "#235da9",
                   borderColor: "#235da9"
                 }}
               >
-                Seguir asignatura
+                {this.state.siguiendoAsig
+                  ? "DEJAR DE SEGUIR"
+                  : "SEGUIR ASIGNATURA"}
               </Button>
             </div>
           </div>
