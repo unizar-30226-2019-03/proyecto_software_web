@@ -32,7 +32,7 @@ export function getCommentsByVideo(id, page, callback) {
       let com = data._embedded.comments.map(c => {
         const t = c.secondsFromBeginning;
         const text = c.text;
-        const user = "david";
+        const user = c.user.username;
         const color = generadorColores(user);
         return { tiempo: t, comentario: text, usuario: user, color: color };
       });
