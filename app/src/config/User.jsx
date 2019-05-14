@@ -116,7 +116,8 @@ export function getSubjectsOfUser(id, callback) {
   let opts = {
     cacheControl: "no-cache, no-store, must-revalidate", // String |
     pragma: "no-cache", // String |
-    expires: "0" // String |
+    expires: "0", // String |
+    projection: "subjectWithUniversity" // String | Incluir si se quiere obtener tambien la universidad en la respuesta
   };
   apiInstance.getSubjectsOfUser(id, opts, (error, data, response) => {
     if (error) {

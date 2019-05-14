@@ -5,59 +5,15 @@ import { ListGroup, Dropdown, Button, FormControl } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
 import foto from "../assets/favicon.ico";
 import CustomToggle from "./CustomToggle";
-import { isSignedIn } from "../config/Auth";
-
-const asignaturas = [
-  {
-    nombre: "Aprendizaje Automático",
-    uni: "Universidad de Zaragoza",
-    foto: foto
-  },
-  {
-    nombre: "Proyecto Software",
-    uni: "Universidad de Zaragoza",
-    foto: foto
-  },
-  {
-    nombre: "Bases de Datos I",
-    uni: "Universidad de Zaragoza",
-    foto: foto
-  },
-  {
-    nombre: "Bases de Datos II",
-    uni: "Universidad de Zaragoza",
-    foto: foto
-  },
-  {
-    nombre: "Administración de Sistemas I",
-    uni: "Universidad de Zaragoza",
-    foto: foto
-  },
-  {
-    nombre: "Administración de Sistemas II",
-    uni: "Universidad de Zaragoza",
-    foto: foto
-  },
-  {
-    nombre: "Inteligencia Artificial",
-    uni: "Universidad de Zaragoza",
-    foto: foto
-  },
-  {
-    nombre: "Ingeniería del Software",
-    uni: "Universidad de Zaragoza",
-    foto: foto
-  },
-  {
-    nombre: "Programación de Sistemas Concurrentes y Distribuidos",
-    uni: "Universidad de Zaragoza",
-    foto: foto
-  }
-];
+import { isSignedIn, getUserID } from "../config/Auth";
+import { getSubjectsOfUser } from "../config/User";
 
 const ItemAsignatura = ({ nombre, uni, foto }) => {
   return (
-    <Link to="/asig/1" style={{ color: "black", textDecoration: "none" }}>
+    <Link
+      to={`/asig/${nombre}`}
+      style={{ color: "black", textDecoration: "none" }}
+    >
       <ListGroup.Item className="fondo">
         <p className="asig">{nombre}</p>
         <p className="uni">{uni}</p>
@@ -69,9 +25,14 @@ const ItemAsignatura = ({ nombre, uni, foto }) => {
 
 const ListaAsignaturas = lista =>
   lista.map(el => {
-    const { nombre, uni, foto } = el;
+    const { name, university, id } = el;
     return (
-      <ItemAsignatura nombre={nombre} uni={uni} foto={foto} key={nombre} />
+      <ItemAsignatura
+        nombre={name}
+        uni={university.name}
+        foto={university.photo}
+        key={id}
+      />
     );
   });
 
@@ -80,11 +41,18 @@ class Asignaturas extends Component {
     super();
     this.state = {
       contentMargin: "300px",
-      filtro: ""
+      filtro: "",
+      asignaturas: []
     };
     this.handleChange = this.handleChange.bind(this);
     this.cambiaFiltro = this.cambiaFiltro.bind(this);
     this.filtrar = this.filtrar.bind(this);
+  }
+
+  componentWillMount() {
+    getSubjectsOfUser(getUserID(), data => {
+      this.setState({ asignaturas: data });
+    });
   }
 
   cambiaFiltro(e) {
@@ -93,7 +61,7 @@ class Asignaturas extends Component {
 
   filtrar(lista) {
     let asig = lista.filter(
-      a => "" || a.nombre.toLowerCase().startsWith(this.state.filtro)
+      a => "" || a.name.toLowerCase().startsWith(this.state.filtro)
     );
     return asig;
   }
@@ -106,7 +74,7 @@ class Asignaturas extends Component {
     }
   }
   render() {
-    const asignaturasFiltradas = this.filtrar(asignaturas);
+    const asignaturasFiltradas = this.filtrar(this.state.asignaturas);
     const listaAsign = ListaAsignaturas(asignaturasFiltradas);
     return !isSignedIn() ? (
       <Redirect to="/" />
