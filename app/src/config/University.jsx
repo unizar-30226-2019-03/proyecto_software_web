@@ -69,7 +69,7 @@ export function getSubjectsFromUniveristy(id, callback) {
     pragma: "no-cache", // String |
     expires: "0" // String |
   };
-  apiInstance.getSubjecstFromUniversity(id, opts, (error, data, response) => {
+  apiInstance.getSubjectsFromUniversity(id, opts, (error, data, response) => {
     if (error) {
       console.error(error);
     } else {

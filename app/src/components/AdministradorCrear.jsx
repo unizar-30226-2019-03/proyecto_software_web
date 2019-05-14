@@ -3,7 +3,13 @@ import BarraAdmi from "./BarraAdmi";
 import { Helmet } from "react-helmet";
 import { Button, Form, Col, Modal } from "react-bootstrap";
 import { Redirect } from "react-router-dom";
-import { isSignedIn } from "../config/Auth";
+import {
+  isSignedIn,
+  restriccionNombre,
+  restriccionUser,
+  emailPattern,
+  restriccion
+} from "../config/Auth";
 import UniversityApi from "swagger_unicast/dist/api/UniversityApi";
 import DegreeApi from "swagger_unicast/dist/api/DegreeApi";
 import { checkFileExtensionImage } from "../config/Process";
@@ -246,7 +252,7 @@ const FormularioAsignatura = (
               ref={asignatura}
             />
           </Form.Group>
-          <Form.Group as={Col} controlId="formGridAsignatura">
+          <Form.Group as={Col} controlId="formGridAsignaturaCorto">
             <Form.Label>Nombre corto</Form.Label>
             <Form.Control
               type="text"
@@ -476,17 +482,53 @@ class AdministradorCrear extends Component {
     const apellidos = this.apellidosProf.current.value;
     const userID = this.userIDProf.current.value;
     const email = this.emailProf.current.value;
-    const passwd = this.passwdProf.current.value;
-    const passwd2 = this.passwd2Prof.current.value;
-    if (passwd === passwd2) {
-      //this.setState({ datosSubidos: true });
-      console.log(nombre, apellidos, userID, email, passwd, passwd2);
+    const pass = this.passwdProf.current.value;
+    const pass2 = this.passwd2Prof.current.value;
+    let ok = true;
+
+    //Comporobar nombre y apellidos
+    if (!nombre.match(restriccionNombre)) {
+      ok = false;
+      alert("Nombre inválido, debe tener al menos 3 letras");
+    }
+    if (!apellidos.match(restriccionNombre)) {
+      ok = false;
+      alert("Apellidos inválidos, debe tener al menos 3 letras");
+    }
+
+    //Comprobar nombre de usuario
+    if (!userID.match(restriccionUser)) {
+      ok = false;
+      alert("Nombre de usuario inálido, debe tener al menos 3 letras");
+    }
+
+    // Comprobar email
+    if (!email.match(emailPattern)) {
+      ok = false;
+      alert("Correo electrónico inválido");
+    }
+
+    //Comprobar passwords
+    if (pass.match(restriccion)) {
+      if (pass !== pass2) {
+        ok = false;
+        alert("Las contraseñas deben coincidir");
+      }
+    } else {
+      ok = false;
+      alert(
+        "La contraseña debe tener como mínimo 8 caracteres y usar letras y números"
+      );
+    }
+
+    if (ok) {
+      //CREAR PROFESOR CON SU ROL, de momento nada
+      console.log(nombre, apellidos, userID, email, pass, pass2);
       form.reset();
       this.handleShow();
-    } else {
-      this.setState({ passValida: 0 });
     }
   }
+
   handleUniversidad(event, form) {
     event.preventDefault();
     if (checkFileExtensionImage(this.fotoUni.current.value)) {
