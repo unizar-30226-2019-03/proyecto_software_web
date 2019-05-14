@@ -14,6 +14,7 @@ import {
   findSubjectByName
 } from "../config/Subject";
 import { getUser, getSubjectsOfUser } from "../config/User";
+import { Notificacion } from "./Listas";
 
 const profesores = [
   { foto: icono, nombre: "Jorge Pérez" },
@@ -146,10 +147,16 @@ class Asignatura extends Component {
       contentMargin: "300px",
       siguiendoAsig: false,
       user: {},
-      asig: {}
+      asig: {},
+      notif: false,
+      mensajeNotif: "",
+      tiempoNotif: 0
     };
     this.seguirAsig = this.seguirAsig.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.iniciarReloj = this.iniciarReloj.bind(this);
+    this.pararReloj = this.pararReloj.bind(this);
+    this.tick = this.tick.bind(this);
   }
 
   componentWillMount() {
@@ -168,6 +175,29 @@ class Asignatura extends Component {
     });
   }
 
+  componentWillUnmount() {
+    this.pararReloj();
+  }
+
+  iniciarReloj() {
+    this.pararReloj();
+    this.timerID = setInterval(() => this.tick(), 1000);
+  }
+
+  pararReloj() {
+    clearInterval(this.timerID);
+  }
+
+  tick() {
+    let t = this.state.tiempoNotif;
+    if (t === 3) {
+      t = -1;
+      this.pararReloj();
+      this.setState({ notif: false });
+    }
+    this.setState({ tiempoNotif: t + 1 });
+  }
+
   handleChange(display) {
     if (display) {
       this.setState({ contentMargin: "300px" });
@@ -180,12 +210,22 @@ class Asignatura extends Component {
     !this.state.siguiendoAsig
       ? SubscribeSubject(this.state.user.id, this.state.asig.id, ok => {
           if (ok) {
-            this.setState({ siguiendoAsig: !this.state.siguiendoAsig });
+            this.setState({
+              siguiendoAsig: !this.state.siguiendoAsig,
+              notif: true,
+              mensajeNotif: `Siguiendo a ${this.state.asig.name}`
+            });
+            this.iniciarReloj();
           }
         })
       : UnsubscribeSubject(this.state.user.id, this.state.asig.id, ok => {
           if (ok) {
-            this.setState({ siguiendoAsig: !this.state.siguiendoAsig });
+            this.setState({
+              siguiendoAsig: !this.state.siguiendoAsig,
+              notif: true,
+              mensajeNotif: `Dejando de seguir a ${this.state.asig.name}`
+            });
+            this.iniciarReloj();
           }
         });
   }
@@ -257,6 +297,11 @@ class Asignatura extends Component {
               <div className="prof">{ListaProfesores(profesores)}</div>
             </div>
           </div>
+          <Notificacion
+            mostrar={this.state.notif}
+            mensaje={this.state.mensajeNotif}
+            deshacer={false}
+          />
         </div>
       </div>
     );

@@ -384,12 +384,22 @@ class ViendoVideo extends Component {
     !this.state.siguiendoAsig
       ? SubscribeSubject(this.state.user.id, this.state.asig.id, ok => {
           if (ok) {
-            this.setState({ siguiendoAsig: !this.state.siguiendoAsig });
+            this.setState({
+              siguiendoAsig: !this.state.siguiendoAsig,
+              notif: true,
+              mensajeNotif: `Siguiendo a ${this.state.asig.name}`
+            });
+            this.iniciarReloj();
           }
         })
       : UnsubscribeSubject(this.state.user.id, this.state.asig.id, ok => {
           if (ok) {
-            this.setState({ siguiendoAsig: !this.state.siguiendoAsig });
+            this.setState({
+              siguiendoAsig: !this.state.siguiendoAsig,
+              notif: true,
+              mensajeNotif: `Dejando de seguir a ${this.state.asig.name}`
+            });
+            this.iniciarReloj();
           }
         });
   }
@@ -617,7 +627,7 @@ class ViendoVideo extends Component {
             </div>
             <div className="datos-video">
               <div style={{ display: "flex", marginBottom: "20px" }}>
-                <Link to="/asig/X">
+                <Link to={`/asig/${this.state.asig.name}`}>
                   <img
                     src={photo}
                     style={{ borderRadius: "50%" }}
