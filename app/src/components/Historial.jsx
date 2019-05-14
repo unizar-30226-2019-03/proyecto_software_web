@@ -2,11 +2,10 @@ import React, { Component } from "react";
 import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
 import ListaVertical from "./ListaVertical";
-import imagenPrueba from "../assets/landscape.jpg";
 import { Redirect } from "react-router-dom";
 import Popup from "reactjs-popup";
 import { Notificacion } from "./Listas";
-import { RemoveAccents, getTime } from "../config/Process";
+import { RemoveAccents } from "../config/Process";
 import { isSignedIn, getUserID } from "../config/Auth";
 import { getDisplaysByUser } from "../config/Display";
 

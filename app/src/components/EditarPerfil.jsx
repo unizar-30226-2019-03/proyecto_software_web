@@ -96,7 +96,17 @@ const FormularioDatos = (
         </Form.Group>
         <Form.Row>
           <Form.Group as={Col} controlId="formGridPasswd">
-            <Form.Label>Contraseña *</Form.Label>
+            {passNoValida ? (
+              <Form.Label style={{ color: "red" }}>
+                Contraseña inválida
+              </Form.Label>
+            ) : passNoIguales ? (
+              <Form.Label style={{ color: "red" }}>
+                Contraseñas no iguales
+              </Form.Label>
+            ) : (
+              <Form.Label>Contraseña*</Form.Label>
+            )}
             <Form.Control defaultValue="" type="password" ref={passwd} />
           </Form.Group>
 
@@ -314,12 +324,17 @@ class EditarPerfil extends Component {
     }
 
     //Comprobar passwords
-    if (pass !== "" && pass.match(restriccion)) {
+    if (pass.match(restriccion)) {
       if (pass !== pass2) {
         ok = false;
         this.setState({ passNoIguales: true, passNoValida: false });
       } else {
         this.setState({ passNoIguales: false, passNoValida: false });
+      }
+    } else {
+      if (pass !== "") {
+        ok = false;
+        this.setState({ passNoValida: true });
       }
     }
 
