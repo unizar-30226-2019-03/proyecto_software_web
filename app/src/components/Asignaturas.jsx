@@ -3,7 +3,6 @@ import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
 import { ListGroup, Dropdown, Button, FormControl } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
-import foto from "../assets/favicon.ico";
 import CustomToggle from "./CustomToggle";
 import { isSignedIn, getUserID } from "../config/Auth";
 import { getSubjectsOfUser } from "../config/User";

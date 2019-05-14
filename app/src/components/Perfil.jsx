@@ -167,6 +167,7 @@ class Perfil extends Component {
                 alt="Foto de perfil"
                 width="160px"
                 height="160px"
+                style={{ borderRadius: "50%" }}
               />
             </div>
             <div>

@@ -5,8 +5,15 @@ import { Helmet } from "react-helmet";
 import uni from "../assets/UnicastNombre.png";
 import { UserApi } from "swagger_unicast";
 import { checkFileExtensionImage } from "../config/Process";
-import { signIn } from "../config/Auth";
+import {
+  signIn,
+  restriccionNombre,
+  restriccionUser,
+  emailPattern,
+  restriccion
+} from "../config/Auth";
 import { getUnivesities, getDegreesFromUnivesity } from "../config/University";
+import { addUser } from "../config/User";
 
 const FormularioDatos = (
   handleSubmit,
@@ -344,10 +351,6 @@ class SignIn extends Component {
   handleSubmitDatos(event) {
     event.preventDefault();
     let ok = true;
-    let emailPattern = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-    let restriccion = /^(?=.*[A-Za-z])(?=.*[0-9])(?=.{8,})/;
-    let restriccionNombre = /^([A-Za-z\u00C0-\u017F]+(([ -][a-zA-Z\u00C0-\u017F])?[a-zA-Z\u00C0-\u017F]*)*){3,}$/;
-    let restriccionUser = /^(\w+){3,}/;
     const pass = this.pass.current.value;
     const pass2 = this.pass2.current.value;
     const nombre = this.nombre.current.value;
@@ -411,7 +414,7 @@ class SignIn extends Component {
   }
 
   handleChangeUni(e) {
-    const uniId = e.target.value;
+    const uniId = parseInt(e.target.value);
     console.log(uniId);
     //ACTUALIZAR LISTA DE CARRERAS (getDegreesFromUniversity)
     /*getDegreesFromUnivesity(uniId, data => {
@@ -432,10 +435,10 @@ class SignIn extends Component {
 
     if (ok) {
       const descripcion = this.descripcion.current.value;
-      const universidad = this.universidad.current.value;
-      const carrera = this.carrera.current.value;
+      const universidad = parseInt(this.universidad.current.value);
+      const carrera = parseInt(this.carrera.current.value);
       let apiInstance = new UserApi();
-      apiInstance.addUser(
+      addUser(
         this.state.userID,
         this.state.pass,
         this.state.nombre,
@@ -445,23 +448,18 @@ class SignIn extends Component {
         universidad,
         carrera,
         this.foto.current.files[0],
-        (error, data, response) => {
-          if (error) {
-            console.error("ERROR");
-          } else {
-            console.log(data);
-            apiInstance.authUser(
-              data.username,
-              this.state.pass,
-              (error, data2, response) => {
-                if (error) {
-                } else {
-                  signIn(data2);
-                  this.setState({ infoValidada: true });
-                }
+        data => {
+          apiInstance.authUser(
+            data.username,
+            this.state.pass,
+            (error, data2, response) => {
+              if (error) {
+              } else {
+                signIn(data2);
+                this.setState({ infoValidada: true });
               }
-            );
-          }
+            }
+          );
         }
       );
     }

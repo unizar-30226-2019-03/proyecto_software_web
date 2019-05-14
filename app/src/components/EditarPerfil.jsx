@@ -1,10 +1,19 @@
 import React, { Component } from "react";
 import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
-import User_img from "../assets/user.png";
 import { Button, Form, Col } from "react-bootstrap";
 import { Redirect, Link } from "react-router-dom";
-import { isSignedIn } from "../config/Auth";
+import {
+  isSignedIn,
+  getUserID,
+  restriccionNombre,
+  restriccionUser,
+  emailPattern,
+  restriccion
+} from "../config/Auth";
+import { checkFileExtensionImage } from "../config/Process";
+import { getUser, updateUser } from "../config/User";
+import { getUnivesities } from "../config/University";
 
 const FormularioDatos = (
   handleSubmit,
@@ -15,32 +24,45 @@ const FormularioDatos = (
   passwd,
   passwd2,
   foto,
-  descripcion,
   universidad,
   carrera,
-  asignaturas,
-  clasePass,
-  img_valida
+  user,
+  description,
+  handleChangeDescription,
+  img_valida,
+  nombreInvalido,
+  apellidoInvalido,
+  userInvalido,
+  emailInvalido,
+  passNoIguales,
+  passNoValida,
+  listaUniversidades,
+  listaCarreras,
+  handleChangeUni
 ) => {
   return (
     <div style={{ margin: "0 20% 0 0" }}>
       <Form onSubmit={e => handleSubmit(e)}>
         <Form.Row>
           <Form.Group as={Col} controlId="formGridName">
-            <Form.Label>Nombre *</Form.Label>
+            <Form.Label style={{ color: nombreInvalido ? "red" : "black" }}>
+              {nombreInvalido ? "Nombre inválido" : "Nombre *"}
+            </Form.Label>
             <Form.Control
               type="text"
-              defaultValue="David"
+              defaultValue={user.name}
               required
               ref={nombre}
             />
           </Form.Group>
 
           <Form.Group as={Col} controlId="formGridSurname">
-            <Form.Label>Apellidos *</Form.Label>
+            <Form.Label style={{ color: apellidoInvalido ? "red" : "black" }}>
+              {apellidoInvalido ? "Apellidos inválido" : "Apellidos *"}
+            </Form.Label>
             <Form.Control
               type="text"
-              defaultValue="Solanas Sanz"
+              defaultValue={user.surnames}
               required
               ref={apellidos}
             />
@@ -48,19 +70,25 @@ const FormularioDatos = (
         </Form.Row>
 
         <Form.Group controlId="formGridUserID">
-          <Form.Label>Nombre de usuario *</Form.Label>
+          <Form.Label style={{ color: userInvalido ? "red" : "black" }}>
+            {userInvalido
+              ? "Nombre de usuario inválido"
+              : "Nombre de usuario *"}
+          </Form.Label>
           <Form.Control
             type="text"
-            defaultValue="739999"
+            defaultValue={user.username}
             required
             ref={userID}
           />
         </Form.Group>
 
         <Form.Group controlId="formGridEmail">
-          <Form.Label>Email *</Form.Label>
+          <Form.Label style={{ color: emailInvalido ? "red" : "black" }}>
+            {emailInvalido ? "Email inválido" : "Email *"}
+          </Form.Label>
           <Form.Control
-            defaultValue="davidsolanas@gmail.com"
+            defaultValue={user.email}
             type="email"
             required
             ref={email}
@@ -69,87 +97,82 @@ const FormularioDatos = (
         <Form.Row>
           <Form.Group as={Col} controlId="formGridPasswd">
             <Form.Label>Contraseña *</Form.Label>
-            <Form.Control
-              defaultValue="1234"
-              type="password"
-              required
-              ref={passwd}
-            />
+            <Form.Control defaultValue="" type="password" ref={passwd} />
           </Form.Group>
 
           <Form.Group as={Col} controlId="formGridPasswd2">
             <Form.Label>Confirmar contraseña *</Form.Label>
-            <Form.Control
-              defaultValue="1234"
-              type="password"
-              required
-              ref={passwd2}
-              style={clasePass}
-            />
+            <Form.Control defaultValue="" type="password" ref={passwd2} />
           </Form.Group>
         </Form.Row>
         <Form.Row>
           <Form.Group as={Col} controlId="formGridUni">
             <Form.Label>¿En qué universidad estudias?</Form.Label>
-            <Form.Control as="select" ref={universidad}>
-              <option>Universidad de Zaragoza</option>
-              <option>Universidad de Madrid</option>
-              <option>Universidad de Valencia</option>
-              <option>Universidad de Barcelona</option>
-              <option>Otra...</option>
+            <Form.Control
+              as="select"
+              ref={universidad}
+              onChange={e => handleChangeUni(e)}
+            >
+              <option value={0}>Elige una universidad...</option>
+              {listaUniversidades.map(e => {
+                const { id, name } = e;
+                return (
+                  <option key={id} value={id}>
+                    {name}
+                  </option>
+                );
+              })}
             </Form.Control>
           </Form.Group>
           <Form.Group as={Col} controlId="formGridCarrera">
             <Form.Label>¿Qué carrera?</Form.Label>
             <Form.Control as="select" ref={carrera}>
-              <option>Ingeniería Informática</option>
-              <option>Medicina</option>
-              <option>Derecho</option>
-              <option>Veterinaria</option>
-              <option>Otra...</option>
+              <option value={0}>Elige una carrera...</option>
+              {listaCarreras.map(e => {
+                const { id, name } = e;
+                return (
+                  <option key={id} value={id}>
+                    {name}
+                  </option>
+                );
+              })}
             </Form.Control>
           </Form.Group>
         </Form.Row>
-        <Form.Group controlId="formGridAsignaturas">
-          <Form.Label>¿Qué asignaturas te interesan?</Form.Label>
-          <Form.Control
-            type="text"
-            defaultValue="Inteligencia Artificial, IoT"
-            ref={asignaturas}
-          />
-        </Form.Group>
 
         <Form.Group controlId="formGridFoto">
-          <Form.Label>Foto de usuario</Form.Label>
+          <Form.Label style={{ color: img_valida ? "black" : "red" }}>
+            {img_valida ? "Foto de usuario" : "Formato de imagen inválido"}
+          </Form.Label>
           <div style={{ display: "flex" }}>
-            <Form.Control type="file" accept="image/*" ref={foto} />
+            <Form.Control
+              type="file"
+              accept="image/*"
+              ref={foto}
+              onChange={event => {
+                var output = document.getElementById("output");
+                output.src = URL.createObjectURL(event.target.files[0]);
+              }}
+            />
             <img
-              src={User_img}
+              id="output"
+              src={user.photo}
               alt="Foto de perfil"
               width="60px"
               height="60px"
-              style={{ marginTop: "-10px" }}
+              style={{ marginTop: "-10px", borderRadius: "50%" }}
             />
           </div>
-          {img_valida === 0 ? (
-            <p class="text-danger">Introduzca un formato de imagen válido</p>
-          ) : (
-            ""
-          )}
         </Form.Group>
 
         <Form.Group controlId="exampleForm.ControlTextarea1">
           <Form.Label>Descripción</Form.Label>
           <Form.Control
             as="textarea"
+            value={description}
+            onChange={handleChangeDescription}
             rows="3"
             style={{ resize: "none" }}
-            ref={descripcion}
-            defaultValue="Un texto es una composición de signos codificados en un sistema de
-                      escritura que forma una unidad de sentido. También es una
-                  composición de caracteres imprimibles generados por un algoritmo
-                  de cifrado que, aunque no tienen sentido para cualquier persona,
-                  sí puede ser descifrado por su destinatario original"
           />
         </Form.Group>
 
@@ -179,8 +202,19 @@ class EditarPerfil extends Component {
     this.state = {
       contentMargin: "300px",
       datosValidados: false,
+      datosInvalidos: false,
       passValida: -1,
-      img_valida: -1
+      listaUniversidades: [],
+      listaCarreras: [],
+      user: {},
+      description: "",
+      img_valida: true,
+      nombreInvalido: false,
+      apellidoInvalido: false,
+      userInvalido: false,
+      emailInvalido: false,
+      passNoIguales: false,
+      passNoValida: false
     };
     this.nombre = React.createRef();
     this.apellidos = React.createRef();
@@ -189,18 +223,50 @@ class EditarPerfil extends Component {
     this.pass = React.createRef();
     this.pass2 = React.createRef();
     this.foto = React.createRef();
-    this.descripcion = React.createRef();
     this.universidad = React.createRef();
     this.carrera = React.createRef();
-    this.asignaturas = React.createRef();
     this.handleSubmitDatos = this.handleSubmitDatos.bind(this);
     this.getBorder = this.getBorder.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.checkFileExtensionImage = this.checkFileExtensionImage.bind(this);
+    this.handleChangeUni = this.handleChangeUni.bind(this);
+    this.handleChangeDescription = this.handleChangeDescription.bind(this);
+    this.getAllUniversities = this.getAllUniversities.bind(this);
   }
-  checkFileExtensionImage(filename) {
-    var ext = filename.split(".").pop();
-    return ext === "jpg" || ext === "jpeg" || ext === "png" || ext === "bmp";
+
+  componentWillMount() {
+    getUser(getUserID(), u => {
+      this.setState({ user: u, description: u.description });
+    });
+    getUnivesities(0, data => {
+      if (data._embedded.universities.length === 20) {
+        this.getAllUniversities(data._embedded.universities, 1);
+      } else {
+        this.setState({ listaUniversidades: data._embedded.universities });
+      }
+    });
+  }
+
+  getAllUniversities(universities, page) {
+    getUnivesities(page, data => {
+      universities.push(data._embedded.universities);
+      if (data._embedded.universities.length === 20) {
+        this.getAllUniversities(universities, page + 1);
+      } else {
+        this.setState({ listaUniversidades: universities });
+      }
+    });
+  }
+
+  handleChangeUni(e) {
+    const uniId = parseInt(e.target.value);
+    //ACTUALIZAR LISTA DE CARRERAS (getDegreesFromUniversity)
+    /*getDegreesFromUnivesity(uniId, data => {
+      this.setState({ listaCarreras: data });
+    });*/
+  }
+
+  handleChangeDescription(e) {
+    this.setState({ description: e.target.value });
   }
 
   handleSubmitDatos(event) {
@@ -212,27 +278,78 @@ class EditarPerfil extends Component {
     const pass = this.pass.current.value;
     const pass2 = this.pass2.current.value;
     const foto = this.foto.current.value;
-    const descripcion = this.descripcion.current.value;
-    const universidad = this.universidad.current.value;
-    const carrera = this.universidad.current.value;
-    const asignaturas = this.asignaturas.current.value;
-    if (pass !== pass2) {
-      this.setState({ passValida: 0 });
-    } else if (!this.checkFileExtensionImage(foto) && foto !== "") {
-      this.setState({ img_valida: 0 });
+    const descripcion = this.state.description;
+    const universidad = parseInt(this.universidad.current.value);
+    const carrera = parseInt(this.universidad.current.value);
+    let ok = true;
+
+    //Comporobar nombre y apellidos
+    if (!nombre.match(restriccionNombre)) {
+      ok = false;
+      this.setState({ nombreInvalido: true });
     } else {
-      this.setState({ datosValidados: true });
-      console.log(
+      this.setState({ nombreInvalido: false });
+    }
+    if (!apellidos.match(restriccionNombre)) {
+      ok = false;
+      this.setState({ apellidoInvalido: true });
+    } else {
+      this.setState({ apellidoInvalido: false });
+    }
+
+    //Comprobar nombre de usuario
+    if (!userID.match(restriccionUser)) {
+      ok = false;
+      this.setState({ userInvalido: true });
+    } else {
+      this.setState({ userInvalido: false });
+    }
+
+    // Comprobar email
+    if (!email.match(emailPattern)) {
+      ok = false;
+      this.setState({ emailInvalido: true });
+    } else {
+      this.setState({ emailInvalido: false });
+    }
+
+    //Comprobar passwords
+    if (pass !== "" && pass.match(restriccion)) {
+      if (pass !== pass2) {
+        ok = false;
+        this.setState({ passNoIguales: true, passNoValida: false });
+      } else {
+        this.setState({ passNoIguales: false, passNoValida: false });
+      }
+    }
+
+    //Comprobar imagen
+    if (!checkFileExtensionImage(foto) && foto !== "") {
+      ok = false;
+      this.setState({ img_valida: false });
+    }
+
+    if (ok) {
+      updateUser(
+        userID,
+        pass,
+        email,
+        descripcion,
         nombre,
         apellidos,
-        userID,
-        email,
-        foto,
-        descripcion,
         universidad,
         carrera,
-        asignaturas
+        this.foto.current.files[0],
+        updated => {
+          if (updated) {
+            this.setState({ datosValidados: true, datosInvalidos: false });
+          } else {
+            this.setState({ datosValidados: false, datosInvalidos: true });
+          }
+        }
       );
+    } else {
+      this.setState({ datosValidados: false, datosInvalidos: true });
     }
   }
   getBorder(key) {
@@ -281,7 +398,13 @@ class EditarPerfil extends Component {
                 marginTop: "80px"
               }}
             >
-              <h5>Editar perfil</h5>
+              <h5
+                style={{ color: this.state.datosInvalidos ? "red" : "black" }}
+              >
+                {this.state.datosInvalidos
+                  ? "No se ha podido actualizar el usuario, compruebe los datos"
+                  : "Editar perfil"}
+              </h5>
               <div>
                 {FormularioDatos(
                   this.handleSubmitDatos,
@@ -292,12 +415,21 @@ class EditarPerfil extends Component {
                   this.pass,
                   this.pass2,
                   this.foto,
-                  this.descripcion,
                   this.universidad,
                   this.carrera,
-                  this.asignaturas,
-                  { border: this.getBorder(this.state.passValida) },
-                  this.state.img_valida
+                  this.state.user,
+                  this.state.description,
+                  this.handleChangeDescription,
+                  this.state.img_valida,
+                  this.state.nombreInvalido,
+                  this.state.apellidoInvalido,
+                  this.state.userInvalido,
+                  this.state.emailInvalido,
+                  this.state.passNoIguales,
+                  this.state.passNoValida,
+                  this.state.listaUniversidades,
+                  this.state.listaCarreras,
+                  this.handleChangeUni
                 )}
               </div>
             </div>
