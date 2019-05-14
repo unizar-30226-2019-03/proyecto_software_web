@@ -6,9 +6,8 @@ import { Helmet } from "react-helmet";
 import BarraNavegacion from "./BarraNavegacion";
 import { Redirect } from "react-router-dom";
 import BusquedaProfesores from "./BusquedaProfesores";
-import { isSignedIn, getUserToken } from "../config/Auth";
-import ApiClient from "swagger_unicast/dist/ApiClient";
-import VideoApi from "swagger_unicast/dist/api/VideoApi";
+import { isSignedIn } from "../config/Auth";
+import { findVideosContainingTitle } from "../config/Video";
 
 const listaProfesores = [
   {
@@ -84,7 +83,6 @@ class ResultadoBusqueda extends Component {
       profesores: false,
       timeNow: new Date()
     };
-    this.VideoApi = new VideoApi();
     this.handleChange = this.handleChange.bind(this);
     this.anyadirVideoALista = this.anyadirVideoALista.bind(this);
     this.iniciarReloj = this.iniciarReloj.bind(this);
@@ -98,29 +96,11 @@ class ResultadoBusqueda extends Component {
   }
 
   buscarVideos(titulo) {
-    //Aquí se recogerá la búsqueda realizada
-    let defaultClient = ApiClient.instance;
-    // Configure Bearer (JWT) access token for authorization: bearerAuth
-    let bearerAuth = defaultClient.authentications["bearerAuth"];
-    bearerAuth.accessToken = getUserToken();
-
-    let opts = {
-      cacheControl: "no-cache, no-store, must-revalidate", // String |
-      pragma: "no-cache", // String |
-      expires: "0", // String |
-      title: titulo // String | String a buscar en el titulo de videos
-    };
-    this.VideoApi.findVideosContainingTitle(opts, (error, data, response) => {
-      if (error) {
-        console.error(error);
-      } else {
-        const now = ApiClient.parseDate(response.headers.date);
-        console.log(data);
-        this.setState({
-          lista: data._embedded.videos,
-          timeNow: now
-        });
-      }
+    findVideosContainingTitle(titulo, (videos, time) => {
+      this.setState({
+        lista: videos,
+        timeNow: time
+      });
     });
   }
 

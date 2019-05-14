@@ -324,7 +324,7 @@ export const MenuVertical = (list, anyadir, listaRepro, time) =>
     return (
       <MenuItem
         url={video.title}
-        canal={video.title}
+        canal={video.subject.name}
         key={video.id}
         id={video.id}
         anyadirALista={anyadir}

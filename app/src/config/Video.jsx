@@ -212,3 +212,31 @@ export function getVideoSubject(id, callback) {
     }
   });
 }
+
+/**
+ * Obtiene todos los vídeos cuyo título contenga el título especificado
+ * @param {String} title Título por el que buscar vídeos
+ * @param {Function} callback Función a ejecutar tras obtener los datos
+ */
+export function findVideosContainingTitle(title, callback) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  let opts = {
+    cacheControl: "no-cache, no-store, must-revalidate", // String |
+    pragma: "no-cache", // String |
+    expires: "0", // String |
+    projection: "videoWithSubject", // String | Incluir si se quiere obtener tambien la universidad y/o la asignatura en la respuesta
+    title: title // String | String a buscar en el titulo de videos
+  };
+  apiInstance.findVideosContainingTitle(opts, (error, data, response) => {
+    if (error) {
+      console.error(error);
+    } else {
+      const now = ApiClient.parseDate(response.headers.date);
+      console.log(data);
+      callback(data._embedded.videos, now);
+    }
+  });
+}
