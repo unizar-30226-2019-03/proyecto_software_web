@@ -240,7 +240,6 @@ class EditarPerfil extends Component {
     this.universidad = React.createRef();
     this.carrera = React.createRef();
     this.handleSubmitDatos = this.handleSubmitDatos.bind(this);
-    this.getBorder = this.getBorder.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleChangeUni = this.handleChangeUni.bind(this);
     this.handleChangeDescription = this.handleChangeDescription.bind(this);
@@ -371,14 +370,7 @@ class EditarPerfil extends Component {
       this.setState({ datosValidados: false, datosInvalidos: true });
     }
   }
-  getBorder(key) {
-    switch (key) {
-      case 0:
-        return "1px solid red";
-      default:
-        return "";
-    }
-  }
+
   handleChange(display) {
     if (display) {
       this.setState({

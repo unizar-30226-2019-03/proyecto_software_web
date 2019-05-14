@@ -328,7 +328,6 @@ class AdministradorBorrar extends Component {
     this.handleUniversidad = this.handleUniversidad.bind(this);
     this.handleAsignatura = this.handleAsignatura.bind(this);
     this.handleProfeAsignatura = this.handleProfeAsignatura.bind(this);
-    this.getBorder = this.getBorder.bind(this);
     this.handleShow = this.handleShow.bind(this);
     this.handleClose = this.handleClose.bind(this);
   }
@@ -339,14 +338,6 @@ class AdministradorBorrar extends Component {
 
   handleShow() {
     this.setState({ show: true });
-  }
-  getBorder(key) {
-    switch (key) {
-      case 0:
-        return "1px solid red";
-      default:
-        return "";
-    }
   }
 
   handleProfesor(event, form) {

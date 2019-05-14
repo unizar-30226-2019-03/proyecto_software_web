@@ -69,7 +69,6 @@ class Perfil extends Component {
     };
     this.pass = React.createRef();
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.getBorder = this.getBorder.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.abrirPopUp = this.abrirPopUp.bind(this);
     this.cerrarPopUp = this.cerrarPopUp.bind(this);
@@ -122,17 +121,7 @@ class Perfil extends Component {
     this.setState({ popUp: false, popUpValidado: false });
   }
 
-  getBorder(key) {
-    switch (key) {
-      case 0:
-        return "1px solid red";
-      default:
-        return "";
-    }
-  }
-
   render() {
-    let clasePass = { border: this.getBorder(this.state.passValida) };
     return !isSignedIn() ? (
       <Redirect to="/" />
     ) : (
@@ -274,7 +263,9 @@ class Perfil extends Component {
                     type="password"
                     ref={this.pass}
                     placeholder="Contraseña..."
-                    style={clasePass}
+                    style={{
+                      border: this.state.passValida !== 0 ? "" : "1px solid red"
+                    }}
                   />
                 </Form.Group>
                 <Button

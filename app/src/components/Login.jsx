@@ -16,7 +16,6 @@ class Login extends Component {
     this.userID = React.createRef();
     this.pass = React.createRef();
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.getBorder = this.getBorder.bind(this);
   }
 
   handleSubmit = event => {
@@ -34,15 +33,6 @@ class Login extends Component {
       }
     });
   };
-
-  getBorder(key) {
-    switch (key) {
-      case 0:
-        return "1px solid red";
-      default:
-        return "";
-    }
-  }
 
   render() {
     return (

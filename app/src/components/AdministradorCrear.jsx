@@ -392,7 +392,6 @@ class AdministradorCrear extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      passValida: -1,
       show: false,
       listaCarreras: [],
       listaUniversidades: []
@@ -421,7 +420,6 @@ class AdministradorCrear extends Component {
     this.handleAsignatura = this.handleAsignatura.bind(this);
     this.handleCarrera = this.handleCarrera.bind(this);
     this.handleProfeAsignatura = this.handleProfeAsignatura.bind(this);
-    this.getBorder = this.getBorder.bind(this);
     this.handleShow = this.handleShow.bind(this);
     this.handleClose = this.handleClose.bind(this);
   }
@@ -466,14 +464,6 @@ class AdministradorCrear extends Component {
 
   handleShow() {
     this.setState({ show: true });
-  }
-  getBorder(key) {
-    switch (key) {
-      case 0:
-        return "1px solid red";
-      default:
-        return "";
-    }
   }
 
   handleProfesor(event, form) {
@@ -615,8 +605,7 @@ class AdministradorCrear extends Component {
               this.userIDProf,
               this.emailProf,
               this.passwdProf,
-              this.passwd2Prof,
-              { border: this.getBorder(this.state.passValida) }
+              this.passwd2Prof
             )}
           </div>
           <div className="boxed" style={{ marginTop: "20px" }} id="a">
