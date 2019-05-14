@@ -7,73 +7,8 @@ import { Redirect } from "react-router-dom";
 import Popup from "reactjs-popup";
 import { Notificacion } from "./Listas";
 import { RemoveAccents, getTime } from "../config/Process";
-import { isSignedIn } from "../config/Auth";
-
-const list = [
-  {
-    name: "La paradoja de los Gemelos RESUELTA!",
-    canal: "Asignatura A",
-    image: imagenPrueba,
-    duracion: getTime(500),
-    rating: 99
-  },
-  {
-    name: "La tierra no gira en círculos aleredor del SOL",
-    canal: "Asignatura B",
-    image: imagenPrueba,
-    duracion: getTime(600),
-    rating: 95
-  },
-  {
-    name: "¿ Cómo será el futuro de la física ?",
-    canal: "Asignatura C",
-    image: imagenPrueba,
-    duracion: getTime(700),
-    rating: 96
-  },
-  {
-    name: "10 cosas que no sabías del SISTEMA SOLAR",
-    canal: "Asignatura D",
-    image: imagenPrueba,
-    duracion: getTime(800),
-    rating: 98
-  },
-  {
-    name: "Física: ¿Heroína o villana?",
-    canal: "Asignatura E",
-    image: imagenPrueba,
-    duracion: getTime(900),
-    rating: 97
-  },
-  {
-    name: "¿ Hasta donde llega el SISTEMA SOLAR ?",
-    canal: "Asignatura F",
-    image: imagenPrueba,
-    duracion: getTime(1000),
-    rating: 91
-  },
-  {
-    name: "Las 8 ecuaciones más importantes de la física",
-    canal: "Asignatura G",
-    image: imagenPrueba,
-    duracion: getTime(1100),
-    rating: 92
-  },
-  {
-    name: "La psicología de los genios",
-    canal: "Asignatura H",
-    image: imagenPrueba,
-    duracion: getTime(1200),
-    rating: 94
-  },
-  {
-    name: "Superhéroes y radioactividad",
-    canal: "Asignatura I",
-    image: imagenPrueba,
-    duracion: getTime(1300),
-    rating: 93
-  }
-];
+import { isSignedIn, getUserID } from "../config/Auth";
+import { getDisplaysByUser } from "../config/Display";
 
 const listasRepro = [
   "Lista de reproducción 1",
@@ -334,12 +269,13 @@ class Historial extends Component {
       contentMargin: "300px",
       fixed: window.innerWidth >= 970,
       busqueda: "",
-      miHistorial: list,
+      miHistorial: [],
       historialFiltrado: [],
       filtrado: false,
       notif: false,
       mensajeNotif: "",
-      tiempo: 0
+      tiempo: 0,
+      page: 0
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleResize = this.handleResize.bind(this);
@@ -351,6 +287,16 @@ class Historial extends Component {
     this.iniciarReloj = this.iniciarReloj.bind(this);
     this.pararReloj = this.pararReloj.bind(this);
     this.tick = this.tick.bind(this);
+  }
+
+  componentWillMount() {
+    getDisplaysByUser(getUserID(), this.state.page, data => {
+      console.log(data);
+      this.setState({
+        page: this.state.page + 1,
+        miHistorial: data._embedded.displays
+      });
+    });
   }
 
   borrarHistorial() {
