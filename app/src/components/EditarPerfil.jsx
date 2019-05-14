@@ -186,7 +186,11 @@ const FormularioDatos = (
           />
         </Form.Group>
 
-        <Button className="boton-filtro" type="submit">
+        <Button
+          className="boton-filtro"
+          style={{ float: "right" }}
+          type="submit"
+        >
           Confirmar
         </Button>
 
@@ -194,7 +198,7 @@ const FormularioDatos = (
           <Button
             className="boton-filtro"
             style={{
-              float: "right",
+              float: "left",
               marginBottom: "20px"
             }}
           >
