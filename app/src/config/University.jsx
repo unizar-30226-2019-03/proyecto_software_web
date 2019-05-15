@@ -32,10 +32,10 @@ export function getUnivesities(page, callback) {
  * @param {Function} callback Función a ejecutar tras obtener los datos
  */
 export function getDegreesFromUnivesity(id, callback) {
-  //let defaultClient = SwaggerUnicast.ApiClient.instance;
+  let defaultClient = ApiClient.instance;
   // Configure Bearer (JWT) access token for authorization: bearerAuth
-  //let bearerAuth = defaultClient.authentications['bearerAuth'];
-  //bearerAuth.accessToken = "YOUR ACCESS TOKEN"
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
 
   let opts = {
     cacheControl: "no-cache, no-store, must-revalidate", // String |
@@ -46,7 +46,6 @@ export function getDegreesFromUnivesity(id, callback) {
     if (error) {
       console.error(error);
     } else {
-      console.log(data);
       callback(data);
     }
   });

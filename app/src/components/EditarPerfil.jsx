@@ -13,7 +13,7 @@ import {
 } from "../config/Auth";
 import { checkFileExtensionImage } from "../config/Process";
 import { getUser, updateUser } from "../config/User";
-import { getUnivesities } from "../config/University";
+import { getUnivesities, getDegreesFromUnivesity } from "../config/University";
 
 const FormularioDatos = (
   handleSubmit,
@@ -273,9 +273,9 @@ class EditarPerfil extends Component {
   handleChangeUni(e) {
     const uniId = parseInt(e.target.value);
     //ACTUALIZAR LISTA DE CARRERAS (getDegreesFromUniversity)
-    /*getDegreesFromUnivesity(uniId, data => {
-      this.setState({ listaCarreras: data });
-    });*/
+    getDegreesFromUnivesity(uniId, data => {
+      this.setState({ listaCarreras: data._embedded.degrees });
+    });
   }
 
   handleChangeDescription(e) {
@@ -293,7 +293,7 @@ class EditarPerfil extends Component {
     const foto = this.foto.current.value;
     const descripcion = this.state.description;
     const universidad = parseInt(this.universidad.current.value);
-    const carrera = parseInt(this.universidad.current.value);
+    const carrera = parseInt(this.carrera.current.value);
     let ok = true;
 
     //Comporobar nombre y apellidos
