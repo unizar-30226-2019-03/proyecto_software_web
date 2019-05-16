@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
-import icono from "../assets/favicon.ico";
 import { Button } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
 import { isSignedIn, getUserID } from "../config/Auth";
@@ -15,6 +14,7 @@ import {
   getVideosFromUploader
 } from "../config/Video";
 import VideoApi from "swagger_unicast/dist/api/VideoApi";
+import { getUser } from "../config/User";
 
 // One item component
 // selected prop will be passed
@@ -141,7 +141,8 @@ class MisVideos extends Component {
     this.state = {
       contentMargin: "300px",
       listaVideos: [],
-      timestampNow: null
+      timestampNow: null,
+      user: {}
     };
     this.handleChange = this.handleChange.bind(this);
     this.videoApi = new VideoApi();
@@ -153,6 +154,9 @@ class MisVideos extends Component {
         listaVideos: videos,
         timestampNow: time
       });
+    });
+    getUser(getUserID(), data => {
+      this.setState({ user: data });
     });
   }
 
@@ -188,7 +192,7 @@ class MisVideos extends Component {
           <div className="cabecera-asignatura">
             <div className="titulo-asignatura">
               <img
-                src={icono}
+                src={this.state.user.photo}
                 alt="icono asignatura"
                 style={{ marginRight: "25px", borderRadius: "50%" }}
                 width="60"
