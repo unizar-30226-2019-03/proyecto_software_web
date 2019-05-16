@@ -9,20 +9,30 @@ class BarraLateral extends Component {
     this.state = { activar: this.props.show, asigs: [] };
     this.active = this.active.bind(this);
     this.getData = this.getData.bind(this);
+    this._isMounted = false;
   }
 
   componentWillMount() {
+    this._isMounted = true;
     this.getData();
   }
 
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
   getData() {
-    getSubjectsOfUser(getUserID(), data => {
-      const asigs = data.map(a => {
-        a.name = a.name.split(":")[0];
-        return a;
+    if (this._isMounted) {
+      getSubjectsOfUser(getUserID(), data => {
+        const asigs = data.map(a => {
+          a.name = a.name.split(":")[0];
+          return a;
+        });
+        if (this._isMounted) {
+          this.setState({ asigs: asigs });
+        }
       });
-      this.setState({ asigs: asigs });
-    });
+    }
   }
 
   componentWillReceiveProps(newProps) {
