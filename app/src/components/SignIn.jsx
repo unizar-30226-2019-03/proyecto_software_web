@@ -416,10 +416,9 @@ class SignIn extends Component {
   handleChangeUni(e) {
     const uniId = parseInt(e.target.value);
     console.log(uniId);
-    //ACTUALIZAR LISTA DE CARRERAS (getDegreesFromUniversity)
-    /*getDegreesFromUnivesity(uniId, data => {
+    getDegreesFromUnivesity(uniId, data => {
       this.setState({ listaCarreras: data });
-    });*/
+    });
   }
 
   handleSubmitInfo(event) {

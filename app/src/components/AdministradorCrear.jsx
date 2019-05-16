@@ -20,7 +20,10 @@ import {
   ligarUsuarioAsig
 } from "../config/Admin";
 import SubjectApi from "swagger_unicast/dist/api/SubjectApi";
-import { getSubjectsFromUniveristy } from "../config/University";
+import {
+  getSubjectsFromUniveristy,
+  getUnivesities
+} from "../config/University";
 import { getUserByUsername } from "../config/User";
 
 const FormularioProfesor = (
@@ -425,37 +428,20 @@ class AdministradorCrear extends Component {
   }
 
   componentWillMount() {
-    let opts = {
-      cacheControl: "no-cache, no-store, must-revalidate", // String |
-      pragma: "no-cache", // String |
-      expires: "0", // String |
-      name: "a" // String | String a buscar en el nombre
-    };
-    this.UniversityApi.findUniversitiesContaining(
-      opts,
-      (error, data, response) => {
-        if (error) {
-          console.error(error);
-        } else {
-          console.log(data);
-          this.setState({ listaUniversidades: data._embedded.universities });
-        }
-      }
-    );
-    opts = {
-      cacheControl: "no-cache, no-store, must-revalidate", // String |
-      pragma: "no-cache", // String |
-      expires: "0", // String |
-      name: "a" // String | String a buscar en el nombre de carreras
-    };
-    this.DegreeApi.findDegreesContainingName(opts, (error, data, response) => {
-      if (error) {
-        console.error(error);
-      } else {
-        console.log(data);
-        this.setState({ listaCarreras: data._embedded.degrees });
-      }
+    getUnivesities(0, data => {
+      this.getAllUniversities(data._embedded.universities, 1);
     });
+  }
+
+  getAllUniversities(unis, page) {
+    if (unis.length < 20) {
+      this.setState({ listaUniversidades: unis });
+    } else {
+      getUnivesities(page, data => {
+        const newData = [...unis, ...data._embedded.universities];
+        this.getAllUniversities(newData, page + 1);
+      });
+    }
   }
 
   handleClose() {
