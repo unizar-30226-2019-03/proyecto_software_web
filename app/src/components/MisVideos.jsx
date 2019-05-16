@@ -6,7 +6,6 @@ import { Link, Redirect } from "react-router-dom";
 import { isSignedIn, getUserID } from "../config/Auth";
 
 import IconoAsignaturaUniversidad from "./IconoAsignaturaUniversidad";
-import iconoAsign from "../assets/favicon.ico";
 import { getTime } from "../config/Process";
 import {
   getTimePassed,
@@ -22,7 +21,23 @@ import { getUser } from "../config/User";
 class MiVideoItem extends Component {
   constructor(props) {
     super(props);
-    this.state = { asig: {} };
+    this.state = {
+      asig: {},
+      mostrarOpciones: false,
+      popUp: false,
+      mostrarNotif: false,
+      mensaje: ""
+    };
+    this.abrirPopUp = this.abrirPopUp.bind(this);
+    this.cerrarPopUp = this.cerrarPopUp.bind(this);
+  }
+
+  abrirPopUp() {
+    this.setState({ popUp: true });
+  }
+
+  cerrarPopUp() {
+    this.setState({ popUp: false, mostrarOpciones: false });
   }
 
   componentWillMount() {
@@ -33,7 +48,15 @@ class MiVideoItem extends Component {
 
   render() {
     return (
-      <div>
+      <div
+        onMouseEnter={() => {
+          this.setState({ mostrarOpciones: true });
+        }}
+        onMouseLeave={() => {
+          this.setState({ mostrarOpciones: false });
+          this.cerrarPopUp();
+        }}
+      >
         <div className="menu-item">
           <Link to={`/video/${this.props.id}`} style={{ position: "relative" }}>
             <img

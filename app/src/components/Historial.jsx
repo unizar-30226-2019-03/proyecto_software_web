@@ -323,6 +323,7 @@ class Historial extends Component {
           });
         }
       });
+      return null;
     });
     this.setState({
       miHistorial: [],
