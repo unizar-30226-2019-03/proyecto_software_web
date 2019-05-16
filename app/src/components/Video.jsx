@@ -71,9 +71,7 @@ export default class Video extends Component {
   }
 
   componentWillUnmount() {
-    const { player } = this.refs.player.getState();
     window.removeEventListener("resize", this.cambiarAltura);
-    console.log(player.currentTime);
   }
 
   render() {
