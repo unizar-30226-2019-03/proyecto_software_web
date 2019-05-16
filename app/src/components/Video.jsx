@@ -77,7 +77,6 @@ export default class Video extends Component {
   }
 
   render() {
-    const t = 0; //Aquí se calculará el tiempo transcurrido anteriormente
     return (
       <div
         ref={this.div}
@@ -88,7 +87,7 @@ export default class Video extends Component {
         <Player
           ref="player"
           autoPlay
-          startTime={t}
+          startTime={this.props.time}
           fluid={false}
           width={"100%"}
           height={this.state.altura}

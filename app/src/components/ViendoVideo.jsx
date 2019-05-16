@@ -32,6 +32,7 @@ import Vote2 from "swagger_unicast/dist/model/Vote2";
 import { getCommentsByVideo, addComment } from "../config/Comments";
 import { getUser, getSubjectsOfUser } from "../config/User";
 import { SubscribeSubject, UnsubscribeSubject } from "../config/Subject";
+import { updateDisplay } from "../config/Display";
 
 const profesores = [
   { foto: icono, nombre: "Jorge" },
@@ -179,16 +180,17 @@ class ViendoVideo extends Component {
   recibirEstadoVideo(estado) {
     var nuevosComentarios = this.state.comentarios.slice();
     const ultimoComentario = nuevosComentarios[nuevosComentarios.length - 1];
+    const currentTime = Math.floor(estado.currentTime);
     if (ultimoComentario === undefined) {
       nuevosComentarios = this.recogerComentarios(
         0,
-        estado.currentTime,
+        currentTime,
         nuevosComentarios
       );
     } else {
       nuevosComentarios = this.recogerComentarios(
         ultimoComentario.tiempo,
-        estado.currentTime,
+        currentTime,
         nuevosComentarios
       );
     }
@@ -197,12 +199,15 @@ class ViendoVideo extends Component {
       document.getElementById("cabecera-comentarios").clientHeight -
       document.getElementById("zona-escribir-comentarios").clientHeight -
       10;
+    if (currentTime > this.state.tiempoVideo) {
+      updateDisplay(this.state.video.id, currentTime);
+    }
     this.setState({
       comentarios: nuevosComentarios,
       alturaComentarios: altura,
       anchuraComentarios: document.getElementById("div-comentarios")
         .clientWidth,
-      tiempoVideo: estado.currentTime
+      tiempoVideo: currentTime
     });
   }
 
@@ -224,6 +229,7 @@ class ViendoVideo extends Component {
       this.setState({ video: video, timeNow: time });
       this.obtenerAsignaturaUni(video);
       this.obtenerComentarios(video, this.state.page);
+      //Buscar tambíen el segundo por el que empezar a reproducir
     });
   }
 
@@ -435,6 +441,7 @@ class ViendoVideo extends Component {
               src={this.state.video.url}
               thumbnailUrl={this.state.video.thumbnailUrl}
               enviarEstado={this.recibirEstadoVideo}
+              time={0}
             />
             <div className="datos-video">
               <p className="titulo-video">{this.state.video.title}</p>

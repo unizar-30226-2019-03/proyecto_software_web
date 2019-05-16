@@ -32,3 +32,22 @@ export function getDisplaysByUser(id, page, callback) {
     }
   });
 }
+
+/**
+ * Actualiza los segundos visualizados de un vídeo por un usuario
+ * @param {Number} videoId ID del vídeo
+ * @param {Number} secsFromBeg Segundos visualizados
+ */
+export function updateDisplay(videoId, secsFromBeg) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  apiInstance.updateDisplay(secsFromBeg, videoId, (error, data, response) => {
+    if (error) {
+      console.error(error);
+    } else {
+      console.log("API called successfully");
+    }
+  });
+}

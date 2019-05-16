@@ -72,3 +72,28 @@ export function UnsubscribeSubject(userId, subjectId, ack) {
     }
   );
 }
+
+/**
+ * Borra la asociación de un usuario con una asignatura
+ * @param {Number} userId ID del usuario
+ * @param {Number} subjectId ID de la asignatura
+ * @param {Function} callback Función a ejecutar tras
+ */
+export function deleteUserFromSubject(userId, subjectId, callback) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  apiInstance.deleteUserFromSubject(
+    userId,
+    subjectId,
+    (error, data, response) => {
+      if (error) {
+        console.error(error);
+        callback(false);
+      } else {
+        callback(true);
+      }
+    }
+  );
+}

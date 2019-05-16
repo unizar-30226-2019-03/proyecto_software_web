@@ -20,13 +20,22 @@ const listasRepro = [
 class HistorialLista extends Component {
   constructor(props) {
     super(props);
-    this.state = { popUp: false, listaVideos: this.props.historial };
+    this.state = {
+      popUp: false,
+      listaVideos: this.props.historial.map(e => {
+        return e.video;
+      })
+    };
     this.abrirPopUp = this.abrirPopUp.bind(this);
     this.cerrarPopUp = this.cerrarPopUp.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ listaVideos: nextProps.historial });
+    this.setState({
+      listaVideos: nextProps.historial.map(e => {
+        return e.video;
+      })
+    });
   }
 
   abrirPopUp() {
