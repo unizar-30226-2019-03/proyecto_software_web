@@ -207,7 +207,6 @@ export function getVideoSubject(id, callback) {
     if (error) {
       console.error(error);
     } else {
-      console.log(data);
       callback(data);
     }
   });

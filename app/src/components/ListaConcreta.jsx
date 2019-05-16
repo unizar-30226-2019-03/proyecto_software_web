@@ -138,6 +138,7 @@ class Lista extends Component {
                 arrow={false}
                 contentStyle={{
                   width: "250px",
+                  zIndex: "1000",
                   maxHeight: "300px",
                   overflow: "scroll",
                   padding: "16px 20px",
@@ -267,6 +268,7 @@ class Lista extends Component {
                 contentStyle={{
                   width: "250px",
                   maxHeight: "300px",
+                  zIndex: "1000",
                   overflow: "scroll",
                   padding: "16px 20px",
                   border: "0",

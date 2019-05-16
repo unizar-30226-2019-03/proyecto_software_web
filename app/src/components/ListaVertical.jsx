@@ -286,6 +286,7 @@ class MenuItem extends Component {
               position="bottom right"
               contentStyle={{
                 width: "250px",
+                zIndex: "1000",
                 maxHeight: "300px",
                 overflow: "scroll",
                 padding: "16px 20px",

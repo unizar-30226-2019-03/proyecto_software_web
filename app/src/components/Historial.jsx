@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
-import ListaVertical from "./ListaVertical";
 import { Redirect } from "react-router-dom";
 import Popup from "reactjs-popup";
 import { Notificacion } from "./Listas";
 import { RemoveAccents } from "../config/Process";
 import { isSignedIn, getUserID } from "../config/Auth";
 import { getDisplaysByUser } from "../config/Display";
+import ListaHistorial from "./ListaHistorial";
 
 const listasRepro = [
   "Lista de reproducción 1",
@@ -86,7 +86,7 @@ class HistorialLista extends Component {
                   padding: "16px 20px",
                   marginTop: "10px",
                   border: "0",
-                  zIndex: "200",
+                  zIndex: "1000",
                   boxShadow:
                     "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4)"
                 }}
@@ -148,7 +148,7 @@ class HistorialLista extends Component {
                   marginTop: "25px"
                 }}
               >
-                <ListaVertical
+                <ListaHistorial
                   lista={this.state.listaVideos}
                   anyadirALista={this.props.anyadirVideoALista}
                   borrar={this.props.borrarVideo}
@@ -168,7 +168,7 @@ class HistorialLista extends Component {
                     marginTop: "25px"
                   }}
                 >
-                  <ListaVertical
+                  <ListaHistorial
                     lista={this.state.listaVideos}
                     anyadirALista={this.props.anyadirVideoALista}
                     borrar={this.props.borrarVideo}
@@ -215,7 +215,7 @@ class HistorialLista extends Component {
                   padding: "16px 20px",
                   border: "0",
                   marginTop: "10px",
-                  zIndex: "200",
+                  zIndex: "1000",
                   boxShadow:
                     "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4)"
                 }}
@@ -325,15 +325,15 @@ class Historial extends Component {
         const palabras = this.state.busqueda.split(" ");
         var resultado = [];
         this.state.miHistorial.forEach(e => {
-          const { name, canal, image, duracion } = e;
+          const video = e.video;
           for (let index = 0; index < palabras.length; index++) {
             const element = palabras[index];
             if (
-              RemoveAccents(name)
+              RemoveAccents(video.title)
                 .toLowerCase()
                 .includes(RemoveAccents(element).toLowerCase())
             ) {
-              resultado.push({ name, canal, image, duracion });
+              resultado.push({ video });
               break;
             }
           }

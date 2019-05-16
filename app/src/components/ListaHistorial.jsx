@@ -1,19 +1,18 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { FaPlus } from "react-icons/fa";
+import { FaTimes, FaPlus } from "react-icons/fa";
 import { FormCheck } from "react-bootstrap";
 import Popup from "reactjs-popup";
+import { getScore, getTimePassed, getVideoSubject } from "../config/Video";
 import { getTime } from "../config/Process";
-import { getScore, getTimePassed } from "../config/Video";
 
-class ContenidoPopUp extends Component {
+export class ContenidoPopUp extends Component {
   constructor(props) {
     super(props);
     this.state = {
       listas: this.props.listaRepro,
       anyadido: false,
       lista: "",
-      tiempo: 0,
       mensaje: "",
       crearLista: false,
       nombreNuevaLista: ""
@@ -118,13 +117,19 @@ class MenuItem extends Component {
     this.state = {
       mostrarOpciones: false,
       popUp: false,
-      tiempo: 0,
       mostrarNotif: false,
-      mensaje: ""
+      mensaje: "",
+      asig: ""
     };
     this.abrirPopUp = this.abrirPopUp.bind(this);
     this.cerrarPopUp = this.cerrarPopUp.bind(this);
     this.recibirHijo = this.recibirHijo.bind(this);
+  }
+
+  componentWillMount() {
+    getVideoSubject(this.props.id, data => {
+      this.setState({ asig: data.name });
+    });
   }
 
   recibirHijo(mostrar, lista, mensaje, anyadir) {
@@ -245,9 +250,9 @@ class MenuItem extends Component {
                 WebkitBoxOrient: "vertical",
                 fontWeight: "500"
               }}
-              to={`/asig/${this.props.canal}`}
+              to={`/asig/${this.state.asig}`}
             >
-              {this.props.canal}
+              {this.state.asig}
             </Link>
             <div style={{ marginTop: "10px", width: "90%" }}>
               <div
@@ -311,6 +316,11 @@ class MenuItem extends Component {
                 enviarPadre={this.recibirHijo}
               />
             </Popup>
+            <FaTimes
+              color={"#00000080"}
+              onClick={() => this.props.borrar(this.props.url)}
+              style={{ cursor: "pointer" }}
+            />
           </div>
         ) : null}
       </div>
@@ -320,14 +330,14 @@ class MenuItem extends Component {
 
 // All items component
 // Important! add unique key
-export const MenuVertical = (list, anyadir, listaRepro, time) =>
+export const MenuVertical = (list, borrar, anyadir, listaRepro, time) =>
   list.map(video => {
     return (
       <MenuItem
         url={video.title}
-        canal={video.subject.name}
         key={video.id}
         id={video.id}
+        borrar={borrar}
         anyadirALista={anyadir}
         img={video.thumbnailUrl}
         listaRepro={listaRepro}
@@ -340,11 +350,12 @@ export const MenuVertical = (list, anyadir, listaRepro, time) =>
     );
   });
 
-class ListaBusqueda extends Component {
+class ListaHistorial extends Component {
   constructor(props) {
     super(props);
     this.menu = MenuVertical(
       this.props.lista,
+      this.props.borrar,
       this.props.anyadirALista,
       this.props.listaRepro,
       this.props.time
@@ -354,14 +365,16 @@ class ListaBusqueda extends Component {
   componentWillReceiveProps(newProps) {
     this.menu = MenuVertical(
       newProps.lista,
+      newProps.borrar,
       newProps.anyadirALista,
       newProps.listaRepro,
       newProps.time
     );
   }
+
   render() {
     return <div>{this.menu}</div>;
   }
 }
 
-export default ListaBusqueda;
+export default ListaHistorial;

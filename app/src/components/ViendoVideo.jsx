@@ -469,6 +469,7 @@ class ViendoVideo extends Component {
                     position="top left"
                     contentStyle={{
                       width: "250px",
+                      zIndex: "1000",
                       maxHeight: "300px",
                       overflow: "scroll",
                       padding: "16px 20px",
@@ -607,6 +608,7 @@ class ViendoVideo extends Component {
                     position="top left"
                     contentStyle={{
                       width: "250px",
+                      zIndex: "1000",
                       maxHeight: "300px",
                       overflow: "scroll",
                       padding: "16px 20px",
