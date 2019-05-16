@@ -11,107 +11,136 @@ import { getTime } from "../config/Process";
 import {
   getTimePassed,
   getScore,
-  getVideosFromUploader
+  getVideosFromUploader,
+  getVideoSubject
 } from "../config/Video";
 import VideoApi from "swagger_unicast/dist/api/VideoApi";
 import { getUser } from "../config/User";
 
 // One item component
 // selected prop will be passed
-const MenuItem = ({
-  title,
-  id,
-  url,
-  canal,
-  img,
-  duracion,
-  rating,
-  timestamp,
-  showRating
-}) => {
-  return (
-    <div>
-      <div className="menu-item">
-        <Link to={`/video/${id}`} style={{ position: "relative" }}>
-          <img src={img} width="210" height="118" alt={title} />
-          <div
-            style={{
-              color: "white",
-              fontSize: "12px",
-              textAlign: "center",
-              backgroundColor: "rgba(0,0,0,0.7)",
-              textDecoration: "none",
-              width: "fit-content",
-              height: "fit-content",
-              position: "absolute",
-              right: "4px",
-              top: "49px",
-              borderRadius: "3px",
-              zIndex: "100"
-            }}
-          >
-            {duracion}
-          </div>
-          {showRating ? (
+class MiVideoItem extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { asig: {} };
+  }
+
+  componentWillMount() {
+    getVideoSubject(this.props.id, data => {
+      this.setState({ asig: data });
+    });
+  }
+
+  render() {
+    return (
+      <div>
+        <div className="menu-item">
+          <Link to={`/video/${this.props.id}`} style={{ position: "relative" }}>
+            <img
+              src={this.props.img}
+              width="210"
+              height="118"
+              alt={this.props.title}
+            />
             <div
               style={{
-                color: rating >= 50 ? "#228B22" : "#DC143C",
+                color: "white",
                 fontSize: "12px",
                 textAlign: "center",
                 backgroundColor: "rgba(0,0,0,0.7)",
                 textDecoration: "none",
-                width: "40px",
+                width: "fit-content",
                 height: "fit-content",
                 position: "absolute",
-                left: "4px",
+                right: "4px",
                 top: "49px",
                 borderRadius: "3px",
                 zIndex: "100"
               }}
             >
-              {rating + "%"}
+              {this.props.duracion}
             </div>
-          ) : null}
-        </Link>
-        <div style={{ height: "32px" }}>
-          <div style={{ float: "left", marginTop: "5px" }}>
-            <Link to={`/asig/${canal}`} style={{ textDecoration: "none" }}>
-              <IconoAsignaturaUniversidad name={canal} image={iconoAsign} />
-            </Link>
+            {this.props.showRating ? (
+              <div
+                style={{
+                  color: this.props.rating >= 50 ? "#228B22" : "#DC143C",
+                  fontSize: "12px",
+                  textAlign: "center",
+                  backgroundColor: "rgba(0,0,0,0.7)",
+                  textDecoration: "none",
+                  width: "40px",
+                  height: "fit-content",
+                  position: "absolute",
+                  left: "4px",
+                  top: "49px",
+                  borderRadius: "3px",
+                  zIndex: "100"
+                }}
+              >
+                {this.props.rating + "%"}
+              </div>
+            ) : null}
+          </Link>
+          <div style={{ height: "32px" }}>
+            <div style={{ float: "left", marginTop: "5px" }}>
+              <Link
+                to={`/asig/${
+                  this.state.asig.name === undefined ? "" : this.state.asig.name
+                }`}
+                style={{ textDecoration: "none" }}
+              >
+                <IconoAsignaturaUniversidad
+                  name={
+                    this.state.asig.abbreviation === undefined
+                      ? ""
+                      : this.state.asig.abbreviation
+                  }
+                  image={
+                    this.state.asig.university === undefined
+                      ? ""
+                      : this.state.asig.university.photo
+                  }
+                />
+              </Link>
+            </div>
+            <div
+              style={{
+                marginLeft: "75px",
+                height: "32px",
+                lineHeight: "normal"
+              }}
+            >
+              {" "}
+              <Link
+                style={{
+                  textDecoration: "none",
+                  color: "black",
+                  fontSize: "14px",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  display: "-webkit-box",
+                  WebkitLineClamp: "2",
+                  WebkitBoxOrient: "vertical",
+                  overflowWrap: "break-word",
+                  fontWeight: "bold"
+                }}
+                to={`/video/${this.props.id}`}
+              >
+                {this.props.title}
+              </Link>
+            </div>
           </div>
           <div
-            style={{ marginLeft: "75px", height: "32px", lineHeight: "normal" }}
+            className="fecha-subida"
+            style={{ marginLeft: "0", marginTop: "2px" }}
           >
-            {" "}
-            <Link
-              style={{
-                textDecoration: "none",
-                color: "black",
-                fontSize: "14px",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                display: "-webkit-box",
-                WebkitLineClamp: "2",
-                WebkitBoxOrient: "vertical",
-                overflowWrap: "break-word",
-                fontWeight: "bold"
-              }}
-              to={`/video/${id}`}
-            >
-              {title}
-            </Link>
+            Subido hace {this.props.timestamp}
           </div>
         </div>
-        <div
-          className="fecha-subida"
-          style={{ marginLeft: "0", marginTop: "2px" }}
-        >
-          Subido hace {timestamp}
-        </div>
       </div>
-    </div>
-  );
-};
+    );
+  }
+}
 
 // All items component
 // Important! add unique key
@@ -120,7 +149,7 @@ const Menu = (list, now) =>
     const { title, url, id, thumbnailUrl, score, timestamp, seconds } = el;
 
     return (
-      <MenuItem
+      <MiVideoItem
         title={title}
         id={id}
         url={url}
