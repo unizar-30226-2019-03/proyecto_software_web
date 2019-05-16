@@ -6,7 +6,7 @@ import Popup from "reactjs-popup";
 import { Notificacion } from "./Listas";
 import { RemoveAccents } from "../config/Process";
 import { isSignedIn, getUserID } from "../config/Auth";
-import { getDisplaysByUser } from "../config/Display";
+import { getDisplaysByUser, deleteVideoFromDisplay } from "../config/Display";
 import ListaHistorial from "./ListaHistorial";
 
 const listasRepro = [
@@ -295,20 +295,41 @@ class Historial extends Component {
     this.iniciarReloj = this.iniciarReloj.bind(this);
     this.pararReloj = this.pararReloj.bind(this);
     this.tick = this.tick.bind(this);
+    this.getHistorial = this.getHistorial.bind(this);
   }
 
   componentWillMount() {
-    getDisplaysByUser(getUserID(), this.state.page, data => {
-      console.log(data);
+    this.getHistorial(0);
+  }
+
+  getHistorial(page) {
+    getDisplaysByUser(getUserID(), page, data => {
       this.setState({
-        page: this.state.page + 1,
+        page: page + 1,
         miHistorial: data._embedded.displays
       });
     });
   }
 
   borrarHistorial() {
-    this.setState({ miHistorial: [], fixed: false });
+    this.state.miHistorial.map(elmnt => {
+      deleteVideoFromDisplay(parseInt(elmnt.video.id), ok => {
+        if (ok) {
+          this.setState({
+            historialFiltrado: [],
+            busqueda: "",
+            filtrado: false,
+            page: 0
+          });
+        }
+      });
+    });
+    this.setState({
+      miHistorial: [],
+      notif: true,
+      mensajeNotif: "Historial completo borrado"
+    });
+    this.iniciarReloj();
   }
 
   buscarHistorial(e) {
@@ -354,26 +375,21 @@ class Historial extends Component {
     this.iniciarReloj();
   }
 
-  borrarVideo(nombreVideo) {
-    var nuevoHistorial = this.state.miHistorial.slice();
-    const index = nuevoHistorial.findIndex(e => e.name === nombreVideo);
-    nuevoHistorial.splice(index, 1);
-    this.setState({
-      miHistorial: nuevoHistorial,
-      notif: true,
-      mensajeNotif: `Vídeo ${nombreVideo.toUpperCase()} eliminado del historial`
+  borrarVideo(idVideo, nombreVideo) {
+    deleteVideoFromDisplay(parseInt(idVideo), ok => {
+      if (ok) {
+        this.setState({
+          notif: true,
+          mensajeNotif: `Vídeo ${nombreVideo.toUpperCase()} eliminado del historial`,
+          historialFiltrado: [],
+          busqueda: "",
+          filtrado: false,
+          page: 0
+        });
+        this.getHistorial(0);
+      }
     });
     this.iniciarReloj();
-    if (this.state.filtrado) {
-      //Borrar también de filtrado
-      var nuevoFiltrado = this.state.historialFiltrado.slice();
-      const index2 = nuevoFiltrado.findIndex(e => e.name === nombreVideo);
-      if (index2 !== -1) {
-        //Borrarlo
-        nuevoFiltrado.splice(index2, 1);
-        this.setState({ historialFiltrado: nuevoFiltrado });
-      }
-    }
   }
 
   handleResize() {

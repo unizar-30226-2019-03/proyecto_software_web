@@ -234,7 +234,6 @@ export function findVideosContainingTitle(title, callback) {
       console.error(error);
     } else {
       const now = ApiClient.parseDate(response.headers.date);
-      console.log(data);
       callback(data._embedded.videos, now);
     }
   });

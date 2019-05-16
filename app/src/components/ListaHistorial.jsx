@@ -318,7 +318,7 @@ class MenuItem extends Component {
             </Popup>
             <FaTimes
               color={"#00000080"}
-              onClick={() => this.props.borrar(this.props.url)}
+              onClick={() => this.props.borrar(this.props.id, this.props.url)}
               style={{ cursor: "pointer" }}
             />
           </div>

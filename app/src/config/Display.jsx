@@ -51,3 +51,23 @@ export function updateDisplay(videoId, secsFromBeg) {
     }
   });
 }
+
+/**
+ * Borra del historial el vídeo
+ * @param {Number} videoId ID del vídeo a borrar del historial
+ * @param {Function} callback Función a ejecutar tras borrar vídeo
+ */
+export function deleteVideoFromDisplay(videoId, callback) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  apiInstance.displaysDeleteVideoIdDelete(videoId, (error, data, response) => {
+    if (error) {
+      console.error(error);
+      callback(false);
+    } else {
+      callback(true);
+    }
+  });
+}
