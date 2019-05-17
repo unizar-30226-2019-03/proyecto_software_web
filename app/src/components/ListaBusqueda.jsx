@@ -247,7 +247,7 @@ class MenuItem extends Component {
               }}
               to={`/asig/${this.props.canal}`}
             >
-              {this.props.canal}
+              {this.props.canal.split(":")[0]}
             </Link>
             <div style={{ marginTop: "10px", width: "90%" }}>
               <div

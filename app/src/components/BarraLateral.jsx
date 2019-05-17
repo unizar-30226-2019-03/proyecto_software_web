@@ -24,12 +24,8 @@ class BarraLateral extends Component {
   getData() {
     if (this._isMounted) {
       getSubjectsOfUser(getUserID(), data => {
-        const asigs = data.map(a => {
-          a.name = a.name.split(":")[0];
-          return a;
-        });
         if (this._isMounted) {
-          this.setState({ asigs: asigs });
+          this.setState({ asigs: data });
         }
       });
     }
@@ -81,7 +77,7 @@ class BarraLateral extends Component {
                 className={this.active(a.name)}
                 to={`/asig/${a.name}`}
               >
-                {a.name}
+                {a.name.split(":")[0]}
               </Link>
             );
           })}
