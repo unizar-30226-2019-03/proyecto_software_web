@@ -130,13 +130,12 @@ export function UploadVideo(video, img, title, description, subjectId, f) {
 }
 
 /**
- * Obtiene los vídeos del usuario especificado, con un máximo
+ * Obtiene los vídeos un usuario, con un máximo
  * de 20 vídeos (dichos vídeos serán elegidos según la página especificada).
- * @param {Number} id ID del usuario
  * @param {Number} page Número de página a obtener
  * @param {Function} callback Función a ejecutar tras obtener los vídeos
  */
-export function getVideosFromUploader(id, page, callback) {
+export function getVideosFromUploader(page, callback) {
   // Configure Bearer (JWT) access token for authorization: bearerAuth
   let bearerAuth = defaultClient.authentications["bearerAuth"];
   bearerAuth.accessToken = getUserToken();
@@ -146,14 +145,16 @@ export function getVideosFromUploader(id, page, callback) {
     pragma: "no-cache", // String |
     expires: "0", // String |
     page: page, // Number | Número de la página a devolver
-    sort: ["null"] // [String] | Parámetros en la forma `($propertyname,)+[asc|desc]?`
+    sort: ["null"], // [String] | Parámetros en la forma `($propertyname,)+[asc|desc]?`
+    projection: "videoWithSubject" // String | Incluir si se quiere obtener tambien la universidad y/o la asignatura en la respuesta
   };
-  apiInstance.getVideosFromUploader(id, opts, (error, data, response) => {
+  apiInstance.getVideosFromUploader(opts, (error, data, response) => {
     if (error) {
       console.error(error);
     } else {
       console.log(data);
       const now = ApiClient.parseDate(response.headers.date);
+      console.log(data);
       callback(data._embedded.videos, now);
     }
   });

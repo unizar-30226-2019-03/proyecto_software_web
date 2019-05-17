@@ -9,7 +9,7 @@ import {
   checkFileExtensionVideo
 } from "../config/Process";
 import { UploadVideo } from "../config/Video";
-import { getSubjectsOfUser } from "../config/User";
+import { getSubjectsAsProfessor } from "../config/User";
 
 const FormularioDatos = (
   handleSubmit,
@@ -130,8 +130,12 @@ class SubirVideo extends Component {
   }
 
   componentWillMount() {
-    getSubjectsOfUser(getUserID(), asignaturas => {
-      this.setState({ listaAsignaturas: asignaturas });
+    getSubjectsAsProfessor(getUserID(), asignaturas => {
+      const asigs = asignaturas.map(a => {
+        a.name = a.name.split(":")[0];
+        return a;
+      });
+      this.setState({ listaAsignaturas: asigs });
     });
   }
 

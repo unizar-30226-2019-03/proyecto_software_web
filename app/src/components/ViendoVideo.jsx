@@ -388,7 +388,7 @@ class ViendoVideo extends Component {
 
   seguirAsig() {
     !this.state.siguiendoAsig
-      ? SubscribeSubject(this.state.user.id, this.state.asig.id, ok => {
+      ? SubscribeSubject(this.state.asig.id, ok => {
           if (ok) {
             this.setState({
               siguiendoAsig: !this.state.siguiendoAsig,
@@ -398,7 +398,7 @@ class ViendoVideo extends Component {
             this.iniciarReloj();
           }
         })
-      : UnsubscribeSubject(this.state.user.id, this.state.asig.id, ok => {
+      : UnsubscribeSubject(this.state.asig.id, ok => {
           if (ok) {
             this.setState({
               siguiendoAsig: !this.state.siguiendoAsig,

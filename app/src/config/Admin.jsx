@@ -2,6 +2,7 @@ import { getUserToken } from "./Auth";
 import ApiClient from "swagger_unicast/dist/ApiClient";
 import { Degree2 } from "swagger_unicast";
 import Subject2 from "swagger_unicast/dist/model/Subject2";
+import SubjectApi from "swagger_unicast/dist/api/SubjectApi";
 
 const defaultClient = ApiClient.instance;
 
@@ -151,16 +152,38 @@ function ligarUniAsig(uni, subject, SubjectApi) {
  * @param {Number} idSubj ID de la asignatura
  * @param {SubjectApi} SubjectApi API de las asignaturas
  */
-export function ligarUsuarioAsig(idUser, idSubj, SubjectApi) {
+export function addProfessor(idUser, idSubj, SubjectApi) {
   // Configure Bearer (JWT) access token for authorization: bearerAuth
   let bearerAuth = defaultClient.authentications["bearerAuth"];
   bearerAuth.accessToken = getUserToken();
 
-  SubjectApi.putUser(idSubj, idUser, (error, data, response) => {
+  SubjectApi.addProfessor(idSubj, idUser, (error, data, response) => {
     if (error) {
       console.error(error);
     } else {
       console.log("API called successfully.");
+    }
+  });
+}
+
+/**
+ * Borra la asociación de un usuario con una asignatura
+ * @param {Number} userId ID del usuario
+ * @param {Number} subjectId ID de la asignatura
+ * @param {Function} callback Función a ejecutar tras
+ */
+export function deleteProfessor(userId, subjectId, callback) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  let apiInstance = new SubjectApi();
+  apiInstance.deleteProfessor(subjectId, userId, (error, data, response) => {
+    if (error) {
+      console.error(error);
+      callback(false);
+    } else {
+      callback(true);
     }
   });
 }

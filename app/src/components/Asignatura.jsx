@@ -208,22 +208,24 @@ class Asignatura extends Component {
 
   seguirAsig() {
     !this.state.siguiendoAsig
-      ? SubscribeSubject(this.state.user.id, this.state.asig.id, ok => {
+      ? SubscribeSubject(this.state.asig.id, ok => {
           if (ok) {
             this.setState({
               siguiendoAsig: !this.state.siguiendoAsig,
               notif: true,
-              mensajeNotif: `Siguiendo a ${this.state.asig.name}`
+              mensajeNotif: `Siguiendo a ${this.state.asig.name.split(":")[0]}`
             });
             this.iniciarReloj();
           }
         })
-      : UnsubscribeSubject(this.state.user.id, this.state.asig.id, ok => {
+      : UnsubscribeSubject(this.state.asig.id, ok => {
           if (ok) {
             this.setState({
               siguiendoAsig: !this.state.siguiendoAsig,
               notif: true,
-              mensajeNotif: `Dejando de seguir a ${this.state.asig.name}`
+              mensajeNotif: `Dejando de seguir a ${
+                this.state.asig.name.split(":")[0]
+              }`
             });
             this.iniciarReloj();
           }
@@ -235,6 +237,10 @@ class Asignatura extends Component {
       this.state.asig.university === undefined
         ? ""
         : this.state.asig.university.photo;
+    const nombreAsig =
+      this.state.asig.name === undefined
+        ? ""
+        : this.state.asig.name.split(":")[0];
     return !isSignedIn() ? (
       <Redirect to="/" />
     ) : (
@@ -267,7 +273,7 @@ class Asignatura extends Component {
                 width="60"
                 height="60"
               />
-              {this.props.match.params.nombre}
+              {nombreAsig}
             </div>
             <div className="universidad">
               <Button

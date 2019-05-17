@@ -42,6 +42,7 @@ export function addUser(
     photo,
     (error, data, response) => {
       if (error) {
+        console.log("MAL");
         console.error(error);
       } else {
         callback(data);
@@ -227,6 +228,32 @@ export function getSubjectsOfUser(id, callback) {
     projection: "subjectWithUniversity" // String | Incluir si se quiere obtener tambien la universidad en la respuesta
   };
   apiInstance.getSubjectsOfUser(id, opts, (error, data, response) => {
+    if (error) {
+      console.error(error);
+    } else {
+      callback(data._embedded.subjects);
+    }
+  });
+}
+
+/**
+ * Obtiene las asignaturas de un profesor, las que está
+ * cursando actualmente
+ * @param {Number} id ID del usuario
+ * @param {Function} callback Función a ejecutar tras obtener los datos
+ */
+export function getSubjectsAsProfessor(id, callback) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  let opts = {
+    cacheControl: "no-cache, no-store, must-revalidate", // String |
+    pragma: "no-cache", // String |
+    expires: "0", // String |
+    projection: "subjectWithUniversity" // String | Incluir si se quiere obtener tambien la universidad en la respuesta
+  };
+  apiInstance.getSubjectsAsProfessor(id, opts, (error, data, response) => {
     if (error) {
       console.error(error);
     } else {

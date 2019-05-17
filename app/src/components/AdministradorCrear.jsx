@@ -17,7 +17,7 @@ import {
   crearUniversidad,
   crearCarreraYLigar,
   crearAsigYLigar,
-  ligarUsuarioAsig
+  addProfessor
 } from "../config/Admin";
 import SubjectApi from "swagger_unicast/dist/api/SubjectApi";
 import {
@@ -549,7 +549,7 @@ class AdministradorCrear extends Component {
           if (data === false || data.length === 0) {
             alert("El usuario especificado no existe");
           } else {
-            ligarUsuarioAsig(data[0].id, asignatura, this.SubjectApi);
+            addProfessor(data[0].id, asignatura, this.SubjectApi);
             form.reset();
             this.handleShow();
             that.setState({ uni: -1 });

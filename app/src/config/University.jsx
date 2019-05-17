@@ -41,7 +41,7 @@ export function getDegreesFromUnivesity(id, callback) {
     if (error) {
       console.error(error);
     } else {
-      callback(data);
+      callback(data._embedded.degrees);
     }
   });
 }

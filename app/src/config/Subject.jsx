@@ -29,16 +29,15 @@ export function findSubjectByName(name, callback) {
 
 /**
  * Relaciona el usuario con la asignatura
- * @param {Number} userId ID del usuario
  * @param {Number} subjectId ID de la asignatura
  * @param {Boolean} ack TRUE si éxito, FALSE si error
  */
-export function SubscribeSubject(userId, subjectId, ack) {
+export function SubscribeSubject(subjectId, ack) {
   // Configure Bearer (JWT) access token for authorization: bearerAuth
   let bearerAuth = defaultClient.authentications["bearerAuth"];
   bearerAuth.accessToken = getUserToken();
 
-  apiInstance.putUser(subjectId, userId, (error, data, response) => {
+  apiInstance.followSubject(subjectId, (error, data, response) => {
     if (error) {
       console.error(error);
       ack(false);
@@ -50,50 +49,20 @@ export function SubscribeSubject(userId, subjectId, ack) {
 
 /**
  * Elimina la relación del usuario con la asignatura
- * @param {Number} userId ID del usuario
  * @param {Number} subjectId ID de la asignatura
  * @param {Boolean} ack TRUE si éxito, FALSE si error
  */
-export function UnsubscribeSubject(userId, subjectId, ack) {
+export function UnsubscribeSubject(subjectId, ack) {
   // Configure Bearer (JWT) access token for authorization: bearerAuth
   let bearerAuth = defaultClient.authentications["bearerAuth"];
   bearerAuth.accessToken = getUserToken();
 
-  apiInstance.deleteUserFromSubject(
-    userId,
-    subjectId,
-    (error, data, response) => {
-      if (error) {
-        console.error(error);
-        ack(false);
-      } else {
-        ack(true);
-      }
+  apiInstance.unfollowSubject(subjectId, (error, data, response) => {
+    if (error) {
+      console.error(error);
+      ack(false);
+    } else {
+      ack(true);
     }
-  );
-}
-
-/**
- * Borra la asociación de un usuario con una asignatura
- * @param {Number} userId ID del usuario
- * @param {Number} subjectId ID de la asignatura
- * @param {Function} callback Función a ejecutar tras
- */
-export function deleteUserFromSubject(userId, subjectId, callback) {
-  // Configure Bearer (JWT) access token for authorization: bearerAuth
-  let bearerAuth = defaultClient.authentications["bearerAuth"];
-  bearerAuth.accessToken = getUserToken();
-
-  apiInstance.deleteUserFromSubject(
-    userId,
-    subjectId,
-    (error, data, response) => {
-      if (error) {
-        console.error(error);
-        callback(false);
-      } else {
-        callback(true);
-      }
-    }
-  );
+  });
 }

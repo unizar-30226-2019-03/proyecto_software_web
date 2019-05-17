@@ -318,6 +318,7 @@ class SignIn extends Component {
     this.universidad = React.createRef();
     this.carrera = React.createRef();
     this.handleSubmitDatos = this.handleSubmitDatos.bind(this);
+    this.handleChangeUni = this.handleChangeUni.bind(this);
     this.handleSubmitInfo = this.handleSubmitInfo.bind(this);
     this.back = this.back.bind(this);
     this.getAllUniversities = this.getAllUniversities.bind(this);
@@ -415,7 +416,6 @@ class SignIn extends Component {
 
   handleChangeUni(e) {
     const uniId = parseInt(e.target.value);
-    console.log(uniId);
     getDegreesFromUnivesity(uniId, data => {
       this.setState({ listaCarreras: data });
     });

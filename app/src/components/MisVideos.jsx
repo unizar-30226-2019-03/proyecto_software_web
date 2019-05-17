@@ -10,11 +10,11 @@ import { getTime } from "../config/Process";
 import {
   getTimePassed,
   getScore,
-  getVideosFromUploader,
-  getVideoSubject
+  getVideosFromUploader
 } from "../config/Video";
 import VideoApi from "swagger_unicast/dist/api/VideoApi";
 import { getUser } from "../config/User";
+import { findSubjectByName } from "../config/Subject";
 
 // One item component
 // selected prop will be passed
@@ -41,7 +41,7 @@ class MiVideoItem extends Component {
   }
 
   componentWillMount() {
-    getVideoSubject(this.props.id, data => {
+    findSubjectByName(this.props.subject.name, data => {
       this.setState({ asig: data });
     });
   }
@@ -183,6 +183,7 @@ const Menu = (list, now) =>
         rating={getScore(score)}
         timestamp={getTimePassed(timestamp, now)}
         showRating={score === null ? false : true}
+        subject={el.subject}
       />
     );
   });
@@ -201,7 +202,7 @@ class MisVideos extends Component {
   }
 
   componentWillMount() {
-    getVideosFromUploader(getUserID(), 0, (videos, time) => {
+    getVideosFromUploader(0, (videos, time) => {
       this.setState({
         listaVideos: videos,
         timestampNow: time
