@@ -4,17 +4,18 @@ import { Helmet } from "react-helmet";
 import { Button } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
 import { isSignedIn, getUserID } from "../config/Auth";
-
+import Popup from "reactjs-popup";
 import IconoAsignaturaUniversidad from "./IconoAsignaturaUniversidad";
 import { getTime } from "../config/Process";
 import {
   getTimePassed,
   getScore,
-  getVideosFromUploader
+  getVideosFromUploader,
+  deleteVideo
 } from "../config/Video";
-import VideoApi from "swagger_unicast/dist/api/VideoApi";
 import { getUser } from "../config/User";
 import { findSubjectByName } from "../config/Subject";
+import { FaEllipsisV } from "react-icons/fa";
 
 // One item component
 // selected prop will be passed
@@ -57,7 +58,56 @@ class MiVideoItem extends Component {
           this.cerrarPopUp();
         }}
       >
-        <div className="menu-item">
+        <div className="menu-item" style={{ position: "relative" }}>
+          {this.state.mostrarOpciones ? (
+            <div
+              style={{
+                fontSize: "12px",
+                textAlign: "center",
+                backgroundColor: "rgba(0,0,0,0.7)",
+                textDecoration: "none",
+                width: "fit-content",
+                height: "fit-content",
+                position: "absolute",
+                right: "8px",
+                top: "4px",
+                borderRadius: "3px",
+                zIndex: "100",
+                cursor: "pointer"
+              }}
+            >
+              <Popup
+                open={this.state.popUp}
+                onOpen={this.abrirPopUp}
+                onClose={this.cerrarPopUp}
+                repositionOnResize
+                position="bottom left"
+                arrow={false}
+                contentStyle={{
+                  width: "120px",
+                  maxHeight: "300px",
+                  overflow: "scroll",
+                  padding: "10px 10px",
+                  border: "0",
+                  marginTop: "10px",
+                  zIndex: "1000",
+                  boxShadow:
+                    "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4)"
+                }}
+                trigger={<FaEllipsisV color={"white"} />}
+              >
+                <div
+                  className="popup-borrar-video"
+                  onClick={() => {
+                    this.cerrarPopUp();
+                    this.props.borrarVideo(parseInt(this.props.id));
+                  }}
+                >
+                  BORRAR VÍDEO
+                </div>
+              </Popup>
+            </div>
+          ) : null}
           <Link to={`/video/${this.props.id}`} style={{ position: "relative" }}>
             <img
               src={this.props.img}
@@ -65,6 +115,7 @@ class MiVideoItem extends Component {
               height="118"
               alt={this.props.title}
             />
+
             <div
               style={{
                 color: "white",
@@ -167,7 +218,7 @@ class MiVideoItem extends Component {
 
 // All items component
 // Important! add unique key
-const Menu = (list, now) =>
+const Menu = (list, now, borrarVideo) =>
   list.map(el => {
     const { title, url, id, thumbnailUrl, score, timestamp, seconds } = el;
 
@@ -184,6 +235,7 @@ const Menu = (list, now) =>
         timestamp={getTimePassed(timestamp, now)}
         showRating={score === null ? false : true}
         subject={el.subject}
+        borrarVideo={borrarVideo}
       />
     );
   });
@@ -198,7 +250,7 @@ class MisVideos extends Component {
       user: {}
     };
     this.handleChange = this.handleChange.bind(this);
-    this.videoApi = new VideoApi();
+    this.borrarVideo = this.borrarVideo.bind(this);
   }
 
   componentWillMount() {
@@ -210,6 +262,21 @@ class MisVideos extends Component {
     });
     getUser(getUserID(), data => {
       this.setState({ user: data });
+    });
+  }
+
+  borrarVideo(id) {
+    deleteVideo(id, ok => {
+      if (ok) {
+        getVideosFromUploader(0, (videos, time) => {
+          this.setState({
+            listaVideos: videos,
+            timestampNow: time
+          });
+        });
+      } else {
+        alert("No se ha podido borrar el vídeo " + id);
+      }
     });
   }
 
@@ -270,7 +337,11 @@ class MisVideos extends Component {
             <div>
               <div>
                 <div style={{ display: "flex", flexWrap: "wrap" }}>
-                  {Menu(this.state.listaVideos, this.state.timestampNow)}
+                  {Menu(
+                    this.state.listaVideos,
+                    this.state.timestampNow,
+                    this.borrarVideo
+                  )}
                 </div>
               </div>
             </div>

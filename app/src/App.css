@@ -892,3 +892,11 @@ h3 {
   font-size: 14px;
   align-self: center;
 }
+
+.popup-borrar-video {
+  font-weight: 400;
+}
+
+.popup-borrar-video:hover {
+  font-weight: 500;
+}

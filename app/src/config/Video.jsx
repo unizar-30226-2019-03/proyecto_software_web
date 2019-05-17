@@ -239,3 +239,24 @@ export function findVideosContainingTitle(title, callback) {
     }
   });
 }
+
+/**
+ * Borra un vídeo, solamente puede borrarlo el autor del vídeo
+ * @param {Number} id ID del vídeo
+ * @param {Function} callback Función a ejecutar tras borrar el vídeo
+ */
+export function deleteVideo(id, callback) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  apiInstance.deleteVideo(id, (error, data, response) => {
+    if (error) {
+      console.error(error);
+      callback(false);
+    } else {
+      console.log("API called successfully.");
+      callback(true);
+    }
+  });
+}
