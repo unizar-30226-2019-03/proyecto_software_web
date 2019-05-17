@@ -22,7 +22,7 @@ class BarraNavegacion extends Component {
       displayNotif: false,
       hide: this.props.hide,
       busqueda: this.props.nuevoTit,
-      photo: {}
+      user: {}
     };
     this.showDropdown = this.showDropdown.bind(this);
     this.hideDropdown = this.hideDropdown.bind(this);
@@ -34,7 +34,7 @@ class BarraNavegacion extends Component {
 
   componentWillMount() {
     getUser(getUserID(), data => {
-      this.setState({ photo: data.photo });
+      this.setState({ user: data });
     });
   }
 
@@ -174,7 +174,7 @@ class BarraNavegacion extends Component {
               <div className="dropdown" style={{ top: "5px" }}>
                 <img
                   alt="usuario"
-                  src={this.state.photo}
+                  src={this.state.user.photo}
                   width="30"
                   height="30"
                   onClick={this.showDropdown}
@@ -183,7 +183,9 @@ class BarraNavegacion extends Component {
                 {this.state.displayMenu ? (
                   <div className="dropdown-content">
                     <Link to="/perfil">Mi perfil</Link>
-                    <Link to="/mis-videos">Mis vídeos</Link>
+                    {this.state.user.role === "ROLE_PROFESSOR" ? (
+                      <Link to="/mis-videos">Mis vídeos</Link>
+                    ) : null}
                     <Link to="/" onClick={() => signOut()}>
                       Cerrar Sesión
                     </Link>

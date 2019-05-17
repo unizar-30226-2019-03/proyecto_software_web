@@ -171,15 +171,27 @@ class Perfil extends Component {
                   <Button className="boton-filtro">Editar perfil</Button>
                 </Link>
               </div>
-              <div
-                style={{
-                  padding: "20px 20px 0px 0px"
-                }}
-              >
-                <Link to="/subir-video" className="universidad">
-                  <Button className="boton-filtro">Subir vídeo</Button>
-                </Link>
-              </div>
+              {this.state.user.role === "ROLE_PROFESSOR" ? (
+                <div
+                  style={{
+                    padding: "20px 20px 0px 0px"
+                  }}
+                >
+                  <Link to="/subir-video" className="universidad">
+                    <Button className="boton-filtro">Subir vídeo</Button>
+                  </Link>
+                </div>
+              ) : (
+                <div
+                  style={{
+                    padding: "20px 20px 0px 0px",
+                    visibility: "hidden"
+                  }}
+                >
+                  a
+                </div>
+              )}
+
               <div
                 style={{
                   padding: "40px 20px 0px 0px"
