@@ -257,3 +257,31 @@ export function deleteVideo(id, callback) {
     }
   });
 }
+
+/**
+ * Obtiene los vídeos de una asignatura concreta
+ * @param {Number} subjectId ID de la asignatura
+ * @param {Number} page Número de página
+ * @param {Function} callback Función a ejecutar tras obtener los vídeos
+ */
+export function getVideosFromSubject(subjectId, page, callback) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  let opts = {
+    cacheControl: "no-cache, no-store, must-revalidate", // String |
+    pragma: "no-cache", // String |
+    expires: "0", // String |
+    page: page, // Number | Número de la página a devolver
+    sort: ["null"] // [String] | Parámetros en la forma `($propertyname,)+[asc|desc]?`
+  };
+  apiInstance.getVideosFromSubject(subjectId, opts, (error, data, response) => {
+    if (error) {
+      console.error(error);
+    } else {
+      const now = ApiClient.parseDate(response.headers.date);
+      callback(data._embedded.videos, now);
+    }
+  });
+}

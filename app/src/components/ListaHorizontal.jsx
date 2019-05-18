@@ -1,197 +1,140 @@
 import React, { Component } from "react";
 import ScrollMenu from "react-horizontal-scrolling-menu";
-import imagenPrueba from "../assets/landscape.jpg";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
-import iconoAsign from "../assets/favicon.ico";
 import { Link } from "react-router-dom";
 import { getTime } from "../config/Process";
 import IconoAsignaturaUniversidad from "./IconoAsignaturaUniversidad";
-
-// list of items
-const list = [
-  {
-    name: "item1",
-    canal: "Asignatura A",
-    image: imagenPrueba,
-    duracion: getTime(500),
-    rating: 98
-  },
-  {
-    name: "item2",
-    canal: "Asignatura B",
-    image: imagenPrueba,
-    duracion: getTime(600),
-    rating: 98
-  },
-  {
-    name: "item3",
-    canal: "Asignatura C",
-    image: imagenPrueba,
-    duracion: getTime(700),
-    rating: 92
-  },
-  {
-    name: "item4",
-    canal: "Asignatura D",
-    image: imagenPrueba,
-    duracion: getTime(800),
-    rating: 88
-  },
-  {
-    name: "item5",
-    canal: "Asignatura E",
-    image: imagenPrueba,
-    duracion: getTime(900),
-    rating: 77
-  },
-  {
-    name: "item6",
-    canal: "Asignatura F",
-    image: imagenPrueba,
-    duracion: getTime(1000),
-    rating: 90
-  },
-  {
-    name: "item7",
-    canal: "Asignatura G",
-    image: imagenPrueba,
-    duracion: getTime(1100),
-    rating: 84
-  },
-  {
-    name: "item8",
-    canal: "Asignatura H",
-    image: imagenPrueba,
-    duracion: getTime(1200),
-    rating: 87
-  },
-  {
-    name: "item9",
-    canal: "Asignatura I",
-    image: imagenPrueba,
-    duracion: getTime(1300),
-    rating: 93
-  },
-  {
-    name: "item10",
-    canal: "Asignatura J",
-    image: imagenPrueba,
-    duracion: getTime(1400),
-    rating: 91
-  },
-  {
-    name: "item11",
-    canal: "Asignatura K",
-    image: imagenPrueba,
-    duracion: getTime(1500),
-    rating: 91
-  },
-  {
-    name: "item12",
-    canal: "Asignatura L",
-    image: imagenPrueba,
-    duracion: getTime(1600),
-    rating: 90
-  }
-];
+import { getTimePassed, getScore, getVideoSubject } from "../config/Video";
 
 // One item component
 // selected prop will be passed
-const MenuItem = ({ url, canal, img, duracion, rating }) => {
-  return (
-    <div>
-      <div className="menu-item">
-        <Link to={`/video/${url}`} style={{ position: "relative" }}>
-          <img src={img} width="210" height="118" alt="videoX" />
-          <div
-            style={{
-              color: "white",
-              fontSize: "12px",
-              textAlign: "center",
-              backgroundColor: "rgba(0,0,0,0.7)",
-              textDecoration: "none",
-              width: "fit-content",
-              height: "fit-content",
-              position: "absolute",
-              right: "4px",
-              top: "49px",
-              borderRadius: "3px",
-              zIndex: "100"
-            }}
-          >
-            {duracion}
-          </div>
-          <div
-            style={{
-              color: rating >= 50 ? "#228B22" : "#DC143C",
-              fontSize: "12px",
-              textAlign: "center",
-              backgroundColor: "rgba(0,0,0,0.7)",
-              textDecoration: "none",
-              width: "40px",
-              height: "fit-content",
-              position: "absolute",
-              left: "4px",
-              top: "49px",
-              borderRadius: "3px",
-              zIndex: "100"
-            }}
-          >
-            {rating + "%"}
-          </div>
-        </Link>
-        <div>
-          <div style={{ float: "left", marginTop: "5px" }}>
-            <Link to={`/asig/${canal}`} style={{ textDecoration: "none" }}>
-              <IconoAsignaturaUniversidad name={canal} image={iconoAsign} />
-            </Link>
-          </div>
-          <div style={{ marginLeft: "75px", lineHeight: "normal" }}>
-            {" "}
-            <Link
+class MenuItem extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { asig: {} };
+  }
+
+  componentWillMount() {
+    getVideoSubject(parseInt(this.props.id), data => {
+      this.setState({ asig: data });
+    });
+  }
+
+  render() {
+    return (
+      <div>
+        <div className="menu-item">
+          <Link to={`/video/${this.props.id}`} style={{ position: "relative" }}>
+            <img src={this.props.img} width="210" height="118" alt="videoX" />
+            <div
               style={{
+                color: "white",
+                fontSize: "12px",
+                textAlign: "center",
+                backgroundColor: "rgba(0,0,0,0.7)",
                 textDecoration: "none",
-                color: "black",
-                fontSize: "14px",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                display: "-webkit-box",
-                WebkitLineClamp: "2",
-                WebkitBoxOrient: "vertical",
-                overflowWrap: "break-word",
-                fontWeight: "bold"
+                width: "fit-content",
+                height: "fit-content",
+                position: "absolute",
+                right: "4px",
+                top: "49px",
+                borderRadius: "3px",
+                zIndex: "100"
               }}
-              to={`/video/${url}`}
             >
-              Vídeo de prueba en pagina de inicio {url}
-            </Link>
+              {this.props.duracion}
+            </div>
+            {this.props.showRating ? (
+              <div
+                style={{
+                  color: this.props.rating >= 50 ? "#228B22" : "#DC143C",
+                  fontSize: "12px",
+                  textAlign: "center",
+                  backgroundColor: "rgba(0,0,0,0.7)",
+                  textDecoration: "none",
+                  width: "40px",
+                  height: "fit-content",
+                  position: "absolute",
+                  left: "4px",
+                  top: "49px",
+                  borderRadius: "3px",
+                  zIndex: "100"
+                }}
+              >
+                {this.props.rating + "%"}
+              </div>
+            ) : null}
+          </Link>
+          <div>
+            <div style={{ float: "left", marginTop: "5px" }}>
+              <Link
+                to={`/asig/${this.state.asig.id}`}
+                style={{ textDecoration: "none" }}
+              >
+                <IconoAsignaturaUniversidad
+                  name={
+                    this.state.asig.abbreviation === undefined
+                      ? ""
+                      : this.state.asig.abbreviation
+                  }
+                  image={
+                    this.state.asig.university === undefined
+                      ? ""
+                      : this.state.asig.university.photo
+                  }
+                />
+              </Link>
+            </div>
+            <div style={{ marginLeft: "75px", lineHeight: "normal" }}>
+              {" "}
+              <Link
+                style={{
+                  textDecoration: "none",
+                  color: "black",
+                  fontSize: "14px",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  display: "-webkit-box",
+                  WebkitLineClamp: "2",
+                  WebkitBoxOrient: "vertical",
+                  overflowWrap: "break-word",
+                  fontWeight: "bold"
+                }}
+                to={`/video/${this.props.id}`}
+              >
+                {this.props.title}
+              </Link>
+            </div>
           </div>
-        </div>
-        <div
-          className="fecha-subida"
-          style={{ marginLeft: "0", marginTop: "2px" }}
-        >
-          Subido hace X min
+          <div
+            className="fecha-subida"
+            style={{ marginLeft: "0", marginTop: "2px" }}
+          >
+            Subido hace {this.props.timestamp}
+          </div>
         </div>
       </div>
-    </div>
-  );
-};
+    );
+  }
+}
 
 // All items component
 // Important! add unique key
-export const Menu = list =>
+export const Menu = (list, now) =>
   list.map(el => {
-    const { name, canal, image, duracion, rating } = el;
-
+    const { title, id, thumbnailUrl, score, timestamp, seconds } = el;
     return (
       <MenuItem
-        url={name}
-        key={name}
-        img={image}
-        canal={canal}
-        duracion={duracion}
-        rating={rating}
+        title={title}
+        id={id}
+        key={title}
+        img={thumbnailUrl}
+        canal={title}
+        duracion={getTime(seconds)}
+        rating={getScore(score)}
+        timestamp={getTimePassed(timestamp, now)}
+        showRating={score === null ? false : true}
+        subject={el.subject}
       />
     );
   });
@@ -275,7 +218,7 @@ class ListaHorizontal extends Component {
   constructor(props) {
     super(props);
     // call it again if items count changes
-    this.menuItems = Menu(list);
+    this.menuItems = Menu(this.props.list);
   }
 
   render() {

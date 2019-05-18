@@ -1,11 +1,9 @@
 import React, { Component } from "react";
 import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
-import imagenPrueba from "../assets/landscape.jpg";
 import { Button } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
 import { Menu } from "./ListaHorizontal";
-import { getTime } from "../config/Process";
 import { isSignedIn, getUserID } from "../config/Auth";
 import {
   SubscribeSubject,
@@ -15,93 +13,7 @@ import {
 } from "../config/Subject";
 import { getUser, getSubjectsOfUser } from "../config/User";
 import { Notificacion } from "./Listas";
-
-const list = [
-  {
-    name: "item1",
-    canal: "Asignatura A",
-    image: imagenPrueba,
-    duracion: getTime(500),
-    rating: 98
-  },
-  {
-    name: "item2",
-    canal: "Asignatura B",
-    image: imagenPrueba,
-    duracion: getTime(600),
-    rating: 98
-  },
-  {
-    name: "item3",
-    canal: "Asignatura C",
-    image: imagenPrueba,
-    duracion: getTime(700),
-    rating: 92
-  },
-  {
-    name: "item4",
-    canal: "Asignatura D",
-    image: imagenPrueba,
-    duracion: getTime(800),
-    rating: 88
-  },
-  {
-    name: "item5",
-    canal: "Asignatura E",
-    image: imagenPrueba,
-    duracion: getTime(900),
-    rating: 77
-  },
-  {
-    name: "item6",
-    canal: "Asignatura F",
-    image: imagenPrueba,
-    duracion: getTime(1000),
-    rating: 90
-  },
-  {
-    name: "item7",
-    canal: "Asignatura G",
-    image: imagenPrueba,
-    duracion: getTime(1100),
-    rating: 84
-  },
-  {
-    name: "item8",
-    canal: "Asignatura H",
-    image: imagenPrueba,
-    duracion: getTime(1200),
-    rating: 87
-  },
-  {
-    name: "item9",
-    canal: "Asignatura I",
-    image: imagenPrueba,
-    duracion: getTime(1300),
-    rating: 93
-  },
-  {
-    name: "item10",
-    canal: "Asignatura J",
-    image: imagenPrueba,
-    duracion: getTime(1400),
-    rating: 91
-  },
-  {
-    name: "item11",
-    canal: "Asignatura K",
-    image: imagenPrueba,
-    duracion: getTime(1500),
-    rating: 91
-  },
-  {
-    name: "item12",
-    canal: "Asignatura L",
-    image: imagenPrueba,
-    duracion: getTime(1600),
-    rating: 90
-  }
-];
+import { getVideosFromSubject } from "../config/Video";
 
 export const Profesor = ({ user }) => {
   return (
@@ -147,20 +59,23 @@ class Asignatura extends Component {
       notif: false,
       mensajeNotif: "",
       tiempoNotif: 0,
-      profesores: []
+      profesores: [],
+      videos: [],
+      timeNow: new Date()
     };
     this.seguirAsig = this.seguirAsig.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.getData = this.getData.bind(this);
     this.iniciarReloj = this.iniciarReloj.bind(this);
     this.pararReloj = this.pararReloj.bind(this);
     this.tick = this.tick.bind(this);
   }
 
-  componentWillMount() {
+  getData(subjectId) {
     getUser(getUserID(), data => {
       this.setState({ user: data });
     });
-    getSubjectById(parseInt(this.props.match.params.id), data => {
+    getSubjectById(subjectId, data => {
       this.setState({ asig: data });
       getSubjectsOfUser(getUserID(), subjects => {
         const found = subjects.find(s => {
@@ -172,28 +87,20 @@ class Asignatura extends Component {
         });
       });
     });
-    getProfessorsFromSubject(parseInt(this.props.match.params.id), data => {
-      console.log(data);
+    getProfessorsFromSubject(subjectId, data => {
       this.setState({ profesores: data });
+    });
+    getVideosFromSubject(subjectId, 0, (data, time) => {
+      this.setState({ videos: data, timeNow: time });
     });
   }
 
+  componentWillMount() {
+    this.getData(parseInt(this.props.match.params.id));
+  }
+
   componentWillReceiveProps(nextProps) {
-    getUser(getUserID(), data => {
-      this.setState({ user: data });
-    });
-    getSubjectById(parseInt(nextProps.match.params.id), data => {
-      this.setState({ asig: data });
-      getSubjectsOfUser(getUserID(), subjects => {
-        const found = subjects.find(s => {
-          return s.id === data.id;
-        });
-        //Si no la ha encontrado -> No sigue la asignatura
-        this.setState({
-          siguiendoAsig: found === undefined ? false : true
-        });
-      });
-    });
+    this.getData(parseInt(nextProps.match.params.id));
   }
 
   componentWillUnmount() {
@@ -309,7 +216,7 @@ class Asignatura extends Component {
               <div>
                 <p style={{ fontWeight: "550" }}>Vídeos subidos</p>
                 <div style={{ display: "flex", flexWrap: "wrap" }}>
-                  {Menu(list)}
+                  {Menu(this.state.videos, this.state.timeNow)}
                 </div>
               </div>
             </div>
