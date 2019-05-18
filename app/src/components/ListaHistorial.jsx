@@ -119,7 +119,7 @@ class MenuItem extends Component {
       popUp: false,
       mostrarNotif: false,
       mensaje: "",
-      asig: ""
+      asig: {}
     };
     this.abrirPopUp = this.abrirPopUp.bind(this);
     this.cerrarPopUp = this.cerrarPopUp.bind(this);
@@ -128,7 +128,7 @@ class MenuItem extends Component {
 
   componentWillMount() {
     getVideoSubject(this.props.id, data => {
-      this.setState({ asig: data.id });
+      this.setState({ asig: data });
     });
   }
 
@@ -250,9 +250,9 @@ class MenuItem extends Component {
                 WebkitBoxOrient: "vertical",
                 fontWeight: "500"
               }}
-              to={`/asig/${this.state.asig}`}
+              to={`/asig/${this.state.asig.id}`}
             >
-              {this.state.asig}
+              {this.state.asig.name}
             </Link>
             <div style={{ marginTop: "10px", width: "90%" }}>
               <div

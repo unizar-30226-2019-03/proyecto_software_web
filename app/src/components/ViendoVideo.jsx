@@ -17,7 +17,7 @@ import Popup from "reactjs-popup";
 import StarRatingComponent from "react-star-rating-component";
 import { ContenidoPopUp } from "./ListaVertical";
 import { Notificacion } from "./Listas";
-import { isSignedIn, getUserToken, getUserID } from "../config/Auth";
+import { isSignedIn, getUserID } from "../config/Auth";
 import {
   generadorColores,
   scrollFunc,
@@ -25,14 +25,11 @@ import {
   getVideo,
   getVideoSubject
 } from "../config/Video";
-import ApiClient from "swagger_unicast/dist/ApiClient";
-import { VideoApi, VoteApi, CommentApi } from "swagger_unicast";
-import VoteId from "swagger_unicast/dist/model/VoteId";
-import Vote2 from "swagger_unicast/dist/model/Vote2";
 import { getCommentsByVideo, addComment } from "../config/Comments";
 import { getUser, getSubjectsOfUser } from "../config/User";
 import { SubscribeSubject, UnsubscribeSubject } from "../config/Subject";
 import { updateDisplay, getVideoDisplay } from "../config/Display";
+import { addVote } from "../config/Vote";
 
 const profesores = [
   { foto: icono, nombre: "Jorge" },
@@ -131,9 +128,6 @@ class ViendoVideo extends Component {
       siguiendoAsig: false,
       tiempoInicial: 0
     };
-    this.videoApi = new VideoApi();
-    this.voteApi = new VoteApi();
-    this.commentApi = new CommentApi();
     this.handleChange = this.handleChange.bind(this);
     this.recogerComentarios = this.recogerComentarios.bind(this);
     this.recibirEstadoVideo = this.recibirEstadoVideo.bind(this);
@@ -374,23 +368,17 @@ class ViendoVideo extends Component {
   }
 
   puntuar() {
-    let defaultClient = ApiClient.instance;
-    // Configure Bearer (JWT) access token for authorization: bearerAuth
-    let bearerAuth = defaultClient.authentications["bearerAuth"];
-    bearerAuth.accessToken = getUserToken();
-    //Enviar al servidor la puntuación actual
-    const voteid = new VoteId(this.state.video.id, this.state.user.id);
-    const vote = new Vote2(
-      voteid,
+    addVote(
+      this.state.video.id,
+      this.state.adecuacion,
       this.state.claridad,
       this.state.calidad,
-      this.state.adecuacion
-    );
-    this.voteApi.addVote(vote, (error, data, response) => {
-      if (error) {
-        console.error(error);
+      exito => {
+        if (exito) {
+          this.setState({ notif: true, mensajeNotif: "Voto registrado!" });
+        }
       }
-    });
+    );
   }
 
   seguirAsig() {
