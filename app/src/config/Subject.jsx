@@ -137,3 +137,29 @@ export function getProfessorsFromSubject(id, callback) {
     }
   });
 }
+
+/**
+ * Obtiene el ránking de asignaturas
+ * @param {Number} page Número de página
+ * @param {Function} callback Función a ejecutar tras obtener los datos
+ */
+export function getSubjectRanking(page, callback) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  let opts = {
+    cacheControl: "no-cache, no-store, must-revalidate", // String |
+    pragma: "no-cache", // String |
+    expires: "0", // String |
+    projection: "subjectWithUniversity", // String | Incluir si se quiere obtener tambien la universidad en la respuesta
+    page: page // Number | Número de la página a devolver
+  };
+  apiInstance.getSubjectRanking(opts, (error, data, response) => {
+    if (error) {
+      console.error(error);
+    } else {
+      callback(data._embedded.subjects);
+    }
+  });
+}

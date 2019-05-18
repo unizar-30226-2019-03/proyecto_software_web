@@ -3,101 +3,51 @@ import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
 import { ListGroup, Dropdown, Button, FormControl } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
-import foto from "../assets/favicon.ico";
 import CustomToggle from "./CustomToggle";
 import { FaTrophy } from "react-icons/fa";
 import { isSignedIn } from "../config/Auth";
+import { getSubjectRanking } from "../config/Subject";
+import { getScore } from "../config/Video";
 
-const asignaturas = [
-  {
-    nombre: "Aprendizaje Automático",
-    uni: "Universidad de Zaragoza",
-    foto: foto,
-    puntuacion: "98%",
-    posicion: 1
-  },
-  {
-    nombre: "Proyecto Software",
-    uni: "Universidad de Zaragoza",
-    foto: foto,
-    puntuacion: "95%",
-    posicion: 2
-  },
-  {
-    nombre: "Bases de Datos I",
-    uni: "Universidad de Zaragoza",
-    foto: foto,
-    puntuacion: "90%",
-    posicion: 3
-  },
-  {
-    nombre: "Bases de Datos II",
-    uni: "Universidad de Zaragoza",
-    foto: foto,
-    puntuacion: "85%",
-    posicion: 4
-  },
-  {
-    nombre: "Administración de Sistemas I",
-    uni: "Universidad de Zaragoza",
-    foto: foto,
-    puntuacion: "82%",
-    posicion: 5
-  },
-  {
-    nombre: "Administración de Sistemas II",
-    uni: "Universidad de Zaragoza",
-    foto: foto,
-    puntuacion: "80%",
-    posicion: 6
-  },
-  {
-    nombre: "Inteligencia Artificial",
-    uni: "Universidad de Zaragoza",
-    foto: foto,
-    puntuacion: "78%",
-    posicion: 7
-  },
-  {
-    nombre: "Ingeniería del Software",
-    uni: "Universidad de Zaragoza",
-    foto: foto,
-    puntuacion: "77%",
-    posicion: 8
-  },
-  {
-    nombre: "Programación de Sistemas Concurrentes y Distribuidos",
-    uni: "Universidad de Zaragoza",
-    foto: foto,
-    puntuacion: "73%",
-    posicion: 9
+class ItemAsignatura extends Component {
+  render() {
+    return (
+      <Link
+        to={`/asig/${this.props.id}`}
+        style={{ color: "black", textDecoration: "none" }}
+      >
+        <ListGroup.Item className="fondo">
+          <p className="puestoRanking">
+            {this.props.pos}.{" "}
+            {this.props.trofeo !== null ? (
+              <FaTrophy
+                style={{ marginLeft: "10px" }}
+                color={this.props.trofeo}
+                size={25}
+              />
+            ) : null}
+          </p>
+          <p className="asigRank">{this.props.nombre}</p>
+          <img
+            className="imagenRank"
+            src={this.props.uni === undefined ? "" : this.props.uni.photo}
+            alt="imagen asinatura"
+          />
+          <p className="uniRank">
+            {this.props.uni === undefined ? "" : this.props.uni.name}
+          </p>
+          <p className="puntuacion">{this.props.puntuacion}%</p>
+        </ListGroup.Item>
+      </Link>
+    );
   }
-];
-
-const ItemAsignatura = ({ nombre, uni, foto, pos, trofeo, puntuacion }) => {
-  return (
-    <Link to="/asig/1" style={{ color: "black", textDecoration: "none" }}>
-      <ListGroup.Item className="fondo">
-        <p className="puestoRanking">
-          {pos}.{" "}
-          {trofeo !== null ? (
-            <FaTrophy style={{ marginLeft: "10px" }} color={trofeo} size={25} />
-          ) : null}
-        </p>
-        <p className="asigRank">{nombre}</p>
-        <img className="imagenRank" src={foto} alt="imagen asinatura" />
-        <p className="uniRank">{uni}</p>
-        <p className="puntuacion">{puntuacion}</p>
-      </ListGroup.Item>
-    </Link>
-  );
-};
+}
 
 const ListaAsignaturas = lista =>
   lista.map(el => {
-    const { nombre, uni, foto, puntuacion, posicion } = el;
+    const { name, university, id, avgScore, position } = el;
     let trofeo = null;
-    switch (posicion) {
+    switch (position) {
       case 1:
         trofeo = "#D4AF37";
         break;
@@ -113,13 +63,13 @@ const ListaAsignaturas = lista =>
     }
     return (
       <ItemAsignatura
-        nombre={nombre}
-        uni={uni}
-        foto={foto}
-        key={nombre}
-        pos={posicion}
+        nombre={name}
+        uni={university}
+        key={id}
+        id={id}
+        pos={position}
         trofeo={trofeo}
-        puntuacion={puntuacion}
+        puntuacion={getScore(avgScore)}
       />
     );
   });
@@ -129,11 +79,22 @@ class Rankings extends Component {
     super();
     this.state = {
       contentMargin: "300px",
-      filtro: ""
+      filtro: "",
+      asignaturas: []
     };
     this.handleChange = this.handleChange.bind(this);
     this.cambiaFiltro = this.cambiaFiltro.bind(this);
     this.filtrar = this.filtrar.bind(this);
+  }
+
+  componentWillMount() {
+    getSubjectRanking(0, data => {
+      const ranking = data.map((a, index) => {
+        a.position = index + 1;
+        return a;
+      });
+      this.setState({ asignaturas: ranking });
+    });
   }
 
   cambiaFiltro(e) {
@@ -142,7 +103,7 @@ class Rankings extends Component {
 
   filtrar(lista) {
     let asig = lista.filter(
-      a => "" || a.nombre.toLowerCase().startsWith(this.state.filtro)
+      a => "" || a.name.toLowerCase().startsWith(this.state.filtro)
     );
     return asig;
   }
@@ -155,7 +116,7 @@ class Rankings extends Component {
     }
   }
   render() {
-    const asignaturasFiltradas = this.filtrar(asignaturas);
+    const asignaturasFiltradas = this.filtrar(this.state.asignaturas);
     const listaAsign = ListaAsignaturas(asignaturasFiltradas);
     return !isSignedIn() ? (
       <Redirect to="/" />
