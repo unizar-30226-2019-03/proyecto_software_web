@@ -45,8 +45,6 @@ export function updateDisplay(videoId, secsFromBeg) {
   apiInstance.updateDisplay(secsFromBeg, videoId, (error, data, response) => {
     if (error) {
       console.error(error);
-    } else {
-      console.log("API called successfully");
     }
   });
 }

@@ -42,7 +42,6 @@ export function addUser(
     photo,
     (error, data, response) => {
       if (error) {
-        console.log("MAL");
         console.error(error);
       } else {
         callback(data);

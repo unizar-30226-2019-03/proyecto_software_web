@@ -544,7 +544,6 @@ class AdministradorCrear extends Component {
       const asignatura = parseInt(this.asignUn.current.value);
       if (!isNaN(asignatura)) {
         const user = this.userUn.current.value;
-        console.log(universidad, asignatura, user);
         getUserByUsername(user, data => {
           if (data === false || data.length === 0) {
             alert("El usuario especificado no existe");

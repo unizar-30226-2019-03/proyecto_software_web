@@ -28,7 +28,6 @@ export function getCommentsByVideo(id, page, callback) {
     if (error) {
       console.error(error);
     } else {
-      console.log(data);
       let com = data._embedded.comments.map(c => {
         const t = c.secondsFromBeginning;
         const text = c.text;
@@ -58,8 +57,6 @@ export function addComment(comment, time, id) {
     (error, data, response) => {
       if (error) {
         console.error(error);
-      } else {
-        console.log(data);
       }
     }
   );

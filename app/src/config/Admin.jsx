@@ -58,7 +58,6 @@ export function crearCarreraYLigar(DegreeApi, carrera, uni) {
         if (error) {
           console.error(error);
         } else {
-          console.log(data);
           ligarUniCarr(uni, data.id, DegreeApi);
         }
       });

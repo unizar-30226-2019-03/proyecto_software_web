@@ -389,8 +389,6 @@ class ViendoVideo extends Component {
     this.voteApi.addVote(vote, (error, data, response) => {
       if (error) {
         console.error(error);
-      } else {
-        console.log(data);
       }
     });
   }

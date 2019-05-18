@@ -152,9 +152,7 @@ export function getVideosFromUploader(page, callback) {
     if (error) {
       console.error(error);
     } else {
-      console.log(data);
       const now = ApiClient.parseDate(response.headers.date);
-      console.log(data);
       callback(data._embedded.videos, now);
     }
   });
@@ -181,7 +179,6 @@ export function getVideo(id, callback) {
     if (error) {
       console.error(error);
     } else {
-      console.log(data);
       const now = ApiClient.parseDate(response.headers.date);
       callback(data, now);
     }

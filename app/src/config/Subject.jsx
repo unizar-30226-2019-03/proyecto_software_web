@@ -22,7 +22,6 @@ export function findSubjectByName(name, callback) {
     if (error) {
       console.error(error);
     } else {
-      console.log(data);
       callback(data);
     }
   });
