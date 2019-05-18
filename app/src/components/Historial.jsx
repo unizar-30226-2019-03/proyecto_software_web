@@ -5,7 +5,7 @@ import { Redirect } from "react-router-dom";
 import Popup from "reactjs-popup";
 import { Notificacion } from "./Listas";
 import { RemoveAccents } from "../config/Process";
-import { isSignedIn, getUserID } from "../config/Auth";
+import { isSignedIn } from "../config/Auth";
 import { getDisplaysByUser, deleteVideoFromDisplay } from "../config/Display";
 import ListaHistorial from "./ListaHistorial";
 
@@ -303,7 +303,7 @@ class Historial extends Component {
   }
 
   getHistorial(page) {
-    getDisplaysByUser(getUserID(), page, data => {
+    getDisplaysByUser(page, data => {
       this.setState({
         page: page + 1,
         miHistorial: data._embedded.displays

@@ -7,11 +7,10 @@ const apiInstance = new DisplayApi();
 
 /**
  * Obtiene una lista de vídeos reproducidos por el usuario
- * @param {Number} id ID del usuario
  * @param {Number} page Número de página a obtener
  * @param {Function} callback Función a ejecutar tras obtener los datos
  */
-export function getDisplaysByUser(id, page, callback) {
+export function getDisplaysByUser(page, callback) {
   // Configure Bearer (JWT) access token for authorization: bearerAuth
   let bearerAuth = defaultClient.authentications["bearerAuth"];
   bearerAuth.accessToken = getUserToken();
@@ -24,7 +23,7 @@ export function getDisplaysByUser(id, page, callback) {
     sort: ["null"], // [String] | Parámetros en la forma `($propertyname,)+[asc|desc]?`
     projection: "displayWithVideo" // String | Incluir si se quiere obtener tambien los videos en la respuesta
   };
-  apiInstance.getDisplaysByUser(id, opts, (error, data, response) => {
+  apiInstance.getDisplaysByUser(opts, (error, data, response) => {
     if (error) {
       console.error(error);
     } else {
@@ -62,7 +61,7 @@ export function deleteVideoFromDisplay(videoId, callback) {
   let bearerAuth = defaultClient.authentications["bearerAuth"];
   bearerAuth.accessToken = getUserToken();
 
-  apiInstance.displaysDeleteVideoIdDelete(videoId, (error, data, response) => {
+  apiInstance.deleteDisplay(videoId, (error, data, response) => {
     if (error) {
       console.error(error);
       callback(false);
