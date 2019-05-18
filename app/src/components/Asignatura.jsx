@@ -175,6 +175,24 @@ class Asignatura extends Component {
     });
   }
 
+  componentWillReceiveProps(nextProps) {
+    getUser(getUserID(), data => {
+      this.setState({ user: data });
+    });
+    findSubjectByName(nextProps.match.params.nombre, data => {
+      this.setState({ asig: data });
+      getSubjectsOfUser(getUserID(), subjects => {
+        const found = subjects.find(s => {
+          return s.id === data.id;
+        });
+        //Si no la ha encontrado -> No sigue la asignatura
+        this.setState({
+          siguiendoAsig: found === undefined ? false : true
+        });
+      });
+    });
+  }
+
   componentWillUnmount() {
     this.pararReloj();
   }

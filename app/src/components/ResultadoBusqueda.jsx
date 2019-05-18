@@ -1,66 +1,13 @@
 import React, { Component } from "react";
 import ListaBusqueda from "./ListaBusqueda";
-import imagenPrueba from "../assets/landscape.jpg";
 import { Notificacion } from "./Listas";
 import { Helmet } from "react-helmet";
 import BarraNavegacion from "./BarraNavegacion";
 import { Redirect } from "react-router-dom";
-import BusquedaProfesores from "./BusquedaProfesores";
 import { isSignedIn } from "../config/Auth";
 import { findVideosContainingTitle } from "../config/Video";
-
-const listaProfesores = [
-  {
-    name: "David Solanas",
-    image: imagenPrueba,
-    uni: "Universidad de Zaragoza"
-  },
-  {
-    name: "Diego Martínez",
-    image: imagenPrueba,
-    uni: "Universidad de Zaragoza"
-  },
-  {
-    name: "Juan Asensio",
-    image: imagenPrueba,
-    uni: "Universidad de Zaragoza"
-  },
-  {
-    name: "Isaac Valdivia",
-    image: imagenPrueba,
-    uni: "Universidad de Zaragoza"
-  },
-  {
-    name: "Lorien López",
-    image: imagenPrueba,
-    uni: "Universidad de Zaragoza"
-  },
-  {
-    name: "Raquel Roy",
-    image: imagenPrueba,
-    uni: "Universidad de Zaragoza"
-  },
-  {
-    name: "Paula Lardiés",
-    image: imagenPrueba,
-    uni: "Universidad de Zaragoza"
-  },
-  {
-    name: "Adrián Samatán",
-    image: imagenPrueba,
-    uni: "Universidad de Zaragoza"
-  },
-  {
-    name: "José Vallejo",
-    image: imagenPrueba,
-    uni: "Universidad de Zaragoza"
-  },
-  {
-    name: "Rubén",
-    image: imagenPrueba,
-    uni: "Universidad de Zaragoza"
-  }
-];
+import { findSubjectsContainingName } from "../config/Subject";
+import BusquedaAsignaturas from "./BusquedaAsignaturas";
 
 const listasRepro = [
   "Lista de reproducción 1",
@@ -77,30 +24,34 @@ class ResultadoBusqueda extends Component {
       contentMargin: "300px",
       busqueda: this.props.match.params.valor,
       lista: [],
+      listaAsignaturas: [],
       tiempo: 0,
       notif: false,
       mensajeNotif: "",
-      profesores: false,
+      asignaturas: false,
       timeNow: new Date()
     };
     this.handleChange = this.handleChange.bind(this);
     this.anyadirVideoALista = this.anyadirVideoALista.bind(this);
     this.iniciarReloj = this.iniciarReloj.bind(this);
     this.pararReloj = this.pararReloj.bind(this);
-    this.buscarVideos = this.buscarVideos.bind(this);
+    this.buscarResultados = this.buscarResultados.bind(this);
     this.tick = this.tick.bind(this);
   }
 
   componentWillMount() {
-    this.buscarVideos(this.props.match.params.valor);
+    this.buscarResultados(this.props.match.params.valor);
   }
 
-  buscarVideos(titulo) {
+  buscarResultados(titulo) {
     findVideosContainingTitle(titulo, (videos, time) => {
       this.setState({
         lista: videos,
         timeNow: time
       });
+    });
+    findSubjectsContainingName(titulo, data => {
+      this.setState({ listaAsignaturas: data });
     });
   }
 
@@ -147,7 +98,7 @@ class ResultadoBusqueda extends Component {
   }
 
   componentWillReceiveProps(newProps) {
-    this.buscarVideos(newProps.match.params.valor);
+    this.buscarResultados(newProps.match.params.valor);
     this.setState({ busqueda: newProps.match.params.valor });
   }
 
@@ -190,29 +141,29 @@ class ResultadoBusqueda extends Component {
             </div>
             <div style={{ marginBottom: "20px", display: "flex" }}>
               <div
-                onClick={() => this.setState({ profesores: false })}
+                onClick={() => this.setState({ asignaturas: false })}
                 style={{
                   cursor: "pointer",
                   marginRight: "10px",
-                  fontWeight: !this.state.profesores ? "550" : "300",
-                  textDecoration: !this.state.profesores ? "underline" : "none"
+                  fontWeight: !this.state.asignaturas ? "550" : "300",
+                  textDecoration: !this.state.asignaturas ? "underline" : "none"
                 }}
               >
                 Videos
               </div>
               <div
-                onClick={() => this.setState({ profesores: true })}
+                onClick={() => this.setState({ asignaturas: true })}
                 style={{
                   cursor: "pointer",
                   marginRight: "10px",
-                  fontWeight: this.state.profesores ? "550" : "300",
-                  textDecoration: this.state.profesores ? "underline" : "none"
+                  fontWeight: this.state.asignaturas ? "550" : "300",
+                  textDecoration: this.state.asignaturas ? "underline" : "none"
                 }}
               >
-                Profesores
+                Asignaturas
               </div>
             </div>
-            {!this.state.profesores ? (
+            {!this.state.asignaturas ? (
               <ListaBusqueda
                 lista={this.state.lista}
                 anyadirALista={this.anyadirVideoALista}
@@ -220,7 +171,7 @@ class ResultadoBusqueda extends Component {
                 time={this.state.timeNow}
               />
             ) : (
-              <BusquedaProfesores lista={listaProfesores} />
+              <BusquedaAsignaturas lista={this.state.listaAsignaturas} />
             )}
             <Notificacion
               mostrar={this.state.notif}

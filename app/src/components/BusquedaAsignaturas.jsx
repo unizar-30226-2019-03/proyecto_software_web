@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "react-bootstrap";
 
-const MenuItem = ({ name, img, uni }) => {
+const MenuItem = ({ subject }) => {
   return (
     <div
       style={{
@@ -12,15 +12,17 @@ const MenuItem = ({ name, img, uni }) => {
     >
       <div>
         <Link
-          to={`/profesor/${name}`}
+          to={`/asig/${subject.name}`}
           style={{ display: "flex", color: "black", textDecoration: "none" }}
         >
           <img
-            src={img}
+            src={
+              subject.university === undefined ? "" : subject.university.photo
+            }
             width="125"
             height="125"
             style={{ borderRadius: "50%" }}
-            alt="videoX"
+            alt={subject.name}
           />
           <div
             style={{
@@ -36,7 +38,8 @@ const MenuItem = ({ name, img, uni }) => {
               marginBottom: "45px"
             }}
           >
-            {name} - {uni}
+            {subject.name === undefined ? "" : subject.name.split(":")[0]} -{" "}
+            {subject.university === undefined ? "" : subject.university.name}
           </div>
         </Link>
       </div>
@@ -49,7 +52,7 @@ const MenuItem = ({ name, img, uni }) => {
         }}
       >
         <Link
-          to={`/chat/${name}`}
+          to={`/chat/${subject.name}`}
           className="universidad"
           style={{ textDecoration: "none" }}
         >
@@ -59,7 +62,7 @@ const MenuItem = ({ name, img, uni }) => {
               whiteSpace: "nowrap"
             }}
           >
-            Enviar un mensaje
+            Seguir Asignatura
           </Button>
         </Link>
       </div>
@@ -69,21 +72,24 @@ const MenuItem = ({ name, img, uni }) => {
 
 // All items component
 // Important! add unique key
-const MenuVertical = list =>
+const Menu = list =>
   list.map(el => {
-    const { name, image, uni } = el;
-
-    return <MenuItem name={name} key={name} img={image} uni={uni} />;
+    return <MenuItem subject={el} key={el.id} />;
   });
 
-class BusquedaProfesores extends Component {
+class BusquedaAsignaturas extends Component {
   constructor(props) {
     super(props);
-    this.menu = MenuVertical(this.props.lista);
+    this.menu = Menu(this.props.lista);
   }
+
+  componentWillReceiveProps(nextProps) {
+    this.menu = Menu(nextProps.lista);
+  }
+
   render() {
     return <div>{this.menu}</div>;
   }
 }
 
-export default BusquedaProfesores;
+export default BusquedaAsignaturas;

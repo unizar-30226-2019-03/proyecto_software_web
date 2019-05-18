@@ -22,7 +22,30 @@ export function findSubjectByName(name, callback) {
     if (error) {
       console.error(error);
     } else {
+      console.log(data);
       callback(data);
+    }
+  });
+}
+
+/**
+ * Busca asignaturas cuyo nombre contenga la cadena name
+ * @param {String} name Nombre a buscar
+ * @param {Function} callback Función a ejecutar tras obtener los datos
+ */
+export function findSubjectsContainingName(name, callback) {
+  let opts = {
+    cacheControl: "no-cache, no-store, must-revalidate", // String |
+    pragma: "no-cache", // String |
+    expires: "0", // String |
+    projection: "subjectWithUniversity", // String | Incluir si se quiere obtener tambien la universidad en la respuesta
+    name: name // String | String a buscar en el nombre de asignaturas
+  };
+  apiInstance.findSubjectsContainingName(opts, (error, data, response) => {
+    if (error) {
+      console.error(error);
+    } else {
+      callback(data._embedded.subjects);
     }
   });
 }
