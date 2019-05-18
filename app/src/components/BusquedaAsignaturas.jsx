@@ -52,7 +52,7 @@ const MenuItem = ({ subject }) => {
         }}
       >
         <Link
-          to={`/chat/${subject.name}`}
+          to={`/asig/${subject.name}`}
           className="universidad"
           style={{ textDecoration: "none" }}
         >
@@ -62,7 +62,7 @@ const MenuItem = ({ subject }) => {
               whiteSpace: "nowrap"
             }}
           >
-            Seguir Asignatura
+            Ir a Asignatura
           </Button>
         </Link>
       </div>
