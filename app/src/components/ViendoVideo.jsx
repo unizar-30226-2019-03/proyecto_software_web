@@ -643,7 +643,7 @@ class ViendoVideo extends Component {
             </div>
             <div className="datos-video">
               <div style={{ display: "flex", marginBottom: "20px" }}>
-                <Link to={`/asig/${this.state.asig.name}`}>
+                <Link to={`/asig/${this.state.asig.id}`}>
                   <img
                     src={photo}
                     style={{ borderRadius: "50%" }}
@@ -654,7 +654,7 @@ class ViendoVideo extends Component {
                 </Link>
                 <Link
                   className="nombre-canal"
-                  to={`/asig/${this.state.asig.name}`}
+                  to={`/asig/${this.state.asig.id}`}
                 >
                   {this.state.asig.name}
                 </Link>

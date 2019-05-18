@@ -128,7 +128,7 @@ class MenuItem extends Component {
 
   componentWillMount() {
     getVideoSubject(this.props.id, data => {
-      this.setState({ asig: data.name });
+      this.setState({ asig: data.id });
     });
   }
 

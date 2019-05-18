@@ -289,22 +289,15 @@ class FormularioProfeAsignatura extends React.Component {
       showAsig: false
     };
     this.handleChange = this.handleChange.bind(this);
-    this.actualizarAsig = this.actualizarAsig.bind(this);
-  }
-
-  actualizarAsig(datos) {
-    const asigs = datos.map(a => {
-      a.name = a.name.split(":")[0];
-      return a;
-    });
-    this.setState({ asignaturas: asigs });
   }
 
   handleChange(event) {
     //Buscar asignaturas según la universidad
     const uni = parseInt(event.target.value);
     if (uni !== -1) {
-      getSubjectsFromUniveristy(uni, this.actualizarAsig);
+      getSubjectsFromUniveristy(uni, data => {
+        this.setState({ asignaturas: data });
+      });
       this.setState({ showAsig: true });
     } else {
       this.setState({ showAsig: false, asignaturas: [] });
@@ -529,7 +522,7 @@ class AdministradorCrear extends Component {
   handleAsignatura(event, form) {
     event.preventDefault();
     const uni = parseInt(this.uniAsig.current.value);
-    const subj = this.nombreAsig.current.value + ":" + uni;
+    const subj = this.nombreAsig.current.value;
     const shortname = this.nombreCortoAsig.current.value;
     crearAsigYLigar(this.SubjectApi, subj, shortname, uni);
     form.reset();

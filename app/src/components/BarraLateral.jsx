@@ -75,9 +75,9 @@ class BarraLateral extends Component {
               <Link
                 key={a.id}
                 className={this.active(a.name)}
-                to={`/asig/${a.name}`}
+                to={`/asig/${a.id}`}
               >
-                {a.name.split(":")[0]}
+                {a.name}
               </Link>
             );
           })}

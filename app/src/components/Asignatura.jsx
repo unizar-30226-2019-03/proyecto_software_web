@@ -11,7 +11,7 @@ import { isSignedIn, getUserID } from "../config/Auth";
 import {
   SubscribeSubject,
   UnsubscribeSubject,
-  findSubjectByName
+  getSubjectById
 } from "../config/Subject";
 import { getUser, getSubjectsOfUser } from "../config/User";
 import { Notificacion } from "./Listas";
@@ -163,14 +163,16 @@ class Asignatura extends Component {
     getUser(getUserID(), data => {
       this.setState({ user: data });
     });
-    findSubjectByName(this.props.match.params.nombre, data => {
+    getSubjectById(parseInt(this.props.match.params.id), data => {
       this.setState({ asig: data });
       getSubjectsOfUser(getUserID(), subjects => {
         const found = subjects.find(s => {
           return s.id === data.id;
         });
         //Si no la ha encontrado -> No sigue la asignatura
-        this.setState({ siguiendoAsig: found === undefined ? false : true });
+        this.setState({
+          siguiendoAsig: found === undefined ? false : true
+        });
       });
     });
   }
@@ -179,7 +181,7 @@ class Asignatura extends Component {
     getUser(getUserID(), data => {
       this.setState({ user: data });
     });
-    findSubjectByName(nextProps.match.params.nombre, data => {
+    getSubjectById(parseInt(nextProps.match.params.id), data => {
       this.setState({ asig: data });
       getSubjectsOfUser(getUserID(), subjects => {
         const found = subjects.find(s => {
@@ -231,7 +233,7 @@ class Asignatura extends Component {
             this.setState({
               siguiendoAsig: !this.state.siguiendoAsig,
               notif: true,
-              mensajeNotif: `Siguiendo a ${this.state.asig.name.split(":")[0]}`
+              mensajeNotif: `Siguiendo a ${this.state.asig.name}`
             });
             this.iniciarReloj();
           }
@@ -241,9 +243,7 @@ class Asignatura extends Component {
             this.setState({
               siguiendoAsig: !this.state.siguiendoAsig,
               notif: true,
-              mensajeNotif: `Dejando de seguir a ${
-                this.state.asig.name.split(":")[0]
-              }`
+              mensajeNotif: `Dejando de seguir a ${this.state.asig.name}`
             });
             this.iniciarReloj();
           }
@@ -256,9 +256,7 @@ class Asignatura extends Component {
         ? ""
         : this.state.asig.university.photo;
     const nombreAsig =
-      this.state.asig.name === undefined
-        ? ""
-        : this.state.asig.name.split(":")[0];
+      this.state.asig.name === undefined ? "" : this.state.asig.name;
     return !isSignedIn() ? (
       <Redirect to="/" />
     ) : (
@@ -269,9 +267,7 @@ class Asignatura extends Component {
         </Helmet>
         <BarraNavegacion
           onChange={this.handleChange}
-          activar={
-            this.state.siguiendoAsig ? this.props.match.params.nombre : ""
-          }
+          activar={nombreAsig}
           displaySide={true}
           hide={false}
         />

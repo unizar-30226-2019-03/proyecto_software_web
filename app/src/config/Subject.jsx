@@ -6,6 +6,31 @@ const apiInstance = new SubjectApi();
 const defaultClient = ApiClient.instance;
 
 /**
+ * Obtiene la asignatura con el id especificado
+ * @param {Number} id ID de la asignatura
+ * @param {Function} callback Función a ejecutar tras obtener los datos
+ */
+export function getSubjectById(id, callback) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  let opts = {
+    cacheControl: "no-cache, no-store, must-revalidate", // String |
+    pragma: "no-cache", // String |
+    expires: "0", // String |
+    projection: "subjectWithUniversity" // String | Incluir si se quiere obtener tambien la universidad en la respuesta
+  };
+  apiInstance.getSubjectById(id, opts, (error, data, response) => {
+    if (error) {
+      console.error(error);
+    } else {
+      callback(data);
+    }
+  });
+}
+
+/**
  * Obtiene la asignatura con el nombre especificado
  * @param {String} name Nombre de la asignatura
  * @param {Function} callback Función a ejecutar tras obtener los datos

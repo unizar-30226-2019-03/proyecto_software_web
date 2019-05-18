@@ -7,12 +7,9 @@ import CustomToggle from "./CustomToggle";
 import { isSignedIn, getUserID } from "../config/Auth";
 import { getSubjectsOfUser } from "../config/User";
 
-const ItemAsignatura = ({ nombre, uni, foto }) => {
+const ItemAsignatura = ({ nombre, uni, foto, id }) => {
   return (
-    <Link
-      to={`/asig/${nombre}`}
-      style={{ color: "black", textDecoration: "none" }}
-    >
+    <Link to={`/asig/${id}`} style={{ color: "black", textDecoration: "none" }}>
       <ListGroup.Item className="fondo">
         <p className="asig">{nombre}</p>
         <p className="uni">{uni}</p>
@@ -31,6 +28,7 @@ const ListaAsignaturas = lista =>
         uni={university.name}
         foto={university.photo}
         key={id}
+        id={id}
       />
     );
   });

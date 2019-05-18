@@ -12,7 +12,7 @@ const MenuItem = ({ subject }) => {
     >
       <div>
         <Link
-          to={`/asig/${subject.name}`}
+          to={`/asig/${subject.id}`}
           style={{ display: "flex", color: "black", textDecoration: "none" }}
         >
           <img
@@ -38,7 +38,7 @@ const MenuItem = ({ subject }) => {
               marginBottom: "45px"
             }}
           >
-            {subject.name === undefined ? "" : subject.name.split(":")[0]} -{" "}
+            {subject.name === undefined ? "" : subject.name} -{" "}
             {subject.university === undefined ? "" : subject.university.name}
           </div>
         </Link>
@@ -52,7 +52,7 @@ const MenuItem = ({ subject }) => {
         }}
       >
         <Link
-          to={`/asig/${subject.name}`}
+          to={`/asig/${subject.id}`}
           className="universidad"
           style={{ textDecoration: "none" }}
         >

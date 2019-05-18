@@ -245,9 +245,9 @@ class MenuItem extends Component {
                 WebkitBoxOrient: "vertical",
                 fontWeight: "500"
               }}
-              to={`/asig/${this.props.canal}`}
+              to={`/asig/${this.props.canalId}`}
             >
-              {this.props.canal.split(":")[0]}
+              {this.props.canal}
             </Link>
             <div style={{ marginTop: "10px", width: "90%" }}>
               <div
@@ -326,6 +326,7 @@ export const MenuVertical = (list, anyadir, listaRepro, time) =>
       <MenuItem
         url={video.title}
         canal={video.subject.name}
+        canalId={video.subject.id}
         key={video.id}
         id={video.id}
         anyadirALista={anyadir}

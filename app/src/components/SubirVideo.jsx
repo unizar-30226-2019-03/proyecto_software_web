@@ -131,11 +131,7 @@ class SubirVideo extends Component {
 
   componentWillMount() {
     getSubjectsAsProfessor(getUserID(), asignaturas => {
-      const asigs = asignaturas.map(a => {
-        a.name = a.name.split(":")[0];
-        return a;
-      });
-      this.setState({ listaAsignaturas: asigs });
+      this.setState({ listaAsignaturas: asignaturas });
     });
   }
 

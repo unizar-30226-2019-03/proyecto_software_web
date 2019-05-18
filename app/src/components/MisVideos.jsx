@@ -14,7 +14,7 @@ import {
   deleteVideo
 } from "../config/Video";
 import { getUser } from "../config/User";
-import { findSubjectByName } from "../config/Subject";
+import { getSubjectById } from "../config/Subject";
 import { FaEllipsisV } from "react-icons/fa";
 
 // One item component
@@ -42,7 +42,7 @@ class MiVideoItem extends Component {
   }
 
   componentWillMount() {
-    findSubjectByName(this.props.subject.name, data => {
+    getSubjectById(parseInt(this.props.subject.id), data => {
       this.setState({ asig: data });
     });
   }
@@ -159,7 +159,7 @@ class MiVideoItem extends Component {
             <div style={{ float: "left", marginTop: "5px" }}>
               <Link
                 to={`/asig/${
-                  this.state.asig.name === undefined ? "" : this.state.asig.name
+                  this.state.asig.id === undefined ? "" : this.state.asig.id
                 }`}
                 style={{ textDecoration: "none" }}
               >
