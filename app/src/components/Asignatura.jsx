@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
-import icono from "../assets/favicon.ico";
 import imagenPrueba from "../assets/landscape.jpg";
 import { Button } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
@@ -11,16 +10,11 @@ import { isSignedIn, getUserID } from "../config/Auth";
 import {
   SubscribeSubject,
   UnsubscribeSubject,
-  getSubjectById
+  getSubjectById,
+  getProfessorsFromSubject
 } from "../config/Subject";
 import { getUser, getSubjectsOfUser } from "../config/User";
 import { Notificacion } from "./Listas";
-
-const profesores = [
-  { foto: icono, nombre: "Jorge Pérez" },
-  { foto: icono, nombre: "Javier Molina" },
-  { foto: icono, nombre: "Juan García" }
-];
 
 const list = [
   {
@@ -109,24 +103,28 @@ const list = [
   }
 ];
 
-export const Profesor = ({ foto, nombre }) => {
+export const Profesor = ({ user }) => {
   return (
     <div
-      style={{ marginRight: "20px", textAlign: "center", marginBottom: "10px" }}
+      style={{
+        marginRight: "20px",
+        textAlign: "center",
+        marginBottom: "10px"
+      }}
     >
       <Link
-        to="/profesor/X"
+        to={`/profesor/${user.id}`}
         style={{ textDecoration: "none", color: "black", display: "flex" }}
       >
         <img
-          src={foto}
+          src={user.photo}
           alt="profesor"
           width="30"
           height="30"
           style={{ borderRadius: "50%" }}
         />
         <p style={{ marginLeft: "10px", marginTop: "3px", fontWeight: "500" }}>
-          {nombre}
+          {user.username}
         </p>
       </Link>
     </div>
@@ -135,9 +133,7 @@ export const Profesor = ({ foto, nombre }) => {
 
 export const ListaProfesores = list =>
   list.map(el => {
-    const { foto, nombre } = el;
-
-    return <Profesor nombre={nombre} key={nombre} foto={foto} />;
+    return <Profesor user={el} key={el.id} />;
   });
 
 class Asignatura extends Component {
@@ -150,7 +146,8 @@ class Asignatura extends Component {
       asig: {},
       notif: false,
       mensajeNotif: "",
-      tiempoNotif: 0
+      tiempoNotif: 0,
+      profesores: []
     };
     this.seguirAsig = this.seguirAsig.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -174,6 +171,10 @@ class Asignatura extends Component {
           siguiendoAsig: found === undefined ? false : true
         });
       });
+    });
+    getProfessorsFromSubject(parseInt(this.props.match.params.id), data => {
+      console.log(data);
+      this.setState({ profesores: data });
     });
   }
 
@@ -314,7 +315,9 @@ class Asignatura extends Component {
             </div>
             <div className="profesores-asignatura" style={{ flex: "15%" }}>
               <div className="tit-prof">Profesorado</div>
-              <div className="prof">{ListaProfesores(profesores)}</div>
+              <div className="prof">
+                {ListaProfesores(this.state.profesores)}
+              </div>
             </div>
           </div>
           <Notificacion

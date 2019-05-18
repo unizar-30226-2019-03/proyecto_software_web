@@ -44,7 +44,7 @@ class App extends Component {
           <Route path={"/subir-video"} component={SubirVideo} />
           <Route path={"/mis-videos"} component={MisVideos} />
 
-          <Route path={"/profesor/:nombre"} component={Profesor} />
+          <Route path={"/profesor/:id"} component={Profesor} />
           <Route path={"/administrador-crear"} component={AdministradorCrear} />
           <Route
             path={"/administrador-borrar"}

@@ -11,7 +11,6 @@ import {
   FaStar,
   FaStarHalf
 } from "react-icons/fa";
-import icono from "../assets/favicon.ico";
 import { getTime } from "../config/Process";
 import Popup from "reactjs-popup";
 import StarRatingComponent from "react-star-rating-component";
@@ -27,15 +26,13 @@ import {
 } from "../config/Video";
 import { getCommentsByVideo, addComment } from "../config/Comments";
 import { getUser, getSubjectsOfUser } from "../config/User";
-import { SubscribeSubject, UnsubscribeSubject } from "../config/Subject";
+import {
+  SubscribeSubject,
+  UnsubscribeSubject,
+  getProfessorsFromSubject
+} from "../config/Subject";
 import { updateDisplay, getVideoDisplay } from "../config/Display";
 import { addVote } from "../config/Vote";
-
-const profesores = [
-  { foto: icono, nombre: "Jorge" },
-  { foto: icono, nombre: "Javier" },
-  { foto: icono, nombre: "Juan" }
-];
 
 const listasRepro = [
   "Lista de reproducción 1",
@@ -75,18 +72,21 @@ const StarRating = ({ nombre, puntuacion, onStarClick, size }) => {
   );
 };
 
-const Profesor = ({ foto, nombre }) => {
+const Profesor = ({ user }) => {
   return (
     <div style={{ marginRight: "20px", textAlign: "center" }}>
-      <Link to="/profesor/X" style={{ textDecoration: "none", color: "black" }}>
+      <Link
+        to={`/profesor/${user.id}`}
+        style={{ textDecoration: "none", color: "black" }}
+      >
         <img
-          src={foto}
+          src={user.photo}
           alt="profesor"
           width="40"
           height="40"
           style={{ borderRadius: "50%" }}
         />
-        <p>{nombre}</p>
+        <p>{user.username}</p>
       </Link>
     </div>
   );
@@ -94,9 +94,7 @@ const Profesor = ({ foto, nombre }) => {
 
 const ListaProfesores = list =>
   list.map(el => {
-    const { foto, nombre } = el;
-
-    return <Profesor nombre={nombre} key={nombre} foto={foto} />;
+    return <Profesor user={el} key={el.id} />;
   });
 
 class ViendoVideo extends Component {
@@ -126,7 +124,8 @@ class ViendoVideo extends Component {
       timeNow: null,
       page: 0,
       siguiendoAsig: false,
-      tiempoInicial: 0
+      tiempoInicial: 0,
+      profesores: []
     };
     this.handleChange = this.handleChange.bind(this);
     this.recogerComentarios = this.recogerComentarios.bind(this);
@@ -254,6 +253,9 @@ class ViendoVideo extends Component {
   obtenerAsignaturaUni(video) {
     getVideoSubject(video.id, asig => {
       this.setState({ asig: asig });
+      getProfessorsFromSubject(asig.id, data => {
+        this.setState({ profesores: data });
+      });
       getSubjectsOfUser(getUserID(), subjects => {
         const found = subjects.find(s => {
           return s.id === asig.id;
@@ -660,7 +662,7 @@ class ViendoVideo extends Component {
               <div style={{ marginLeft: "48px" }}>
                 <p style={{ fontWeight: "550" }}>Profesores de la asignatura</p>
                 <div style={{ display: "flex" }}>
-                  {ListaProfesores(profesores)}
+                  {ListaProfesores(this.state.profesores)}
                 </div>
               </div>
             </div>

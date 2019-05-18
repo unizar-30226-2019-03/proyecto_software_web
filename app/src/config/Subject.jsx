@@ -113,3 +113,27 @@ export function UnsubscribeSubject(subjectId, ack) {
     }
   });
 }
+
+/**
+ * Obtiene los profesores asociados a una asignatura
+ * @param {Number} id ID de la asignatura
+ * @param {Function} callback Función a ejecutar tras obtener los datos
+ */
+export function getProfessorsFromSubject(id, callback) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  let opts = {
+    cacheControl: "no-cache, no-store, must-revalidate", // String |
+    pragma: "no-cache", // String |
+    expires: "0" // String |
+  };
+  apiInstance.getProfessorsFromSubject(id, opts, (error, data, response) => {
+    if (error) {
+      console.error(error);
+    } else {
+      callback(data._embedded.users);
+    }
+  });
+}

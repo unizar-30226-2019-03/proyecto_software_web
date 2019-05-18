@@ -103,7 +103,7 @@ class Profesor extends Component {
             marginTop: "80px"
           }}
         >
-          <h5>{this.props.match.params.nombre}</h5>
+          <h5>{this.props.match.params.id}</h5>
           <div style={{ marginTop: "40px" }}>
             <div
               style={{
