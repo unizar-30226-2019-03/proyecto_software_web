@@ -32,7 +32,7 @@ import Vote2 from "swagger_unicast/dist/model/Vote2";
 import { getCommentsByVideo, addComment } from "../config/Comments";
 import { getUser, getSubjectsOfUser } from "../config/User";
 import { SubscribeSubject, UnsubscribeSubject } from "../config/Subject";
-import { updateDisplay } from "../config/Display";
+import { updateDisplay, getVideoDisplay } from "../config/Display";
 
 const profesores = [
   { foto: icono, nombre: "Jorge" },
@@ -128,7 +128,8 @@ class ViendoVideo extends Component {
       video: {},
       timeNow: null,
       page: 0,
-      siguiendoAsig: false
+      siguiendoAsig: false,
+      tiempoInicial: 0
     };
     this.videoApi = new VideoApi();
     this.voteApi = new VoteApi();
@@ -200,7 +201,11 @@ class ViendoVideo extends Component {
       document.getElementById("zona-escribir-comentarios").clientHeight -
       10;
     if (currentTime > this.state.tiempoVideo) {
-      updateDisplay(this.state.video.id, currentTime);
+      if (currentTime >= this.state.video.seconds - 1) {
+        updateDisplay(this.state.video.id, 0);
+      } else {
+        updateDisplay(this.state.video.id, currentTime);
+      }
     }
     this.setState({
       comentarios: nuevosComentarios,
@@ -229,7 +234,11 @@ class ViendoVideo extends Component {
       this.setState({ video: video, timeNow: time });
       this.obtenerAsignaturaUni(video);
       this.obtenerComentarios(video, this.state.page);
-      //Buscar tambíen el segundo por el que empezar a reproducir
+      getVideoDisplay(video.id, data => {
+        if (data !== false) {
+          this.setState({ tiempoInicial: data.secsFromBeg });
+        }
+      });
     });
   }
 
@@ -441,7 +450,7 @@ class ViendoVideo extends Component {
               src={this.state.video.url}
               thumbnailUrl={this.state.video.thumbnailUrl}
               enviarEstado={this.recibirEstadoVideo}
-              time={0}
+              time={this.state.tiempoInicial}
             />
             <div className="datos-video">
               <p className="titulo-video">{this.state.video.title}</p>

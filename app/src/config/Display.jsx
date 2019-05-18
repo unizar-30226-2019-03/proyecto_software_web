@@ -70,3 +70,28 @@ export function deleteVideoFromDisplay(videoId, callback) {
     }
   });
 }
+
+/**
+ * Obtiene los datos de visualización para un usuario de un
+ * vídeo concreto
+ * @param {Number} videoId ID del vídeo
+ * @param {Function} callback Función a ejecutar tras obtener los datos
+ */
+export function getVideoDisplay(videoId, callback) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  let opts = {
+    cacheControl: "no-cache, no-store, must-revalidate", // String |
+    pragma: "no-cache", // String |
+    expires: "0" // String |
+  };
+  apiInstance.findByUserIdAndVideoId(videoId, opts, (error, data, response) => {
+    if (error) {
+      callback(false);
+    } else {
+      callback(data);
+    }
+  });
+}
