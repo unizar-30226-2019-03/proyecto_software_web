@@ -4,7 +4,8 @@ import { Redirect, Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import uni from "../assets/UnicastNombre.png";
 import { UserApi } from "swagger_unicast";
-import { signIn } from "../config/Auth";
+import { signIn, setUserRole } from "../config/Auth";
+import { getUser } from "../config/User";
 
 class Login extends Component {
   constructor(props) {
@@ -28,8 +29,11 @@ class Login extends Component {
         this.setState({ error: true });
       } else {
         signIn(data);
-        // validacion será 1 si es admin, y 0 si es un usuario normal
-        this.setState({ validado: userID === "admin" ? 1 : 0 });
+        getUser(data.id, user => {
+          // validaeo será 1 si es admin, y 0 si es un usuario normal o profesor
+          setUserRole(user.role);
+          this.setState({ validado: user.role === "ROLE_ADMIN" ? 1 : 0 });
+        });
       }
     });
   };

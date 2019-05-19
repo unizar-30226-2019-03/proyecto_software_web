@@ -23,7 +23,7 @@ import ResultadoBusqueda from "./components/ResultadoBusqueda";
 import MensajesProfes from "./components/MensajesProfes";
 import Chat from "./components/Chat";
 import MisVideos from "./components/MisVideos";
-import { isSignedIn } from "./config/Auth";
+import { isSignedIn, getUserRole } from "./config/Auth";
 
 /**
  * Clase raíz, esta clase se encarga de renderizar todas las páginas
@@ -37,7 +37,15 @@ class App extends Component {
           <Route
             exact
             path={"/"}
-            render={() => (!isSignedIn() ? <Login /> : <Inicio />)}
+            render={() =>
+              !isSignedIn() ? (
+                <Login />
+              ) : getUserRole() === "ROLE_ADMIN" ? (
+                <AdministradorCrear />
+              ) : (
+                <Inicio />
+              )
+            }
           />
           <Route path={"/registro"} component={SignIn} />
           <Route path={"/inicio"} component={Inicio} />

@@ -46,6 +46,14 @@ export function isSignedIn() {
 }
 
 /**
+ * Guarda el rol del usuario para futuras comprobaciones
+ * @param {String} role Rol del usuario
+ */
+export function setUserRole(role) {
+  localStorage.setItem("role", role);
+}
+
+/**
  * Devuelve el Token de sesión del usuario.
  */
 export function getUserToken() {
@@ -57,4 +65,11 @@ export function getUserToken() {
  */
 export function getUserID() {
   return localStorage.getItem("userID");
+}
+
+/**
+ * Devuelve el rol del usuario
+ */
+export function getUserRole() {
+  return localStorage.getItem("role");
 }
