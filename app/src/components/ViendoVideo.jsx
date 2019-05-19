@@ -194,11 +194,7 @@ class ViendoVideo extends Component {
       document.getElementById("zona-escribir-comentarios").clientHeight -
       10;
     if (currentTime > this.state.tiempoVideo) {
-      if (currentTime >= this.state.video.seconds - 1) {
-        updateDisplay(this.state.video.id, 0);
-      } else {
-        updateDisplay(this.state.video.id, currentTime);
-      }
+      updateDisplay(this.state.video.id, currentTime);
     }
     this.setState({
       comentarios: nuevosComentarios,
@@ -229,7 +225,11 @@ class ViendoVideo extends Component {
       this.obtenerComentarios(video, this.state.page);
       getVideoDisplay(video.id, data => {
         if (data !== false) {
-          this.setState({ tiempoInicial: data.secsFromBeg });
+          if (data.secsFromBeg >= video.seconds - 1) {
+            this.setState({ tiempoInicial: 0 });
+          } else {
+            this.setState({ tiempoInicial: data.secsFromBeg });
+          }
         }
       });
     });
