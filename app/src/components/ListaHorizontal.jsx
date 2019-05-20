@@ -23,7 +23,7 @@ class MenuItem extends Component {
   render() {
     return (
       <div>
-        <div className="menu-item">
+        <div className="menu-item zoom-item">
           <Link to={`/video/${this.props.id}`} style={{ position: "relative" }}>
             <img src={this.props.img} width="210" height="118" alt="videoX" />
             <div
@@ -65,8 +65,8 @@ class MenuItem extends Component {
               </div>
             ) : null}
           </Link>
-          <div>
-            <div style={{ float: "left", marginTop: "5px" }}>
+          <div style={{ display: "flex" }}>
+            <div style={{ marginTop: "5px" }}>
               <Link
                 to={`/asig/${this.state.asig.id}`}
                 style={{ textDecoration: "none" }}
@@ -85,7 +85,7 @@ class MenuItem extends Component {
                 />
               </Link>
             </div>
-            <div style={{ marginLeft: "75px", lineHeight: "normal" }}>
+            <div style={{ marginLeft: "5px", lineHeight: "16px" }}>
               {" "}
               <Link
                 style={{

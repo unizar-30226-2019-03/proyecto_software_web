@@ -145,13 +145,14 @@ export function getVideosFromUploader(page, callback) {
     pragma: "no-cache", // String |
     expires: "0", // String |
     page: page, // Number | Número de la página a devolver
-    sort: ["null"], // [String] | Parámetros en la forma `($propertyname,)+[asc|desc]?`
+    sort: ["timestamp,desc"], // [String] | Parámetros en la forma `($propertyname,)+[asc|desc]?`
     projection: "videoWithSubject" // String | Incluir si se quiere obtener tambien la universidad y/o la asignatura en la respuesta
   };
   apiInstance.getVideosFromUploader(opts, (error, data, response) => {
     if (error) {
       console.error(error);
     } else {
+      console.log(data._embedded.videos);
       const now = ApiClient.parseDate(response.headers.date);
       callback(data._embedded.videos, now);
     }
@@ -274,7 +275,7 @@ export function getVideosFromSubject(subjectId, page, callback) {
     pragma: "no-cache", // String |
     expires: "0", // String |
     page: page, // Number | Número de la página a devolver
-    sort: ["null"] // [String] | Parámetros en la forma `($propertyname,)+[asc|desc]?`
+    sort: ["timestamp,desc"] // [String] | Parámetros en la forma `($propertyname,)+[asc|desc]?`
   };
   apiInstance.getVideosFromSubject(subjectId, opts, (error, data, response) => {
     if (error) {
