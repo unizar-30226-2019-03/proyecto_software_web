@@ -8,72 +8,7 @@ import { Notificacion } from "./MisListas";
 import Popup from "reactjs-popup";
 import { RemoveAccents, getTime } from "../config/Process";
 import { isSignedIn } from "../config/Auth";
-
-const list = [
-  {
-    name: "La paradoja de los Gemelos RESUELTA!",
-    canal: "Asignatura A",
-    image: imagenPrueba,
-    duracion: getTime(500),
-    rating: 99
-  },
-  {
-    name: "La tierra no gira en círculos aleredor del SOL",
-    canal: "Asignatura B",
-    image: imagenPrueba,
-    duracion: getTime(600),
-    rating: 95
-  },
-  {
-    name: "¿ Cómo será el futuro de la física ?",
-    canal: "Asignatura C",
-    image: imagenPrueba,
-    duracion: getTime(700),
-    rating: 96
-  },
-  {
-    name: "10 cosas que no sabías del SISTEMA SOLAR",
-    canal: "Asignatura D",
-    image: imagenPrueba,
-    duracion: getTime(800),
-    rating: 98
-  },
-  {
-    name: "Física: ¿Heroína o villana?",
-    canal: "Asignatura E",
-    image: imagenPrueba,
-    duracion: getTime(900),
-    rating: 97
-  },
-  {
-    name: "¿ Hasta donde llega el SISTEMA SOLAR ?",
-    canal: "Asignatura F",
-    image: imagenPrueba,
-    duracion: getTime(1000),
-    rating: 91
-  },
-  {
-    name: "Las 8 ecuaciones más importantes de la física",
-    canal: "Asignatura G",
-    image: imagenPrueba,
-    duracion: getTime(1100),
-    rating: 92
-  },
-  {
-    name: "La psicología de los genios",
-    canal: "Asignatura H",
-    image: imagenPrueba,
-    duracion: getTime(1200),
-    rating: 94
-  },
-  {
-    name: "Superhéroes y radioactividad",
-    canal: "Asignatura I",
-    image: imagenPrueba,
-    duracion: getTime(1300),
-    rating: 93
-  }
-];
+import { getVideosFromReproductionList } from "../config/VideoAPI";
 
 const listasRepro = [
   "Lista de reproducción 1",
@@ -104,6 +39,7 @@ class Lista extends Component {
   }
 
   render() {
+    console.log(this.state.listaVideos);
     return (
       <div>
         {!this.props.fixed ? (
@@ -330,24 +266,27 @@ class Lista extends Component {
 class ListaConcreta extends Component {
   constructor() {
     super();
+    this._isMounted = false;
     this.state = {
       contentMargin: "300px",
       fixed: window.innerWidth >= 970,
       busqueda: "",
-      miHistorial: list,
-      historialFiltrado: [],
+      miLista: [],
+      listaFiltrada: [],
       filtrado: false,
       notif: false,
-      videoBorrado: null,
-      tiempo: 0,
       mensajeNotif: "",
+      videoBorrado: {},
       deshacer: false,
-      borradoCompleto: false
+      tiempo: 0,
+      timestamp: new Date(),
+      page: 0
     };
+    this.getData = this.getData.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleResize = this.handleResize.bind(this);
-    this.borrarHistorial = this.borrarHistorial.bind(this);
-    this.buscarHistorial = this.buscarHistorial.bind(this);
+    this.borrarLista = this.borrarLista.bind(this);
+    this.buscarEnLista = this.buscarEnLista.bind(this);
     this.keyDown = this.keyDown.bind(this);
     this.anyadirVideoALista = this.anyadirVideoALista.bind(this);
     this.borrarVideo = this.borrarVideo.bind(this);
@@ -357,34 +296,49 @@ class ListaConcreta extends Component {
     this.deshacer = this.deshacer.bind(this);
   }
 
+  getData(page) {
+    const id = parseInt(this.props.match.params.id);
+    getVideosFromReproductionList(id, page, (data, now) => {
+      console.log(data);
+      if (this._isMounted) {
+        let newState = this.state.miLista.slice().concat(data);
+        this.setState({
+          miLista: newState,
+          page: page + 1,
+          timestamp: now
+        });
+      }
+    });
+  }
+
   deshacer() {
     const { v, index, index2 } = this.state.videoBorrado;
-    var nuevoHistorial = this.state.miHistorial.slice();
+    var nuevoHistorial = this.state.miLista.slice();
     nuevoHistorial.splice(index, 0, v);
     this.setState({
       videoBorrado: null,
-      miHistorial: nuevoHistorial,
+      miLista: nuevoHistorial,
       notif: false
     });
     if (index2 !== -1) {
       //Deshacer en el filtrado también
-      var nuevoHistorialFiltrado = this.state.historialFiltrado.slice();
-      nuevoHistorialFiltrado.splice(index2, 0, v);
-      this.setState({ historialFiltrado: nuevoHistorialFiltrado });
+      var nuevolistaFiltrada = this.state.listaFiltrada.slice();
+      nuevolistaFiltrada.splice(index2, 0, v);
+      this.setState({ listaFiltrada: nuevolistaFiltrada });
     }
     clearInterval(this.timerID);
   }
 
-  borrarHistorial() {
+  borrarLista() {
     //Borrar la lista en el servidor
     this.setState({ borradoCompleto: true });
   }
 
-  buscarHistorial(e) {
+  buscarEnLista(e) {
     e.preventDefault();
     this.setState({ busqueda: e.target.value });
     if (e.target.value === "") {
-      this.setState({ historialFiltrado: [], filtrado: false });
+      this.setState({ listaFiltrada: [], filtrado: false });
     }
   }
 
@@ -393,7 +347,7 @@ class ListaConcreta extends Component {
       if (e.keyCode === 13) {
         const palabras = this.state.busqueda.split(" ");
         var resultado = [];
-        this.state.miHistorial.forEach(e => {
+        this.state.miLista.forEach(e => {
           const { name, canal, image, duracion } = e;
           for (let index = 0; index < palabras.length; index++) {
             const element = palabras[index];
@@ -407,7 +361,7 @@ class ListaConcreta extends Component {
             }
           }
         });
-        this.setState({ historialFiltrado: resultado, filtrado: true });
+        this.setState({ listaFiltrada: resultado, filtrado: true });
       }
     }
   }
@@ -424,13 +378,13 @@ class ListaConcreta extends Component {
   }
 
   borrarVideo(nombreVideo) {
-    var nuevoHistorial = this.state.miHistorial.slice();
+    var nuevoHistorial = this.state.miLista.slice();
     const index = nuevoHistorial.findIndex(e => e.name === nombreVideo);
     const v = nuevoHistorial[index];
     var index2 = -1;
     nuevoHistorial.splice(index, 1);
     this.setState({
-      miHistorial: nuevoHistorial,
+      miLista: nuevoHistorial,
       notif: true,
       deshacer: true,
       videoBorrado: { v, index, index2 },
@@ -439,13 +393,13 @@ class ListaConcreta extends Component {
     this.iniciarReloj();
     if (this.state.filtrado) {
       //Borrar también de filtrado
-      var nuevoFiltrado = this.state.historialFiltrado.slice();
+      var nuevoFiltrado = this.state.listaFiltrada.slice();
       index2 = nuevoFiltrado.findIndex(e => e.name === nombreVideo);
       if (index2 !== -1) {
         //Borrarlo
         nuevoFiltrado.splice(index2, 1);
         this.setState({
-          historialFiltrado: nuevoFiltrado,
+          listaFiltrada: nuevoFiltrado,
           videoBorrado: { v, index, index2 }
         });
       }
@@ -453,7 +407,7 @@ class ListaConcreta extends Component {
   }
 
   handleResize() {
-    if (this.state.miHistorial.length > 0) {
+    if (this.state.miLista.length > 0) {
       if (window.innerWidth <= 970) {
         this.setState({ fixed: false });
       } else {
@@ -466,7 +420,13 @@ class ListaConcreta extends Component {
     window.addEventListener("resize", this.handleResize);
   }
 
+  componentWillMount() {
+    this._isMounted = true;
+    this.getData(0);
+  }
+
   componentWillUnmount() {
+    this._isMounted = false;
     this.pararReloj();
     window.removeEventListener("resize", this.handleResize);
   }
@@ -528,10 +488,11 @@ class ListaConcreta extends Component {
                 <div>
                   <h5 style={{ fontWeight: "bold" }}>
                     {this.props.match.params.id}
+                    {this.props.match.params.nombre}
                   </h5>
                 </div>
               </div>{" "}
-              {this.state.miHistorial.length === 0 ? (
+              {this.state.miLista.length === 0 ? (
                 <div
                   style={{
                     color: "#00000080",
@@ -545,13 +506,13 @@ class ListaConcreta extends Component {
               ) : (
                 <Lista
                   fixed={this.state.fixed}
-                  borrar={this.borrarHistorial}
-                  handleChange={this.buscarHistorial}
+                  borrar={this.borrarLista}
+                  handleChange={this.buscarEnLista}
                   keyDown={this.keyDown}
                   historial={
                     !this.state.filtrado
-                      ? this.state.miHistorial
-                      : this.state.historialFiltrado
+                      ? this.state.miLista
+                      : this.state.listaFiltrada
                   }
                   busqueda={this.state.busqueda}
                   borrarVideo={this.borrarVideo}

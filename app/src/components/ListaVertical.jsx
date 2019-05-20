@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { FaTimes, FaPlus } from "react-icons/fa";
 import { FormCheck } from "react-bootstrap";
 import Popup from "reactjs-popup";
-import { getScore, getTimePassed } from "../config/VideoAPI";
+import { getScore, getTimePassed, getVideoSubject } from "../config/VideoAPI";
 import { getTime } from "../config/Process";
 
 export class ContenidoPopUp extends Component {
@@ -114,15 +114,35 @@ export class ContenidoPopUp extends Component {
 class MenuItem extends Component {
   constructor(props) {
     super(props);
+    this._isMounted = false;
     this.state = {
       mostrarOpciones: false,
       popUp: false,
       mostrarNotif: false,
-      mensaje: ""
+      mensaje: "",
+      asig: {}
     };
+    this.getData = this.getData.bind(this);
     this.abrirPopUp = this.abrirPopUp.bind(this);
     this.cerrarPopUp = this.cerrarPopUp.bind(this);
     this.recibirHijo = this.recibirHijo.bind(this);
+  }
+
+  getData() {
+    getVideoSubject(this.props.id, data => {
+      if (this._isMounted) {
+        this.setState({ asig: data });
+      }
+    });
+  }
+
+  componentWillMount() {
+    this._isMounted = true;
+    this.getData();
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   recibirHijo(mostrar, lista, mensaje, anyadir) {
@@ -243,9 +263,9 @@ class MenuItem extends Component {
                 WebkitBoxOrient: "vertical",
                 fontWeight: "500"
               }}
-              to={`/asig/${this.props.canal}`}
+              to={`/asig/${this.state.asig.id}`}
             >
-              {this.props.canal}
+              {this.state.asig.name}
             </Link>
             <div style={{ marginTop: "10px", width: "90%" }}>
               <div
@@ -311,7 +331,7 @@ class MenuItem extends Component {
             </Popup>
             <FaTimes
               color={"#00000080"}
-              onClick={() => this.props.borrar(this.props.url)}
+              onClick={() => this.props.borrar(this.props.id, this.props.url)}
               style={{ cursor: "pointer" }}
             />
           </div>
@@ -328,7 +348,6 @@ export const MenuVertical = (list, borrar, anyadir, listaRepro, time) =>
     return (
       <MenuItem
         url={video.title}
-        canal={video.title}
         key={video.id}
         id={video.id}
         borrar={borrar}

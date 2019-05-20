@@ -58,16 +58,37 @@ export const Notificacion = ({ mostrar, mensaje, handleClick, deshacer }) => {
 class Lista extends Component {
   constructor(props) {
     super(props);
+    this._isMounted = false;
     this.state = {
-      lista: this.props.list,
+      lista: {},
+      videos: [],
+      timeNow: new Date(),
       popUp: false
     };
     this.abrirPopUp = this.abrirPopUp.bind(this);
+
     this.cerrarPopUp = this.cerrarPopUp.bind(this);
+  }
+
+  getData(list) {
+    getVideosFromReproductionList(list.id, 0, (data, now) => {
+      if (this._isMounted) {
+        this.setState({ lista: list, videos: data, timeNow: now });
+      }
+    });
+  }
+
+  componentWillMount() {
+    this._isMounted = true;
+    this.getData(this.props.list);
   }
 
   componentWillReceiveProps(newProps) {
     this.setState({ lista: newProps.list });
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   abrirPopUp() {
@@ -89,7 +110,16 @@ class Lista extends Component {
                 style={{ marginRight: "5px" }}
               />
             ) : null}
-            <h6>{this.state.lista.name}</h6>
+            <h6>
+              <Link
+                to={`/lista/id=${this.state.lista.id}&name=${
+                  this.state.lista.name
+                }`}
+                style={{ color: "black", textDecoration: "none" }}
+              >
+                {this.state.lista.name}
+              </Link>
+            </h6>
           </div>
           <div
             style={{
@@ -152,27 +182,44 @@ class Lista extends Component {
               </div>
             </Popup>
           </div>
-          <div style={{ marginRight: "0", marginLeft: "auto" }}>
-            <Link
-              to={`/lista/${this.state.lista.id}`}
-              style={{ color: "#00000080", textDecoration: "none" }}
-            >
-              Ver todos los vídeos
-            </Link>
-          </div>
+          {this.state.videos.length === 0 ? null : (
+            <div style={{ marginRight: "0", marginLeft: "auto" }}>
+              <Link
+                to={`/lista/id=${this.state.lista.id}&name=${
+                  this.state.lista.name
+                }`}
+                style={{ color: "#00000080", textDecoration: "none" }}
+              >
+                Ver todos los vídeos
+              </Link>
+            </div>
+          )}
         </div>
-        <ListaHorizontal
-          list={
-            this.state.lista.videos === undefined ? [] : this.state.lista.videos
-          }
-          now={this.state.lista.timestamp}
-        />
+        {this.state.videos.length === 0 ? (
+          <div
+            style={{
+              width: "93.45%",
+              marginTop: "10px",
+              fontSize: "13px",
+              color: "#00000080",
+              marginBottom: "50px",
+              borderBottom: "1px solid lightgrey"
+            }}
+          >
+            <p style={{ width: "50%" }}>
+              Actualmente no hay vídeos guardados en esta lista, conforme
+              guardes los vídeos se mostrarán aquí.
+            </p>
+          </div>
+        ) : (
+          <ListaHorizontal list={this.state.videos} now={this.state.timeNow} />
+        )}
       </div>
     );
   }
 }
 
-class Listas extends Component {
+class MisListas extends Component {
   constructor() {
     super();
     this._isMounted = false;
@@ -211,13 +258,6 @@ class Listas extends Component {
 
   getData() {
     getUserReproductionLists(data => {
-      data.map((list, index) => {
-        getVideosFromReproductionList(list.id, 0, (videos, now) => {
-          data[index].videos = videos;
-          data[index].timestamp = now;
-        });
-        return null;
-      });
       if (this._isMounted) {
         this.setState({ misListas: data });
       }
@@ -401,4 +441,4 @@ class Listas extends Component {
   }
 }
 
-export default Listas;
+export default MisListas;

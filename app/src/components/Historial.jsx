@@ -10,7 +10,7 @@ import {
   getDisplaysByUser,
   deleteVideoFromDisplay
 } from "../config/DisplayAPI";
-import ListaHistorial from "./ListaHistorial";
+import ListaVertical from "./ListaVertical";
 
 const listasRepro = [
   "Lista de reproducción 1",
@@ -151,7 +151,7 @@ class HistorialLista extends Component {
                   marginTop: "25px"
                 }}
               >
-                <ListaHistorial
+                <ListaVertical
                   lista={this.state.listaVideos}
                   anyadirALista={this.props.anyadirVideoALista}
                   borrar={this.props.borrarVideo}
@@ -171,7 +171,7 @@ class HistorialLista extends Component {
                     marginTop: "25px"
                   }}
                 >
-                  <ListaHistorial
+                  <ListaVertical
                     lista={this.state.listaVideos}
                     anyadirALista={this.props.anyadirVideoALista}
                     borrar={this.props.borrarVideo}

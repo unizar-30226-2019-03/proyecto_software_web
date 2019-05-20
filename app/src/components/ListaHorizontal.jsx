@@ -11,13 +11,26 @@ import { getTimePassed, getScore, getVideoSubject } from "../config/VideoAPI";
 class MenuItem extends Component {
   constructor(props) {
     super(props);
+    this._isMounted = false;
     this.state = { asig: {} };
+    this.getData = this.getData.bind(this);
+  }
+
+  getData() {
+    getVideoSubject(parseInt(this.props.id), data => {
+      if (this._isMounted) {
+        this.setState({ asig: data });
+      }
+    });
   }
 
   componentWillMount() {
-    getVideoSubject(parseInt(this.props.id), data => {
-      this.setState({ asig: data });
-    });
+    this._isMounted = true;
+    this.getData();
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render() {
