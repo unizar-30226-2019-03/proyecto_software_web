@@ -10,10 +10,10 @@ import {
   UnsubscribeSubject,
   getSubjectById,
   getProfessorsFromSubject
-} from "../config/Subject";
-import { getUser, getSubjectsOfUser } from "../config/User";
+} from "../config/SubjectAPI";
+import { getUser, getSubjectsOfUser } from "../config/UserAPI";
 import { Notificacion } from "./Listas";
-import { getVideosFromSubject } from "../config/Video";
+import { getVideosFromSubject } from "../config/VideoAPI";
 
 export const Profesor = ({ user }) => {
   return (

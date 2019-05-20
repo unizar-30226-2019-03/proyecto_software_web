@@ -23,16 +23,16 @@ import {
   getTimePassed,
   getVideo,
   getVideoSubject
-} from "../config/Video";
-import { getCommentsByVideo, addComment } from "../config/Comments";
-import { getUser, getSubjectsOfUser } from "../config/User";
+} from "../config/VideoAPI";
+import { getCommentsByVideo, addComment } from "../config/CommentsAPI";
+import { getUser, getSubjectsOfUser } from "../config/UserAPI";
 import {
   SubscribeSubject,
   UnsubscribeSubject,
   getProfessorsFromSubject
-} from "../config/Subject";
-import { updateDisplay, getVideoDisplay } from "../config/Display";
-import { addVote } from "../config/Vote";
+} from "../config/SubjectAPI";
+import { updateDisplay, getVideoDisplay } from "../config/DisplayAPI";
+import { addVote } from "../config/VoteAPI";
 
 const listasRepro = [
   "Lista de reproducción 1",

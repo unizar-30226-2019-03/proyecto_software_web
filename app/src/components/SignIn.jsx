@@ -12,8 +12,11 @@ import {
   emailPattern,
   restriccion
 } from "../config/Auth";
-import { getUnivesities, getDegreesFromUnivesity } from "../config/University";
-import { addUser } from "../config/User";
+import {
+  getUnivesities,
+  getDegreesFromUnivesity
+} from "../config/UniversityAPI";
+import { addUser } from "../config/UserAPI";
 
 const FormularioDatos = (
   handleSubmit,

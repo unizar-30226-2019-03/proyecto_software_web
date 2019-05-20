@@ -4,7 +4,7 @@ import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { getTime } from "../config/Process";
 import IconoAsignaturaUniversidad from "./IconoAsignaturaUniversidad";
-import { getTimePassed, getScore, getVideoSubject } from "../config/Video";
+import { getTimePassed, getScore, getVideoSubject } from "../config/VideoAPI";
 
 // One item component
 // selected prop will be passed

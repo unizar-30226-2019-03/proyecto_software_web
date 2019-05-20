@@ -6,7 +6,7 @@ import { FaBell, FaEnvelope, FaBars } from "react-icons/fa";
 import BarraBusqueda from "./BarraBusqueda";
 import BarraLateral from "./BarraLateral";
 import { signOut, getUserID } from "../config/Auth";
-import { getUser } from "../config/User";
+import { getUser } from "../config/UserAPI";
 
 class BarraNavegacion extends Component {
   /**

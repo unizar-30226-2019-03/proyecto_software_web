@@ -5,8 +5,8 @@ import { Helmet } from "react-helmet";
 import BarraNavegacion from "./BarraNavegacion";
 import { Redirect } from "react-router-dom";
 import { isSignedIn } from "../config/Auth";
-import { findVideosContainingTitle } from "../config/Video";
-import { findSubjectsContainingName } from "../config/Subject";
+import { findVideosContainingTitle } from "../config/VideoAPI";
+import { findSubjectsContainingName } from "../config/SubjectAPI";
 import BusquedaAsignaturas from "./BusquedaAsignaturas";
 
 const listasRepro = [

@@ -6,7 +6,10 @@ import Popup from "reactjs-popup";
 import { Notificacion } from "./Listas";
 import { RemoveAccents } from "../config/Process";
 import { isSignedIn } from "../config/Auth";
-import { getDisplaysByUser, deleteVideoFromDisplay } from "../config/Display";
+import {
+  getDisplaysByUser,
+  deleteVideoFromDisplay
+} from "../config/DisplayAPI";
 import ListaHistorial from "./ListaHistorial";
 
 const listasRepro = [

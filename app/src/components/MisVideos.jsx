@@ -12,9 +12,9 @@ import {
   getScore,
   getVideosFromUploader,
   deleteVideo
-} from "../config/Video";
-import { getUser } from "../config/User";
-import { getSubjectById } from "../config/Subject";
+} from "../config/VideoAPI";
+import { getUser } from "../config/UserAPI";
+import { getSubjectById } from "../config/SubjectAPI";
 import { FaEllipsisV } from "react-icons/fa";
 
 // One item component

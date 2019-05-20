@@ -8,8 +8,8 @@ import {
   checkFileExtensionImage,
   checkFileExtensionVideo
 } from "../config/Process";
-import { UploadVideo } from "../config/Video";
-import { getSubjectsAsProfessor } from "../config/User";
+import { UploadVideo } from "../config/VideoAPI";
+import { getSubjectsAsProfessor } from "../config/UserAPI";
 
 const FormularioDatos = (
   handleSubmit,

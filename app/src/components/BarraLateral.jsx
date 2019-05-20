@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { getSubjectsOfUser } from "../config/User";
+import { getSubjectsOfUser } from "../config/UserAPI";
 import { getUserID } from "../config/Auth";
 
 class BarraLateral extends Component {

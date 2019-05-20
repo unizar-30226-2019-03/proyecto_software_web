@@ -12,8 +12,11 @@ import {
   restriccion
 } from "../config/Auth";
 import { checkFileExtensionImage } from "../config/Process";
-import { getUser, updateUser } from "../config/User";
-import { getUnivesities, getDegreesFromUnivesity } from "../config/University";
+import { getUser, updateUser } from "../config/UserAPI";
+import {
+  getUnivesities,
+  getDegreesFromUnivesity
+} from "../config/UniversityAPI";
 
 const FormularioDatos = (
   handleSubmit,

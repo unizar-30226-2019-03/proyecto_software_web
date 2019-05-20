@@ -4,7 +4,7 @@ import { FaPlus } from "react-icons/fa";
 import { FormCheck } from "react-bootstrap";
 import Popup from "reactjs-popup";
 import { getTime } from "../config/Process";
-import { getScore, getTimePassed } from "../config/Video";
+import { getScore, getTimePassed } from "../config/VideoAPI";
 
 class ContenidoPopUp extends Component {
   constructor(props) {

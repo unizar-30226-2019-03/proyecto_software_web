@@ -5,7 +5,7 @@ import { ListGroup, Dropdown, Button, FormControl } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
 import CustomToggle from "./CustomToggle";
 import { isSignedIn, getUserID } from "../config/Auth";
-import { getSubjectsOfUser } from "../config/User";
+import { getSubjectsOfUser } from "../config/UserAPI";
 
 const ItemAsignatura = ({ nombre, uni, foto, id }) => {
   return (

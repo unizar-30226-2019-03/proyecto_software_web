@@ -5,7 +5,11 @@ import { Button, Form } from "react-bootstrap";
 import Popup from "reactjs-popup";
 import { Link, Redirect } from "react-router-dom";
 import { isSignedIn, getUserID } from "../config/Auth";
-import { getUser, getUniversityOfUser, getDegreeOfUser } from "../config/User";
+import {
+  getUser,
+  getUniversityOfUser,
+  getDegreeOfUser
+} from "../config/UserAPI";
 
 class CamposMostrar extends Component {
   renderCampo(nombre, contenido) {

@@ -6,8 +6,8 @@ import { Link, Redirect } from "react-router-dom";
 import CustomToggle from "./CustomToggle";
 import { FaTrophy } from "react-icons/fa";
 import { isSignedIn } from "../config/Auth";
-import { getSubjectRanking } from "../config/Subject";
-import { getScore } from "../config/Video";
+import { getSubjectRanking } from "../config/SubjectAPI";
+import { getScore } from "../config/VideoAPI";
 
 class ItemAsignatura extends Component {
   render() {

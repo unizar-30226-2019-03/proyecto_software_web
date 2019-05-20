@@ -1,6 +1,6 @@
 import { getUserToken } from "./Auth";
 import { ApiClient, CommentApi } from "swagger_unicast";
-import { generadorColores } from "./Video";
+import { generadorColores } from "./VideoAPI";
 
 const apiInstance = new CommentApi();
 const defaultClient = ApiClient.instance;

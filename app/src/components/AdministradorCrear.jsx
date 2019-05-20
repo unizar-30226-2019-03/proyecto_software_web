@@ -18,13 +18,13 @@ import {
   crearCarreraYLigar,
   crearAsigYLigar,
   addProfessor
-} from "../config/Admin";
+} from "../config/AdminAPI";
 import SubjectApi from "swagger_unicast/dist/api/SubjectApi";
 import {
   getSubjectsFromUniveristy,
   getUnivesities
-} from "../config/University";
-import { getUserByUsername } from "../config/User";
+} from "../config/UniversityAPI";
+import { getUserByUsername } from "../config/UserAPI";
 
 const FormularioProfesor = (
   handleProfesor,

@@ -5,7 +5,7 @@ import { Helmet } from "react-helmet";
 import uni from "../assets/UnicastNombre.png";
 import { UserApi } from "swagger_unicast";
 import { signIn, setUserRole } from "../config/Auth";
-import { getUser } from "../config/User";
+import { getUser } from "../config/UserAPI";
 
 class Login extends Component {
   constructor(props) {

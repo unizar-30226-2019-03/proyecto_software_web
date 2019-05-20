@@ -9,7 +9,9 @@ class Inicio extends Component {
   constructor() {
     super();
     this.state = {
-      contentMargin: "300px"
+      contentMargin: "300px",
+      asignaturas: [],
+      recomendados: []
     };
     this.handleChange = this.handleChange.bind(this);
   }
@@ -51,9 +53,7 @@ class Inicio extends Component {
         >
           <div>
             <div>
-              <h5 style={{ fontWeight: "bold" }}>
-                Vídeos subidos recientemente
-              </h5>
+              <h5 style={{ fontWeight: "bold" }}>Vídeos recomendados</h5>
             </div>
             <ListaHorizontal />
           </div>
@@ -69,38 +69,6 @@ class Inicio extends Component {
                 }}
               >
                 Asignatura X
-              </Link>
-            </div>
-            <ListaHorizontal />
-          </div>
-          <div>
-            <div>
-              <Link
-                to="/asig/aY"
-                style={{
-                  fontSize: "1.25rem",
-                  color: "black",
-                  textDecoration: "none",
-                  fontWeight: "bold"
-                }}
-              >
-                Asignatura Y
-              </Link>
-            </div>
-            <ListaHorizontal />
-          </div>
-          <div>
-            <div>
-              <Link
-                to="/asig/aZ"
-                style={{
-                  fontSize: "1.25rem",
-                  color: "black",
-                  textDecoration: "none",
-                  fontWeight: "bold"
-                }}
-              >
-                Asignatura Z
               </Link>
             </div>
             <ListaHorizontal />
