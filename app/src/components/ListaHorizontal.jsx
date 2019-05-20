@@ -188,6 +188,11 @@ class HMenuArr extends Component {
       menu: this.props.menu
     };
   }
+
+  componentWillReceiveProps(newProps) {
+    this.setState({ menu: newProps.menu });
+  }
+
   render() {
     return (
       <div
@@ -218,7 +223,11 @@ class ListaHorizontal extends Component {
   constructor(props) {
     super(props);
     // call it again if items count changes
-    this.menuItems = Menu(this.props.list);
+    this.menuItems = Menu(this.props.list, this.props.now);
+  }
+
+  componentWillReceiveProps(newProps) {
+    this.menuItems = Menu(newProps.list, this.props.now);
   }
 
   render() {

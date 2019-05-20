@@ -1,19 +1,41 @@
 import React, { Component } from "react";
 import { Link, Redirect } from "react-router-dom";
 import BarraNavegacion from "./BarraNavegacion";
-import ListaHorizontal from "./ListaHorizontal";
+import ListaHorizontal, { Menu } from "./ListaHorizontal";
 import { Helmet } from "react-helmet";
-import { isSignedIn } from "../config/Auth";
+import { isSignedIn, getUserID } from "../config/Auth";
+import { getRecommendations, getVideosFromSubject } from "../config/VideoAPI";
+import { getSubjectsOfUser } from "../config/UserAPI";
 
 class Inicio extends Component {
   constructor() {
     super();
     this.state = {
       contentMargin: "300px",
+      displayAll: false,
       asignaturas: [],
-      recomendados: []
+      videosAsignatura: [[]],
+      recomendados: [],
+      timeNow: new Date()
     };
     this.handleChange = this.handleChange.bind(this);
+  }
+
+  componentWillMount() {
+    getSubjectsOfUser(getUserID(), data => {
+      data.map((asig, index) => {
+        getVideosFromSubject(asig.id, 0, videos => {
+          let newVideos = this.state.videosAsignatura.slice();
+          newVideos[index] = videos;
+          this.setState({ videosAsignatura: newVideos });
+        });
+        return null;
+      });
+      this.setState({ asignaturas: data });
+    });
+    getRecommendations((data, now) => {
+      this.setState({ recomendados: data, timeNow: now });
+    });
   }
 
   /**
@@ -52,27 +74,73 @@ class Inicio extends Component {
           }}
         >
           <div>
-            <div>
+            <div style={{ display: "flex" }}>
               <h5 style={{ fontWeight: "bold" }}>Vídeos recomendados</h5>
+              <div
+                className="boton-ver-todos-inicio"
+                onClick={() =>
+                  this.setState({ displayAll: !this.state.displayAll })
+                }
+              >
+                {this.state.displayAll ? "Ver menos" : "Ver todos"}
+              </div>
             </div>
-            <ListaHorizontal />
-          </div>
-          <div>
-            <div>
-              <Link
-                to="/asig/aX"
+            {this.state.displayAll ? (
+              <div
                 style={{
-                  fontSize: "1.25rem",
-                  color: "black",
-                  textDecoration: "none",
-                  fontWeight: "bold"
+                  display: "flex",
+                  flexWrap: "wrap",
+                  marginBottom: "50px",
+                  borderBottom: "1px solid lightgrey",
+                  overflow: "hidden",
+                  width: "93.45%"
                 }}
               >
-                Asignatura X
-              </Link>
-            </div>
-            <ListaHorizontal />
+                {Menu(this.state.recomendados, this.state.timeNow)}
+              </div>
+            ) : (
+              <ListaHorizontal
+                list={this.state.recomendados}
+                now={this.state.timeNow}
+              />
+            )}
           </div>
+          {this.state.asignaturas.map((asig, index) => {
+            return (
+              <div key={asig.id}>
+                <div style={{ marginBottom: ".5rem" }}>
+                  <Link
+                    to={`/asig/${asig.id}`}
+                    style={{
+                      fontSize: "1.25rem",
+                      color: "black",
+                      textDecoration: "none",
+                      fontWeight: "bold"
+                    }}
+                  >
+                    <div>
+                      <img
+                        src={asig.university.photo}
+                        alt={asig.university.name}
+                        width="35"
+                        height="35"
+                        style={{ borderRadius: "50%" }}
+                      />{" "}
+                      {asig.name}
+                    </div>
+                  </Link>
+                </div>
+                <ListaHorizontal
+                  list={
+                    this.state.videosAsignatura[index] === undefined
+                      ? []
+                      : this.state.videosAsignatura[index]
+                  }
+                  now={this.state.timeNow}
+                />
+              </div>
+            );
+          })}
         </div>
       </div>
     );

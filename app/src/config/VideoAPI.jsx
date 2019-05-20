@@ -285,3 +285,28 @@ export function getVideosFromSubject(subjectId, page, callback) {
     }
   });
 }
+
+/**
+ * Obtiene los vídeos recomendados para un usuario
+ * @param {Function} callback Función a ejecutar tras obtener los datos
+ */
+export function getRecommendations(callback) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  let opts = {
+    cacheControl: "no-cache, no-store, must-revalidate", // String |
+    pragma: "no-cache", // String |
+    expires: "0", // String |
+    projection: "videoWithSubject" // String | Incluir si se quiere obtener tambien la universidad y/o la asignatura en la respuesta
+  };
+  apiInstance.findRecommendedVideos(opts, (error, data, response) => {
+    if (error) {
+      console.error(error);
+    } else {
+      const now = ApiClient.parseDate(response.headers.date);
+      callback(data._embedded.videos, now);
+    }
+  });
+}
