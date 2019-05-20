@@ -77,6 +77,7 @@ const ListaAsignaturas = lista =>
 class Rankings extends Component {
   constructor() {
     super();
+    this._isMounted = false;
     this.state = {
       contentMargin: "300px",
       filtro: "",
@@ -85,16 +86,28 @@ class Rankings extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.cambiaFiltro = this.cambiaFiltro.bind(this);
     this.filtrar = this.filtrar.bind(this);
+    this.getData = this.getData.bind(this);
   }
 
-  componentWillMount() {
+  getData() {
     getSubjectRanking(0, data => {
       const ranking = data.map((a, index) => {
         a.position = index + 1;
         return a;
       });
-      this.setState({ asignaturas: ranking });
+      if (this._isMounted) {
+        this.setState({ asignaturas: ranking });
+      }
     });
+  }
+
+  componentWillMount() {
+    this._isMounted = true;
+    this.getData();
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   cambiaFiltro(e) {

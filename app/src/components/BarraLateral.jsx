@@ -22,13 +22,11 @@ class BarraLateral extends Component {
   }
 
   getData() {
-    if (this._isMounted) {
-      getSubjectsOfUser(getUserID(), data => {
-        if (this._isMounted) {
-          this.setState({ asigs: data });
-        }
-      });
-    }
+    getSubjectsOfUser(getUserID(), data => {
+      if (this._isMounted) {
+        this.setState({ asigs: data });
+      }
+    });
   }
 
   componentWillReceiveProps(newProps) {

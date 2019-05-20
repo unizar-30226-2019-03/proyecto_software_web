@@ -51,6 +51,7 @@ export const ListaProfesores = list =>
 class Asignatura extends Component {
   constructor() {
     super();
+    this._isMounted = false;
     this.state = {
       contentMargin: "300px",
       siguiendoAsig: false,
@@ -73,29 +74,40 @@ class Asignatura extends Component {
 
   getData(subjectId) {
     getUser(getUserID(), data => {
-      this.setState({ user: data });
+      if (this._isMounted) {
+        this.setState({ user: data });
+      }
     });
     getSubjectById(subjectId, data => {
-      this.setState({ asig: data });
+      if (this._isMounted) {
+        this.setState({ asig: data });
+      }
       getSubjectsOfUser(getUserID(), subjects => {
         const found = subjects.find(s => {
           return s.id === data.id;
         });
         //Si no la ha encontrado -> No sigue la asignatura
-        this.setState({
-          siguiendoAsig: found === undefined ? false : true
-        });
+        if (this._isMounted) {
+          this.setState({
+            siguiendoAsig: found === undefined ? false : true
+          });
+        }
       });
     });
     getProfessorsFromSubject(subjectId, data => {
-      this.setState({ profesores: data });
+      if (this._isMounted) {
+        this.setState({ profesores: data });
+      }
     });
     getVideosFromSubject(subjectId, 0, (data, time) => {
-      this.setState({ videos: data, timeNow: time });
+      if (this._isMounted) {
+        this.setState({ videos: data, timeNow: time });
+      }
     });
   }
 
   componentWillMount() {
+    this._isMounted = true;
     this.getData(parseInt(this.props.match.params.id));
   }
 
@@ -104,6 +116,7 @@ class Asignatura extends Component {
   }
 
   componentWillUnmount() {
+    this._isMounted = false;
     this.pararReloj();
   }
 

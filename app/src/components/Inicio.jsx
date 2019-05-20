@@ -10,6 +10,7 @@ import { getSubjectsOfUser } from "../config/UserAPI";
 class Inicio extends Component {
   constructor() {
     super();
+    this._isMounted = false;
     this.state = {
       contentMargin: "300px",
       displayAll: false,
@@ -19,23 +20,39 @@ class Inicio extends Component {
       timeNow: new Date()
     };
     this.handleChange = this.handleChange.bind(this);
+    this.getData = this.getData.bind(this);
   }
 
-  componentWillMount() {
+  getData() {
     getSubjectsOfUser(getUserID(), data => {
       data.map((asig, index) => {
         getVideosFromSubject(asig.id, 0, videos => {
           let newVideos = this.state.videosAsignatura.slice();
           newVideos[index] = videos;
-          this.setState({ videosAsignatura: newVideos });
+          if (this._isMounted) {
+            this.setState({ videosAsignatura: newVideos });
+          }
         });
         return null;
       });
-      this.setState({ asignaturas: data });
+      if (this._isMounted) {
+        this.setState({ asignaturas: data });
+      }
     });
     getRecommendations((data, now) => {
-      this.setState({ recomendados: data, timeNow: now });
+      if (this._isMounted) {
+        this.setState({ recomendados: data, timeNow: now });
+      }
     });
+  }
+
+  componentWillMount() {
+    this._isMounted = true;
+    this.getData();
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   /**
@@ -120,8 +137,16 @@ class Inicio extends Component {
                   >
                     <div>
                       <img
-                        src={asig.university.photo}
-                        alt={asig.university.name}
+                        src={
+                          asig.university === undefined
+                            ? ""
+                            : asig.university.photo
+                        }
+                        alt={
+                          asig.university === undefined
+                            ? ""
+                            : asig.university.name
+                        }
                         width="35"
                         height="35"
                         style={{ borderRadius: "50%" }}

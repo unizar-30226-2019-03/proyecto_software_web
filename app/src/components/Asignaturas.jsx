@@ -25,8 +25,8 @@ const ListaAsignaturas = lista =>
     return (
       <ItemAsignatura
         nombre={name}
-        uni={university.name}
-        foto={university.photo}
+        uni={university === undefined ? "" : university.name}
+        foto={university === undefined ? "" : university.photo}
         key={id}
         id={id}
       />
@@ -36,19 +36,32 @@ const ListaAsignaturas = lista =>
 class Asignaturas extends Component {
   constructor() {
     super();
+    this._isMounted = false;
     this.state = {
       contentMargin: "300px",
       filtro: "",
       asignaturas: []
     };
     this.handleChange = this.handleChange.bind(this);
+    this.getData = this.getData.bind(this);
     this.cambiaFiltro = this.cambiaFiltro.bind(this);
     this.filtrar = this.filtrar.bind(this);
   }
 
   componentWillMount() {
+    this._isMounted = true;
+    this.getData();
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
+  getData() {
     getSubjectsOfUser(getUserID(), data => {
-      this.setState({ asignaturas: data });
+      if (this._isMounted) {
+        this.setState({ asignaturas: data });
+      }
     });
   }
 

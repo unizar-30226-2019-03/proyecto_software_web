@@ -276,6 +276,7 @@ class HistorialLista extends Component {
 class Historial extends Component {
   constructor() {
     super();
+    this._isMounted = false;
     this.state = {
       contentMargin: "300px",
       fixed: window.innerWidth >= 970,
@@ -302,15 +303,18 @@ class Historial extends Component {
   }
 
   componentWillMount() {
+    this._isMounted = true;
     this.getHistorial(0);
   }
 
   getHistorial(page) {
     getDisplaysByUser(page, data => {
-      this.setState({
-        page: page + 1,
-        miHistorial: data._embedded.displays
-      });
+      if (this._isMounted) {
+        this.setState({
+          page: page + 1,
+          miHistorial: data._embedded.displays
+        });
+      }
     });
   }
 
@@ -411,6 +415,7 @@ class Historial extends Component {
   }
 
   componentWillUnmount() {
+    this._isMounted = false;
     this.pararReloj();
     window.removeEventListener("resize", this.handleResize);
   }

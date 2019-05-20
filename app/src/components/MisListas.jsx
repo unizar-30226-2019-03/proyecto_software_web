@@ -175,6 +175,7 @@ class Lista extends Component {
 class Listas extends Component {
   constructor() {
     super();
+    this._isMounted = false;
     this.state = {
       contentMargin: "300px",
       popUp: false,
@@ -199,10 +200,12 @@ class Listas extends Component {
   }
 
   componentWillMount() {
+    this._isMounted = true;
     this.getData();
   }
 
   componentWillUnmount() {
+    this._isMounted = false;
     this.pararReloj();
   }
 
@@ -215,7 +218,9 @@ class Listas extends Component {
         });
         return null;
       });
-      this.setState({ misListas: data });
+      if (this._isMounted) {
+        this.setState({ misListas: data });
+      }
     });
   }
 

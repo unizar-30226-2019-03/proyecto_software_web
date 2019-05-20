@@ -15,6 +15,7 @@ class BarraNavegacion extends Component {
    */
   constructor(props) {
     super(props);
+    this._isMounted = false;
     this.state = {
       displayMenu: false,
       displaySide: this.props.displaySide,
@@ -28,14 +29,22 @@ class BarraNavegacion extends Component {
     this.hideDropdown = this.hideDropdown.bind(this);
     this.showSideBar = this.showSideBar.bind(this);
     this.resize = this.resize.bind(this);
+    this.getData = this.getData.bind(this);
     this.showDropdownNotif = this.showDropdownNotif.bind(this);
     this.hideDropdownNotif = this.hideDropdownNotif.bind(this);
   }
 
-  componentWillMount() {
+  getData() {
     getUser(getUserID(), data => {
-      this.setState({ user: data });
+      if (this._isMounted) {
+        this.setState({ user: data });
+      }
     });
+  }
+
+  componentWillMount() {
+    this._isMounted = true;
+    this.getData();
   }
 
   componentDidMount() {
@@ -43,6 +52,7 @@ class BarraNavegacion extends Component {
   }
 
   componentWillUnmount() {
+    this._isMounted = false;
     window.removeEventListener("resize", this.resize);
     document.removeEventListener("click", this.hideDropdown);
     document.removeEventListener("click", this.hideDropdownNotif);
