@@ -164,14 +164,26 @@ class ResultadoBusqueda extends Component {
               </div>
             </div>
             {!this.state.asignaturas ? (
-              <ListaBusqueda
-                lista={this.state.lista}
-                anyadirALista={this.anyadirVideoALista}
-                listaRepro={listasRepro}
-                time={this.state.timeNow}
-              />
-            ) : (
+              this.state.lista.length > 0 ? (
+                <ListaBusqueda
+                  lista={this.state.lista}
+                  anyadirALista={this.anyadirVideoALista}
+                  listaRepro={listasRepro}
+                  time={this.state.timeNow}
+                />
+              ) : (
+                <div style={{ color: "#00000080", fontSize: "13px" }}>
+                  Ningún vídeo coincide con la búsqueda, por favor pruebe otro
+                  nombre por el que buscar.
+                </div>
+              )
+            ) : this.state.listaAsignaturas.length > 0 ? (
               <BusquedaAsignaturas lista={this.state.listaAsignaturas} />
+            ) : (
+              <div style={{ color: "#00000080", fontSize: "13px" }}>
+                Ninguna asignatura coincide con la búsqueda, por favor pruebe
+                otro nombre por el que buscar.
+              </div>
             )}
             <Notificacion
               mostrar={this.state.notif}
