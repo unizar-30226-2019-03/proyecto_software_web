@@ -2,22 +2,17 @@ import React, { Component } from "react";
 import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
 import ListaHorizontal from "./ListaHorizontal";
-import { FaPlus, FaPencilAlt, FaRegTrashAlt } from "react-icons/fa";
+import { FaPlus, FaRegTrashAlt, FaStar } from "react-icons/fa";
 import Popup from "reactjs-popup";
 import { Form, Button } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
 import { isSignedIn } from "../config/Auth";
-
-const lista = [
-  { titulo: "Lista de reproducción A" },
-  { titulo: "Lista de reproducción B" },
-  { titulo: "Lista de reproducción C" },
-  { titulo: "Lista de reproducción D" },
-  { titulo: "Lista de reproducción E" },
-  { titulo: "Lista de reproducción F" },
-  { titulo: "Lista de reproducción G" },
-  { titulo: "Lista de reproducción H" }
-];
+import {
+  getUserReproductionLists,
+  addReproductionList,
+  deleteReproductionList
+} from "../config/ReproductionListAPI";
+import { getVideosFromReproductionList } from "../config/VideoAPI";
 
 export const Notificacion = ({ mostrar, mensaje, handleClick, deshacer }) => {
   return (
@@ -64,15 +59,15 @@ class Lista extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      tituloOriginal: this.props.titulo,
-      titulo: this.props.titulo,
-      width: this.props.titulo.length,
+      lista: this.props.list,
       popUp: false
     };
-    this.handleChange = this.handleChange.bind(this);
-    this.keyPress = this.keyPress.bind(this);
     this.abrirPopUp = this.abrirPopUp.bind(this);
     this.cerrarPopUp = this.cerrarPopUp.bind(this);
+  }
+
+  componentWillReceiveProps(newProps) {
+    this.setState({ lista: newProps.list });
   }
 
   abrirPopUp() {
@@ -83,63 +78,41 @@ class Lista extends Component {
     this.setState({ popUp: false });
   }
 
-  handleChange(e) {
-    e.preventDefault();
-    this.setState({
-      titulo: e.target.value,
-      width: e.target.value.length + 0.5
-    });
-  }
-
-  keyPress(e) {
-    if (e.keyCode === 13) {
-      e.target.blur();
-      this.props.editar(this.state.tituloOriginal, this.state.titulo);
-    }
-  }
-
   render() {
     return (
       <div>
         <div style={{ display: "flex", width: "93.45%" }}>
-          <div>
-            <h6 style={{ fontWeight: "bold" }}>
-              <input
-                defaultValue={this.state.titulo}
-                ref={ip => (this.titulo = ip)}
-                onChange={this.handleChange}
-                onKeyDown={this.keyPress}
-                size={this.state.width}
-                style={{
-                  backgroundColor: "#fafafa",
-                  border: "0",
-                  overflow: "visible",
-                  pointerEvents: "none",
-                  outline: "none"
-                }}
+          <div style={{ display: "flex" }}>
+            {this.state.lista.name === "Favoritos" ? (
+              <FaStar
+                color={"rgb(212, 175, 55)"}
+                style={{ marginRight: "5px" }}
               />
-            </h6>
+            ) : null}
+            <h6>{this.state.lista.name}</h6>
           </div>
           <div
             style={{
-              display: "flex",
-              marginTop: "-4px"
+              marginLeft: "10px",
+              marginTop: "-5px"
             }}
           >
-            <div
-              style={{
-                cursor: "pointer",
-                marginRight: "15px"
-              }}
-              onClick={() => {
-                this.titulo.focus();
-              }}
-            >
-              <FaPencilAlt className="icono-lista" />
-            </div>
             <Popup
               open={this.state.popUp}
               onOpen={this.abrirPopUp}
+              arrow={false}
+              position={"bottom left"}
+              contentStyle={{
+                width: "250px",
+                maxHeight: "300px",
+                overflow: "scroll",
+                padding: "16px 20px",
+                marginTop: "10px",
+                border: "0",
+                zIndex: "1000",
+                boxShadow:
+                  "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4)"
+              }}
               repositionOnResize
               trigger={
                 <div style={{ cursor: "pointer" }}>
@@ -147,37 +120,53 @@ class Lista extends Component {
                 </div>
               }
             >
-              <div className="popup">
-                <div className="titulo">¿Estás seguro?</div>
-
-                <Button
-                  variant="link"
+              <div style={{ padding: "5px 10px" }}>
+                <div
                   style={{
-                    marginTop: "10px",
-                    padding: "0",
-                    textDecoration: "none",
-                    fontSize: "14px"
+                    fontWeight: "550",
+                    fontSize: "16px",
+                    borderBottom: "1px solid lightgrey"
+                  }}
+                >
+                  ¿Estás seguro?
+                </div>
+                <div style={{ fontSize: "13px", paddingTop: "10px" }}>
+                  Una vez eliminada no habrá vuelta atrás.
+                </div>
+                <div
+                  style={{
+                    color: "red",
+                    fontSize: "14px",
+                    paddingTop: "10px",
+                    width: "fit-content",
+                    height: "fit-content",
+                    cursor: "pointer"
                   }}
                   onClick={() => {
                     this.cerrarPopUp();
-                    this.props.borrar(this.state.titulo);
+                    this.props.borrar(this.state.lista);
                   }}
                 >
-                  Confirmar borrado
-                </Button>
+                  Sí, eliminar
+                </div>
               </div>
             </Popup>
           </div>
           <div style={{ marginRight: "0", marginLeft: "auto" }}>
             <Link
-              to={`/lista/` + this.state.titulo}
+              to={`/lista/${this.state.lista.id}`}
               style={{ color: "#00000080", textDecoration: "none" }}
             >
               Ver todos los vídeos
             </Link>
           </div>
         </div>
-        <ListaHorizontal />
+        <ListaHorizontal
+          list={
+            this.state.lista.videos === undefined ? [] : this.state.lista.videos
+          }
+          now={this.state.lista.timestamp}
+        />
       </div>
     );
   }
@@ -189,12 +178,15 @@ class Listas extends Component {
     this.state = {
       contentMargin: "300px",
       popUp: false,
-      popUpValidado: false,
-      nombreLista: "",
+      notif: false,
+      mensajeNotif: "",
       tiempo: 0,
-      misListas: lista
+      misListas: [],
+      listaCreada: null,
+      deshacer: true
     };
     this.nombreLista = React.createRef();
+    this.getData = this.getData.bind(this);
     this.crearLista = this.crearLista.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.abrirPopUp = this.abrirPopUp.bind(this);
@@ -204,7 +196,27 @@ class Listas extends Component {
     this.pararReloj = this.pararReloj.bind(this);
     this.tick = this.tick.bind(this);
     this.borrarLista = this.borrarLista.bind(this);
-    this.editarLista = this.editarLista.bind(this);
+  }
+
+  componentWillMount() {
+    this.getData();
+  }
+
+  componentWillUnmount() {
+    this.pararReloj();
+  }
+
+  getData() {
+    getUserReproductionLists(data => {
+      data.map((list, index) => {
+        getVideosFromReproductionList(list.id, 0, (videos, now) => {
+          data[index].videos = videos;
+          data[index].timestamp = now;
+        });
+        return null;
+      });
+      this.setState({ misListas: data });
+    });
   }
 
   handleChange(display) {
@@ -226,19 +238,29 @@ class Listas extends Component {
   crearLista(evento) {
     evento.preventDefault();
     const nombreLista = this.nombreLista.current.value;
-    var nuevasListas = this.state.misListas.slice();
-    nuevasListas.push({ titulo: nombreLista });
-    this.setState({
-      popUpValidado: true,
-      nombreLista: nombreLista,
-      misListas: nuevasListas
+    addReproductionList(nombreLista, (ok, list) => {
+      if (ok) {
+        this.setState({
+          mensajeNotif: `Lista ${nombreLista.toUpperCase()} creada`,
+          notif: true,
+          listaCreada: list,
+          deshacer: true
+        });
+        this.getData();
+      } else {
+        this.setState({
+          mensajeNotif: `No se ha podido crear la lista ${nombreLista.toUpperCase()}`,
+          notif: true,
+          deshacer: false
+        });
+      }
+      this.iniciarReloj();
     });
-    this.iniciarReloj();
   }
 
   deshacer() {
-    this.borrarLista(this.state.nombreLista);
-    this.setState({ popUpValidado: false });
+    this.borrarLista(this.state.listaCreada);
+    this.setState({ notif: false });
   }
 
   iniciarReloj() {
@@ -247,7 +269,6 @@ class Listas extends Component {
 
   pararReloj() {
     clearInterval(this.timerID);
-    this.setState({ popUpValidado: false });
   }
 
   tick() {
@@ -255,22 +276,30 @@ class Listas extends Component {
     if (t === 3) {
       t = -1;
       this.pararReloj();
+      this.setState({ notif: false });
     }
     this.setState({ tiempo: t + 1 });
   }
 
-  borrarLista(titulo) {
-    var nuevasListas = this.state.misListas.slice();
-    const index = nuevasListas.findIndex(e => e.titulo === titulo);
-    nuevasListas.splice(index, 1);
-    this.setState({ misListas: nuevasListas });
-  }
-
-  editarLista(antigua, nueva) {
-    var nuevasListas = this.state.misListas.slice();
-    const index = nuevasListas.findIndex(e => e.titulo === antigua);
-    nuevasListas[index] = { titulo: nueva };
-    this.setState({ misListas: nuevasListas });
+  borrarLista(lista) {
+    this.pararReloj();
+    deleteReproductionList(lista.id, ok => {
+      if (!ok) {
+        this.setState({
+          mensajeNotif: `No se ha podido borrar la lista ${lista.name.toUpperCase()}`,
+          notif: true,
+          deshacer: false
+        });
+      } else {
+        this.setState({
+          mensajeNotif: `Lista ${lista.name.toUpperCase()} borrada`,
+          notif: true,
+          deshacer: false
+        });
+        this.getData();
+      }
+      this.iniciarReloj();
+    });
   }
 
   render() {
@@ -352,21 +381,13 @@ class Listas extends Component {
               </Popup>
             </div>
             {this.state.misListas.map(e => {
-              const { titulo } = e;
-              return (
-                <Lista
-                  titulo={titulo}
-                  key={titulo}
-                  editar={this.editarLista}
-                  borrar={this.borrarLista}
-                />
-              );
+              return <Lista list={e} key={e.id} borrar={this.borrarLista} />;
             })}
             <Notificacion
-              mostrar={this.state.popUpValidado}
-              mensaje={`Lista ${this.state.nombreLista.toUpperCase()} creada`}
+              mostrar={this.state.notif}
+              mensaje={this.state.mensajeNotif}
               handleClick={this.deshacer}
-              deshacer={true}
+              deshacer={this.state.deshacer}
             />
           </div>
         </div>

@@ -4,7 +4,7 @@ import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
 import ListaVertical from "./ListaVertical";
 import imagenPrueba from "../assets/landscape.jpg";
-import { Notificacion } from "./Listas";
+import { Notificacion } from "./MisListas";
 import Popup from "reactjs-popup";
 import { RemoveAccents, getTime } from "../config/Process";
 import { isSignedIn } from "../config/Auth";
@@ -527,7 +527,7 @@ class ListaConcreta extends Component {
               <div className="cabecera-asignatura">
                 <div>
                   <h5 style={{ fontWeight: "bold" }}>
-                    {this.props.match.params.nombre}
+                    {this.props.match.params.id}
                   </h5>
                 </div>
               </div>{" "}

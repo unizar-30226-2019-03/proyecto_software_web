@@ -12,7 +12,7 @@ import {
   getProfessorsFromSubject
 } from "../config/SubjectAPI";
 import { getUser, getSubjectsOfUser } from "../config/UserAPI";
-import { Notificacion } from "./Listas";
+import { Notificacion } from "./MisListas";
 import { getVideosFromSubject } from "../config/VideoAPI";
 
 export const Profesor = ({ user }) => {

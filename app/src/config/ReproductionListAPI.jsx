@@ -19,8 +19,7 @@ export function addReproductionList(name, callback) {
       console.error(error);
       callback(false);
     } else {
-      console.log(data);
-      callback(true);
+      callback(true, data);
     }
   });
 }
@@ -145,7 +144,7 @@ export function getUserReproductionLists(callback) {
     if (error) {
       console.error(error);
     } else {
-      callback(data);
+      callback(data._embedded.reproductionLists);
     }
   });
 }

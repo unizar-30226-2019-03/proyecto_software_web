@@ -15,7 +15,7 @@ import { getTime } from "../config/Process";
 import Popup from "reactjs-popup";
 import StarRatingComponent from "react-star-rating-component";
 import { ContenidoPopUp } from "./ListaVertical";
-import { Notificacion } from "./Listas";
+import { Notificacion } from "./MisListas";
 import { isSignedIn, getUserID } from "../config/Auth";
 import {
   generadorColores,
@@ -623,7 +623,7 @@ class ViendoVideo extends Component {
                     }
                   >
                     <ContenidoPopUp
-                      video={this.props.match.params.nombreVideo}
+                      video={this.props.match.params.id}
                       listaRepro={listasRepro}
                       enviarPadre={this.guardarVideo}
                     />

@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet";
 import ListaVerticalMensajes from "./ListaVerticalMensajes";
 import imagenUsuario from "../assets/user.png";
 import Popup from "reactjs-popup";
-import { Notificacion } from "./Listas";
+import { Notificacion } from "./MisListas";
 import { RemoveAccents } from "../config/Process";
 import { isSignedIn } from "../config/Auth";
 import { Redirect, Link } from "react-router-dom";

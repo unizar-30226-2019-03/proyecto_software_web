@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import ListaBusqueda from "./ListaBusqueda";
-import { Notificacion } from "./Listas";
+import { Notificacion } from "./MisListas";
 import { Helmet } from "react-helmet";
 import BarraNavegacion from "./BarraNavegacion";
 import { Redirect } from "react-router-dom";

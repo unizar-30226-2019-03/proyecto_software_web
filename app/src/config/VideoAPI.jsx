@@ -310,3 +310,36 @@ export function getRecommendations(callback) {
     }
   });
 }
+
+/**
+ * Obitene los vídeos de una lista de reproducción
+ * @param {Number} reproListId ID de la lista de reproducción
+ * @param {Number} page Página a obtener
+ * @param {Function} callback Función a ejecutar tras obtener los datos
+ */
+export function getVideosFromReproductionList(reproListId, page, callback) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  let opts = {
+    cacheControl: "no-cache, no-store, must-revalidate", // String |
+    pragma: "no-cache", // String |
+    expires: "0", // String |
+    page: page, // Number | Número de la página a devolver
+    sort: ["null"], // [String] | Parámetros en la forma `($propertyname,)+[asc|desc]?`
+    projection: "videoWithSubject" // String | Incluir si se quiere obtener tambien la universidad y/o la asignatura en la respuesta
+  };
+  apiInstance.getVideosFromReproductionList(
+    reproListId,
+    opts,
+    (error, data, response) => {
+      if (error) {
+        console.error(error);
+      } else {
+        const now = ApiClient.parseDate(response.headers.date);
+        callback(data._embedded.videos, now);
+      }
+    }
+  );
+}

@@ -3,7 +3,7 @@ import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
 import { Redirect } from "react-router-dom";
 import Popup from "reactjs-popup";
-import { Notificacion } from "./Listas";
+import { Notificacion } from "./MisListas";
 import { RemoveAccents } from "../config/Process";
 import { isSignedIn } from "../config/Auth";
 import {

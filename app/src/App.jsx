@@ -7,7 +7,7 @@ import EditarPerfil from "./components/EditarPerfil";
 import SubirVideo from "./components/SubirVideo";
 import Rankings from "./components/Rankings";
 import Historial from "./components/Historial";
-import Listas from "./components/Listas";
+import Listas from "./components/MisListas";
 import Perfil from "./components/Perfil";
 import Mensajes from "./components/Mensajes";
 import Asignatura from "./components/Asignatura";
@@ -63,7 +63,7 @@ class App extends Component {
           <Route path={"/rankings"} component={Rankings} />
           <Route path={"/historial"} component={Historial} />
           <Route path={"/listas"} component={Listas} />
-          <Route path={"/lista/:nombre"} component={ListaConcreta} />
+          <Route path={"/lista/:id"} component={ListaConcreta} />
           <Route path={"/perfil"} component={Perfil} />
           <Route path={"/mensajes-profesores"} component={MensajesProfes} />
           <Route path={"/mensajes"} component={Mensajes} />
