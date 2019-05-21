@@ -51,6 +51,7 @@ class CamposMostrar extends Component {
             <h6 style={{ textAlign: "justify" }}>{this.props.description}</h6>
           </div>
         </div>
+        <br></br>
         {this.renderCampo("Universidad:", this.props.uni)}
         {this.renderCampo("Grado:", this.props.degree)}
       </div>
@@ -148,6 +149,7 @@ class Perfil extends Component {
           }}
         >
           <h5>{`${this.state.user.name} ${this.state.user.surnames}`}</h5>
+          <div>
           <div style={{ marginTop: "40px" }}>
             <div
               style={{
@@ -228,11 +230,14 @@ class Perfil extends Component {
               </div>
             </div>
           </div>
+          </div>
+          <div style={{marginTop:"80px"}}>
           <CamposMostrar
             description={this.state.user.description}
             uni={this.state.uni.name}
             degree={this.state.degree.name}
           />
+          </div>
           <div
             style={{
               padding: "30px 20px 0px 0px"

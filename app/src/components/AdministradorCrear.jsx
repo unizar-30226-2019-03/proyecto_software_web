@@ -4,20 +4,18 @@ import { Helmet } from "react-helmet";
 import { Button, Form, Col, Modal } from "react-bootstrap";
 import { Redirect } from "react-router-dom";
 import {
-  isSignedIn,
-  restriccionNombre,
-  restriccionUser,
-  emailPattern,
-  restriccion
+  isSignedIn
 } from "../config/Auth";
 import UniversityApi from "swagger_unicast/dist/api/UniversityApi";
 import DegreeApi from "swagger_unicast/dist/api/DegreeApi";
+import UserApi from "swagger_unicast/dist/api/UserApi";
 import { checkFileExtensionImage } from "../config/Process";
 import {
   crearUniversidad,
   crearCarreraYLigar,
   crearAsigYLigar,
-  addProfessor
+  addProfessor, 
+  hacerProfesor
 } from "../config/AdminAPI";
 import SubjectApi from "swagger_unicast/dist/api/SubjectApi";
 import {
@@ -28,44 +26,17 @@ import { getUserByUsername } from "../config/UserAPI";
 
 const FormularioProfesor = (
   handleProfesor,
-  nombre,
-  apellidos,
-  userID,
-  email,
-  passwd,
-  passwd2,
-  clasePass
+  userID
 ) => {
   return (
     <div style={{ margin: "20px 20px 20px 20px" }}>
-      <h6>Añadir profesor</h6>
+      <h6>Convertir usuario en profesor</h6>
       <Form
         id="form-profesor"
         onSubmit={e =>
           handleProfesor(e, document.getElementById("form-profesor"))
         }
       >
-        <Form.Row>
-          <Form.Group as={Col} controlId="formGridName">
-            <Form.Label>Nombre</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Nombre"
-              required
-              ref={nombre}
-            />
-          </Form.Group>
-
-          <Form.Group as={Col} controlId="formGridSurname">
-            <Form.Label>Apellidos</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Apellidos"
-              required
-              ref={apellidos}
-            />
-          </Form.Group>
-        </Form.Row>
 
         <Form.Group controlId="formGridUserID">
           <Form.Label>Nombre de usuario</Form.Label>
@@ -77,37 +48,6 @@ const FormularioProfesor = (
           />
         </Form.Group>
 
-        <Form.Group controlId="formGridEmail">
-          <Form.Label>Email</Form.Label>
-          <Form.Control
-            placeholder="ejemplo@gmail.com"
-            type="email"
-            required
-            ref={email}
-          />
-        </Form.Group>
-        <Form.Row>
-          <Form.Group as={Col} controlId="formGridPasswd">
-            <Form.Label>Contraseña</Form.Label>
-            <Form.Control
-              placeholder="Contraseña"
-              type="password"
-              required
-              ref={passwd}
-            />
-          </Form.Group>
-
-          <Form.Group as={Col} controlId="formGridPasswd2">
-            <Form.Label>Confirmar contraseña</Form.Label>
-            <Form.Control
-              placeholder="Confirmación"
-              type="password"
-              required
-              ref={passwd2}
-              style={clasePass}
-            />
-          </Form.Group>
-        </Form.Row>
         <Button className="boton-filtro" type="reset">
           Cancelar
         </Button>
@@ -395,12 +335,8 @@ class AdministradorCrear extends Component {
     this.UniversityApi = new UniversityApi();
     this.DegreeApi = new DegreeApi();
     this.SubjectApi = new SubjectApi();
-    this.nombreProf = React.createRef();
-    this.apellidosProf = React.createRef();
+    this.UserApi = new UserApi();
     this.userIDProf = React.createRef();
-    this.emailProf = React.createRef();
-    this.passwdProf = React.createRef();
-    this.passwd2Prof = React.createRef();
     this.nombreUni = React.createRef();
     this.fotoUni = React.createRef();
     this.nombreCarrera = React.createRef();
@@ -447,55 +383,8 @@ class AdministradorCrear extends Component {
 
   handleProfesor(event, form) {
     event.preventDefault();
-    const nombre = this.nombreProf.current.value;
-    const apellidos = this.apellidosProf.current.value;
     const userID = this.userIDProf.current.value;
-    const email = this.emailProf.current.value;
-    const pass = this.passwdProf.current.value;
-    const pass2 = this.passwd2Prof.current.value;
-    let ok = true;
-
-    //Comporobar nombre y apellidos
-    if (!nombre.match(restriccionNombre)) {
-      ok = false;
-      alert("Nombre inválido, debe tener al menos 3 letras");
-    }
-    if (!apellidos.match(restriccionNombre)) {
-      ok = false;
-      alert("Apellidos inválidos, debe tener al menos 3 letras");
-    }
-
-    //Comprobar nombre de usuario
-    if (!userID.match(restriccionUser)) {
-      ok = false;
-      alert("Nombre de usuario inálido, debe tener al menos 3 letras");
-    }
-
-    // Comprobar email
-    if (!email.match(emailPattern)) {
-      ok = false;
-      alert("Correo electrónico inválido");
-    }
-
-    //Comprobar passwords
-    if (pass.match(restriccion)) {
-      if (pass !== pass2) {
-        ok = false;
-        alert("Las contraseñas deben coincidir");
-      }
-    } else {
-      ok = false;
-      alert(
-        "La contraseña debe tener como mínimo 8 caracteres y usar letras y números"
-      );
-    }
-
-    if (ok) {
-      //CREAR PROFESOR CON SU ROL, de momento nada
-      console.log(nombre, apellidos, userID, email, pass, pass2);
-      form.reset();
-      this.handleShow();
-    }
+    hacerProfesor(userID, form, this.handleShow, this.UserApi);
   }
 
   handleUniversidad(event, form) {
@@ -578,12 +467,7 @@ class AdministradorCrear extends Component {
           <div className="boxed">
             {FormularioProfesor(
               this.handleProfesor,
-              this.nombreProf,
-              this.apellidosProf,
-              this.userIDProf,
-              this.emailProf,
-              this.passwdProf,
-              this.passwd2Prof
+              this.userIDProf
             )}
           </div>
           <div className="boxed" style={{ marginTop: "20px" }} id="a">

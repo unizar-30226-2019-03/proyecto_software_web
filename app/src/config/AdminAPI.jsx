@@ -5,7 +5,38 @@ import Subject2 from "swagger_unicast/dist/model/Subject2";
 import SubjectApi from "swagger_unicast/dist/api/SubjectApi";
 
 const defaultClient = ApiClient.instance;
+/**
+ * 
+ */
+export function hacerProfesor(username, form, handleShow, api){
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
 
+  let opts = {
+    cacheControl: "'no-cache, no-store, must-revalidate'", // String |
+    pragma: "'no-cache'", // String |
+    expires: "'0'", // String |
+    username: username // String | Comienzo del username del usuario a buscar
+  };
+  api.findUsersContainingUsername(opts, (error, data, response) => {
+    if (error) {
+      alert("Errorsito");
+    } else {
+      console.log(data);
+    }
+  });
+ /* api.makeProfessor(userId, (error, data, response) => {
+    if (error) {
+      alert("El nombre de usuario es incorrecto");
+      console.log(error);
+      console.log(userId);
+    } else {
+      form.reset();
+      handleShow();
+    }
+  });*/
+}
 /**
  * Crea la universidad cuyo nombre y foto son los especificados
  * en los parámetros. Si ya existe la universidad, muestra un

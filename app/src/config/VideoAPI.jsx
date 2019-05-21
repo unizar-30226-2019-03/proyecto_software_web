@@ -302,14 +302,14 @@ export function getRecommendations(callback) {
     expires: "0", // String |
     projection: "videoWithSubject" // String | Incluir si se quiere obtener tambien la universidad y/o la asignatura en la respuesta
   };
-  apiInstance.findRecommendedVideos(opts, (error, data, response) => {
+  /*apiInstance.findRecommendedVideos(opts, (error, data, response) => {
     if (error) {
       console.error(error);
     } else {
       const now = ApiClient.parseDate(response.headers.date);
       callback(data._embedded.videos, now);
     }
-  });
+  });*/
 }
 
 /**
