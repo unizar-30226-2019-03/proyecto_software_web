@@ -3,12 +3,12 @@ import { Redirect } from "react-router-dom";
 import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
 import ListaVertical from "./ListaVertical";
-import imagenPrueba from "../assets/landscape.jpg";
 import { Notificacion } from "./MisListas";
 import Popup from "reactjs-popup";
-import { RemoveAccents, getTime } from "../config/Process";
+import { RemoveAccents } from "../config/Process";
 import { isSignedIn } from "../config/Auth";
 import { getVideosFromReproductionList } from "../config/VideoAPI";
+import { deleteVideoFromReproductionList } from "../config/ReproductionListAPI";
 
 const listasRepro = [
   "Lista de reproducción 1",
@@ -377,33 +377,23 @@ class ListaConcreta extends Component {
     this.iniciarReloj();
   }
 
-  borrarVideo(nombreVideo) {
-    var nuevoHistorial = this.state.miLista.slice();
-    const index = nuevoHistorial.findIndex(e => e.name === nombreVideo);
-    const v = nuevoHistorial[index];
-    var index2 = -1;
-    nuevoHistorial.splice(index, 1);
-    this.setState({
-      miLista: nuevoHistorial,
-      notif: true,
-      deshacer: true,
-      videoBorrado: { v, index, index2 },
-      mensajeNotif: `Vídeo ${nombreVideo.toUpperCase()} eliminado de la lista`
+  borrarVideo(idVideo, nombreVideo) {
+    const idLista = parseInt(this.props.match.params.id);
+    deleteVideoFromReproductionList(idLista, parseInt(idVideo), ok => {
+      if (ok) {
+        this.setState({
+          notif: true,
+          mensajeNotif: `Vídeo ${nombreVideo.toUpperCase()} eliminado de ${this.props.match.params.nombre.toUpperCase()}`,
+          listaFiltrada: [],
+          miLista: [],
+          busqueda: "",
+          filtrado: false,
+          page: 0
+        });
+        this.getData(0);
+      }
     });
     this.iniciarReloj();
-    if (this.state.filtrado) {
-      //Borrar también de filtrado
-      var nuevoFiltrado = this.state.listaFiltrada.slice();
-      index2 = nuevoFiltrado.findIndex(e => e.name === nombreVideo);
-      if (index2 !== -1) {
-        //Borrarlo
-        nuevoFiltrado.splice(index2, 1);
-        this.setState({
-          listaFiltrada: nuevoFiltrado,
-          videoBorrado: { v, index, index2 }
-        });
-      }
-    }
   }
 
   handleResize() {
@@ -487,8 +477,7 @@ class ListaConcreta extends Component {
               <div className="cabecera-asignatura">
                 <div>
                   <h5 style={{ fontWeight: "bold" }}>
-                    {this.props.match.params.id}
-                    {this.props.match.params.nombre}
+                    Lista de reproducción - {this.props.match.params.nombre}
                   </h5>
                 </div>
               </div>{" "}
