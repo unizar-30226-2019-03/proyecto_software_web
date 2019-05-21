@@ -18,7 +18,8 @@ export default class Video extends Component {
     this.state = {
       video: "",
       thumbnailUrl: "",
-      altura: 0
+      altura: 0,
+      startTime: this.props.time
     };
     this.div = React.createRef();
     this.play_pause = this.play_pause.bind(this);
@@ -27,10 +28,11 @@ export default class Video extends Component {
   }
 
   componentWillReceiveProps(newProps) {
-    if (this.props.src !== newProps.src) {
+    if (this.props.src !== newProps.src || this.props.time !== newProps.time) {
       this.setState({
         video: newProps.src,
-        thumbnailUrl: newProps.thumbnailUrl
+        thumbnailUrl: newProps.thumbnailUrl,
+        startTime: newProps.time
       });
     }
   }
@@ -85,7 +87,7 @@ export default class Video extends Component {
         <Player
           ref="player"
           autoPlay
-          startTime={this.props.time}
+          startTime={this.state.startTime}
           fluid={false}
           width={"100%"}
           height={this.state.altura}

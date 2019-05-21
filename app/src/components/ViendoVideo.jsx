@@ -156,21 +156,28 @@ class ViendoVideo extends Component {
     });
     getVideo(this.props.match.params.id, (video, time) => {
       if (this._isMounted) {
-        this.setState({ video: video, timeNow: time });
+        getVideoDisplay(video.id, data => {
+          if (data !== false) {
+            if (this._isMounted) {
+              if (data.secsFromBeg >= video.seconds - 1) {
+                this.setState({
+                  video: video,
+                  timeNow: time,
+                  tiempoInicial: 0
+                });
+              } else {
+                this.setState({
+                  video: video,
+                  timeNow: time,
+                  tiempoInicial: data.secsFromBeg
+                });
+              }
+            }
+          }
+        });
       }
       this.obtenerAsignaturaUni(video);
       this.obtenerComentarios(video, this.state.page);
-      getVideoDisplay(video.id, data => {
-        if (data !== false) {
-          if (this._isMounted) {
-            if (data.secsFromBeg >= video.seconds - 1) {
-              this.setState({ tiempoInicial: 0 });
-            } else {
-              this.setState({ tiempoInicial: data.secsFromBeg });
-            }
-          }
-        }
-      });
     });
   }
 
