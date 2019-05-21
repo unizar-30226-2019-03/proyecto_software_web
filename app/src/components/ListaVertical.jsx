@@ -5,7 +5,10 @@ import { FormCheck } from "react-bootstrap";
 import Popup from "reactjs-popup";
 import { getScore, getTimePassed, getVideoSubject } from "../config/VideoAPI";
 import { getTime } from "../config/Process";
-import { getReproductionListVideoIn } from "../config/ReproductionListAPI";
+import {
+  getReproductionListVideoIn,
+  addReproductionList
+} from "../config/ReproductionListAPI";
 
 export class ContenidoPopUp extends Component {
   constructor(props) {
@@ -80,12 +83,17 @@ export class ContenidoPopUp extends Component {
     if (e.keyCode === 13) {
       //CREAR LA LISTA
       const item = this.state.nombreNuevaLista;
-      var nuevasListas = this.state.listas.slice();
-      nuevasListas.push(item);
-      this.setState({
-        nombreNuevaLista: "",
-        crearLista: false,
-        listas: nuevasListas
+      addReproductionList(item, (ok, data) => {
+        if (ok) {
+          var nuevasListas = this.state.listas.slice();
+          nuevasListas.push(data);
+          this.setState({
+            nombreNuevaLista: "",
+            crearLista: false,
+            listas: nuevasListas
+          });
+          this.props.actualizarListas();
+        }
       });
     }
   }
@@ -368,6 +376,7 @@ class MenuItem extends Component {
                 videoId={this.props.id}
                 listaRepro={this.props.listaRepro}
                 enviarPadre={this.recibirHijo}
+                actualizarListas={this.props.actualizarListas}
               />
             </Popup>
             <FaTimes
@@ -384,7 +393,14 @@ class MenuItem extends Component {
 
 // All items component
 // Important! add unique key
-export const MenuVertical = (list, borrar, anyadir, listaRepro, time) =>
+export const MenuVertical = (
+  list,
+  borrar,
+  anyadir,
+  listaRepro,
+  time,
+  actualizarListas
+) =>
   list.map(video => {
     return (
       <MenuItem
@@ -394,6 +410,7 @@ export const MenuVertical = (list, borrar, anyadir, listaRepro, time) =>
         borrar={borrar}
         anyadirALista={anyadir}
         img={video.thumbnailUrl}
+        actualizarListas={actualizarListas}
         listaRepro={listaRepro}
         duracion={getTime(video.seconds)}
         rating={getScore(video.score)}
@@ -412,7 +429,8 @@ class ListaVertical extends Component {
       this.props.borrar,
       this.props.anyadirALista,
       this.props.listaRepro,
-      this.props.time
+      this.props.time,
+      this.props.actualizarListas
     );
   }
 
@@ -422,7 +440,8 @@ class ListaVertical extends Component {
       newProps.borrar,
       newProps.anyadirALista,
       newProps.listaRepro,
-      newProps.time
+      newProps.time,
+      newProps.actualizarListas
     );
   }
 

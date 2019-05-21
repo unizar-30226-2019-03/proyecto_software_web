@@ -149,6 +149,7 @@ class Lista extends Component {
                   anyadirALista={this.props.anyadirVideoALista}
                   borrar={this.props.borrarVideo}
                   listaRepro={this.state.listasRepro}
+                  actualizarListas={this.props.actualizarListas}
                 />
               </div>
             </div>
@@ -169,6 +170,7 @@ class Lista extends Component {
                     anyadirALista={this.props.anyadirVideoALista}
                     borrar={this.props.borrarVideo}
                     listaRepro={this.state.listasRepro}
+                    actualizarListas={this.props.actualizarListas}
                   />
                 </div>
               </div>
@@ -541,6 +543,7 @@ class ListaConcreta extends Component {
                   borrar={this.borrarLista}
                   handleChange={this.buscarEnLista}
                   keyDown={this.keyDown}
+                  actualizarListas={this.getReproductionLists}
                   historial={
                     !this.state.filtrado
                       ? this.state.miLista

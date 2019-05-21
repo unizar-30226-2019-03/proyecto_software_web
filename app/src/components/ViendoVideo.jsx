@@ -695,6 +695,7 @@ class ViendoVideo extends Component {
                       videoId={this.state.video.id}
                       listaRepro={this.state.listasRepro}
                       enviarPadre={this.guardarVideo}
+                      actualizarListas={this.getReproductionLists}
                     />
                   </Popup>
                 </div>

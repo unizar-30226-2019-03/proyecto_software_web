@@ -155,6 +155,7 @@ class HistorialLista extends Component {
                   anyadirALista={this.props.anyadirVideoALista}
                   borrar={this.props.borrarVideo}
                   listaRepro={this.state.listasRepro}
+                  actualizarListas={this.props.actualizarListas}
                 />
               </div>
             </div>
@@ -175,6 +176,7 @@ class HistorialLista extends Component {
                     anyadirALista={this.props.anyadirVideoALista}
                     borrar={this.props.borrarVideo}
                     listaRepro={this.state.listasRepro}
+                    actualizarListas={this.props.actualizarListas}
                   />
                 </div>
               </div>
@@ -543,6 +545,7 @@ class Historial extends Component {
               busqueda={this.state.busqueda}
               borrarVideo={this.borrarVideo}
               anyadirVideoALista={this.anyadirVideoALista}
+              actualizarListas={this.getReproductionLists}
             />
           )}
         </div>

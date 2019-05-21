@@ -202,6 +202,7 @@ class MenuItem extends Component {
                 videoId={this.props.id}
                 listaRepro={this.props.listaRepro}
                 enviarPadre={this.recibirHijo}
+                actualizarListas={this.props.actualizarListas}
               />
             </Popup>
           </div>
@@ -213,7 +214,13 @@ class MenuItem extends Component {
 
 // All items component
 // Important! add unique key
-export const MenuVertical = (list, anyadir, listaRepro, time) =>
+export const MenuVertical = (
+  list,
+  anyadir,
+  listaRepro,
+  time,
+  actualizarListas
+) =>
   list.map(video => {
     return (
       <MenuItem
@@ -223,6 +230,7 @@ export const MenuVertical = (list, anyadir, listaRepro, time) =>
         key={video.id}
         id={video.id}
         anyadirALista={anyadir}
+        actualizarListas={actualizarListas}
         img={video.thumbnailUrl}
         listaRepro={listaRepro}
         duracion={getTime(video.seconds)}
@@ -241,7 +249,8 @@ class ListaBusqueda extends Component {
       this.props.lista,
       this.props.anyadirALista,
       this.props.listaRepro,
-      this.props.time
+      this.props.time,
+      this.props.actualizarListas
     );
   }
 
@@ -250,7 +259,8 @@ class ListaBusqueda extends Component {
       newProps.lista,
       newProps.anyadirALista,
       newProps.listaRepro,
-      newProps.time
+      newProps.time,
+      newProps.actualizarListas
     );
   }
   render() {

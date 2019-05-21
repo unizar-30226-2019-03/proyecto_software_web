@@ -216,6 +216,7 @@ class ResultadoBusqueda extends Component {
                   anyadirALista={this.anyadirVideoALista}
                   listaRepro={this.state.listasRepro}
                   time={this.state.timeNow}
+                  actualizarListas={this.getReproductionLists}
                 />
               ) : (
                 <div style={{ color: "#00000080", fontSize: "13px" }}>
