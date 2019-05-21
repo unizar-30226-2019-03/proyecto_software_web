@@ -7,6 +7,7 @@ import BarraBusqueda from "./BarraBusqueda";
 import BarraLateral from "./BarraLateral";
 import { signOut, getUserID } from "../config/Auth";
 import { getUser } from "../config/UserAPI";
+import { getUserUncheckedNotifications } from "../config/NotificationAPI";
 
 class BarraNavegacion extends Component {
   /**
@@ -23,15 +24,21 @@ class BarraNavegacion extends Component {
       displayNotif: false,
       hide: this.props.hide,
       busqueda: this.props.nuevoTit,
-      user: {}
+      user: {},
+      unCheckedNotifications: [],
+      tiempoCheck: 0
     };
     this.showDropdown = this.showDropdown.bind(this);
     this.hideDropdown = this.hideDropdown.bind(this);
     this.showSideBar = this.showSideBar.bind(this);
     this.resize = this.resize.bind(this);
     this.getData = this.getData.bind(this);
+    this.getNotifications = this.getNotifications.bind(this);
     this.showDropdownNotif = this.showDropdownNotif.bind(this);
     this.hideDropdownNotif = this.hideDropdownNotif.bind(this);
+    this.iniciarReloj = this.iniciarReloj.bind(this);
+    this.pararReloj = this.pararReloj.bind(this);
+    this.tick = this.tick.bind(this);
   }
 
   getData() {
@@ -42,9 +49,19 @@ class BarraNavegacion extends Component {
     });
   }
 
+  getNotifications() {
+    getUserUncheckedNotifications(0, data => {
+      if (this._isMounted) {
+        this.setState({ unCheckedNotifications: data });
+        this.iniciarReloj();
+      }
+    });
+  }
+
   componentWillMount() {
     this._isMounted = true;
     this.getData();
+    this.getNotifications();
   }
 
   componentDidMount() {
@@ -53,6 +70,7 @@ class BarraNavegacion extends Component {
 
   componentWillUnmount() {
     this._isMounted = false;
+    this.pararReloj();
     window.removeEventListener("resize", this.resize);
     document.removeEventListener("click", this.hideDropdown);
     document.removeEventListener("click", this.hideDropdownNotif);
@@ -112,6 +130,25 @@ class BarraNavegacion extends Component {
     this.setState({ displayNotif: false }, () => {
       document.removeEventListener("click", this.hideDropdownNotif);
     });
+  }
+
+  iniciarReloj() {
+    this.pararReloj();
+    this.timerID = setInterval(() => this.tick(), 1000);
+  }
+
+  pararReloj() {
+    clearInterval(this.timerID);
+  }
+
+  tick() {
+    let t = this.state.tiempoCheck;
+    if (t === 5) {
+      t = -1;
+      this.pararReloj();
+      this.getNotifications();
+    }
+    this.setState({ tiempoCheck: t + 1 });
   }
 
   render() {

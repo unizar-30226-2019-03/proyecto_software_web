@@ -6,9 +6,9 @@ import SubjectApi from "swagger_unicast/dist/api/SubjectApi";
 
 const defaultClient = ApiClient.instance;
 /**
- * 
+ *
  */
-export function hacerProfesor(username, form, handleShow, api){
+export function hacerProfesor(username, form, handleShow, api) {
   // Configure Bearer (JWT) access token for authorization: bearerAuth
   let bearerAuth = defaultClient.authentications["bearerAuth"];
   bearerAuth.accessToken = getUserToken();
@@ -26,7 +26,7 @@ export function hacerProfesor(username, form, handleShow, api){
       console.log(data);
     }
   });
- /* api.makeProfessor(userId, (error, data, response) => {
+  /* api.makeProfessor(userId, (error, data, response) => {
     if (error) {
       alert("El nombre de usuario es incorrecto");
       console.log(error);
