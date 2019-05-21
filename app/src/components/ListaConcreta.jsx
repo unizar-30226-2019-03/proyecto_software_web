@@ -8,7 +8,10 @@ import Popup from "reactjs-popup";
 import { RemoveAccents } from "../config/Process";
 import { isSignedIn } from "../config/Auth";
 import { getVideosFromReproductionList } from "../config/VideoAPI";
-import { deleteVideoFromReproductionList } from "../config/ReproductionListAPI";
+import {
+  deleteVideoFromReproductionList,
+  deleteReproductionList
+} from "../config/ReproductionListAPI";
 
 const listasRepro = [
   "Lista de reproducción 1",
@@ -39,7 +42,6 @@ class Lista extends Component {
   }
 
   render() {
-    console.log(this.state.listaVideos);
     return (
       <div>
         {!this.props.fixed ? (
@@ -235,7 +237,8 @@ class Lista extends Component {
                     ¿Estás seguro?
                   </div>
                   <div style={{ fontSize: "13px", paddingTop: "10px" }}>
-                    Una vez eliminada no habrá vuelta atrás.
+                    Una vez eliminada la lista no habrá vuelta atrás. Se
+                    borrarán tanto los vídeos como la lista.
                   </div>
                   <div
                     style={{
@@ -280,7 +283,8 @@ class ListaConcreta extends Component {
       deshacer: false,
       tiempo: 0,
       timestamp: new Date(),
-      page: 0
+      page: 0,
+      borradoCompleto: false
     };
     this.getData = this.getData.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -331,7 +335,12 @@ class ListaConcreta extends Component {
 
   borrarLista() {
     //Borrar la lista en el servidor
-    this.setState({ borradoCompleto: true });
+    const id = parseInt(this.props.match.params.id);
+    deleteReproductionList(id, ok => {
+      if (ok) {
+        this.setState({ borradoCompleto: true });
+      }
+    });
   }
 
   buscarEnLista(e) {
@@ -348,15 +357,14 @@ class ListaConcreta extends Component {
         const palabras = this.state.busqueda.split(" ");
         var resultado = [];
         this.state.miLista.forEach(e => {
-          const { name, canal, image, duracion } = e;
           for (let index = 0; index < palabras.length; index++) {
             const element = palabras[index];
             if (
-              RemoveAccents(name)
+              RemoveAccents(e.title)
                 .toLowerCase()
                 .includes(RemoveAccents(element).toLowerCase())
             ) {
-              resultado.push({ name, canal, image, duracion });
+              resultado.push(e);
               break;
             }
           }
