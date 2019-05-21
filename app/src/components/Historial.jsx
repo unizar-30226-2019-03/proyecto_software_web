@@ -4,27 +4,25 @@ import { Helmet } from "react-helmet";
 import { Redirect } from "react-router-dom";
 import Popup from "reactjs-popup";
 import { Notificacion } from "./MisListas";
-import { RemoveAccents } from "../config/Process";
+import { RemoveAccents, putFavouritesFirst } from "../config/Process";
 import { isSignedIn } from "../config/Auth";
 import {
   getDisplaysByUser,
   deleteVideoFromDisplay
 } from "../config/DisplayAPI";
 import ListaVertical from "./ListaVertical";
-
-const listasRepro = [
-  "Lista de reproducción 1",
-  "Lista de reproducción 2",
-  "Lista de reproducción 3",
-  "Lista de reproducción 4",
-  "Lista de reproduccióndasds aadsasdsadasadsdasdasasddasdsaddsadas 5"
-];
+import {
+  addVideotoReproductionList,
+  deleteVideoFromReproductionList,
+  getUserReproductionLists
+} from "../config/ReproductionListAPI";
 
 class HistorialLista extends Component {
   constructor(props) {
     super(props);
     this.state = {
       popUp: false,
+      listasRepro: this.props.listasRepro,
       listaVideos: this.props.historial.map(e => {
         return e.video;
       })
@@ -37,7 +35,8 @@ class HistorialLista extends Component {
     this.setState({
       listaVideos: nextProps.historial.map(e => {
         return e.video;
-      })
+      }),
+      listasRepro: nextProps.listasRepro
     });
   }
 
@@ -155,7 +154,7 @@ class HistorialLista extends Component {
                   lista={this.state.listaVideos}
                   anyadirALista={this.props.anyadirVideoALista}
                   borrar={this.props.borrarVideo}
-                  listaRepro={listasRepro}
+                  listaRepro={this.state.listasRepro}
                 />
               </div>
             </div>
@@ -175,7 +174,7 @@ class HistorialLista extends Component {
                     lista={this.state.listaVideos}
                     anyadirALista={this.props.anyadirVideoALista}
                     borrar={this.props.borrarVideo}
-                    listaRepro={listasRepro}
+                    listaRepro={this.state.listasRepro}
                   />
                 </div>
               </div>
@@ -283,6 +282,7 @@ class Historial extends Component {
       busqueda: "",
       miHistorial: [],
       historialFiltrado: [],
+      listasRepro: [],
       filtrado: false,
       notif: false,
       mensajeNotif: "",
@@ -300,11 +300,13 @@ class Historial extends Component {
     this.pararReloj = this.pararReloj.bind(this);
     this.tick = this.tick.bind(this);
     this.getHistorial = this.getHistorial.bind(this);
+    this.getReproductionLists = this.getReproductionLists.bind(this);
   }
 
   componentWillMount() {
     this._isMounted = true;
     this.getHistorial(0);
+    this.getReproductionLists();
   }
 
   getHistorial(page) {
@@ -314,6 +316,15 @@ class Historial extends Component {
           page: page + 1,
           miHistorial: data._embedded.displays
         });
+      }
+    });
+  }
+
+  getReproductionLists() {
+    getUserReproductionLists(data => {
+      if (this._isMounted) {
+        const sortedData = putFavouritesFirst(data);
+        this.setState({ listasRepro: sortedData });
       }
     });
   }
@@ -372,14 +383,43 @@ class Historial extends Component {
     }
   }
 
-  anyadirVideoALista(nombreVideo, mensaje, lista, anyadir) {
+  anyadirVideoALista(idVideo, mensaje, idLista, anyadir, callback) {
     //Añadir o borrar de la lista lista, dependiendo del parametro anyadir
     if (anyadir) {
       //Añadir el video
+      addVideotoReproductionList(idLista, idVideo, ok => {
+        if (ok) {
+          this.setState({
+            notif: true,
+            mensajeNotif: mensaje
+          });
+          callback(true);
+        } else {
+          this.setState({
+            notif: true,
+            mensajeNotif: "No se ha podido añadir a la lista"
+          });
+          callback(false);
+        }
+      });
     } else {
       //Borrar el video
+      deleteVideoFromReproductionList(idLista, idVideo, ok => {
+        if (ok) {
+          this.setState({
+            notif: true,
+            mensajeNotif: mensaje
+          });
+          callback(true);
+        } else {
+          this.setState({
+            notif: true,
+            mensajeNotif: "No se ha podido borrar de la lista"
+          });
+          callback(false);
+        }
+      });
     }
-    this.setState({ notif: true, mensajeNotif: mensaje });
     this.iniciarReloj();
   }
 
@@ -499,6 +539,7 @@ class Historial extends Component {
                   ? this.state.miHistorial
                   : this.state.historialFiltrado
               }
+              listasRepro={this.state.listasRepro}
               busqueda={this.state.busqueda}
               borrarVideo={this.borrarVideo}
               anyadirVideoALista={this.anyadirVideoALista}
