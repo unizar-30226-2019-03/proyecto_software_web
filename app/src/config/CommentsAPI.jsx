@@ -21,7 +21,7 @@ export function getCommentsByVideo(id, page, callback) {
     pragma: "no-cache", // String |
     expires: "0", // String |
     page: page, // Number | Número de la página a devolver
-    sort: ["null"], // [String] | Parámetros en la forma `($propertyname,)+[asc|desc]?`
+    sort: ["secondsFromBeginning,asc"], // [String] | Parámetros en la forma `($propertyname,)+[asc|desc]?`
     projection: "commentWithUser" // String | Incluir si se quiere obtener tambien el usuario que ha hecho el comentario
   };
   apiInstance.getCommentsByVideo(id, opts, (error, data, response) => {
