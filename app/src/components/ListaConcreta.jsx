@@ -10,7 +10,8 @@ import { isSignedIn } from "../config/Auth";
 import { getVideosFromReproductionList } from "../config/VideoAPI";
 import {
   deleteVideoFromReproductionList,
-  deleteReproductionList
+  deleteReproductionList,
+  getUserReproductionLists
 } from "../config/ReproductionListAPI";
 
 const listasRepro = [
@@ -24,13 +25,20 @@ const listasRepro = [
 class Lista extends Component {
   constructor(props) {
     super(props);
-    this.state = { popUp: false, listaVideos: this.props.historial };
+    this.state = {
+      popUp: false,
+      listaVideos: this.props.historial,
+      listasRepro: this.props.listasRepro
+    };
     this.abrirPopUp = this.abrirPopUp.bind(this);
     this.cerrarPopUp = this.cerrarPopUp.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ listaVideos: nextProps.historial });
+    this.setState({
+      listaVideos: nextProps.historial,
+      listasRepro: nextProps.listasRepro
+    });
   }
 
   abrirPopUp() {
@@ -147,7 +155,7 @@ class Lista extends Component {
                   lista={this.state.listaVideos}
                   anyadirALista={this.props.anyadirVideoALista}
                   borrar={this.props.borrarVideo}
-                  listaRepro={listasRepro}
+                  listaRepro={this.state.listasRepro}
                 />
               </div>
             </div>
@@ -167,7 +175,7 @@ class Lista extends Component {
                     lista={this.state.listaVideos}
                     anyadirALista={this.props.anyadirVideoALista}
                     borrar={this.props.borrarVideo}
-                    listaRepro={listasRepro}
+                    listaRepro={this.state.listasRepro}
                   />
                 </div>
               </div>
@@ -274,6 +282,7 @@ class ListaConcreta extends Component {
       contentMargin: "300px",
       fixed: window.innerWidth >= 970,
       busqueda: "",
+      listasRepro: [],
       miLista: [],
       listaFiltrada: [],
       filtrado: false,
@@ -287,6 +296,7 @@ class ListaConcreta extends Component {
       borradoCompleto: false
     };
     this.getData = this.getData.bind(this);
+    this.getReproductionLists = this.getReproductionLists.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleResize = this.handleResize.bind(this);
     this.borrarLista = this.borrarLista.bind(this);
@@ -303,7 +313,6 @@ class ListaConcreta extends Component {
   getData(page) {
     const id = parseInt(this.props.match.params.id);
     getVideosFromReproductionList(id, page, (data, now) => {
-      console.log(data);
       if (this._isMounted) {
         let newState = this.state.miLista.slice().concat(data);
         this.setState({
@@ -311,6 +320,14 @@ class ListaConcreta extends Component {
           page: page + 1,
           timestamp: now
         });
+      }
+    });
+  }
+
+  getReproductionLists() {
+    getUserReproductionLists(data => {
+      if (this._isMounted) {
+        this.setState({ listasRepro: data });
       }
     });
   }
@@ -421,6 +438,7 @@ class ListaConcreta extends Component {
   componentWillMount() {
     this._isMounted = true;
     this.getData(0);
+    this.getReproductionLists();
   }
 
   componentWillUnmount() {
@@ -514,6 +532,7 @@ class ListaConcreta extends Component {
                   busqueda={this.state.busqueda}
                   borrarVideo={this.borrarVideo}
                   anyadirVideoALista={this.anyadirVideoALista}
+                  listasRepro={this.state.listasRepro}
                 />
               )}
             </div>

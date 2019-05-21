@@ -5,12 +5,15 @@ import { FormCheck } from "react-bootstrap";
 import Popup from "reactjs-popup";
 import { getScore, getTimePassed, getVideoSubject } from "../config/VideoAPI";
 import { getTime } from "../config/Process";
+import { getReproductionListVideoIn } from "../config/ReproductionListAPI";
 
 export class ContenidoPopUp extends Component {
   constructor(props) {
     super(props);
+    this._isMounted = false;
     this.state = {
       listas: this.props.listaRepro,
+      listasDelVideo: [],
       anyadido: false,
       lista: "",
       mensaje: "",
@@ -18,14 +21,34 @@ export class ContenidoPopUp extends Component {
       nombreNuevaLista: ""
     };
     this.handleChange = this.handleChange.bind(this);
-
+    this.getData = this.getData.bind(this);
     this.actualizarNuevaLista = this.actualizarNuevaLista.bind(this);
     this.crearLista = this.crearLista.bind(this);
+  }
+
+  getData() {
+    const id = parseInt(this.props.video);
+    getReproductionListVideoIn(id, data => {
+      if (this._isMounted) {
+        this.setState({ listasDelVideo: data });
+      }
+    });
+  }
+
+  componentWillMount() {
+    this._isMounted = true;
+    this.getData();
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   handleChange(e) {
     const item = e.target.value;
     const isChecked = e.target.checked;
+    console.log(isChecked, item, this.props.video);
+    /*
     if (!isChecked) {
       //Eliminar De la lista item
       this.props.enviarPadre(true, item, `Eliminado de ${item}`, false);
@@ -33,6 +56,7 @@ export class ContenidoPopUp extends Component {
       //Añadir a la lista item
       this.props.enviarPadre(true, item, `Añadido a ${item}`, true);
     }
+    */
   }
 
   actualizarNuevaLista(e) {
@@ -68,12 +92,17 @@ export class ContenidoPopUp extends Component {
           }}
         >
           {this.state.listas.map(lista => {
+            let checked = this.state.listasDelVideo.find(l => {
+              return l.id === lista.id;
+            });
+            checked = checked === undefined ? false : true;
             return (
-              <FormCheck id={lista} key={lista}>
+              <FormCheck id={lista.id} key={lista.id}>
                 <FormCheck.Input
                   type={"checkbox"}
-                  value={lista}
+                  value={lista.name}
                   onChange={this.handleChange}
+                  checked={checked}
                 />
                 <FormCheck.Label
                   style={{
@@ -85,7 +114,7 @@ export class ContenidoPopUp extends Component {
                     WebkitBoxOrient: "vertical"
                   }}
                 >
-                  {lista}
+                  {lista.name}
                 </FormCheck.Label>
               </FormCheck>
             );
@@ -324,7 +353,7 @@ class MenuItem extends Component {
               }
             >
               <ContenidoPopUp
-                video={this.props.url}
+                video={this.props.id}
                 listaRepro={this.props.listaRepro}
                 enviarPadre={this.recibirHijo}
               />
