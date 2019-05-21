@@ -8,6 +8,12 @@ import { isSignedIn } from "../config/Auth";
 import { findVideosContainingTitle } from "../config/VideoAPI";
 import { findSubjectsContainingName } from "../config/SubjectAPI";
 import BusquedaAsignaturas from "./BusquedaAsignaturas";
+import { putFavouritesFirst } from "../config/Process";
+import {
+  getUserReproductionLists,
+  addVideotoReproductionList,
+  deleteVideoFromReproductionList
+} from "../config/ReproductionListAPI";
 
 const listasRepro = [
   "Lista de reproducción 1",
@@ -20,11 +26,13 @@ const listasRepro = [
 class ResultadoBusqueda extends Component {
   constructor(props) {
     super(props);
+    this._isMounted = false;
     this.state = {
       contentMargin: "300px",
       busqueda: this.props.match.params.valor,
       lista: [],
       listaAsignaturas: [],
+      listasRepro: [],
       tiempo: 0,
       notif: false,
       mensajeNotif: "",
@@ -36,22 +44,38 @@ class ResultadoBusqueda extends Component {
     this.iniciarReloj = this.iniciarReloj.bind(this);
     this.pararReloj = this.pararReloj.bind(this);
     this.buscarResultados = this.buscarResultados.bind(this);
+    this.getReproductionLists = this.getReproductionLists.bind(this);
     this.tick = this.tick.bind(this);
   }
 
   componentWillMount() {
+    this._isMounted = true;
     this.buscarResultados(this.props.match.params.valor);
+    this.getReproductionLists();
   }
 
   buscarResultados(titulo) {
     findVideosContainingTitle(titulo, (videos, time) => {
-      this.setState({
-        lista: videos,
-        timeNow: time
-      });
+      if (this._isMounted) {
+        this.setState({
+          lista: videos,
+          timeNow: time
+        });
+      }
     });
     findSubjectsContainingName(titulo, data => {
-      this.setState({ listaAsignaturas: data });
+      if (this._isMounted) {
+        this.setState({ listaAsignaturas: data });
+      }
+    });
+  }
+
+  getReproductionLists() {
+    getUserReproductionLists(data => {
+      if (this._isMounted) {
+        const sortedData = putFavouritesFirst(data);
+        this.setState({ listasRepro: sortedData });
+      }
     });
   }
 
@@ -82,18 +106,48 @@ class ResultadoBusqueda extends Component {
     this.setState({ tiempo: t + 1 });
   }
 
-  anyadirVideoALista(nombreVideo, mensaje, lista, anyadir) {
+  anyadirVideoALista(idVideo, mensaje, idLista, anyadir, callback) {
     //Añadir o borrar de la lista lista, dependiendo del parametro anyadir
     if (anyadir) {
       //Añadir el video
+      addVideotoReproductionList(idLista, idVideo, ok => {
+        if (ok) {
+          this.setState({
+            notif: true,
+            mensajeNotif: mensaje
+          });
+          callback(true);
+        } else {
+          this.setState({
+            notif: true,
+            mensajeNotif: "No se ha podido añadir a la lista"
+          });
+          callback(false);
+        }
+      });
     } else {
       //Borrar el video
+      deleteVideoFromReproductionList(idLista, idVideo, ok => {
+        if (ok) {
+          this.setState({
+            notif: true,
+            mensajeNotif: mensaje
+          });
+          callback(true);
+        } else {
+          this.setState({
+            notif: true,
+            mensajeNotif: "No se ha podido borrar de la lista"
+          });
+          callback(false);
+        }
+      });
     }
-    this.setState({ notif: true, mensajeNotif: mensaje });
     this.iniciarReloj();
   }
 
   componentWillUnmount() {
+    this._isMounted = false;
     this.pararReloj();
   }
 
@@ -168,7 +222,7 @@ class ResultadoBusqueda extends Component {
                 <ListaBusqueda
                   lista={this.state.lista}
                   anyadirALista={this.anyadirVideoALista}
-                  listaRepro={listasRepro}
+                  listaRepro={this.state.listasRepro}
                   time={this.state.timeNow}
                 />
               ) : (

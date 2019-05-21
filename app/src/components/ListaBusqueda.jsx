@@ -1,136 +1,28 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
-import { FormCheck } from "react-bootstrap";
 import Popup from "reactjs-popup";
 import { getTime } from "../config/Process";
 import { getScore, getTimePassed } from "../config/VideoAPI";
-
-class ContenidoPopUp extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      listas: this.props.listaRepro,
-      anyadido: false,
-      lista: "",
-      tiempo: 0,
-      mensaje: "",
-      crearLista: false,
-      nombreNuevaLista: ""
-    };
-    this.handleChange = this.handleChange.bind(this);
-
-    this.actualizarNuevaLista = this.actualizarNuevaLista.bind(this);
-    this.crearLista = this.crearLista.bind(this);
-  }
-
-  handleChange(e) {
-    const item = e.target.value;
-    const isChecked = e.target.checked;
-    if (!isChecked) {
-      //Eliminar De la lista item
-      this.props.enviarPadre(true, item, `Eliminado de ${item}`, false);
-    } else {
-      //Añadir a la lista item
-      this.props.enviarPadre(true, item, `Añadido a ${item}`, true);
-    }
-  }
-
-  actualizarNuevaLista(e) {
-    e.preventDefault();
-    this.setState({ nombreNuevaLista: e.target.value });
-  }
-
-  crearLista(e) {
-    if (e.keyCode === 13) {
-      //CREAR LA LISTA
-      const item = this.state.nombreNuevaLista;
-      var nuevasListas = this.state.listas.slice();
-      nuevasListas.push(item);
-      this.setState({
-        nombreNuevaLista: "",
-        crearLista: false,
-        listas: nuevasListas
-      });
-    }
-  }
-
-  render() {
-    return (
-      <div>
-        <div style={{ borderBottom: "1px solid lightgrey", fontWeight: "450" }}>
-          Guardar en...
-        </div>
-        <div
-          style={{
-            paddingTop: "15px",
-            fontSize: "14px",
-            borderBottom: "1px solid lightgrey"
-          }}
-        >
-          {this.state.listas.map(lista => {
-            return (
-              <FormCheck id={lista} key={lista}>
-                <FormCheck.Input
-                  type={"checkbox"}
-                  value={lista}
-                  onChange={this.handleChange}
-                />
-                <FormCheck.Label
-                  style={{
-                    marginBottom: "10px",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    display: "-webkit-box",
-                    WebkitLineClamp: "1",
-                    WebkitBoxOrient: "vertical"
-                  }}
-                >
-                  {lista}
-                </FormCheck.Label>
-              </FormCheck>
-            );
-          })}
-        </div>
-        <div
-          style={{ paddingTop: "15px", fontSize: "14px", cursor: "default" }}
-          onClick={() => this.setState({ crearLista: true })}
-        >
-          {!this.state.crearLista ? (
-            "+ Crear nueva lista"
-          ) : (
-            <input
-              style={{ border: "0", borderBottom: "1px solid lightgrey" }}
-              placeholder="Nueva lista..."
-              onChange={this.actualizarNuevaLista}
-              onKeyDown={this.crearLista}
-            />
-          )}
-        </div>
-      </div>
-    );
-  }
-}
+import { ContenidoPopUp } from "./ListaVertical";
 
 class MenuItem extends Component {
   constructor(props) {
     super(props);
     this.state = {
       mostrarOpciones: false,
-      popUp: false,
-      tiempo: 0,
-      mostrarNotif: false,
-      mensaje: ""
+      popUp: false
     };
     this.abrirPopUp = this.abrirPopUp.bind(this);
     this.cerrarPopUp = this.cerrarPopUp.bind(this);
     this.recibirHijo = this.recibirHijo.bind(this);
   }
 
-  recibirHijo(mostrar, lista, mensaje, anyadir) {
-    this.setState({ mostrarNotif: mostrar, mensaje: mensaje });
+  recibirHijo(lista, mensaje, anyadir, callback) {
     //SI anyadir = true, anyadir a la lista lista, sino borrar de la lista lista
-    this.props.anyadirALista(this.props.url, mensaje, lista, anyadir);
+    this.props.anyadirALista(this.props.id, mensaje, lista, anyadir, ok => {
+      callback(ok);
+    });
   }
 
   abrirPopUp() {
@@ -307,6 +199,7 @@ class MenuItem extends Component {
             >
               <ContenidoPopUp
                 video={this.props.url}
+                videoId={this.props.id}
                 listaRepro={this.props.listaRepro}
                 enviarPadre={this.recibirHijo}
               />
