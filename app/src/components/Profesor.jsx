@@ -6,6 +6,12 @@ import { Button } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
 import icono from "../assets/favicon.ico";
 import { isSignedIn } from "../config/Auth";
+import {
+  getUser,
+  getUniversityOfUser,
+  getDegreeOfUser,
+  getSubjectsUniAsProfessor
+} from "../config/UserAPI";
 
 class CamposMostrar extends Component {
   renderCampo(nombre, contenido) {
@@ -25,6 +31,7 @@ class CamposMostrar extends Component {
         >
           {contenido}
         </h6>
+        <br />
       </div>
     );
   }
@@ -46,29 +53,79 @@ class CamposMostrar extends Component {
               margin: "40px 40% 0 120px"
             }}
           >
-            <h6 style={{ textAlign: "justify" }}>
-              Un texto es una composición de signos codificados en un sistema de
-              escritura que forma una unidad de sentido. También es una
-              composición de caracteres imprimibles generados por un algoritmo
-              de cifrado que, aunque no tienen sentido para cualquier persona,
-              sí puede ser descifrado por su destinatario original
-            </h6>
+            <h6 style={{ textAlign: "justify" }}>{this.props.description}</h6>
           </div>
+          <br />
         </div>
-        {this.renderCampo("Universidad:", "UNIZAR")}
-        {this.renderCampo("Grado:", "Ingeniería Informática")}
+        {this.renderCampo("Universidad:", this.props.uni)}
+        {this.renderCampo("Grado:", this.props.degree)}
+      </div>
+    );
+  }
+}
+
+class AsignaturasProf extends Component {
+  renderSubject(subject) {
+    const foto =
+      subject.university === undefined ? "" : subject.university.photo;
+    return (
+      <div style={{ marginBottom: "10px" }}>
+        {console.log(subject)}
+        <Link to={`/asig/${subject.id}`}>
+          <img
+            src={foto}
+            style={{ borderRadius: "50%" }}
+            height="40"
+            width="40"
+            alt="Canal"
+          />
+        </Link>
+        <Link
+          className="link-asignatura"
+          style={{ padding: "0 0 0 10px" }}
+          to={`/asig/${subject.id}`}
+        >
+          {subject.name}
+        </Link>
+      </div>
+    );
+  }
+  render() {
+    return (
+      <div>
+        <h6
+          style={{
+            float: "left"
+          }}
+        >
+          <strong>Asignaturas:</strong>
+        </h6>
+        <div
+          style={{
+            margin: "30px 40% 0 120px"
+          }}
+        >
+          {this.props.sub.forEach(subject => {
+            this.renderSubject(subject);
+          })}
+        </div>
       </div>
     );
   }
 }
 
 class Profesor extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      contentMargin: "300px"
+      contentMargin: "300px",
+      prof: "",
+      sub: []
     };
     this.handleChange = this.handleChange.bind(this);
+    this.getUniFromUser = this.getUniFromUser.bind(this);
+    this.getDegreeFromUser = this.getDegreeFromUser.bind(this);
+    this.saveSubjects = this.saveSubjects.bind(this);
   }
 
   handleChange(display) {
@@ -83,7 +140,45 @@ class Profesor extends Component {
     }
   }
 
+  componentWillMount() {
+    getUser(this.props.match.params.id, data => {
+      this.setState({ prof: data });
+      this.getUniFromUser(Number.parseInt(data.id));
+      this.getDegreeFromUser(data.id);
+      getSubjectsUniAsProfessor(data.id, this.saveSubjects);
+    });
+  }
+  getUniFromUser(id) {
+    getUniversityOfUser(id, data => {
+      this.setState({ uni: data });
+    });
+  }
+  getDegreeFromUser(id) {
+    getDegreeOfUser(id, data => {
+      this.setState({ degree: data });
+    });
+  }
+  saveSubjects(data) {
+    this.setState({ sub: data });
+  }
+
   render() {
+    const nombre =
+      this.state.prof.name === undefined ? "" : this.state.prof.name;
+    const apellidos =
+      this.state.prof.surnames === undefined ? "" : this.state.prof.surnames;
+    const user_nom =
+      this.state.prof.username === undefined ? "" : this.state.prof.username;
+    const foto =
+      this.state.prof.photo === undefined ? User_img : this.state.prof.photo;
+    const correo =
+      this.state.prof.correo === undefined ? "" : this.state.prof.correo;
+    const descr =
+      this.state.prof.description === undefined
+        ? ""
+        : this.state.prof.description;
+    const uni = this.state.uni === undefined ? "" : this.state.uni;
+    const degree = this.state.degree === undefined ? "" : this.state.degree;
     return (
       <div>
         <Helmet>
@@ -103,7 +198,9 @@ class Profesor extends Component {
             marginTop: "80px"
           }}
         >
-          <h5>{this.props.match.params.id}</h5>
+          <h5>
+            {nombre} {apellidos}
+          </h5>
           <div style={{ marginTop: "40px" }}>
             <div
               style={{
@@ -112,10 +209,11 @@ class Profesor extends Component {
               }}
             >
               <img
-                src={User_img}
+                src={foto}
                 alt="Foto de perfil"
                 width="160px"
                 height="160px"
+                style={{ borderRadius: "50%" }}
               />
             </div>
             <div
@@ -125,7 +223,7 @@ class Profesor extends Component {
             >
               <div>
                 <Link
-                  to={`/chat/${this.props.match.params.nombre}`}
+                  to={`/chat/${this.props.match.params.id}`}
                   className="universidad"
                 >
                   <Button className="boton-filtro">Enviar un mensaje</Button>
@@ -144,7 +242,7 @@ class Profesor extends Component {
                 >
                   <strong>Nombre de usuario:</strong>
                 </h6>
-                <p>739999</p>
+                <p>{user_nom}</p>
               </div>
               <div
                 style={{
@@ -159,80 +257,13 @@ class Profesor extends Component {
                 >
                   <strong>Dirección de correo:</strong>
                 </h6>
-                <h6>davidsolanas@gmail.com</h6>
+                <h6>{correo}</h6>
               </div>
             </div>
           </div>
-          <CamposMostrar />
-          <div>
-            <h6
-              style={{
-                float: "left"
-              }}
-            >
-              <strong>Asignaturas:</strong>
-            </h6>
-            <div
-              style={{
-                margin: "30px 40% 0 120px"
-              }}
-            >
-              <div style={{ marginBottom: "10px" }}>
-                <Link to="/asig/X">
-                  <img
-                    src={icono}
-                    style={{ borderRadius: "50%" }}
-                    height="40"
-                    width="40"
-                    alt="Canal"
-                  />
-                </Link>
-                <Link
-                  className="link-asignatura"
-                  style={{ padding: "0 0 0 10px" }}
-                  to="/asig/X"
-                >
-                  Asignatura concreta
-                </Link>
-              </div>
-              <div style={{ marginBottom: "10px" }}>
-                <Link to="/asig/X">
-                  <img
-                    src={icono}
-                    style={{ borderRadius: "50%" }}
-                    height="40"
-                    width="40"
-                    alt="Canal"
-                  />
-                </Link>
-                <Link
-                  className="link-asignatura"
-                  style={{ padding: "0 0 0 10px" }}
-                  to="/asig/X"
-                >
-                  Asignatura concreta
-                </Link>
-              </div>
-              <div style={{ marginBottom: "10px" }}>
-                <Link to="/asig/X">
-                  <img
-                    src={icono}
-                    style={{ borderRadius: "50%" }}
-                    height="40"
-                    width="40"
-                    alt="Canal"
-                  />
-                </Link>
-                <Link
-                  className="link-asignatura"
-                  style={{ padding: "0 0 0 10px" }}
-                  to="/asig/X"
-                >
-                  Asignatura concreta
-                </Link>
-              </div>
-            </div>
-          </div>
+          <br />
+          <CamposMostrar description={descr} uni={uni} degree={degree} />
+          <AsignaturasProf sub={this.state.sub} />
         </div>
       </div>
     );
