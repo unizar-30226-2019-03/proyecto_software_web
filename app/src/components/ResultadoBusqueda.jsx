@@ -15,14 +15,6 @@ import {
   deleteVideoFromReproductionList
 } from "../config/ReproductionListAPI";
 
-const listasRepro = [
-  "Lista de reproducción 1",
-  "Lista de reproducción 2",
-  "Lista de reproducción 3",
-  "Lista de reproducción 4",
-  "Lista de reproduccióndasds aadsasdsadasadsdasdasasddasdsaddsadas 5"
-];
-
 class ResultadoBusqueda extends Component {
   constructor(props) {
     super(props);

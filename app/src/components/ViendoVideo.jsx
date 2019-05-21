@@ -11,7 +11,7 @@ import {
   FaStar,
   FaStarHalf
 } from "react-icons/fa";
-import { getTime } from "../config/Process";
+import { getTime, putFavouritesFirst } from "../config/Process";
 import Popup from "reactjs-popup";
 import StarRatingComponent from "react-star-rating-component";
 import { ContenidoPopUp } from "./ListaVertical";
@@ -33,6 +33,11 @@ import {
 } from "../config/SubjectAPI";
 import { updateDisplay, getVideoDisplay } from "../config/DisplayAPI";
 import { addVote } from "../config/VoteAPI";
+import {
+  getUserReproductionLists,
+  addVideotoReproductionList,
+  deleteVideoFromReproductionList
+} from "../config/ReproductionListAPI";
 
 const listasRepro = [
   "Lista de reproducción 1",
@@ -100,10 +105,12 @@ const ListaProfesores = list =>
 class ViendoVideo extends Component {
   constructor() {
     super();
+    this._isMounted = false;
     this.state = {
       contentMargin: "15%",
       user: {},
       totalComentarios: [],
+      listasRepro: [],
       obtenerNuevosComentarios: false,
       obteniendoComentarios: false,
       comentarios: [],
@@ -127,6 +134,8 @@ class ViendoVideo extends Component {
       tiempoInicial: 0,
       profesores: []
     };
+    this.getData = this.getData.bind(this);
+    this.getReproductionLists = this.getReproductionLists.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.recogerComentarios = this.recogerComentarios.bind(this);
     this.recibirEstadoVideo = this.recibirEstadoVideo.bind(this);
@@ -145,6 +154,41 @@ class ViendoVideo extends Component {
     this.obtenerAsignaturaUni = this.obtenerAsignaturaUni.bind(this);
     this.seguirAsig = this.seguirAsig.bind(this);
     this.comentario = React.createRef();
+  }
+
+  getData() {
+    getUser(getUserID(), user => {
+      if (this._isMounted) {
+        this.setState({ user: user });
+      }
+    });
+    getVideo(this.props.match.params.id, (video, time) => {
+      if (this._isMounted) {
+        this.setState({ video: video, timeNow: time });
+      }
+      this.obtenerAsignaturaUni(video);
+      this.obtenerComentarios(video, this.state.page);
+      getVideoDisplay(video.id, data => {
+        if (data !== false) {
+          if (this._isMounted) {
+            if (data.secsFromBeg >= video.seconds - 1) {
+              this.setState({ tiempoInicial: 0 });
+            } else {
+              this.setState({ tiempoInicial: data.secsFromBeg });
+            }
+          }
+        }
+      });
+    });
+  }
+
+  getReproductionLists() {
+    getUserReproductionLists(data => {
+      if (this._isMounted) {
+        const sortedData = putFavouritesFirst(data);
+        this.setState({ listasRepro: sortedData });
+      }
+    });
   }
 
   recogerComentarios(tiempoInicio, tiempoFin, lista) {
@@ -216,23 +260,9 @@ class ViendoVideo extends Component {
   }
 
   componentWillMount() {
-    getUser(getUserID(), user => {
-      this.setState({ user: user });
-    });
-    getVideo(this.props.match.params.id, (video, time) => {
-      this.setState({ video: video, timeNow: time });
-      this.obtenerAsignaturaUni(video);
-      this.obtenerComentarios(video, this.state.page);
-      getVideoDisplay(video.id, data => {
-        if (data !== false) {
-          if (data.secsFromBeg >= video.seconds - 1) {
-            this.setState({ tiempoInicial: 0 });
-          } else {
-            this.setState({ tiempoInicial: data.secsFromBeg });
-          }
-        }
-      });
-    });
+    this._isMounted = true;
+    this.getData();
+    this.getReproductionLists();
   }
 
   obtenerComentarios(video, page) {
@@ -241,27 +271,35 @@ class ViendoVideo extends Component {
       if (comentarios.length === 20) {
         obtenerMas = true;
       }
-      this.setState({
-        totalComentarios: [...this.state.totalComentarios, ...comentarios],
-        page: page,
-        obtenerNuevosComentarios: obtenerMas,
-        obteniendoComentarios: false
-      });
+      if (this._isMounted) {
+        this.setState({
+          totalComentarios: [...this.state.totalComentarios, ...comentarios],
+          page: page,
+          obtenerNuevosComentarios: obtenerMas,
+          obteniendoComentarios: false
+        });
+      }
     });
   }
 
   obtenerAsignaturaUni(video) {
     getVideoSubject(video.id, asig => {
-      this.setState({ asig: asig });
+      if (this._isMounted) {
+        this.setState({ asig: asig });
+      }
       getProfessorsFromSubject(asig.id, data => {
-        this.setState({ profesores: data });
+        if (this._isMounted) {
+          this.setState({ profesores: data });
+        }
       });
       getSubjectsOfUser(getUserID(), subjects => {
         const found = subjects.find(s => {
           return s.id === asig.id;
         });
         //Si no la ha encontrado -> No sigue la asignatura
-        this.setState({ siguiendoAsig: found === undefined ? false : true });
+        if (this._isMounted) {
+          this.setState({ siguiendoAsig: found === undefined ? false : true });
+        }
       });
     });
   }
@@ -303,13 +341,43 @@ class ViendoVideo extends Component {
     }
   }
 
-  guardarVideo(mostrar, lista, mensaje, anyadir) {
+  guardarVideo(idLista, mensaje, anyadir, callback) {
+    const idVideo = this.state.video.id;
     if (anyadir) {
-      //Añadir a la lista lista
+      //Añadir el video
+      addVideotoReproductionList(idLista, idVideo, ok => {
+        if (ok) {
+          this.setState({
+            notif: true,
+            mensajeNotif: mensaje
+          });
+          callback(true);
+        } else {
+          this.setState({
+            notif: true,
+            mensajeNotif: "No se ha podido añadir a la lista"
+          });
+          callback(false);
+        }
+      });
     } else {
-      //Borrar de la lista lista
+      //Borrar el video
+      deleteVideoFromReproductionList(idLista, idVideo, ok => {
+        if (ok) {
+          this.setState({
+            notif: true,
+            mensajeNotif: mensaje
+          });
+          callback(true);
+        } else {
+          this.setState({
+            notif: true,
+            mensajeNotif: "No se ha podido borrar de la lista"
+          });
+          callback(false);
+        }
+      });
     }
-    this.setState({ notif: mostrar, mensajeNotif: mensaje });
     this.iniciarReloj();
   }
 
@@ -333,6 +401,7 @@ class ViendoVideo extends Component {
   }
 
   componentWillUnmount() {
+    this._isMounted = false;
     this.pararReloj();
   }
 
@@ -623,8 +692,9 @@ class ViendoVideo extends Component {
                     }
                   >
                     <ContenidoPopUp
-                      video={this.props.match.params.id}
-                      listaRepro={listasRepro}
+                      video={this.state.video.title}
+                      videoId={this.state.video.id}
+                      listaRepro={this.state.listasRepro}
                       enviarPadre={this.guardarVideo}
                     />
                   </Popup>
