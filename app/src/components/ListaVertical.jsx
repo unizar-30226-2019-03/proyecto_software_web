@@ -14,9 +14,6 @@ export class ContenidoPopUp extends Component {
     this.state = {
       listas: this.props.listaRepro,
       listasDelVideo: [],
-      anyadido: false,
-      lista: "",
-      mensaje: "",
       crearLista: false,
       nombreNuevaLista: ""
     };
@@ -27,7 +24,7 @@ export class ContenidoPopUp extends Component {
   }
 
   getData() {
-    const id = parseInt(this.props.video);
+    const id = parseInt(this.props.videoId);
     getReproductionListVideoIn(id, data => {
       if (this._isMounted) {
         this.setState({ listasDelVideo: data });
@@ -44,19 +41,34 @@ export class ContenidoPopUp extends Component {
     this._isMounted = false;
   }
 
-  handleChange(e) {
-    const item = e.target.value;
+  handleChange(e, id, name) {
     const isChecked = e.target.checked;
-    console.log(isChecked, item, this.props.video);
-    /*
+
     if (!isChecked) {
       //Eliminar De la lista item
-      this.props.enviarPadre(true, item, `Eliminado de ${item}`, false);
+      this.props.enviarPadre(
+        id,
+        `${this.props.video.toUpperCase()} eliminado de ${name.toUpperCase()}`,
+        false,
+        ok => {
+          if (ok) {
+            this.getData();
+          }
+        }
+      );
     } else {
       //Añadir a la lista item
-      this.props.enviarPadre(true, item, `Añadido a ${item}`, true);
+      this.props.enviarPadre(
+        id,
+        `${this.props.video.toUpperCase()} añadido a ${name.toUpperCase()}`,
+        true,
+        ok => {
+          if (ok) {
+            this.getData();
+          }
+        }
+      );
     }
-    */
   }
 
   actualizarNuevaLista(e) {
@@ -100,8 +112,8 @@ export class ContenidoPopUp extends Component {
               <FormCheck id={lista.id} key={lista.id}>
                 <FormCheck.Input
                   type={"checkbox"}
-                  value={lista.name}
-                  onChange={this.handleChange}
+                  value={lista.id}
+                  onChange={e => this.handleChange(e, lista.id, lista.name)}
                   checked={checked}
                 />
                 <FormCheck.Label
@@ -147,8 +159,6 @@ class MenuItem extends Component {
     this.state = {
       mostrarOpciones: false,
       popUp: false,
-      mostrarNotif: false,
-      mensaje: "",
       asig: {}
     };
     this.getData = this.getData.bind(this);
@@ -174,10 +184,11 @@ class MenuItem extends Component {
     this._isMounted = false;
   }
 
-  recibirHijo(mostrar, lista, mensaje, anyadir) {
-    this.setState({ mostrarNotif: mostrar, mensaje: mensaje });
+  recibirHijo(lista, mensaje, anyadir, callback) {
     //SI anyadir = true, anyadir a la lista lista, sino borrar de la lista lista
-    this.props.anyadirALista(this.props.url, mensaje, lista, anyadir);
+    this.props.anyadirALista(this.props.id, mensaje, lista, anyadir, ok => {
+      callback(ok);
+    });
   }
 
   abrirPopUp() {
@@ -353,7 +364,8 @@ class MenuItem extends Component {
               }
             >
               <ContenidoPopUp
-                video={this.props.id}
+                video={this.props.url}
+                videoId={this.props.id}
                 listaRepro={this.props.listaRepro}
                 enviarPadre={this.recibirHijo}
               />

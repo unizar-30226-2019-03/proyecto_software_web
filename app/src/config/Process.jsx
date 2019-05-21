@@ -74,3 +74,17 @@ export function checkFileExtensionVideo(filename) {
     ext === "avi"
   );
 }
+
+/**
+ * Coloca la lista de reproducción de favoritos en primer lugar
+ * @param {Array} data Array de listas de reproducción
+ */
+export function putFavouritesFirst(data) {
+  const i = data.findIndex(e => {
+    return e.name === "Favoritos";
+  });
+  var t1 = data[i];
+  data[i] = data[0];
+  data[0] = t1;
+  return data;
+}

@@ -5,22 +5,15 @@ import { Helmet } from "react-helmet";
 import ListaVertical from "./ListaVertical";
 import { Notificacion } from "./MisListas";
 import Popup from "reactjs-popup";
-import { RemoveAccents } from "../config/Process";
+import { RemoveAccents, putFavouritesFirst } from "../config/Process";
 import { isSignedIn } from "../config/Auth";
 import { getVideosFromReproductionList } from "../config/VideoAPI";
 import {
   deleteVideoFromReproductionList,
   deleteReproductionList,
-  getUserReproductionLists
+  getUserReproductionLists,
+  addVideotoReproductionList
 } from "../config/ReproductionListAPI";
-
-const listasRepro = [
-  "Lista de reproducción 1",
-  "Lista de reproducción 2",
-  "Lista de reproducción 3",
-  "Lista de reproducción 4",
-  "Lista de reproduccióndasds aadsasdsadasadsdasdasasddasdsaddsadas 5"
-];
 
 class Lista extends Component {
   constructor(props) {
@@ -289,7 +282,6 @@ class ListaConcreta extends Component {
       notif: false,
       mensajeNotif: "",
       videoBorrado: {},
-      deshacer: false,
       tiempo: 0,
       timestamp: new Date(),
       page: 0,
@@ -307,7 +299,6 @@ class ListaConcreta extends Component {
     this.iniciarReloj = this.iniciarReloj.bind(this);
     this.pararReloj = this.pararReloj.bind(this);
     this.tick = this.tick.bind(this);
-    this.deshacer = this.deshacer.bind(this);
   }
 
   getData(page) {
@@ -327,27 +318,10 @@ class ListaConcreta extends Component {
   getReproductionLists() {
     getUserReproductionLists(data => {
       if (this._isMounted) {
-        this.setState({ listasRepro: data });
+        const sortedData = putFavouritesFirst(data);
+        this.setState({ listasRepro: sortedData });
       }
     });
-  }
-
-  deshacer() {
-    const { v, index, index2 } = this.state.videoBorrado;
-    var nuevoHistorial = this.state.miLista.slice();
-    nuevoHistorial.splice(index, 0, v);
-    this.setState({
-      videoBorrado: null,
-      miLista: nuevoHistorial,
-      notif: false
-    });
-    if (index2 !== -1) {
-      //Deshacer en el filtrado también
-      var nuevolistaFiltrada = this.state.listaFiltrada.slice();
-      nuevolistaFiltrada.splice(index2, 0, v);
-      this.setState({ listaFiltrada: nuevolistaFiltrada });
-    }
-    clearInterval(this.timerID);
   }
 
   borrarLista() {
@@ -391,14 +365,57 @@ class ListaConcreta extends Component {
     }
   }
 
-  anyadirVideoALista(nombreVideo, mensaje, lista, anyadir) {
+  anyadirVideoALista(idVideo, mensaje, idLista, anyadir, callback) {
     //Añadir o borrar de la lista lista, dependiendo del parametro anyadir
     if (anyadir) {
       //Añadir el video
+      addVideotoReproductionList(idLista, idVideo, ok => {
+        if (ok) {
+          this.setState({
+            notif: true,
+            mensajeNotif: mensaje
+          });
+          callback(true);
+        } else {
+          this.setState({
+            notif: true,
+            mensajeNotif: "No se ha podido añadir a la lista"
+          });
+          callback(false);
+        }
+      });
     } else {
       //Borrar el video
+      const idActual = parseInt(this.props.match.params.id);
+      deleteVideoFromReproductionList(idLista, idVideo, ok => {
+        if (ok) {
+          if (idActual === idLista) {
+            this.setState({
+              notif: true,
+              mensajeNotif: mensaje,
+              listaFiltrada: [],
+              miLista: [],
+              busqueda: "",
+              filtrado: false,
+              page: 0
+            });
+            this.getData(0);
+          } else {
+            this.setState({
+              notif: true,
+              mensajeNotif: mensaje
+            });
+          }
+          callback(true);
+        } else {
+          this.setState({
+            notif: true,
+            mensajeNotif: "No se ha podido borrar de la lista"
+          });
+          callback(false);
+        }
+      });
     }
-    this.setState({ notif: true, mensajeNotif: mensaje, deshacer: false });
     this.iniciarReloj();
   }
 
@@ -539,8 +556,7 @@ class ListaConcreta extends Component {
             <Notificacion
               mostrar={this.state.notif}
               mensaje={this.state.mensajeNotif}
-              deshacer={this.state.deshacer}
-              handleClick={this.deshacer}
+              deshacer={false}
             />
           </div>
         )}

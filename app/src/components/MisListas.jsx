@@ -13,6 +13,7 @@ import {
   deleteReproductionList
 } from "../config/ReproductionListAPI";
 import { getVideosFromReproductionList } from "../config/VideoAPI";
+import { putFavouritesFirst } from "../config/Process";
 
 export const Notificacion = ({ mostrar, mensaje, handleClick, deshacer }) => {
   return (
@@ -259,7 +260,8 @@ class MisListas extends Component {
   getData() {
     getUserReproductionLists(data => {
       if (this._isMounted) {
-        this.setState({ misListas: data });
+        const sortedData = putFavouritesFirst(data);
+        this.setState({ misListas: sortedData });
       }
     });
   }
