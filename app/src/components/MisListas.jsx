@@ -249,7 +249,9 @@ class MisListas extends Component {
 
   componentWillMount() {
     this._isMounted = true;
-    this.getData();
+    if (isSignedIn()) {
+      this.getData();
+    }
   }
 
   componentWillUnmount() {

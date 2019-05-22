@@ -3,9 +3,7 @@ import BarraAdmi from "./BarraAdmi";
 import { Helmet } from "react-helmet";
 import { Button, Form, Col, Modal } from "react-bootstrap";
 import { Redirect } from "react-router-dom";
-import {
-  isSignedIn
-} from "../config/Auth";
+import { isSignedIn } from "../config/Auth";
 import UniversityApi from "swagger_unicast/dist/api/UniversityApi";
 import DegreeApi from "swagger_unicast/dist/api/DegreeApi";
 import UserApi from "swagger_unicast/dist/api/UserApi";
@@ -14,7 +12,7 @@ import {
   crearUniversidad,
   crearCarreraYLigar,
   crearAsigYLigar,
-  addProfessor, 
+  addProfessor,
   hacerProfesor
 } from "../config/AdminAPI";
 import SubjectApi from "swagger_unicast/dist/api/SubjectApi";
@@ -24,10 +22,7 @@ import {
 } from "../config/UniversityAPI";
 import { getUserByUsername } from "../config/UserAPI";
 
-const FormularioProfesor = (
-  handleProfesor,
-  userID
-) => {
+const FormularioProfesor = (handleProfesor, userID) => {
   return (
     <div style={{ margin: "20px 20px 20px 20px" }}>
       <h6>Convertir usuario en profesor</h6>
@@ -37,7 +32,6 @@ const FormularioProfesor = (
           handleProfesor(e, document.getElementById("form-profesor"))
         }
       >
-
         <Form.Group controlId="formGridUserID">
           <Form.Label>Nombre de usuario</Form.Label>
           <Form.Control
@@ -327,6 +321,7 @@ class FormularioProfeAsignatura extends React.Component {
 class AdministradorCrear extends Component {
   constructor(props) {
     super(props);
+    this._isMounted = false;
     this.state = {
       show: false,
       listaCarreras: [],
@@ -347,6 +342,7 @@ class AdministradorCrear extends Component {
     this.uniUn = React.createRef();
     this.asignUn = React.createRef();
     this.userUn = React.createRef();
+    this.getData = this.getData.bind(this);
     this.handleProfesor = this.handleProfesor.bind(this);
     this.handleUniversidad = this.handleUniversidad.bind(this);
     this.handleAsignatura = this.handleAsignatura.bind(this);
@@ -357,6 +353,17 @@ class AdministradorCrear extends Component {
   }
 
   componentWillMount() {
+    this._isMounted = true;
+    if (isSignedIn()) {
+      this.getData();
+    }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
+  getData() {
     getUnivesities(0, data => {
       this.getAllUniversities(data._embedded.universities, 1);
     });
@@ -364,7 +371,9 @@ class AdministradorCrear extends Component {
 
   getAllUniversities(unis, page) {
     if (unis.length < 20) {
-      this.setState({ listaUniversidades: unis });
+      if (this._isMounted) {
+        this.setState({ listaUniversidades: unis });
+      }
     } else {
       getUnivesities(page, data => {
         const newData = [...unis, ...data._embedded.universities];
@@ -465,10 +474,7 @@ class AdministradorCrear extends Component {
         >
           <h5>Añadir elementos a la página</h5>
           <div className="boxed">
-            {FormularioProfesor(
-              this.handleProfesor,
-              this.userIDProf
-            )}
+            {FormularioProfesor(this.handleProfesor, this.userIDProf)}
           </div>
           <div className="boxed" style={{ marginTop: "20px" }} id="a">
             {FormularioUniversidad(

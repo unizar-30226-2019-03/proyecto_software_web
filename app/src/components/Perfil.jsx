@@ -62,6 +62,7 @@ class CamposMostrar extends Component {
 class Perfil extends Component {
   constructor() {
     super();
+    this._isMounted = false;
     this.state = {
       contentMargin: "300px",
       popUp: false,
@@ -73,6 +74,7 @@ class Perfil extends Component {
       degree: {}
     };
     this.pass = React.createRef();
+    this.getData = this.getData.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.abrirPopUp = this.abrirPopUp.bind(this);
@@ -82,8 +84,21 @@ class Perfil extends Component {
   }
 
   componentWillMount() {
+    this._isMounted = true;
+    if (isSignedIn()) {
+      this.getData();
+    }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
+  getData() {
     getUser(getUserID(), data => {
-      this.setState({ user: data });
+      if (this._isMounted) {
+        this.setState({ user: data });
+      }
       this.getUniFromUser(data.id);
       this.getDegreeFromUser(data.id);
     });
@@ -91,12 +106,17 @@ class Perfil extends Component {
 
   getUniFromUser(id) {
     getUniversityOfUser(id, data => {
-      this.setState({ uni: data });
+      if (this._isMounted) {
+        this.setState({ uni: data });
+      }
     });
   }
+
   getDegreeFromUser(id) {
     getDegreeOfUser(id, data => {
-      this.setState({ degree: data });
+      if (this._isMounted) {
+        this.setState({ degree: data });
+      }
     });
   }
 

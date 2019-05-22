@@ -38,6 +38,20 @@ import {
   addVideotoReproductionList,
   deleteVideoFromReproductionList
 } from "../config/ReproductionListAPI";
+import {
+  FacebookShareButton,
+  FacebookIcon,
+  LinkedinShareButton,
+  LinkedinIcon,
+  PinterestShareButton,
+  PinterestIcon,
+  RedditShareButton,
+  RedditIcon,
+  TwitterShareButton,
+  TwitterIcon,
+  EmailShareButton,
+  EmailIcon
+} from "react-share";
 
 const StarRating = ({ nombre, puntuacion, onStarClick, size }) => {
   return (
@@ -115,6 +129,7 @@ class ViendoVideo extends Component {
       tiempoNotif: 0,
       popUpGuardar: false,
       popUpPuntuar: false,
+      popUpCompartir: false,
       calidad: 2.5,
       adecuacion: 2.5,
       claridad: 2.5,
@@ -266,8 +281,10 @@ class ViendoVideo extends Component {
 
   componentWillMount() {
     this._isMounted = true;
-    this.getData();
-    this.getReproductionLists();
+    if (isSignedIn()) {
+      this.getData();
+      this.getReproductionLists();
+    }
   }
 
   obtenerComentarios(video, page) {
@@ -486,12 +503,13 @@ class ViendoVideo extends Component {
       this.state.asig.university === undefined
         ? ""
         : this.state.asig.university.photo;
+    const currentUrl = window.location.href;
     return !isSignedIn() ? (
       <Redirect to="/" />
     ) : (
       <div>
         <Helmet>
-          <title>Inicio</title>
+          <title>UniCast | Vídeo</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         <BarraNavegacion
@@ -534,7 +552,13 @@ class ViendoVideo extends Component {
                 >
                   <Popup
                     open={this.state.popUpPuntuar}
-                    onOpen={() => this.setState({ popUpPuntuar: true })}
+                    onOpen={() =>
+                      this.setState({
+                        popUpPuntuar: true,
+                        popUpGuardar: false,
+                        popUpCompartir: false
+                      })
+                    }
                     onClose={() => this.setState({ popUpPuntuar: false })}
                     arrow={false}
                     position="top left"
@@ -665,15 +689,122 @@ class ViendoVideo extends Component {
                       </div>
                     </div>
                   </Popup>
-
-                  <FaShareAlt
-                    size={30}
-                    color={"#00000080"}
-                    style={{ marginRight: "20px", cursor: "pointer" }}
-                  />
+                  <Popup
+                    open={this.state.popUpCompartir}
+                    onOpen={() =>
+                      this.setState({
+                        popUpCompartir: true,
+                        popUpGuardar: false,
+                        popUpPuntuar: false
+                      })
+                    }
+                    onClose={() => this.setState({ popUpCompartir: false })}
+                    arrow={false}
+                    position="top left"
+                    contentStyle={{
+                      width: "270px",
+                      zIndex: "1000",
+                      maxHeight: "300px",
+                      overflow: "scroll",
+                      padding: "16px 20px",
+                      border: "0",
+                      marginTop: "10px",
+                      boxShadow:
+                        "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4)"
+                    }}
+                    trigger={
+                      <FaShareAlt
+                        size={30}
+                        color={"#00000080"}
+                        style={{ marginRight: "20px", cursor: "pointer" }}
+                      />
+                    }
+                  >
+                    <div>
+                      <div
+                        style={{
+                          borderBottom: "1px solid lightgrey",
+                          marginBottom: "10px"
+                        }}
+                      >
+                        Compartir
+                      </div>
+                      <div className="share-container">
+                        <div className="share">
+                          <FacebookShareButton
+                            url={currentUrl}
+                            quote={"Vídeo Unicast: " + this.state.video.title}
+                            className="share-button"
+                          >
+                            <FacebookIcon size={32} round />
+                          </FacebookShareButton>
+                          <div className="share-name">Facebook</div>
+                        </div>
+                        <div className="share">
+                          <TwitterShareButton
+                            url={currentUrl}
+                            title={"Vídeo Unicast: " + this.state.video.title}
+                            className="share-button"
+                          >
+                            <TwitterIcon size={32} round />
+                          </TwitterShareButton>
+                          <div className="share-name">Twitter</div>
+                        </div>
+                        <div className="share">
+                          <LinkedinShareButton
+                            url={currentUrl}
+                            className="share-button"
+                          >
+                            <LinkedinIcon size={32} round />
+                          </LinkedinShareButton>
+                          <div className="share-name">Linkedin</div>
+                        </div>
+                        <div className="share">
+                          <PinterestShareButton
+                            url={currentUrl}
+                            media={this.state.video.thumbnailUrl}
+                            description={
+                              "Vídeo Unicast: " + this.state.video.title
+                            }
+                            className="share-button"
+                          >
+                            <PinterestIcon size={32} round />
+                          </PinterestShareButton>
+                          <div className="share-name">Pinterest</div>
+                        </div>
+                        <div className="share">
+                          <RedditShareButton
+                            url={currentUrl}
+                            title={"Vídeo Unicast: " + this.state.video.title}
+                            className="share-button"
+                          >
+                            <RedditIcon size={32} round />
+                          </RedditShareButton>
+                          <div className="share-name">Reddit</div>
+                        </div>
+                        <div className="share">
+                          <EmailShareButton
+                            url={currentUrl}
+                            subject={"Vídeo Unicast: " + this.state.video.title}
+                            body={"Mira este vídeo!\n"}
+                            className="share-button"
+                          >
+                            <EmailIcon size={32} round />
+                            <div className="share-name">Email</div>
+                          </EmailShareButton>
+                        </div>
+                      </div>
+                    </div>
+                  </Popup>
                   <Popup
                     open={this.state.popUpGuardar}
-                    onOpen={() => this.setState({ popUpGuardar: true })}
+                    onOpen={() =>
+                      this.setState({
+                        popUpGuardar: true,
+                        popUpCompartir: false,
+                        popUpPuntuar: false
+                      })
+                    }
                     onClose={() => this.setState({ popUpGuardar: false })}
                     arrow={false}
                     position="top left"

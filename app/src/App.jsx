@@ -16,7 +16,6 @@ import AdministradorBorrar from "./components/AdministradorBorrar";
 import Login from "./components/Login";
 import SignIn from "./components/SignIn";
 import ViendoVideo from "./components/ViendoVideo";
-import RecuperarPass from "./components/RecuperarPass";
 import Profesor from "./components/Profesor";
 import ListaConcreta from "./components/ListaConcreta";
 import ResultadoBusqueda from "./components/ResultadoBusqueda";
@@ -72,7 +71,6 @@ class App extends Component {
           <Route path={"/mensajes"} component={Mensajes} />
           <Route path={"/asig/:id"} component={Asignatura} />
           <Route path={"/video/:id"} component={ViendoVideo} />
-          <Route path={"/recuperacion"} component={RecuperarPass} />
           <Route path={"/chat/:nombre"} component={Chat} />
           <Route path={"/busqueda/:valor"} component={ResultadoBusqueda} />
         </Switch>

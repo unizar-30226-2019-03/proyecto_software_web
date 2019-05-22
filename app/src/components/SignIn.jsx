@@ -291,6 +291,7 @@ const FormularioInfo = (
 class SignIn extends Component {
   constructor(props) {
     super(props);
+    this._isMounted = false;
     this.state = {
       datosValidados: false,
       infoValidada: false,
@@ -320,6 +321,7 @@ class SignIn extends Component {
     this.descripcion = React.createRef();
     this.universidad = React.createRef();
     this.carrera = React.createRef();
+    this.getData = this.getData.bind(this);
     this.handleSubmitDatos = this.handleSubmitDatos.bind(this);
     this.handleChangeUni = this.handleChangeUni.bind(this);
     this.handleSubmitInfo = this.handleSubmitInfo.bind(this);
@@ -327,14 +329,25 @@ class SignIn extends Component {
     this.getAllUniversities = this.getAllUniversities.bind(this);
   }
 
-  componentWillMount() {
+  getData() {
     getUnivesities(0, data => {
       if (data._embedded.universities.length === 20) {
         this.getAllUniversities(data._embedded.universities, 1);
       } else {
-        this.setState({ listaUniversidades: data._embedded.universities });
+        if (this._isMounted) {
+          this.setState({ listaUniversidades: data._embedded.universities });
+        }
       }
     });
+  }
+
+  componentWillMount() {
+    this._isMounted = true;
+    this.getData();
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   getAllUniversities(universities, page) {
@@ -343,7 +356,9 @@ class SignIn extends Component {
       if (data._embedded.universities.length === 20) {
         this.getAllUniversities(universities, page + 1);
       } else {
-        this.setState({ listaUniversidades: universities });
+        if (this._isMounted) {
+          this.setState({ listaUniversidades: universities });
+        }
       }
     });
   }
@@ -430,9 +445,13 @@ class SignIn extends Component {
 
     if (!checkFileExtensionImage(this.foto.current.value)) {
       ok = false;
-      this.setState({ errorFoto: true });
+      if (this._isMounted) {
+        this.setState({ errorFoto: true });
+      }
     } else {
-      this.setState({ errorFoto: false });
+      if (this._isMounted) {
+        this.setState({ errorFoto: false });
+      }
     }
 
     if (ok) {
@@ -458,7 +477,9 @@ class SignIn extends Component {
               if (error) {
               } else {
                 signIn(data2);
-                this.setState({ infoValidada: true });
+                if (this._isMounted) {
+                  this.setState({ infoValidada: true });
+                }
               }
             }
           );

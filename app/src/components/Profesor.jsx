@@ -121,11 +121,13 @@ class AsignaturasProf extends Component {
 class Profesor extends Component {
   constructor(props) {
     super(props);
+    this._isMounted = false;
     this.state = {
       contentMargin: "300px",
       prof: "",
       sub: []
     };
+    this.getData = this.getData.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.getUniFromUser = this.getUniFromUser.bind(this);
     this.getDegreeFromUser = this.getDegreeFromUser.bind(this);
@@ -144,23 +146,44 @@ class Profesor extends Component {
   }
 
   componentWillMount() {
+    this._isMounted = true;
+    if (isSignedIn()) {
+      this.getData();
+    }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
+  getData() {
     getUser(this.props.match.params.id, data => {
-      this.setState({ prof: data });
+      if (this._isMounted) {
+        this.setState({ prof: data });
+      }
       this.getUniFromUser(parseInt(data.id));
       this.getDegreeFromUser(data.id);
       getSubjectsAsProfessor(data.id, data => {
-        this.setState({ sub: data });
+        if (this._isMounted) {
+          this.setState({ sub: data });
+        }
       });
     });
   }
+
   getUniFromUser(id) {
     getUniversityOfUser(id, data => {
-      this.setState({ uni: data });
+      if (this._isMounted) {
+        this.setState({ uni: data });
+      }
     });
   }
+
   getDegreeFromUser(id) {
     getDegreeOfUser(id, data => {
-      this.setState({ degree: data });
+      if (this._isMounted) {
+        this.setState({ degree: data });
+      }
     });
   }
 

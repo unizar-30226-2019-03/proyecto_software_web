@@ -960,3 +960,31 @@ h3 {
   border-radius: 50%;
   background-color: #235da9;
 }
+
+.share-container {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 10px;
+}
+
+.share {
+  vertical-align: top;
+  display: inline-block;
+  margin-right: 15px;
+  text-align: center;
+  width: 55px;
+}
+
+.share-name {
+  margin-top: 3px;
+  font-size: 12px;
+}
+
+.share-button {
+  text-align: -webkit-center;
+  cursor: pointer;
+}
+
+.share-button:hover:not(:active) {
+  opacity: 0.75;
+}

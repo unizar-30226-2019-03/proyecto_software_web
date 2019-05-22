@@ -456,8 +456,10 @@ class ListaConcreta extends Component {
 
   componentWillMount() {
     this._isMounted = true;
-    this.getData(0);
-    this.getReproductionLists();
+    if (isSignedIn()) {
+      this.getData(0);
+      this.getReproductionLists();
+    }
   }
 
   componentWillUnmount() {

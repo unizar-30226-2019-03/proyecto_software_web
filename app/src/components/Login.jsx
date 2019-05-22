@@ -10,6 +10,7 @@ import { getUser } from "../config/UserAPI";
 class Login extends Component {
   constructor(props) {
     super(props);
+    this._isMounted = false;
     this.state = {
       error: false,
       validado: -1
@@ -19,6 +20,14 @@ class Login extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+  componentWillMount() {
+    this._isMounted = true;
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
   handleSubmit = event => {
     const userID = this.userID.current.value;
     const pass = this.pass.current.value;
@@ -26,13 +35,17 @@ class Login extends Component {
     let apiInstance = new UserApi();
     apiInstance.authUser(userID, pass, (error, data, response) => {
       if (error) {
-        this.setState({ error: true });
+        if (this._isMounted) {
+          this.setState({ error: true });
+        }
       } else {
         signIn(data);
         getUser(data.id, user => {
           // validaeo será 1 si es admin, y 0 si es un usuario normal o profesor
           setUserRole(user.role);
-          this.setState({ validado: user.role === "ROLE_ADMIN" ? 1 : 0 });
+          if (this._isMounted) {
+            this.setState({ validado: user.role === "ROLE_ADMIN" ? 1 : 0 });
+          }
         });
       }
     });

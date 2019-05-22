@@ -54,7 +54,9 @@ class MiVideoItem extends Component {
 
   componentWillMount() {
     this._isMounted = true;
-    this.getData();
+    if (isSignedIn()) {
+      this.getData();
+    }
   }
 
   componentWillUnmount() {
