@@ -129,13 +129,17 @@ export function getProfessorsFromSubject(id, callback) {
     pragma: "no-cache", // String |
     expires: "0" // String |
   };
-  apiInstance.getProfessorsFromSubject(id, opts, (error, data, response) => {
-    if (error) {
-      console.error(error);
-    } else {
-      callback(data._embedded.users);
+  apiInstance.getProfessorsFromSubject(
+    Number.parseInt(id),
+    opts,
+    (error, data, response) => {
+      if (error) {
+        console.error(error);
+      } else {
+        callback(data._embedded.users);
+      }
     }
-  });
+  );
 }
 
 /**

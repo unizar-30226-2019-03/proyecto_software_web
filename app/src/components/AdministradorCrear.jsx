@@ -3,9 +3,7 @@ import BarraAdmi from "./BarraAdmi";
 import { Helmet } from "react-helmet";
 import { Button, Form, Col, Modal } from "react-bootstrap";
 import { Redirect } from "react-router-dom";
-import {
-  isSignedIn
-} from "../config/Auth";
+import { isSignedIn } from "../config/Auth";
 import UniversityApi from "swagger_unicast/dist/api/UniversityApi";
 import DegreeApi from "swagger_unicast/dist/api/DegreeApi";
 import UserApi from "swagger_unicast/dist/api/UserApi";
@@ -14,7 +12,7 @@ import {
   crearUniversidad,
   crearCarreraYLigar,
   crearAsigYLigar,
-  addProfessor, 
+  addProfessor,
   hacerProfesor
 } from "../config/AdminAPI";
 import SubjectApi from "swagger_unicast/dist/api/SubjectApi";
@@ -24,10 +22,7 @@ import {
 } from "../config/UniversityAPI";
 import { getUserByUsername } from "../config/UserAPI";
 
-const FormularioProfesor = (
-  handleProfesor,
-  userID
-) => {
+const FormularioProfesor = (handleProfesor, userID) => {
   return (
     <div style={{ margin: "20px 20px 20px 20px" }}>
       <h6>Convertir usuario en profesor</h6>
@@ -37,7 +32,6 @@ const FormularioProfesor = (
           handleProfesor(e, document.getElementById("form-profesor"))
         }
       >
-
         <Form.Group controlId="formGridUserID">
           <Form.Label>Nombre de usuario</Form.Label>
           <Form.Control
@@ -117,6 +111,7 @@ const FormularioCarrera = (handleCarrera, uni, carrera, universidades) => {
           <Form.Group as={Col} controlId="formGridUniCarr">
             <Form.Label>Universidad</Form.Label>
             <Form.Control as="select" ref={uni}>
+              <option value={-1}>Elegir universidad...</option>
               {universidades.map(univ => {
                 const { id, name } = univ;
                 return (
@@ -174,6 +169,7 @@ const FormularioAsignatura = (
           <Form.Group as={Col} controlId="formGridUni">
             <Form.Label>Universidad</Form.Label>
             <Form.Control as="select" ref={uni}>
+              <option value={-1}>Elegir universidad...</option>
               {universidades.map(univ => {
                 const { id, name } = univ;
                 return (
@@ -285,6 +281,7 @@ class FormularioProfeAsignatura extends React.Component {
               <Form.Label>Asignatura</Form.Label>
               {this.state.showAsig ? (
                 <Form.Control as="select" ref={this.props.asignatura}>
+                  <option value={-1}>Elegir asignatura...</option>
                   {this.state.asignaturas.map(asig => {
                     const { id, name } = asig;
                     return (
@@ -401,36 +398,47 @@ class AdministradorCrear extends Component {
   handleCarrera(event, form) {
     event.preventDefault();
     const uni = parseInt(this.uniCarr.current.value);
-    const carrera = this.nombreCarrera.current.value;
-    //Añadir carrera
-    crearCarreraYLigar(this.DegreeApi, carrera, uni);
-    form.reset();
-    this.handleShow();
+    if (uni !== -1) {
+      const carrera = this.nombreCarrera.current.value;
+      //Añadir carrera
+      crearCarreraYLigar(this.DegreeApi, carrera, uni);
+      form.reset();
+      this.handleShow();
+    }
   }
 
   handleAsignatura(event, form) {
     event.preventDefault();
     const uni = parseInt(this.uniAsig.current.value);
-    const subj = this.nombreAsig.current.value;
-    const shortname = this.nombreCortoAsig.current.value;
-    crearAsigYLigar(this.SubjectApi, subj, shortname, uni);
-    form.reset();
-    this.handleShow();
+    if (uni !== -1) {
+      const subj = this.nombreAsig.current.value;
+      const shortname = this.nombreCortoAsig.current.value;
+      crearAsigYLigar(this.SubjectApi, subj, shortname, uni);
+      form.reset();
+      this.handleShow();
+    }
   }
 
   handleProfeAsignatura(event, form, that) {
     event.preventDefault();
 
     const universidad = parseInt(this.uniUn.current.value);
-    if (universidad !== -1 || this.asignUn.current !== null) {
+    if (
+      universidad !== -1 ||
+      (this.asignUn.current !== null && this.asignUn.current.value !== "-1")
+    ) {
       const asignatura = parseInt(this.asignUn.current.value);
       if (!isNaN(asignatura)) {
         const user = this.userUn.current.value;
         getUserByUsername(user, data => {
-          if (data === false || data.length === 0) {
+          if (
+            data === false ||
+            data.length === 0 ||
+            data.role === "ROLE_USER"
+          ) {
             alert("El usuario especificado no existe");
           } else {
-            addProfessor(data[0].id, asignatura, this.SubjectApi);
+            addProfessor(data.id, asignatura, this.SubjectApi);
             form.reset();
             this.handleShow();
             that.setState({ uni: -1 });
@@ -465,10 +473,7 @@ class AdministradorCrear extends Component {
         >
           <h5>Añadir elementos a la página</h5>
           <div className="boxed">
-            {FormularioProfesor(
-              this.handleProfesor,
-              this.userIDProf
-            )}
+            {FormularioProfesor(this.handleProfesor, this.userIDProf)}
           </div>
           <div className="boxed" style={{ marginTop: "20px" }} id="a">
             {FormularioUniversidad(

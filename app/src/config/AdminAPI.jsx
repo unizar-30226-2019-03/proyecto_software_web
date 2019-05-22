@@ -21,7 +21,7 @@ export function hacerProfesor(username, form, handleShow, api) {
   };
   api.findUserByUsername(opts, (error, data, response) => {
     if (error) {
-      console.error(error);
+      alert("El nombre de usuario es incorrecto");
     } else {
       console.log(data);
       api.makeProfessor(data.id, (error, data, response) => {
@@ -36,6 +36,97 @@ export function hacerProfesor(username, form, handleShow, api) {
       });
     }
   });
+}
+
+/**
+ *
+ */
+export function borrarProfesor(username, form, handleShow, api) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  let opts = {
+    cacheControl: "no-cache, no-store, must-revalidate", // String |
+    pragma: "no-cache", // String |
+    expires: "0", // String |
+    username: username // String | Comienzo del username del usuario a buscar
+  };
+  api.findUserByUsername(opts, (error, data, response) => {
+    if (error) {
+      console.error(error);
+    } else {
+      console.log(data);
+      api.eraseProfessor(data.id, (error, data, response) => {
+        if (error) {
+          alert("El nombre de usuario es incorrecto");
+          console.error(error);
+        } else {
+          form.reset();
+          handleShow();
+          console.log("API called successfully.");
+        }
+      });
+    }
+  });
+}
+
+/**
+ *
+ */
+export function borrarUniversidad(uni, form, handleShow, api) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  api.deleteUniversity(Number.parseInt(uni), (error, data, response) => {
+    if (error) {
+      console.error(error);
+    } else {
+      form.reset();
+      handleShow();
+    }
+  });
+}
+
+/**
+ *
+ */
+export function borrarAsignatura(sub, form, handleShow, api) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  api.deleteSubject(Number.parseInt(sub), (error, data, response) => {
+    if (error) {
+      console.error(error);
+    } else {
+      form.reset();
+      handleShow();
+    }
+  });
+}
+
+/**
+ *
+ */
+export function borrarProfeAsignatura(sub, prof, form, handleShow, api) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  api.deleteProfessor(
+    Number.parseInt(sub),
+    Number.parseInt(prof),
+    (error, data, response) => {
+      if (error) {
+        console.error(error);
+      } else {
+        form.reset();
+        handleShow();
+      }
+    }
+  );
 }
 /**
  * Crea la universidad cuyo nombre y foto son los especificados
