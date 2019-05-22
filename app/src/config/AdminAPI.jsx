@@ -19,23 +19,23 @@ export function hacerProfesor(username, form, handleShow, api) {
     expires: "0", // String |
     username: username // String | Comienzo del username del usuario a buscar
   };
-  api.findUsersContainingUsername(opts, (error, data, response) => {
+  api.findUserByUsername(opts, (error, data, response) => {
     if (error) {
-      alert("Errorsito");
+      console.error(error);
     } else {
       console.log(data);
+      api.makeProfessor(data.id, (error, data, response) => {
+        if (error) {
+          alert("El nombre de usuario es incorrecto");
+          console.error(error);
+        } else {
+          form.reset();
+          handleShow();
+          console.log("API called successfully.");
+        }
+      });
     }
   });
-  /* api.makeProfessor(userId, (error, data, response) => {
-    if (error) {
-      alert("El nombre de usuario es incorrecto");
-      console.log(error);
-      console.log(userId);
-    } else {
-      form.reset();
-      handleShow();
-    }
-  });*/
 }
 /**
  * Crea la universidad cuyo nombre y foto son los especificados
