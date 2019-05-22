@@ -20,7 +20,7 @@ export function getDisplaysByUser(page, callback) {
     pragma: "no-cache", // String |
     expires: "0", // String |
     page: page, // Number | Número de la página a devolver
-    sort: ["null"], // [String] | Parámetros en la forma `($propertyname,)+[asc|desc]?`
+    sort: ["timestampLastTime,desc"], // [String] | Parámetros en la forma `($propertyname,)+[asc|desc]?`
     projection: "displayWithVideo" // String | Incluir si se quiere obtener tambien los videos en la respuesta
   };
   apiInstance.getDisplaysByUser(opts, (error, data, response) => {
