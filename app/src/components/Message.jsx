@@ -6,6 +6,7 @@ class Message extends React.Component {
     const fromMe = this.props.fromMe ? "from-me" : "";
     return (
       <div className={`message ${fromMe}`} id={this.props.id}>
+        {console.log(this.props.message, this.props.fromMe)}
         <div className="message-body">{this.props.message}</div>
       </div>
     );
@@ -14,7 +15,6 @@ class Message extends React.Component {
 
 Message.defaultProps = {
   message: "",
-  username: "",
   fromMe: false
 };
 

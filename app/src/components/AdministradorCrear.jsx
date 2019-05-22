@@ -405,6 +405,8 @@ class AdministradorCrear extends Component {
       const uni = this.nombreUni.current.value;
       const file = this.fotoUni.current.files[0];
       crearUniversidad(uni, file, form, this.handleShow, this.UniversityApi);
+      this.getData();
+      console.log(this.state);
     } else {
       alert("Debe introducir una imágen válida");
     }
