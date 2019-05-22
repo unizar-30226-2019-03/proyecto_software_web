@@ -137,18 +137,20 @@ export function borrarProfeAsignatura(sub, prof, form, handleShow, api) {
  * @param {HTMLElement} form Formulario de entrada
  * @param {Function} handleShow Callback a ejecutar
  * @param {UniversityApi} api API de la universidad
+ * @param {Function} callback Función a ejecutar tras crear la universidad
  */
-export function crearUniversidad(uni, file, form, handleShow, api) {
+export function crearUniversidad(uni, file, form, handleShow, api, callback) {
   // Configure Bearer (JWT) access token for authorization: bearerAuth
   let bearerAuth = defaultClient.authentications["bearerAuth"];
   bearerAuth.accessToken = getUserToken();
 
   api.addUniversity(uni, file, (error, data, response) => {
     if (error) {
-      alert("La universidad " + uni + " ya existe");
+      callback(false);
     } else {
       form.reset();
       handleShow();
+      callback(true);
     }
   });
 }

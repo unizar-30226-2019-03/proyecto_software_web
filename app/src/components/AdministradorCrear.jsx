@@ -375,6 +375,7 @@ class AdministradorCrear extends Component {
   getAllUniversities(unis, page) {
     if (unis.length < 20) {
       if (this._isMounted) {
+        console.log(unis);
         this.setState({ listaUniversidades: unis });
       }
     } else {
@@ -404,7 +405,20 @@ class AdministradorCrear extends Component {
     if (checkFileExtensionImage(this.fotoUni.current.value)) {
       const uni = this.nombreUni.current.value;
       const file = this.fotoUni.current.files[0];
-      crearUniversidad(uni, file, form, this.handleShow, this.UniversityApi);
+      crearUniversidad(
+        uni,
+        file,
+        form,
+        this.handleShow,
+        this.UniversityApi,
+        ok => {
+          if (ok) {
+            this.getData();
+          } else {
+            alert("La universidad " + uni + " ya existe");
+          }
+        }
+      );
     } else {
       alert("Debe introducir una imágen válida");
     }
