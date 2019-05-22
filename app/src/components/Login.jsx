@@ -12,6 +12,7 @@ class Login extends Component {
     super(props);
     this._isMounted = false;
     this.state = {
+      location: this.props.location,
       error: false,
       validado: -1
     };
@@ -109,16 +110,22 @@ class Login extends Component {
                     <Button className="boton-login" type="submit">
                       Iniciar Sesión
                     </Button>
-                    <Link
-                      className="textInfo"
-                      to="/recuperacion"
-                      style={{ color: "#007bff", textDecoration: "none" }}
-                    >
-                      ¿Has olvidado tu contraseña?
-                    </Link>
                     <p
                       className="textInfo"
-                      style={{ textAlign: "left", padding: "5 0px" }}
+                      to="/recuperacion"
+                      style={{
+                        color: "#00000080",
+                        fontSize: "12px",
+                        textAlign: "left",
+                        paddingBottom: "0"
+                      }}
+                    >
+                      UniCast - Servicio multimedia online orientado a
+                      educación.
+                    </p>
+                    <p
+                      className="textInfo"
+                      style={{ textAlign: "left", padding: "5px 0px" }}
                     >
                       ¿No tienes cuenta?{" "}
                       <Link

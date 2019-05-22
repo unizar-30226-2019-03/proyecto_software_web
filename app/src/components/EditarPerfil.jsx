@@ -9,7 +9,8 @@ import {
   restriccionNombre,
   restriccionUser,
   emailPattern,
-  restriccion
+  restriccion,
+  getUserRole
 } from "../config/Auth";
 import { checkFileExtensionImage } from "../config/Process";
 import { getUser, updateUser } from "../config/UserAPI";
@@ -404,7 +405,7 @@ class EditarPerfil extends Component {
   }
 
   render() {
-    return !isSignedIn() ? (
+    return !isSignedIn() || getUserRole() === "ROLE_ADMIN" ? (
       <Redirect to="/" />
     ) : (
       <div>
@@ -430,7 +431,9 @@ class EditarPerfil extends Component {
               }}
             >
               <h5
-                style={{ color: this.state.datosInvalidos ? "red" : "black" }}
+                style={{
+                  color: this.state.datosInvalidos ? "red" : "black"
+                }}
               >
                 {this.state.datosInvalidos
                   ? "No se ha podido actualizar el usuario, compruebe los datos"

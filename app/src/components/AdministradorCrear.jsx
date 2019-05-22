@@ -3,7 +3,7 @@ import BarraAdmi from "./BarraAdmi";
 import { Helmet } from "react-helmet";
 import { Button, Form, Col, Modal } from "react-bootstrap";
 import { Redirect } from "react-router-dom";
-import { isSignedIn } from "../config/Auth";
+import { isSignedIn, getUserRole } from "../config/Auth";
 import UniversityApi from "swagger_unicast/dist/api/UniversityApi";
 import DegreeApi from "swagger_unicast/dist/api/DegreeApi";
 import UserApi from "swagger_unicast/dist/api/UserApi";
@@ -404,9 +404,26 @@ class AdministradorCrear extends Component {
     if (checkFileExtensionImage(this.fotoUni.current.value)) {
       const uni = this.nombreUni.current.value;
       const file = this.fotoUni.current.files[0];
+<<<<<<< HEAD
       crearUniversidad(uni, file, form, this.handleShow, this.UniversityApi);
       this.getData();
       console.log(this.state);
+=======
+      crearUniversidad(
+        uni,
+        file,
+        form,
+        this.handleShow,
+        this.UniversityApi,
+        ok => {
+          if (ok) {
+            this.getData();
+          } else {
+            alert("La universidad " + uni + " ya existe");
+          }
+        }
+      );
+>>>>>>> e63b882d1511c43f5b4f523cce515d9333129a41
     } else {
       alert("Debe introducir una imágen válida");
     }
@@ -470,7 +487,7 @@ class AdministradorCrear extends Component {
   }
 
   render() {
-    return !isSignedIn() ? (
+    return !isSignedIn() || getUserRole() !== "ROLE_ADMIN" ? (
       <Redirect to="/" />
     ) : (
       <div>

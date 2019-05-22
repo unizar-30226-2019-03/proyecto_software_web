@@ -6,7 +6,7 @@ import { FaPlus, FaRegTrashAlt, FaStar } from "react-icons/fa";
 import Popup from "reactjs-popup";
 import { Form, Button } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
-import { isSignedIn } from "../config/Auth";
+import { isSignedIn, getUserRole } from "../config/Auth";
 import {
   getUserReproductionLists,
   addReproductionList,
@@ -352,7 +352,7 @@ class MisListas extends Component {
   }
 
   render() {
-    return !isSignedIn() ? (
+    return !isSignedIn() || getUserRole() === "ROLE_ADMIN" ? (
       <Redirect to="/" />
     ) : (
       <div>

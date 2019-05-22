@@ -3,7 +3,7 @@ import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
 import { Button, Form, Col } from "react-bootstrap";
 import { Redirect, Link } from "react-router-dom";
-import { isSignedIn, getUserID } from "../config/Auth";
+import { isSignedIn, getUserID, getUserRole } from "../config/Auth";
 import {
   checkFileExtensionImage,
   checkFileExtensionVideo
@@ -190,7 +190,7 @@ class SubirVideo extends Component {
   }
 
   render() {
-    return !isSignedIn() ? (
+    return !isSignedIn() || getUserRole() === "ROLE_ADMIN" ? (
       <Redirect to="/" />
     ) : (
       <div>

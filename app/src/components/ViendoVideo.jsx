@@ -16,7 +16,7 @@ import Popup from "reactjs-popup";
 import StarRatingComponent from "react-star-rating-component";
 import { ContenidoPopUp } from "./ListaVertical";
 import { Notificacion } from "./MisListas";
-import { isSignedIn, getUserID } from "../config/Auth";
+import { isSignedIn, getUserID, getUserRole } from "../config/Auth";
 import {
   generadorColores,
   scrollFunc,
@@ -169,7 +169,8 @@ class ViendoVideo extends Component {
         this.setState({ user: user });
       }
     });
-    getVideo(parseInt(this.props.match.params.id), (video, time) => {
+    const id = this.props.location.search.split("=")[1];
+    getVideo(parseInt(id), (video, time) => {
       if (this._isMounted) {
         getVideoDisplay(video.id, data => {
           if (data !== false) {
@@ -469,7 +470,13 @@ class ViendoVideo extends Component {
       exito => {
         if (exito) {
           this.setState({ notif: true, mensajeNotif: "Voto registrado!" });
+        } else {
+          this.setState({
+            notif: true,
+            mensajeNotif: "Ya has votado este vídeo"
+          });
         }
+        this.iniciarReloj();
       }
     );
   }
@@ -504,8 +511,13 @@ class ViendoVideo extends Component {
         ? ""
         : this.state.asig.university.photo;
     const currentUrl = window.location.href;
-    return !isSignedIn() ? (
-      <Redirect to="/" />
+    return !isSignedIn() || getUserRole() === "ROLE_ADMIN" ? (
+      <Redirect
+        to={{
+          pathname: "/",
+          state: { url: `/video/${this.props.match.params.id}` }
+        }}
+      />
     ) : (
       <div>
         <Helmet>
@@ -762,7 +774,11 @@ class ViendoVideo extends Component {
                         <div className="share">
                           <PinterestShareButton
                             url={currentUrl}
-                            media={this.state.video.thumbnailUrl}
+                            media={
+                              this.state.video.thumbnailUrl === undefined
+                                ? ""
+                                : this.state.video.thumbnailUrl
+                            }
                             description={
                               "Vídeo Unicast: " + this.state.video.title
                             }

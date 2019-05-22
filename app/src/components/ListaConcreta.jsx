@@ -6,7 +6,7 @@ import ListaVertical from "./ListaVertical";
 import { Notificacion } from "./MisListas";
 import Popup from "reactjs-popup";
 import { RemoveAccents, putFavouritesFirst } from "../config/Process";
-import { isSignedIn } from "../config/Auth";
+import { isSignedIn, getUserRole } from "../config/Auth";
 import { getVideosFromReproductionList } from "../config/VideoAPI";
 import {
   deleteVideoFromReproductionList,
@@ -496,7 +496,7 @@ class ListaConcreta extends Component {
   }
 
   render() {
-    return !isSignedIn() ? (
+    return !isSignedIn() || getUserRole() === "ROLE_ADMIN" ? (
       <Redirect to="/" />
     ) : (
       <div>

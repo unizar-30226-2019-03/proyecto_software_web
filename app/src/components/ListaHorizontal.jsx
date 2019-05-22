@@ -37,7 +37,10 @@ class MenuItem extends Component {
     return (
       <div>
         <div className="menu-item zoom-item">
-          <Link to={`/video/${this.props.id}`} style={{ position: "relative" }}>
+          <Link
+            to={`/video?id=${this.props.id}`}
+            style={{ position: "relative" }}
+          >
             <img src={this.props.img} width="210" height="118" alt="videoX" />
             <div
               style={{
@@ -113,7 +116,7 @@ class MenuItem extends Component {
                   overflowWrap: "break-word",
                   fontWeight: "bold"
                 }}
-                to={`/video/${this.props.id}`}
+                to={`/video?id=${this.props.id}`}
               >
                 {this.props.title}
               </Link>

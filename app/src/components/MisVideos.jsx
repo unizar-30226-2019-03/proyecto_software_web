@@ -3,7 +3,7 @@ import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
 import { Button } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
-import { isSignedIn, getUserID } from "../config/Auth";
+import { isSignedIn, getUserID, getUserRole } from "../config/Auth";
 import Popup from "reactjs-popup";
 import IconoAsignaturaUniversidad from "./IconoAsignaturaUniversidad";
 import { getTime } from "../config/Process";
@@ -124,7 +124,10 @@ class MiVideoItem extends Component {
               </Popup>
             </div>
           ) : null}
-          <Link to={`/video/${this.props.id}`} style={{ position: "relative" }}>
+          <Link
+            to={`/video?id=${this.props.id}`}
+            style={{ position: "relative" }}
+          >
             <img
               src={this.props.img}
               width="210"
@@ -214,7 +217,7 @@ class MiVideoItem extends Component {
                   overflowWrap: "break-word",
                   fontWeight: "bold"
                 }}
-                to={`/video/${this.props.id}`}
+                to={`/video?id=${this.props.id}`}
               >
                 {this.props.title}
               </Link>
@@ -352,7 +355,7 @@ class MisVideos extends Component {
   }
 
   render() {
-    return !isSignedIn() ? (
+    return !isSignedIn() || getUserRole() === "ROLE_ADMIN" ? (
       <Redirect to="/" />
     ) : (
       <div>

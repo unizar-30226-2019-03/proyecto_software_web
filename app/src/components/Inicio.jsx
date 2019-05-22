@@ -3,7 +3,7 @@ import { Link, Redirect } from "react-router-dom";
 import BarraNavegacion from "./BarraNavegacion";
 import ListaHorizontal, { Menu } from "./ListaHorizontal";
 import { Helmet } from "react-helmet";
-import { isSignedIn, getUserID } from "../config/Auth";
+import { isSignedIn, getUserID, getUserRole } from "../config/Auth";
 import { getRecommendations, getVideosFromSubject } from "../config/VideoAPI";
 import { getSubjectsOfUser } from "../config/UserAPI";
 
@@ -71,7 +71,7 @@ class Inicio extends Component {
   }
 
   render() {
-    return !isSignedIn() ? (
+    return !isSignedIn() || getUserRole() === "ROLE_ADMIN" ? (
       <Redirect to="/" />
     ) : (
       <div>

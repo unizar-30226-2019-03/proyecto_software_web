@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet";
 import User_img from "../assets/user.png";
 import { Button } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
-import { isSignedIn } from "../config/Auth";
+import { isSignedIn, getUserRole } from "../config/Auth";
 import {
   getUser,
   getUniversityOfUser,
@@ -35,7 +35,7 @@ class CamposMostrar extends Component {
     );
   }
   render() {
-    return !isSignedIn() ? (
+    return !isSignedIn() || getUserRole() === "ROLE_ADMIN" ? (
       <Redirect to="/" />
     ) : (
       <div>
