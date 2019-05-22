@@ -154,7 +154,7 @@ class ViendoVideo extends Component {
         this.setState({ user: user });
       }
     });
-    getVideo(this.props.match.params.id, (video, time) => {
+    getVideo(parseInt(this.props.match.params.id), (video, time) => {
       if (this._isMounted) {
         getVideoDisplay(video.id, data => {
           if (data !== false) {
@@ -173,6 +173,12 @@ class ViendoVideo extends Component {
                 });
               }
             }
+          } else {
+            this.setState({
+              video: video,
+              timeNow: time,
+              tiempoInicial: 0
+            });
           }
         });
       }
