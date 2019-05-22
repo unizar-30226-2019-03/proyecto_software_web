@@ -51,7 +51,7 @@ class CamposMostrar extends Component {
             <h6 style={{ textAlign: "justify" }}>{this.props.description}</h6>
           </div>
         </div>
-        <br></br>
+        <br />
         {this.renderCampo("Universidad:", this.props.uni)}
         {this.renderCampo("Grado:", this.props.degree)}
       </div>
@@ -150,93 +150,93 @@ class Perfil extends Component {
         >
           <h5>{`${this.state.user.name} ${this.state.user.surnames}`}</h5>
           <div>
-          <div style={{ marginTop: "40px" }}>
-            <div
-              style={{
-                float: "left",
-                padding: "0 60px 0 0"
-              }}
-            >
-              <img
-                src={this.state.user.photo}
-                alt="Foto de perfil"
-                width="160px"
-                height="160px"
-                style={{ borderRadius: "50%" }}
-              />
-            </div>
-            <div>
+            <div style={{ marginTop: "40px" }}>
               <div
                 style={{
-                  padding: "20px 20px 0px 0px",
                   float: "left",
-                  marginBottom: "10px"
+                  padding: "0 60px 0 0"
                 }}
               >
-                <Link to="/editar-perfil" className="universidad">
-                  <Button className="boton-filtro">Editar perfil</Button>
-                </Link>
+                <img
+                  src={this.state.user.photo}
+                  alt="Foto de perfil"
+                  width="160px"
+                  height="160px"
+                  style={{ borderRadius: "50%" }}
+                />
               </div>
-              {this.state.user.role === "ROLE_PROFESSOR" ? (
-                <div
-                  style={{
-                    padding: "20px 20px 0px 0px"
-                  }}
-                >
-                  <Link to="/subir-video" className="universidad">
-                    <Button className="boton-filtro">Subir vídeo</Button>
-                  </Link>
-                </div>
-              ) : (
+              <div>
                 <div
                   style={{
                     padding: "20px 20px 0px 0px",
-                    visibility: "hidden"
+                    float: "left",
+                    marginBottom: "10px"
                   }}
                 >
-                  a
+                  <Link to="/editar-perfil" className="universidad">
+                    <Button className="boton-filtro">Editar perfil</Button>
+                  </Link>
                 </div>
-              )}
+                {this.state.user.role === "ROLE_PROFESSOR" ? (
+                  <div
+                    style={{
+                      padding: "20px 20px 0px 0px"
+                    }}
+                  >
+                    <Link to="/subir-video" className="universidad">
+                      <Button className="boton-filtro">Subir vídeo</Button>
+                    </Link>
+                  </div>
+                ) : (
+                  <div
+                    style={{
+                      padding: "20px 20px 0px 0px",
+                      visibility: "hidden"
+                    }}
+                  >
+                    a
+                  </div>
+                )}
 
-              <div
-                style={{
-                  padding: "40px 20px 0px 0px"
-                }}
-              >
-                <h6
+                <div
                   style={{
-                    float: "left",
-                    padding: "0 20px 0 0"
+                    padding: "40px 20px 0px 0px"
                   }}
                 >
-                  <strong>Nombre de usuario:</strong>
-                </h6>
-                <p>{this.state.user.username}</p>
-              </div>
-              <div
-                style={{
-                  padding: "0px 20px 0px 0px"
-                }}
-              >
-                <h6
+                  <h6
+                    style={{
+                      float: "left",
+                      padding: "0 20px 0 0"
+                    }}
+                  >
+                    <strong>Nombre de usuario:</strong>
+                  </h6>
+                  <p>{this.state.user.username}</p>
+                </div>
+                <div
                   style={{
-                    float: "left",
-                    padding: "0 20px 0 0"
+                    padding: "0px 20px 0px 0px"
                   }}
                 >
-                  <strong>Dirección de correo:</strong>
-                </h6>
-                <h6>{this.state.user.email}</h6>
+                  <h6
+                    style={{
+                      float: "left",
+                      padding: "0 20px 0 0"
+                    }}
+                  >
+                    <strong>Dirección de correo:</strong>
+                  </h6>
+                  <h6>{this.state.user.email}</h6>
+                </div>
               </div>
             </div>
           </div>
-          </div>
-          <div style={{marginTop:"80px"}}>
-          <CamposMostrar
-            description={this.state.user.description}
-            uni={this.state.uni.name}
-            degree={this.state.degree.name}
-          />
+          <div style={{ marginTop: "80px" }}>
+            <CamposMostrar
+              description={this.state.user.description}
+              uni={this.state.uni.name}
+              degree={this.state.degree.name}
+            />
           </div>
           <div
             style={{
@@ -258,6 +258,7 @@ class Perfil extends Component {
                 </div>
               </div>
             }
+            contentStyle={{ padding: "15px" }}
             modal={true}
           >
             <div className="popup">
@@ -292,14 +293,14 @@ class Perfil extends Component {
                 <Button
                   className="btn-danger"
                   type="submit"
-                  style={{ float: "left" }}
+                  style={{ float: "right" }}
                 >
                   Confirmar borrado
                 </Button>
               </Form>
               <Button
                 className="boton-filtro"
-                style={{ float: "right" }}
+                style={{ float: "left" }}
                 onClick={() => {
                   this.cerrarPopUp();
                 }}

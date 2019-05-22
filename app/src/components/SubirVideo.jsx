@@ -92,7 +92,7 @@ const FormularioDatos = (
         <Button
           className="boton-filtro"
           type="submit"
-          style={{ float: "left" }}
+          style={{ float: "right" }}
         >
           Confirmar
         </Button>
@@ -100,7 +100,7 @@ const FormularioDatos = (
       <Link to="/perfil">
         <Button
           className="boton-filtro"
-          style={{ float: "right", marginBottom: "20px" }}
+          style={{ float: "left", marginBottom: "20px" }}
         >
           Cancelar
         </Button>

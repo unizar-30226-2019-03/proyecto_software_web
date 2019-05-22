@@ -23,6 +23,7 @@ import { Notificacion } from "./MisListas";
 class MiVideoItem extends Component {
   constructor(props) {
     super(props);
+    this._isMounted = false;
     this.state = {
       asig: {},
       mostrarOpciones: false,
@@ -30,8 +31,17 @@ class MiVideoItem extends Component {
       mostrarNotif: false,
       mensaje: ""
     };
+    this.getData = this.getData.bind(this);
     this.abrirPopUp = this.abrirPopUp.bind(this);
     this.cerrarPopUp = this.cerrarPopUp.bind(this);
+  }
+
+  getData() {
+    getSubjectById(parseInt(this.props.subject.id), data => {
+      if (this._isMounted) {
+        this.setState({ asig: data });
+      }
+    });
   }
 
   abrirPopUp() {
@@ -43,9 +53,12 @@ class MiVideoItem extends Component {
   }
 
   componentWillMount() {
-    getSubjectById(parseInt(this.props.subject.id), data => {
-      this.setState({ asig: data });
-    });
+    this._isMounted = true;
+    this.getData();
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render() {
