@@ -138,7 +138,6 @@ class BarraNavegacion extends Component {
   getNotifications() {
     getUserUncheckedNotifications(0, (data, now) => {
       if (this._isMounted) {
-        console.log(data);
         if (!this.state.displayNotif) {
           this.setState({ unCheckedNotifications: data, timeNow: now });
           if (data.length > 0) {
