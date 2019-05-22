@@ -404,11 +404,6 @@ class AdministradorCrear extends Component {
     if (checkFileExtensionImage(this.fotoUni.current.value)) {
       const uni = this.nombreUni.current.value;
       const file = this.fotoUni.current.files[0];
-<<<<<<< HEAD
-      crearUniversidad(uni, file, form, this.handleShow, this.UniversityApi);
-      this.getData();
-      console.log(this.state);
-=======
       crearUniversidad(
         uni,
         file,
@@ -423,7 +418,6 @@ class AdministradorCrear extends Component {
           }
         }
       );
->>>>>>> e63b882d1511c43f5b4f523cce515d9333129a41
     } else {
       alert("Debe introducir una imágen válida");
     }
