@@ -108,7 +108,9 @@ class Asignatura extends Component {
 
   componentWillMount() {
     this._isMounted = true;
-    this.getData(parseInt(this.props.match.params.id));
+    if (isSignedIn()) {
+      this.getData(parseInt(this.props.match.params.id));
+    }
   }
 
   componentWillReceiveProps(nextProps) {

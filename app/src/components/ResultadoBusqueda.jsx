@@ -42,8 +42,10 @@ class ResultadoBusqueda extends Component {
 
   componentWillMount() {
     this._isMounted = true;
-    this.buscarResultados(this.props.match.params.valor);
-    this.getReproductionLists();
+    if (isSignedIn()) {
+      this.buscarResultados(this.props.match.params.valor);
+      this.getReproductionLists();
+    }
   }
 
   buscarResultados(titulo) {

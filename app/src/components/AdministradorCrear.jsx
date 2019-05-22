@@ -324,6 +324,7 @@ class FormularioProfeAsignatura extends React.Component {
 class AdministradorCrear extends Component {
   constructor(props) {
     super(props);
+    this._isMounted = false;
     this.state = {
       show: false,
       listaCarreras: [],
@@ -344,6 +345,7 @@ class AdministradorCrear extends Component {
     this.uniUn = React.createRef();
     this.asignUn = React.createRef();
     this.userUn = React.createRef();
+    this.getData = this.getData.bind(this);
     this.handleProfesor = this.handleProfesor.bind(this);
     this.handleUniversidad = this.handleUniversidad.bind(this);
     this.handleAsignatura = this.handleAsignatura.bind(this);
@@ -354,6 +356,17 @@ class AdministradorCrear extends Component {
   }
 
   componentWillMount() {
+    this._isMounted = true;
+    if (isSignedIn()) {
+      this.getData();
+    }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
+  getData() {
     getUnivesities(0, data => {
       this.getAllUniversities(data._embedded.universities, 1);
     });
@@ -361,7 +374,9 @@ class AdministradorCrear extends Component {
 
   getAllUniversities(unis, page) {
     if (unis.length < 20) {
-      this.setState({ listaUniversidades: unis });
+      if (this._isMounted) {
+        this.setState({ listaUniversidades: unis });
+      }
     } else {
       getUnivesities(page, data => {
         const newData = [...unis, ...data._embedded.universities];

@@ -307,8 +307,10 @@ class Historial extends Component {
 
   componentWillMount() {
     this._isMounted = true;
-    this.getHistorial(0);
-    this.getReproductionLists();
+    if (isSignedIn()) {
+      this.getHistorial(0);
+      this.getReproductionLists();
+    }
   }
 
   getHistorial(page) {

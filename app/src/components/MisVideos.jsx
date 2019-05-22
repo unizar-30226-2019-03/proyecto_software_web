@@ -16,12 +16,14 @@ import {
 import { getUser } from "../config/UserAPI";
 import { getSubjectById } from "../config/SubjectAPI";
 import { FaEllipsisV } from "react-icons/fa";
+import { Notificacion } from "./MisListas";
 
 // One item component
 // selected prop will be passed
 class MiVideoItem extends Component {
   constructor(props) {
     super(props);
+    this._isMounted = false;
     this.state = {
       asig: {},
       mostrarOpciones: false,
@@ -29,8 +31,17 @@ class MiVideoItem extends Component {
       mostrarNotif: false,
       mensaje: ""
     };
+    this.getData = this.getData.bind(this);
     this.abrirPopUp = this.abrirPopUp.bind(this);
     this.cerrarPopUp = this.cerrarPopUp.bind(this);
+  }
+
+  getData() {
+    getSubjectById(parseInt(this.props.subject.id), data => {
+      if (this._isMounted) {
+        this.setState({ asig: data });
+      }
+    });
   }
 
   abrirPopUp() {
@@ -42,9 +53,14 @@ class MiVideoItem extends Component {
   }
 
   componentWillMount() {
-    getSubjectById(parseInt(this.props.subject.id), data => {
-      this.setState({ asig: data });
-    });
+    this._isMounted = true;
+    if (isSignedIn()) {
+      this.getData();
+    }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render() {
@@ -243,26 +259,48 @@ const Menu = (list, now, borrarVideo) =>
 class MisVideos extends Component {
   constructor() {
     super();
+    this._isMounted = false;
     this.state = {
       contentMargin: "300px",
       listaVideos: [],
       timestampNow: null,
-      user: {}
+      user: {},
+      notif: false,
+      mensajeNotif: "",
+      tiempoNotif: 0
     };
+    this.getData = this.getData.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.borrarVideo = this.borrarVideo.bind(this);
+    this.iniciarReloj = this.iniciarReloj.bind(this);
+    this.pararReloj = this.pararReloj.bind(this);
+    this.tick = this.tick.bind(this);
+  }
+
+  getData() {
+    getVideosFromUploader(0, (videos, time) => {
+      if (this._isMounted) {
+        this.setState({
+          listaVideos: videos,
+          timestampNow: time
+        });
+      }
+    });
+    getUser(getUserID(), data => {
+      if (this._isMounted) {
+        this.setState({ user: data });
+      }
+    });
   }
 
   componentWillMount() {
-    getVideosFromUploader(0, (videos, time) => {
-      this.setState({
-        listaVideos: videos,
-        timestampNow: time
-      });
-    });
-    getUser(getUserID(), data => {
-      this.setState({ user: data });
-    });
+    this._isMounted = true;
+    this.getData();
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+    this.pararReloj();
   }
 
   borrarVideo(id) {
@@ -271,11 +309,17 @@ class MisVideos extends Component {
         getVideosFromUploader(0, (videos, time) => {
           this.setState({
             listaVideos: videos,
-            timestampNow: time
+            timestampNow: time,
+            notif: true,
+            mensajeNotif: "Vídeo borrado con éxito"
           });
         });
       } else {
-        alert("No se ha podido borrar el vídeo " + id);
+        this.setState({
+          notif: true,
+          mensajeNotif:
+            "No se ha podido borrar el vídeo, inténtelo más adelante"
+        });
       }
     });
   }
@@ -287,6 +331,26 @@ class MisVideos extends Component {
       this.setState({ contentMargin: "70px" });
     }
   }
+
+  iniciarReloj() {
+    this.pararReloj();
+    this.timerID = setInterval(() => this.tick(), 1000);
+  }
+
+  pararReloj() {
+    clearInterval(this.timerID);
+  }
+
+  tick() {
+    let t = this.state.tiempoNotif;
+    if (t === 3) {
+      t = -1;
+      this.pararReloj();
+      this.setState({ notif: false });
+    }
+    this.setState({ tiempoNotif: t + 1 });
+  }
+
   render() {
     return !isSignedIn() ? (
       <Redirect to="/" />
@@ -346,6 +410,11 @@ class MisVideos extends Component {
               </div>
             </div>
           </div>
+          <Notificacion
+            mostrar={this.state.notif}
+            mensaje={this.state.mensajeNotif}
+            deshacer={false}
+          />
         </div>
       </div>
     );

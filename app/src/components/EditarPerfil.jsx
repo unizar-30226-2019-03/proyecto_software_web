@@ -216,6 +216,7 @@ const FormularioDatos = (
 class EditarPerfil extends Component {
   constructor(props) {
     super(props);
+    this._isMounted = false;
     this.state = {
       contentMargin: "300px",
       datosValidados: false,
@@ -242,6 +243,7 @@ class EditarPerfil extends Component {
     this.foto = React.createRef();
     this.universidad = React.createRef();
     this.carrera = React.createRef();
+    this.getData = this.getData.bind(this);
     this.handleSubmitDatos = this.handleSubmitDatos.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleChangeUni = this.handleChangeUni.bind(this);
@@ -249,17 +251,32 @@ class EditarPerfil extends Component {
     this.getAllUniversities = this.getAllUniversities.bind(this);
   }
 
-  componentWillMount() {
+  getData() {
     getUser(getUserID(), u => {
-      this.setState({ user: u, description: u.description });
+      if (this._isMounted) {
+        this.setState({ user: u, description: u.description });
+      }
     });
     getUnivesities(0, data => {
       if (data._embedded.universities.length === 20) {
         this.getAllUniversities(data._embedded.universities, 1);
       } else {
-        this.setState({ listaUniversidades: data._embedded.universities });
+        if (this._isMounted) {
+          this.setState({ listaUniversidades: data._embedded.universities });
+        }
       }
     });
+  }
+
+  componentWillMount() {
+    this._isMounted = true;
+    if (isSignedIn()) {
+      this.getData();
+    }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   getAllUniversities(universities, page) {

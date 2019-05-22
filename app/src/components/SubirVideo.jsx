@@ -92,7 +92,7 @@ const FormularioDatos = (
         <Button
           className="boton-filtro"
           type="submit"
-          style={{ float: "left" }}
+          style={{ float: "right" }}
         >
           Confirmar
         </Button>
@@ -100,7 +100,7 @@ const FormularioDatos = (
       <Link to="/perfil">
         <Button
           className="boton-filtro"
-          style={{ float: "right", marginBottom: "20px" }}
+          style={{ float: "left", marginBottom: "20px" }}
         >
           Cancelar
         </Button>
@@ -112,6 +112,7 @@ const FormularioDatos = (
 class SubirVideo extends Component {
   constructor(props) {
     super(props);
+    this._isMounted = false;
     this.state = {
       contentMargin: "300px",
       datosSubidos: false,
@@ -125,14 +126,28 @@ class SubirVideo extends Component {
     this.descripcion = React.createRef();
     this.video = React.createRef();
     this.asignatura = React.createRef();
+    this.getData = this.getData.bind(this);
     this.handleSubmitDatos = this.handleSubmitDatos.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
 
-  componentWillMount() {
+  getData() {
     getSubjectsAsProfessor(getUserID(), asignaturas => {
-      this.setState({ listaAsignaturas: asignaturas });
+      if (this._isMounted) {
+        this.setState({ listaAsignaturas: asignaturas });
+      }
     });
+  }
+
+  componentWillMount() {
+    this._isMounted = true;
+    if (isSignedIn()) {
+      this.getData();
+    }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   handleSubmitDatos(event) {
