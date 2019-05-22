@@ -55,7 +55,7 @@ class App extends Component {
           <Route path={"/mensajes"} component={Mensajes} />
           <Route path={"/asig/:id"} component={Asignatura} />
           <Route path={"/video"} component={ViendoVideo} />
-          <Route path={"/chat/:nombre"} component={Chat} />
+          <Route path={"/chat/:id"} component={Chat} />
           <Route path={"/busqueda/:valor"} component={ResultadoBusqueda} />
         </Switch>
       </Router>

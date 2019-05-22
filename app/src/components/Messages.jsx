@@ -48,7 +48,6 @@ const MensajesChat = listaMensajes =>
     return (
       <Message
         key={i}
-        username={message.username}
         message={message.message}
         fromMe={message.fromMe}
         id={`mensaje${i}`}
