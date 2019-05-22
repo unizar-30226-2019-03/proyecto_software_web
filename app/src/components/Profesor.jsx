@@ -9,7 +9,7 @@ import {
   getUser,
   getUniversityOfUser,
   getDegreeOfUser,
-  getSubjectsUniAsProfessor
+  getSubjectsAsProfessor
 } from "../config/UserAPI";
 
 class CamposMostrar extends Component {
@@ -148,7 +148,7 @@ class Profesor extends Component {
       this.setState({ prof: data });
       this.getUniFromUser(parseInt(data.id));
       this.getDegreeFromUser(data.id);
-      getSubjectsUniAsProfessor(data.id, data => {
+      getSubjectsAsProfessor(data.id, data => {
         this.setState({ sub: data });
       });
     });

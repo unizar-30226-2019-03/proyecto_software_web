@@ -237,7 +237,7 @@ export function getSubjectsOfUser(id, callback) {
 
 /**
  * Obtiene las asignaturas de un profesor, las que está
- * cursando actualmente
+ * cursando actualmente, junto con la universidad
  * @param {Number} id ID del usuario
  * @param {Function} callback Función a ejecutar tras obtener los datos
  */
@@ -262,12 +262,11 @@ export function getSubjectsAsProfessor(id, callback) {
 }
 
 /**
- * Obtiene las asignaturas de un profesor, las que está
- * cursando actualmente, junto con la universidad donde la imparte
- * @param {Number} id ID del usuario
+ * Obtiene los profesores de un usuario
+ * @param {Number} page Página a obtener
  * @param {Function} callback Función a ejecutar tras obtener los datos
  */
-export function getSubjectsUniAsProfessor(id, callback) {
+export function findUserProfessors(page, callback) {
   // Configure Bearer (JWT) access token for authorization: bearerAuth
   let bearerAuth = defaultClient.authentications["bearerAuth"];
   bearerAuth.accessToken = getUserToken();
@@ -276,13 +275,14 @@ export function getSubjectsUniAsProfessor(id, callback) {
     cacheControl: "no-cache, no-store, must-revalidate", // String |
     pragma: "no-cache", // String |
     expires: "0", // String |
-    projection: "subjectWithUniversity" // String | Incluir si se quiere obtener tambien la universidad en la respuesta
+    page: page, // Number | Número de la página a devolver
+    sort: ["username"] // [String] | Parámetros en la forma `($propertyname,)+[asc|desc]?`
   };
-  apiInstance.getSubjectsAsProfessor(id, opts, (error, data, response) => {
+  apiInstance.findUserProfessors(opts, (error, data, response) => {
     if (error) {
       console.error(error);
     } else {
-      callback(data._embedded.subjects);
+      callback(data);
     }
   });
 }
