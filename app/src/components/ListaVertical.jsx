@@ -223,7 +223,10 @@ class MenuItem extends Component {
         }}
       >
         <div>
-          <Link to={`/video/${this.props.id}`} style={{ position: "relative" }}>
+          <Link
+            to={`/video?id=${this.props.id}`}
+            style={{ position: "relative" }}
+          >
             <img src={this.props.img} width="240" height="140" alt="videoX" />
             <div
               style={{
@@ -287,7 +290,7 @@ class MenuItem extends Component {
                 wordWrap: "break-word",
                 width: "90%"
               }}
-              to={`/video/${this.props.id}`}
+              to={`/video?id=${this.props.id}`}
             >
               {this.props.url}
             </Link>

@@ -169,7 +169,8 @@ class ViendoVideo extends Component {
         this.setState({ user: user });
       }
     });
-    getVideo(parseInt(this.props.match.params.id), (video, time) => {
+    const id = this.props.location.search.split("=")[1];
+    getVideo(parseInt(id), (video, time) => {
       if (this._isMounted) {
         getVideoDisplay(video.id, data => {
           if (data !== false) {
@@ -511,7 +512,12 @@ class ViendoVideo extends Component {
         : this.state.asig.university.photo;
     const currentUrl = window.location.href;
     return !isSignedIn() || getUserRole() === "ROLE_ADMIN" ? (
-      <Redirect to="/" />
+      <Redirect
+        to={{
+          pathname: "/",
+          state: { url: `/video/${this.props.match.params.id}` }
+        }}
+      />
     ) : (
       <div>
         <Helmet>

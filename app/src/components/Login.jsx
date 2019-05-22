@@ -12,6 +12,7 @@ class Login extends Component {
     super(props);
     this._isMounted = false;
     this.state = {
+      location: this.props.location,
       error: false,
       validado: -1
     };

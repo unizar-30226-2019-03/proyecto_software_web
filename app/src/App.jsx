@@ -22,7 +22,6 @@ import ResultadoBusqueda from "./components/ResultadoBusqueda";
 import MensajesProfes from "./components/MensajesProfes";
 import Chat from "./components/Chat";
 import MisVideos from "./components/MisVideos";
-import { isSignedIn, getUserRole } from "./config/Auth";
 
 /**
  * Clase raíz, esta clase se encarga de renderizar todas las páginas
@@ -33,19 +32,7 @@ class App extends Component {
     return (
       <Router>
         <Switch>
-          <Route
-            exact
-            path={"/"}
-            render={() =>
-              !isSignedIn() ? (
-                <Login />
-              ) : getUserRole() === "ROLE_ADMIN" ? (
-                <AdministradorCrear />
-              ) : (
-                <Inicio />
-              )
-            }
-          />
+          <Route exact path={"/"} component={Login} />
           <Route path={"/registro"} component={SignIn} />
           <Route path={"/inicio"} component={Inicio} />
           <Route path={"/subir-video"} component={SubirVideo} />
@@ -70,7 +57,7 @@ class App extends Component {
           <Route path={"/mensajes-profesores"} component={MensajesProfes} />
           <Route path={"/mensajes"} component={Mensajes} />
           <Route path={"/asig/:id"} component={Asignatura} />
-          <Route path={"/video/:id"} component={ViendoVideo} />
+          <Route path={"/video"} component={ViendoVideo} />
           <Route path={"/chat/:nombre"} component={Chat} />
           <Route path={"/busqueda/:valor"} component={ResultadoBusqueda} />
         </Switch>

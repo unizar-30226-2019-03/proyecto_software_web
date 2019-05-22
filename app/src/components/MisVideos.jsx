@@ -124,7 +124,10 @@ class MiVideoItem extends Component {
               </Popup>
             </div>
           ) : null}
-          <Link to={`/video/${this.props.id}`} style={{ position: "relative" }}>
+          <Link
+            to={`/video?id=${this.props.id}`}
+            style={{ position: "relative" }}
+          >
             <img
               src={this.props.img}
               width="210"
@@ -214,7 +217,7 @@ class MiVideoItem extends Component {
                   overflowWrap: "break-word",
                   fontWeight: "bold"
                 }}
-                to={`/video/${this.props.id}`}
+                to={`/video?id=${this.props.id}`}
               >
                 {this.props.title}
               </Link>
