@@ -5,7 +5,7 @@ import { ListGroup, Dropdown, Button, FormControl } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
 import CustomToggle from "./CustomToggle";
 import { FaTrophy } from "react-icons/fa";
-import { isSignedIn } from "../config/Auth";
+import { isSignedIn, getUserRole } from "../config/Auth";
 import { getSubjectRanking } from "../config/SubjectAPI";
 import { getScore } from "../config/VideoAPI";
 
@@ -133,7 +133,7 @@ class Rankings extends Component {
   render() {
     const asignaturasFiltradas = this.filtrar(this.state.asignaturas);
     const listaAsign = ListaAsignaturas(asignaturasFiltradas);
-    return !isSignedIn() ? (
+    return !isSignedIn() || getUserRole() === "ROLE_ADMIN" ? (
       <Redirect to="/" />
     ) : (
       <div>

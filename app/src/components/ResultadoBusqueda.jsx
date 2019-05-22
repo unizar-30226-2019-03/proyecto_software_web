@@ -4,7 +4,7 @@ import { Notificacion } from "./MisListas";
 import { Helmet } from "react-helmet";
 import BarraNavegacion from "./BarraNavegacion";
 import { Redirect } from "react-router-dom";
-import { isSignedIn } from "../config/Auth";
+import { isSignedIn, getUserRole } from "../config/Auth";
 import { findVideosContainingTitle } from "../config/VideoAPI";
 import { findSubjectsContainingName } from "../config/SubjectAPI";
 import BusquedaAsignaturas from "./BusquedaAsignaturas";
@@ -151,7 +151,7 @@ class ResultadoBusqueda extends Component {
   }
 
   render() {
-    return !isSignedIn() ? (
+    return !isSignedIn() || getUserRole() === "ROLE_ADMIN" ? (
       <Redirect to="/" />
     ) : (
       <div>

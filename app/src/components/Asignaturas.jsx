@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet";
 import { ListGroup, Dropdown, Button, FormControl } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
 import CustomToggle from "./CustomToggle";
-import { isSignedIn, getUserID } from "../config/Auth";
+import { isSignedIn, getUserID, getUserRole } from "../config/Auth";
 import { getSubjectsOfUser } from "../config/UserAPI";
 
 const ItemAsignatura = ({ nombre, uni, foto, id }) => {
@@ -88,7 +88,7 @@ class Asignaturas extends Component {
   render() {
     const asignaturasFiltradas = this.filtrar(this.state.asignaturas);
     const listaAsign = ListaAsignaturas(asignaturasFiltradas);
-    return !isSignedIn() ? (
+    return !isSignedIn() || getUserRole() === "ROLE_ADMIN" ? (
       <Redirect to="/" />
     ) : (
       <div>

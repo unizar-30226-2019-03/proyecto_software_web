@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet";
 import { Button, Form } from "react-bootstrap";
 import Popup from "reactjs-popup";
 import { Link, Redirect } from "react-router-dom";
-import { isSignedIn, getUserID } from "../config/Auth";
+import { isSignedIn, getUserID, getUserRole } from "../config/Auth";
 import {
   getUser,
   getUniversityOfUser,
@@ -147,7 +147,7 @@ class Perfil extends Component {
   }
 
   render() {
-    return !isSignedIn() ? (
+    return !isSignedIn() || getUserRole() === "ROLE_ADMIN" ? (
       <Redirect to="/" />
     ) : (
       <div>

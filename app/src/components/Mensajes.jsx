@@ -6,7 +6,7 @@ import imagenUsuario from "../assets/user.png";
 import Popup from "reactjs-popup";
 import { Notificacion } from "./MisListas";
 import { RemoveAccents } from "../config/Process";
-import { isSignedIn } from "../config/Auth";
+import { isSignedIn, getUserRole } from "../config/Auth";
 import { Redirect, Link } from "react-router-dom";
 
 const list = [
@@ -417,7 +417,7 @@ class Mensajes extends Component {
   }
 
   render() {
-    return !isSignedIn() ? (
+    return !isSignedIn() || getUserRole() === "ROLE_ADMIN" ? (
       <Redirect to="/" />
     ) : (
       <div>

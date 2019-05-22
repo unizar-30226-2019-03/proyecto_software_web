@@ -3,7 +3,7 @@ import BarraAdmi from "./BarraAdmi";
 import { Helmet } from "react-helmet";
 import { Button, Form, Col, Modal } from "react-bootstrap";
 import { Redirect } from "react-router-dom";
-import { isSignedIn } from "../config/Auth";
+import { isSignedIn, getUserRole } from "../config/Auth";
 import UniversityApi from "swagger_unicast/dist/api/UniversityApi";
 import DegreeApi from "swagger_unicast/dist/api/DegreeApi";
 import UserApi from "swagger_unicast/dist/api/UserApi";
@@ -375,7 +375,6 @@ class AdministradorCrear extends Component {
   getAllUniversities(unis, page) {
     if (unis.length < 20) {
       if (this._isMounted) {
-        console.log(unis);
         this.setState({ listaUniversidades: unis });
       }
     } else {
@@ -482,7 +481,7 @@ class AdministradorCrear extends Component {
   }
 
   render() {
-    return !isSignedIn() ? (
+    return !isSignedIn() || getUserRole() !== "ROLE_ADMIN" ? (
       <Redirect to="/" />
     ) : (
       <div>

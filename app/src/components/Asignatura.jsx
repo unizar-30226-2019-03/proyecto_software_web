@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet";
 import { Button } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
 import { Menu } from "./ListaHorizontal";
-import { isSignedIn, getUserID } from "../config/Auth";
+import { isSignedIn, getUserID, getUserRole } from "../config/Auth";
 import {
   SubscribeSubject,
   UnsubscribeSubject,
@@ -180,7 +180,7 @@ class Asignatura extends Component {
         : this.state.asig.university.photo;
     const nombreAsig =
       this.state.asig.name === undefined ? "" : this.state.asig.name;
-    return !isSignedIn() ? (
+    return !isSignedIn() || getUserRole() === "ROLE_ADMIN" ? (
       <Redirect to="/" />
     ) : (
       <div>

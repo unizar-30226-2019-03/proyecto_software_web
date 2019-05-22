@@ -16,7 +16,7 @@ import Popup from "reactjs-popup";
 import StarRatingComponent from "react-star-rating-component";
 import { ContenidoPopUp } from "./ListaVertical";
 import { Notificacion } from "./MisListas";
-import { isSignedIn, getUserID } from "../config/Auth";
+import { isSignedIn, getUserID, getUserRole } from "../config/Auth";
 import {
   generadorColores,
   scrollFunc,
@@ -504,7 +504,7 @@ class ViendoVideo extends Component {
         ? ""
         : this.state.asig.university.photo;
     const currentUrl = window.location.href;
-    return !isSignedIn() ? (
+    return !isSignedIn() || getUserRole() === "ROLE_ADMIN" ? (
       <Redirect to="/" />
     ) : (
       <div>

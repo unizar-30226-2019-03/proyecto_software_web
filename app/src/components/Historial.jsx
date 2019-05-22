@@ -5,7 +5,7 @@ import { Redirect } from "react-router-dom";
 import Popup from "reactjs-popup";
 import { Notificacion } from "./MisListas";
 import { RemoveAccents, putFavouritesFirst } from "../config/Process";
-import { isSignedIn } from "../config/Auth";
+import { isSignedIn, getUserRole } from "../config/Auth";
 import {
   getDisplaysByUser,
   deleteVideoFromDisplay
@@ -492,7 +492,7 @@ class Historial extends Component {
   }
 
   render() {
-    return !isSignedIn() ? (
+    return !isSignedIn() || getUserRole() === "ROLE_ADMIN" ? (
       <Redirect to="/" />
     ) : (
       <div>
