@@ -148,16 +148,16 @@ export function getUserByUsername(username, callback) {
   bearerAuth.accessToken = getUserToken();
 
   let opts = {
-    cacheControl: "'no-cache, no-store, must-revalidate'", // String |
-    pragma: "'no-cache'", // String |
-    expires: "'0'", // String |
-    username: username // String | Comienzo del username del usuario a buscar
+    cacheControl: "no-cache, no-store, must-revalidate", // String |
+    pragma: "no-cache", // String |
+    expires: "0", // String |
+    username: username // String | String a buscar en el nombre de usuario
   };
-  apiInstance.findUsersStartsWithUsername(opts, (error, data, response) => {
+  apiInstance.findUserByUsername(opts, (error, data, response) => {
     if (error) {
-      callback(false);
+      console.error(error);
     } else {
-      callback(data._embedded.users);
+      callback(data);
     }
   });
 }
@@ -247,10 +247,10 @@ export function getSubjectsAsProfessor(id, callback) {
   bearerAuth.accessToken = getUserToken();
 
   let opts = {
-    cacheControl: "'no-cache, no-store, must-revalidate'", // String |
-    pragma: "'no-cache'", // String |
-    expires: "'0'", // String |
-    projection: "'subjectWithUniversity'" // String | Incluir si se quiere obtener tambien la universidad en la respuesta
+    cacheControl: "no-cache, no-store, must-revalidate", // String |
+    pragma: "no-cache", // String |
+    expires: "0", // String |
+    projection: "subjectWithUniversity" // String | Incluir si se quiere obtener tambien la universidad en la respuesta
   };
   apiInstance.getSubjectsAsProfessor(id, opts, (error, data, response) => {
     if (error) {
@@ -273,9 +273,9 @@ export function getSubjectsUniAsProfessor(id, callback) {
   bearerAuth.accessToken = getUserToken();
 
   let opts = {
-    cacheControl: "'no-cache, no-store, must-revalidate'", // String |
-    pragma: "'no-cache'", // String |
-    expires: "'0'", // String |
+    cacheControl: "no-cache, no-store, must-revalidate", // String |
+    pragma: "no-cache", // String |
+    expires: "0", // String |
     projection: "subjectWithUniversity" // String | Incluir si se quiere obtener tambien la universidad en la respuesta
   };
   apiInstance.getSubjectsAsProfessor(id, opts, (error, data, response) => {

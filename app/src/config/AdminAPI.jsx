@@ -14,9 +14,9 @@ export function hacerProfesor(username, form, handleShow, api) {
   bearerAuth.accessToken = getUserToken();
 
   let opts = {
-    cacheControl: "'no-cache, no-store, must-revalidate'", // String |
-    pragma: "'no-cache'", // String |
-    expires: "'0'", // String |
+    cacheControl: "no-cache, no-store, must-revalidate", // String |
+    pragma: "no-cache", // String |
+    expires: "0", // String |
     username: username // String | Comienzo del username del usuario a buscar
   };
   api.findUsersContainingUsername(opts, (error, data, response) => {

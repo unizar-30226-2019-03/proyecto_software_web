@@ -64,31 +64,15 @@ class CamposMostrar extends Component {
 }
 
 class AsignaturasProf extends Component {
-  renderSubject(subject) {
-    const foto =
-      subject.university === undefined ? "" : subject.university.photo;
-    return (
-      <div style={{ marginBottom: "10px" }}>
-        {console.log(subject)}
-        <Link to={`/asig/${subject.id}`}>
-          <img
-            src={foto}
-            style={{ borderRadius: "50%" }}
-            height="40"
-            width="40"
-            alt="Canal"
-          />
-        </Link>
-        <Link
-          className="link-asignatura"
-          style={{ padding: "0 0 0 10px" }}
-          to={`/asig/${subject.id}`}
-        >
-          {subject.name}
-        </Link>
-      </div>
-    );
+  constructor(props) {
+    super(props);
+    this.state = { sub: this.props.sub };
   }
+
+  componentWillReceiveProps(newProps) {
+    this.setState({ sub: newProps.sub });
+  }
+
   render() {
     return (
       <div>
@@ -104,8 +88,29 @@ class AsignaturasProf extends Component {
             margin: "30px 40% 0 120px"
           }}
         >
-          {this.props.sub.forEach(subject => {
-            this.renderSubject(subject);
+          {this.state.sub.map(subject => {
+            const foto =
+              subject.university === undefined ? "" : subject.university.photo;
+            return (
+              <div key={subject.id} style={{ marginBottom: "10px" }}>
+                <Link to={`/asig/${subject.id}`}>
+                  <img
+                    src={foto}
+                    style={{ borderRadius: "50%" }}
+                    height="40"
+                    width="40"
+                    alt="Canal"
+                  />
+                </Link>
+                <Link
+                  className="link-asignatura"
+                  style={{ padding: "0 0 0 10px" }}
+                  to={`/asig/${subject.id}`}
+                >
+                  {subject.name}
+                </Link>
+              </div>
+            );
           })}
         </div>
       </div>
@@ -124,7 +129,6 @@ class Profesor extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.getUniFromUser = this.getUniFromUser.bind(this);
     this.getDegreeFromUser = this.getDegreeFromUser.bind(this);
-    this.saveSubjects = this.saveSubjects.bind(this);
   }
 
   handleChange(display) {
@@ -142,9 +146,11 @@ class Profesor extends Component {
   componentWillMount() {
     getUser(this.props.match.params.id, data => {
       this.setState({ prof: data });
-      this.getUniFromUser(Number.parseInt(data.id));
+      this.getUniFromUser(parseInt(data.id));
       this.getDegreeFromUser(data.id);
-      getSubjectsUniAsProfessor(data.id, this.saveSubjects);
+      getSubjectsUniAsProfessor(data.id, data => {
+        this.setState({ sub: data });
+      });
     });
   }
   getUniFromUser(id) {
@@ -156,9 +162,6 @@ class Profesor extends Component {
     getDegreeOfUser(id, data => {
       this.setState({ degree: data });
     });
-  }
-  saveSubjects(data) {
-    this.setState({ sub: data });
   }
 
   render() {
