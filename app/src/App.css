@@ -56,6 +56,21 @@
 }
 
 /* Estilo de los enlaces del menú desplegable */
+.dropdown-content div {
+  color: black;
+  padding: 8px 16px;
+  text-decoration: none;
+  text-align: left;
+  font-size: 14px;
+  display: block;
+}
+
+/* Cambia fondo cuando pasas por encima del enlace */
+.dropdown-content div:hover {
+  background-color: #f1f1f1;
+}
+
+/* Estilo de los enlaces del menú desplegable */
 .dropdown-content a {
   color: black;
   padding: 8px 16px;
@@ -919,4 +934,29 @@ h3 {
 
 .boton-ver-todos-inicio:hover {
   transform: scale(1.05);
+}
+
+.notificacion {
+  position: absolute;
+  padding-top: 1px;
+  top: -3px;
+  right: -11px;
+  font-size: 10px;
+  width: 18px;
+  height: 18px;
+  text-align: center;
+  border-radius: 50%;
+  background-color: #235da9;
+  color: white;
+}
+
+.notificacion-mensaje {
+  position: absolute;
+  top: 15px;
+  left: 0px;
+  font-size: 10px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #235da9;
 }

@@ -72,7 +72,8 @@ export function getUserUncheckedNotifications(page, callback) {
     if (error) {
       console.error(error);
     } else {
-      callback(data._embedded.usersAreNotified);
+      const now = ApiClient.parseDate(response.headers.date);
+      callback(data._embedded.usersAreNotified, now);
     }
   });
 }

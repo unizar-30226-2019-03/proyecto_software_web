@@ -7,7 +7,91 @@ import BarraBusqueda from "./BarraBusqueda";
 import BarraLateral from "./BarraLateral";
 import { signOut, getUserID } from "../config/Auth";
 import { getUser } from "../config/UserAPI";
-import { getUserUncheckedNotifications } from "../config/NotificationAPI";
+import {
+  getUserUncheckedNotifications,
+  checkNotification
+} from "../config/NotificationAPI";
+import { getTimePassed } from "../config/VideoAPI";
+
+class Notificacion extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      unChecked: true,
+      timeNow: this.props.now,
+      notif: this.props.notif
+    };
+  }
+
+  componentWillReceiveProps(newProps) {
+    this.setState({ timeNow: newProps.now, notif: newProps.notif });
+  }
+
+  render() {
+    return (
+      <div>
+        {this.state.notif.notificationCategory === "videos" ? (
+          <div
+            onMouseEnter={() => {
+              checkNotification(this.state.notif.id, ok => {
+                if (ok) {
+                  this.setState({ unChecked: false });
+                }
+              });
+            }}
+            style={{
+              position: "relative"
+            }}
+          >
+            <span
+              className="notificacion-mensaje"
+              style={{
+                visibility: this.state.unChecked ? "visible" : "hidden"
+              }}
+            />
+            <span
+              style={{
+                width: "155px",
+                display: "inline-block"
+              }}
+            >
+              Nuevo vídeo subido
+            </span>
+            <span
+              style={{
+                marginLeft: "20px",
+                color: "#00000080",
+                fontSize: "12px"
+              }}
+            >
+              Hace{" "}
+              {getTimePassed(this.state.notif.timestamp, this.state.timeNow)}
+            </span>
+          </div>
+        ) : (
+          <div
+            style={{
+              position: "relative"
+            }}
+          >
+            <span className="notificacion-mensaje" />
+            Nuevo mensaje recibido
+            <span
+              style={{
+                marginLeft: "10px",
+                color: "#00000080",
+                fontSize: "12px"
+              }}
+            >
+              Hace{" "}
+              {getTimePassed(this.state.notif.timestamp, this.state.timeNow)}
+            </span>
+          </div>
+        )}
+      </div>
+    );
+  }
+}
 
 class BarraNavegacion extends Component {
   /**
@@ -26,7 +110,9 @@ class BarraNavegacion extends Component {
       busqueda: this.props.nuevoTit,
       user: {},
       unCheckedNotifications: [],
-      tiempoCheck: 0
+      bolaNotif: false,
+      tiempoCheck: 0,
+      timeNow: new Date()
     };
     this.showDropdown = this.showDropdown.bind(this);
     this.hideDropdown = this.hideDropdown.bind(this);
@@ -50,9 +136,15 @@ class BarraNavegacion extends Component {
   }
 
   getNotifications() {
-    getUserUncheckedNotifications(0, data => {
+    getUserUncheckedNotifications(0, (data, now) => {
       if (this._isMounted) {
-        this.setState({ unCheckedNotifications: data });
+        console.log(data);
+        if (!this.state.displayNotif) {
+          this.setState({ unCheckedNotifications: data, timeNow: now });
+          if (data.length > 0) {
+            this.setState({ bolaNotif: true });
+          }
+        }
         this.iniciarReloj();
       }
     });
@@ -183,17 +275,46 @@ class BarraNavegacion extends Component {
                 marginLeft: "3px"
               }}
             >
-              <div className="dropdown" style={{ top: "8px" }}>
-                <FaBell size={20} onClick={this.showDropdownNotif} />
+              <div
+                className="dropdown"
+                style={{ top: "8px" }}
+                onClick={() => this.setState({ bolaNotif: false })}
+              >
+                <div style={{ position: "relative" }}>
+                  <FaBell size={20} onClick={this.showDropdownNotif} />
+                  <span
+                    className="notificacion"
+                    style={{
+                      visibility: !this.state.bolaNotif ? "hidden" : "visible"
+                    }}
+                  >
+                    {this.state.unCheckedNotifications.length}
+                  </span>
+                </div>
                 {this.state.displayNotif ? (
-                  <div className="dropdown-content">
-                    <a href="#a">Video Nuevo1</a>
-                    <a href="#a">Vídeo Nuevo2</a>
-                    <a href="#a">Vídeo Nuevo3</a>
-                    <a href="#a">Vídeo Nuevo4</a>
-                    <a href="#a">Vídeo Nuevo5</a>
-                    <a href="#a">Vídeo Nuevo6</a>
-                    <a href="#a">Vídeo Nuevo7</a>
+                  <div className="dropdown-content" style={{ width: "340px" }}>
+                    {this.state.unCheckedNotifications.length === 0 ? (
+                      <div
+                        style={{
+                          color: "#00000080",
+                          fontSize: "12px"
+                        }}
+                      >
+                        No hay nuevas notificaciones disponibles, ya las ha
+                        revisado todas ellas.
+                      </div>
+                    ) : (
+                      this.state.unCheckedNotifications.map(elmnt => {
+                        const notif = elmnt.notification;
+                        return (
+                          <Notificacion
+                            key={notif.id}
+                            notif={notif}
+                            now={this.state.timeNow}
+                          />
+                        );
+                      })
+                    )}
                   </div>
                 ) : null}
               </div>
