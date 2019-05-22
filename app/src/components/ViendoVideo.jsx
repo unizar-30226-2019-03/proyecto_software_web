@@ -469,7 +469,13 @@ class ViendoVideo extends Component {
       exito => {
         if (exito) {
           this.setState({ notif: true, mensajeNotif: "Voto registrado!" });
+        } else {
+          this.setState({
+            notif: true,
+            mensajeNotif: "Ya has votado este vídeo"
+          });
         }
+        this.iniciarReloj();
       }
     );
   }
@@ -762,7 +768,11 @@ class ViendoVideo extends Component {
                         <div className="share">
                           <PinterestShareButton
                             url={currentUrl}
-                            media={this.state.video.thumbnailUrl}
+                            media={
+                              this.state.video.thumbnailUrl === undefined
+                                ? ""
+                                : this.state.video.thumbnailUrl
+                            }
                             description={
                               "Vídeo Unicast: " + this.state.video.title
                             }
