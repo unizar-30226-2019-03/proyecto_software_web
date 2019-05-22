@@ -515,7 +515,9 @@ class ViendoVideo extends Component {
       <Redirect
         to={{
           pathname: "/",
-          state: { url: `/video/${this.props.match.params.id}` }
+          state: {
+            url: `/video?id=${this.props.location.search.split("=")[1]}`
+          }
         }}
       />
     ) : (

@@ -113,7 +113,7 @@ class Lista extends Component {
             ) : null}
             <h6>
               <Link
-                to={`/lista/id=${this.state.lista.id}&name=${
+                to={`/lista?id=${this.state.lista.id}&name=${
                   this.state.lista.name
                 }`}
                 style={{ color: "black", textDecoration: "none" }}
@@ -186,7 +186,7 @@ class Lista extends Component {
           {this.state.videos.length === 0 ? null : (
             <div style={{ marginRight: "0", marginLeft: "auto" }}>
               <Link
-                to={`/lista/id=${this.state.lista.id}&name=${
+                to={`/lista?id=${this.state.lista.id}&name=${
                   this.state.lista.name
                 }`}
                 style={{ color: "#00000080", textDecoration: "none" }}

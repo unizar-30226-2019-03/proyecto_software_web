@@ -274,6 +274,8 @@ class ListaConcreta extends Component {
     super();
     this._isMounted = false;
     this.state = {
+      idLista: -1,
+      nombreLista: "",
       contentMargin: "300px",
       fixed: window.innerWidth >= 970,
       busqueda: "",
@@ -304,7 +306,10 @@ class ListaConcreta extends Component {
   }
 
   getData(page) {
-    const id = parseInt(this.props.match.params.id);
+    const id =
+      this.state.idLista === -1
+        ? parseInt(this.props.location.search.split("&")[0].split("=")[1])
+        : this.state.idLista;
     getVideosFromReproductionList(id, page, (data, now) => {
       if (this._isMounted) {
         let newState = this.state.miLista.slice().concat(data);
@@ -328,8 +333,7 @@ class ListaConcreta extends Component {
 
   borrarLista() {
     //Borrar la lista en el servidor
-    const id = parseInt(this.props.match.params.id);
-    deleteReproductionList(id, ok => {
+    deleteReproductionList(this.state.idLista, ok => {
       if (ok) {
         this.setState({ borradoCompleto: true });
       }
@@ -388,7 +392,7 @@ class ListaConcreta extends Component {
       });
     } else {
       //Borrar el video
-      const idActual = parseInt(this.props.match.params.id);
+      const idActual = this.state.idLista;
       deleteVideoFromReproductionList(idLista, idVideo, ok => {
         if (ok) {
           if (idActual === idLista) {
@@ -422,12 +426,12 @@ class ListaConcreta extends Component {
   }
 
   borrarVideo(idVideo, nombreVideo) {
-    const idLista = parseInt(this.props.match.params.id);
+    const idLista = this.state.idLista;
     deleteVideoFromReproductionList(idLista, parseInt(idVideo), ok => {
       if (ok) {
         this.setState({
           notif: true,
-          mensajeNotif: `Vídeo ${nombreVideo.toUpperCase()} eliminado de ${this.props.match.params.nombre.toUpperCase()}`,
+          mensajeNotif: `Vídeo ${nombreVideo.toUpperCase()} eliminado de ${this.state.nombreLista.toUpperCase()}`,
           listaFiltrada: [],
           miLista: [],
           busqueda: "",
@@ -457,6 +461,14 @@ class ListaConcreta extends Component {
   componentWillMount() {
     this._isMounted = true;
     if (isSignedIn()) {
+      if (this._isMounted) {
+        this.setState({
+          idLista: parseInt(
+            this.props.location.search.split("&")[0].split("=")[1]
+          ),
+          nombreLista: this.props.location.search.split("&")[1].split("=")[1]
+        });
+      }
       this.getData(0);
       this.getReproductionLists();
     }
@@ -524,7 +536,7 @@ class ListaConcreta extends Component {
               <div className="cabecera-asignatura">
                 <div>
                   <h5 style={{ fontWeight: "bold" }}>
-                    Lista de reproducción - {this.props.match.params.nombre}
+                    Lista de reproducción - {this.state.nombreLista}
                   </h5>
                 </div>
               </div>{" "}

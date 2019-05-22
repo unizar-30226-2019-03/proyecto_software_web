@@ -59,7 +59,11 @@ class Login extends Component {
           <title>UniCast</title>
         </Helmet>
         {this.state.validado === 0 ? (
-          <Redirect to={"/inicio"} />
+          this.props.location.state === undefined ? (
+            <Redirect to={"/inicio"} />
+          ) : (
+            <Redirect to={this.props.location.state.url} />
+          )
         ) : (
           <div>
             {this.state.validado === 1 ? (

@@ -49,10 +49,7 @@ class App extends Component {
           <Route path={"/rankings"} component={Rankings} />
           <Route path={"/historial"} component={Historial} />
           <Route path={"/listas"} component={MisListas} />
-          <Route
-            path={"/lista/id=:id&name=:nombre"}
-            component={ListaConcreta}
-          />
+          <Route exact path={"/lista"} component={ListaConcreta} />
           <Route path={"/perfil"} component={Perfil} />
           <Route path={"/mensajes-profesores"} component={MensajesProfes} />
           <Route path={"/mensajes"} component={Mensajes} />
