@@ -7,8 +7,8 @@ const defaultClient = ApiClient.instance;
 
 /**
  * Inicia la sesión de un usuario
- * @param {String} username Nombre de usuario
- * @param {String} password Contraseña
+ * @param {String} username Nombre del usuario
+ * @param {String} password Contraseña del usuario
  * @param {Function} callback Función a ejecutar tras obtener los daros
  */
 export function authUser(username, password, callback) {
