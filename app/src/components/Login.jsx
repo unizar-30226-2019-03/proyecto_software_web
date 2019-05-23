@@ -3,9 +3,8 @@ import { Button, Form } from "react-bootstrap";
 import { Redirect } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import uni from "../assets/UnicastNombre.png";
-import { UserApi } from "swagger_unicast";
 import { signIn, setUserRole } from "../config/Auth";
-import { getUser } from "../config/UserAPI";
+import { getUser, authUser } from "../config/UserAPI";
 
 class Login extends Component {
   constructor(props) {
@@ -31,12 +30,11 @@ class Login extends Component {
   }
 
   handleSubmit = event => {
-    const userID = this.userID.current.value;
+    const username = this.userID.current.value;
     const pass = this.pass.current.value;
     event.preventDefault();
-    let apiInstance = new UserApi();
-    apiInstance.authUser(userID, pass, (error, data, response) => {
-      if (error) {
+    authUser(username, pass, data => {
+      if (data === false) {
         if (this._isMounted) {
           this.setState({ error: true });
         }
@@ -46,7 +44,9 @@ class Login extends Component {
           // validaeo será 1 si es admin, y 0 si es un usuario normal o profesor
           setUserRole(user.role);
           if (this._isMounted) {
-            this.setState({ validado: user.role === "ROLE_ADMIN" ? 1 : 0 });
+            this.setState({
+              validado: user.role === "ROLE_ADMIN" ? 1 : 0
+            });
           }
         });
       }

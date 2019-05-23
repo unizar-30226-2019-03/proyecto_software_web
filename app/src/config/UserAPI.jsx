@@ -6,6 +6,22 @@ const apiInstance = new UserApi(); //Instancia de la API de usuarios
 const defaultClient = ApiClient.instance;
 
 /**
+ * Inicia la sesión de un usuario
+ * @param {String} username Nombre de usuario
+ * @param {String} password Contraseña
+ * @param {Function} callback Función a ejecutar tras obtener los daros
+ */
+export function authUser(username, password, callback) {
+  apiInstance.authUser(username, password, (error, data, response) => {
+    if (error) {
+      callback(false);
+    } else {
+      callback(data);
+    }
+  });
+}
+
+/**
  * Crea el usuario especificado en el servidor
  * @param {String} username Nombre de usuario del nuevo usuario
  * @param {String} password Contraseña del nuevo usuario
