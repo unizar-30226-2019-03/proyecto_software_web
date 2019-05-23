@@ -65,13 +65,14 @@ export function getMessagesFromSender(senderId, page, callback) {
     pragma: "no-cache", // String |
     expires: "0", // String |
     page: page, // Number | Número de la página a devolver
-    sort: ["null"] // [String] | Parámetros en la forma `($propertyname,)+[asc|desc]?`
+    sort: ["timestamp,desc"] // [String] | Parámetros en la forma `($propertyname,)+[asc|desc]?`
   };
+
   apiInstance.getMessagesFromSender(senderId, opts, (error, data, response) => {
     if (error) {
       console.error(error);
     } else {
-      callback(data);
+      callback(data._embedded.messages);
     }
   });
 }
@@ -92,8 +93,9 @@ export function getMessagesToReceiver(receiverId, page, callback) {
     pragma: "no-cache", // String |
     expires: "0", // String |
     page: page, // Number | Número de la página a devolver
-    sort: ["null"] // [String] | Parámetros en la forma `($propertyname,)+[asc|desc]?`
+    sort: ["timestamp,desc"] // [String] | Parámetros en la forma `($propertyname,)+[asc|desc]?`
   };
+
   apiInstance.getMessagesToReceiver(
     receiverId,
     opts,
@@ -101,7 +103,7 @@ export function getMessagesToReceiver(receiverId, page, callback) {
       if (error) {
         console.error(error);
       } else {
-        callback(data);
+        callback(data._embedded.messages);
       }
     }
   );
