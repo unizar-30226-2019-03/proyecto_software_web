@@ -276,13 +276,13 @@ export function findUserProfessors(page, callback) {
     pragma: "no-cache", // String |
     expires: "0", // String |
     page: page, // Number | Número de la página a devolver
-    sort: ["username"] // [String] | Parámetros en la forma `($propertyname,)+[asc|desc]?`
+    sort: ["_embedded.users.username"] // [String] | Parámetros en la forma `($propertyname,)+[asc|desc]?`
   };
   apiInstance.findUserProfessors(opts, (error, data, response) => {
     if (error) {
       console.error(error);
     } else {
-      callback(data);
+      callback(data._embedded.users);
     }
   });
 }

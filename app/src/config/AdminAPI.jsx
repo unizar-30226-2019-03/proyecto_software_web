@@ -6,6 +6,13 @@ import SubjectApi from "swagger_unicast/dist/api/SubjectApi";
 
 const defaultClient = ApiClient.instance;
 
+/**
+ * Busca un usuario y lo convierte a profesor
+ * @param {String} username Nombre de usuario
+ * @param {HTMLElement} form Formulario a resetear
+ * @param {Function} handleShow Función a ejecutar
+ * @param {UserApi} api API de usuario
+ */
 export function hacerProfesor(username, form, handleShow, api) {
   // Configure Bearer (JWT) access token for authorization: bearerAuth
   let bearerAuth = defaultClient.authentications["bearerAuth"];
@@ -34,6 +41,14 @@ export function hacerProfesor(username, form, handleShow, api) {
   });
 }
 
+/**
+ *
+ * Busca un usuario y lo convierte a usuario normal
+ * @param {String} username Nombre de usuario
+ * @param {HTMLElement} form Formulario a resetear
+ * @param {Function} handleShow Función a ejecutar
+ * @param {UserApi} api API de usuario
+ */
 export function borrarProfesor(username, form, handleShow, api) {
   // Configure Bearer (JWT) access token for authorization: bearerAuth
   let bearerAuth = defaultClient.authentications["bearerAuth"];
@@ -63,6 +78,15 @@ export function borrarProfesor(username, form, handleShow, api) {
   });
 }
 
+/**
+ *
+ * Elimina la universidad que tenga el id especificado
+ * @param {Number} uni ID de la universidad
+ * @param {HTMLElement} form Formulario a resetear
+ * @param {Function} handleShow Función a ejecutar
+ * @param {UniversityApi} api API de universidad
+ * @param {Function} callback Función a ejecutar tras realizar la operación
+ */
 export function borrarUniversidad(uni, form, handleShow, api, callback) {
   // Configure Bearer (JWT) access token for authorization: bearerAuth
   let bearerAuth = defaultClient.authentications["bearerAuth"];
@@ -80,6 +104,14 @@ export function borrarUniversidad(uni, form, handleShow, api, callback) {
   });
 }
 
+/**
+ *
+ * Elimina la asignatura que tenga el id especificado
+ * @param {Number} sub ID de la asignatura
+ * @param {HTMLElement} form Formulario a resetear
+ * @param {Function} handleShow Función a ejecutar
+ * @param {SubjectApi} api API de asignatura
+ */
 export function borrarAsignatura(sub, form, handleShow, api) {
   // Configure Bearer (JWT) access token for authorization: bearerAuth
   let bearerAuth = defaultClient.authentications["bearerAuth"];
@@ -96,6 +128,14 @@ export function borrarAsignatura(sub, form, handleShow, api) {
   });
 }
 
+/**
+ * Elimina la asociación de un profesor con una asignatura
+ * @param {Number} sub ID de la asignatura
+ * @param {Number} prof ID del profesor
+ * @param {HTMLElement} form Formulario a resetear
+ * @param {Function} handleShow Función a ejecutar
+ * @param {SubjectApi} api API de asignatura
+ */
 export function borrarProfeAsignatura(sub, prof, form, handleShow, api) {
   // Configure Bearer (JWT) access token for authorization: bearerAuth
   let bearerAuth = defaultClient.authentications["bearerAuth"];
@@ -276,7 +316,7 @@ export function addProfessor(idUser, idSubj, SubjectApi, callback) {
 }
 
 /**
- * Borra la asociación de un usuario con una asignatura
+ * Elimina la asociación de un usuario con una asignatura
  * @param {Number} userId ID del usuario
  * @param {Number} subjectId ID de la asignatura
  * @param {Function} callback Función a ejecutar tras

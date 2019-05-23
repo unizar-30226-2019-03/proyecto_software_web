@@ -3,140 +3,34 @@ import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
 import ListaVerticalProfes from "./ListaVerticalProfes";
 import imagenUsuario from "../assets/user.png";
-import { RemoveAccents } from "../config/Process";
 import { Redirect, Link } from "react-router-dom";
 import { isSignedIn, getUserRole } from "../config/Auth";
-
-const list = [
-  {
-    name: "Béjar Hernández, Ruben",
-    image: imagenUsuario
-  },
-  {
-    name: "Lacasta Miguel, Javier",
-    image: imagenUsuario
-  },
-  {
-    name: "Zarazaga Soria, F. Javier",
-    image: imagenUsuario
-  },
-  {
-    name: "Latre, Miguel Ángel",
-    image: imagenUsuario
-  },
-  {
-    name: "Nogueras, Javier",
-    image: imagenUsuario
-  },
-  {
-    name: "García Vallés, Fernando",
-    image: imagenUsuario
-  },
-  {
-    name: "Suárez Gracia, Darío",
-    image: imagenUsuario
-  },
-  {
-    name: "Lopez-Pellicer, Fracisco J.",
-    image: imagenUsuario
-  },
-  {
-    name: "Resano Ezcaray, Jesús Javier",
-    image: imagenUsuario
-  }
-];
+import { findUserProfessors } from "../config/UserAPI";
 
 class ProfesoresLista extends Component {
   constructor(props) {
     super(props);
-    this.state = { listaProfesores: this.props.historial };
+    this.state = { listaProfesores: this.props.profesores };
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ listaProfesores: nextProps.historial });
+    this.setState({ listaProfesores: nextProps.profesores });
   }
 
   render() {
     return (
       <div>
-        {!this.props.fixed ? (
-          <div style={{ display: "block", marginRight: "50px" }}>
-            <div className="profesores-asignaturas">
-              <input
-                onChange={this.props.handleChange}
-                onKeyDown={this.props.keyDown}
-                defaultValue={this.props.busqueda}
-                style={{
-                  fontSize: "14px",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  display: "-webkit-box",
-                  WebkitLineClamp: "1",
-                  WebkitBoxOrient: "vertical",
-                  backgroundColor: "#fafafa",
-                  borderWidth: "0px 0px 1px 0px",
-                  borderColor: "lightgrey",
-                  width: "calc(100% - 67%)",
-                  color: "#00000080",
-                  outline: "none"
-                }}
-                placeholder={"Buscar profesor..."}
-              />
-            </div>
-            <div>
-              <div
-                style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  marginTop: "25px"
-                }}
-              >
-                <ListaVerticalProfes lista={this.state.listaProfesores} />
-              </div>
-            </div>
+        <div style={{ display: "block", marginRight: "70px" }}>
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              marginTop: "25px"
+            }}
+          >
+            <ListaVerticalProfes lista={this.state.listaProfesores} />
           </div>
-        ) : (
-          <div style={{ display: "flex", marginRight: "70px" }}>
-            <div style={{ paddingRight: "300px" }}>
-              <div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    marginTop: "25px"
-                  }}
-                >
-                  <ListaVerticalProfes lista={this.state.listaProfesores} />
-                </div>
-              </div>
-            </div>
-            <div
-              className="profesores-asignatura"
-              style={{ position: "fixed", right: "70px" }}
-            >
-              <input
-                onChange={this.props.handleChange}
-                onKeyDown={this.props.keyDown}
-                defaultValue={this.props.busqueda}
-                style={{
-                  fontSize: "14px",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  display: "-webkit-box",
-                  WebkitLineClamp: "1",
-                  WebkitBoxOrient: "vertical",
-                  backgroundColor: "#fafafa",
-                  borderWidth: "0px 0px 1px 0px",
-                  borderColor: "lightgrey",
-                  width: "100%",
-                  color: "#00000080",
-                  outline: "none"
-                }}
-                placeholder={"Buscar profesor..."}
-              />
-            </div>
-          </div>
-        )}
+        </div>
       </div>
     );
   }
@@ -145,65 +39,29 @@ class ProfesoresLista extends Component {
 class MensajesProfes extends Component {
   constructor() {
     super();
+    this._isMounted = false;
     this.state = {
       contentMargin: "300px",
-      fixed: window.innerWidth >= 970,
-      busqueda: "",
-      miHistorial: list,
-      historialFiltrado: [],
-      filtrado: false
+      profesores: [],
+      page: 0
     };
+    this.getData = this.getData.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.handleResize = this.handleResize.bind(this);
-    this.borrarHistorial = this.borrarHistorial.bind(this);
-    this.buscarHistorial = this.buscarHistorial.bind(this);
-    this.keyDown = this.keyDown.bind(this);
   }
 
-  borrarHistorial() {
-    this.setState({ miHistorial: [], fixed: false });
-  }
-
-  buscarHistorial(e) {
-    e.preventDefault();
-    this.setState({ busqueda: e.target.value });
-    if (e.target.value === "") {
-      this.setState({ historialFiltrado: [], filtrado: false });
-    }
-  }
-
-  keyDown(e) {
-    if (this.state.busqueda !== "") {
-      if (e.keyCode === 13) {
-        const palabras = this.state.busqueda.split(" ");
-        var resultado = [];
-        this.state.miHistorial.forEach(e => {
-          const { name, image } = e;
-          for (let index = 0; index < palabras.length; index++) {
-            const element = palabras[index];
-            if (
-              RemoveAccents(name)
-                .toLowerCase()
-                .includes(RemoveAccents(element).toLowerCase())
-            ) {
-              resultado.push({ name, image });
-              break;
-            }
-          }
-        });
-        this.setState({ historialFiltrado: resultado, filtrado: true });
+  getData(page) {
+    findUserProfessors(page, data => {
+      console.log(data);
+      if (this._isMounted) {
+        const profesores = this.state.profesores.slice().concat(data);
+        this.setState({ page: page + 1, profesores: profesores });
       }
-    }
+    });
   }
 
-  handleResize() {
-    if (this.state.miHistorial.length > 0) {
-      if (window.innerWidth <= 970) {
-        this.setState({ fixed: false });
-      } else {
-        this.setState({ fixed: true });
-      }
-    }
+  componentWillMount() {
+    this._isMounted = true;
+    this.getData(0);
   }
 
   componentDidMount() {
@@ -211,6 +69,7 @@ class MensajesProfes extends Component {
   }
 
   componentWillUnmount() {
+    this._isMounted = false;
     window.removeEventListener("resize", this.handleResize);
   }
 
@@ -267,7 +126,7 @@ class MensajesProfes extends Component {
               {"Profesores"}
             </Link>
           </div>
-          {this.state.miHistorial.length === 0 ? (
+          {this.state.profesores.length === 0 ? (
             <div
               style={{
                 color: "#00000080",
@@ -280,19 +139,7 @@ class MensajesProfes extends Component {
               apareciendo aqui.
             </div>
           ) : (
-            <ProfesoresLista
-              fixed={this.state.fixed}
-              borrar={this.borrarHistorial}
-              handleChange={this.buscarHistorial}
-              keyDown={this.keyDown}
-              anyadir={this.anyadirHistorialA}
-              historial={
-                !this.state.filtrado
-                  ? this.state.miHistorial
-                  : this.state.historialFiltrado
-              }
-              busqueda={this.state.busqueda}
-            />
+            <ProfesoresLista profesores={this.state.profesores} />
           )}
         </div>
       </div>

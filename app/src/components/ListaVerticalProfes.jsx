@@ -11,8 +11,14 @@ class MenuItem extends Component {
         }}
       >
         <div>
-          <Link to={`/chat/${this.props.url}`}>
-            <img src={this.props.img} width="120" height="80" alt="mensajeX" />
+          <Link to={`/chat/${this.props.user.id}`}>
+            <img
+              src={this.props.user.photo}
+              width="80"
+              height="80"
+              alt={this.props.user.username}
+              style={{ borderRadius: "50%" }}
+            />
           </Link>
         </div>
         <div style={{ marginTop: "0px" }}>
@@ -37,9 +43,9 @@ class MenuItem extends Component {
                 wordWrap: "break-word",
                 width: "90%"
               }}
-              to={`/chat/${this.props.url}`}
+              to={`/chat/${this.props.user.id}`}
             >
-              {this.props.url}
+              {this.props.user.name + " " + this.props.user.surnames}
             </Link>
           </div>
           <div
@@ -63,7 +69,7 @@ class MenuItem extends Component {
                   fontWeight: "500"
                 }}
               >
-                Asignaturas del profesor. Proyecto sofware. IA. Programación I.
+                {this.props.user.username + ": " + this.props.user.description}
               </div>
             </div>
           </div>
@@ -77,9 +83,7 @@ class MenuItem extends Component {
 // Important! add unique key
 export const MenuVertical = list =>
   list.map(el => {
-    const { name, image } = el;
-
-    return <MenuItem url={name} key={name} img={image} />;
+    return <MenuItem user={el} key={el.id} />;
   });
 
 class ListaVerticalProfes extends Component {
