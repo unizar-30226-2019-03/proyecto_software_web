@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
 import ListaVerticalProfes from "./ListaVerticalProfes";
-import imagenUsuario from "../assets/user.png";
 import { Redirect, Link } from "react-router-dom";
 import { isSignedIn, getUserRole } from "../config/Auth";
 import { findUserProfessors } from "../config/UserAPI";
@@ -51,7 +50,6 @@ class MensajesProfes extends Component {
 
   getData(page) {
     findUserProfessors(page, data => {
-      console.log(data);
       if (this._isMounted) {
         const profesores = this.state.profesores.slice().concat(data);
         this.setState({ page: page + 1, profesores: profesores });
@@ -64,13 +62,8 @@ class MensajesProfes extends Component {
     this.getData(0);
   }
 
-  componentDidMount() {
-    window.addEventListener("resize", this.handleResize);
-  }
-
   componentWillUnmount() {
     this._isMounted = false;
-    window.removeEventListener("resize", this.handleResize);
   }
 
   handleChange(display) {

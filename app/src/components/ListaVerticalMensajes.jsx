@@ -114,20 +114,18 @@ class MenuItem extends Component {
 // All items component
 // Important! add unique key
 export const MenuVertical = (list, borrar) =>
-  list.map(el => {
-    const { name, image } = el;
-
-    return <MenuItem url={name} key={name} borrar={borrar} img={image} />;
+  list.map((el, index) => {
+    return <MenuItem key={index} />;
   });
 
 class ListaVerticalMensajes extends Component {
   constructor(props) {
     super(props);
-    this.menu = MenuVertical(this.props.lista, this.props.borrar);
+    this.menu = MenuVertical(this.props.lista);
   }
 
   componentWillReceiveProps(newProps) {
-    this.menu = MenuVertical(newProps.lista, newProps.borrar);
+    this.menu = MenuVertical(newProps.lista);
   }
 
   render() {

@@ -70,11 +70,23 @@ class Notificacion extends Component {
           </div>
         ) : (
           <div
+            onMouseEnter={() => {
+              checkNotification(this.state.notif.id, ok => {
+                if (ok) {
+                  this.setState({ unChecked: false });
+                }
+              });
+            }}
             style={{
               position: "relative"
             }}
           >
-            <span className="notificacion-mensaje" />
+            <span
+              className="notificacion-mensaje"
+              style={{
+                visibility: this.state.unChecked ? "visible" : "hidden"
+              }}
+            />
             Nuevo mensaje recibido
             <span
               style={{

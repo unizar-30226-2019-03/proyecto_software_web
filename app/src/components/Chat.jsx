@@ -5,11 +5,6 @@ import Messages from "./Messages";
 import { isSignedIn } from "../config/Auth";
 import { Redirect, Link } from "react-router-dom";
 import { getUser } from "../config/UserAPI";
-import {
-  enviarMensaje,
-  mensajesPropios,
-  mensajesRecibidos
-} from "../config/MensajesAPI";
 
 class Chat extends Component {
   constructor(props) {
@@ -36,12 +31,6 @@ class Chat extends Component {
     getUser(this.props.match.params.id, data => {
       if (this._isMounted) {
         this.setState({ prof: data });
-        mensajesPropios(parseInt(this.props.match.params.id), mensajes => {
-          console.log(mensajes);
-        });
-        mensajesRecibidos(parseInt(this.props.match.params.id), mensajes => {
-          console.log(mensajes);
-        });
       }
     });
   }
@@ -67,7 +56,6 @@ class Chat extends Component {
     const nuevosMensages = this.state.messages.slice();
     nuevosMensages.push(message);
     this.setState({ messages: nuevosMensages });
-    enviarMensaje(parseInt(this.state.prof.id), message.message);
   }
 
   render() {

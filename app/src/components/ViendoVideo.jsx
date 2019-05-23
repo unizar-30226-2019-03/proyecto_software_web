@@ -473,7 +473,7 @@ class ViendoVideo extends Component {
         } else {
           this.setState({
             notif: true,
-            mensajeNotif: "Ya has votado este vídeo"
+            mensajeNotif: "Error, intente votar el vídeo en otro momento"
           });
         }
         this.iniciarReloj();
