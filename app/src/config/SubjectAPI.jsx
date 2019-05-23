@@ -130,7 +130,7 @@ export function getProfessorsFromSubject(id, callback) {
     expires: "0" // String |
   };
   apiInstance.getProfessorsFromSubject(
-    Number.parseInt(id),
+    parseInt(id),
     opts,
     (error, data, response) => {
       if (error) {

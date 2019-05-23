@@ -37,13 +37,13 @@ class Chat extends Component {
       if (this._isMounted) {
         this.setState({ prof: data });
         mensajesPropios(
-          Number.parseInt(this.props.match.params.id),
+          parseInt(this.props.match.params.id),
           mensajes => {
             console.log(mensajes);
           }
         );
         mensajesRecibidos(
-          Number.parseInt(this.props.match.params.id),
+          parseInt(this.props.match.params.id),
           mensajes => {
             console.log(mensajes);
           }
@@ -73,7 +73,7 @@ class Chat extends Component {
     const nuevosMensages = this.state.messages.slice();
     nuevosMensages.push(message);
     this.setState({ messages: nuevosMensages });
-    enviarMensaje(Number.parseInt(this.state.prof.id), message.message);
+    enviarMensaje(parseInt(this.state.prof.id), message.message);
   }
 
   render() {

@@ -10,7 +10,8 @@ import UserApi from "swagger_unicast/dist/api/UserApi";
 import {
   borrarUniversidad,
   borrarProfesor,
-  borrarProfeAsignatura
+  borrarProfeAsignatura,
+  borrarAsignatura
 } from "../config/AdminAPI";
 import SubjectApi from "swagger_unicast/dist/api/SubjectApi";
 import {
@@ -22,7 +23,7 @@ import { getProfessorsFromSubject } from "../config/SubjectAPI";
 const FormularioProfesor = (handleProfesor, userID) => {
   return (
     <div style={{ margin: "20px 20px 20px 20px" }}>
-      <h6>Borrar profesor</h6>
+      <h6>Quitar permisos de profesor</h6>
       <Form
         id="form-profesor"
         onSubmit={e =>
@@ -288,7 +289,6 @@ class FormularioProfeAsignatura extends React.Component {
           <Form.Row>
             <Form.Group as={Col} controlId="formGridProfeProfe" required>
               <Form.Label>Nombre de usuario del profesor</Form.Label>
-              {console.log(this.props)}
               {this.state.showProfe ? (
                 <Form.Control as="select" ref={this.props.user}>
                   <option value={-1}>Elegir profesor...</option>
@@ -324,6 +324,7 @@ class FormularioProfeAsignatura extends React.Component {
 class AdministradorBorrar extends Component {
   constructor(props) {
     super(props);
+    this._isMounted = false;
     this.state = {
       show: false,
       listaUniversidades: []
@@ -339,6 +340,7 @@ class AdministradorBorrar extends Component {
     this.uniUn = React.createRef();
     this.asignUn = React.createRef();
     this.userUn = React.createRef();
+    this.getData = this.getData.bind(this);
     this.handleProfesor = this.handleProfesor.bind(this);
     this.handleUniversidad = this.handleUniversidad.bind(this);
     this.handleAsignatura = this.handleAsignatura.bind(this);
@@ -348,6 +350,17 @@ class AdministradorBorrar extends Component {
   }
 
   componentWillMount() {
+    this._isMounted = true;
+    if (isSignedIn()) {
+      this.getData();
+    }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
+  getData() {
     getUnivesities(0, data => {
       this.getAllUniversities(data._embedded.universities, 1);
     });
@@ -355,7 +368,9 @@ class AdministradorBorrar extends Component {
 
   getAllUniversities(unis, page) {
     if (unis.length < 20) {
-      this.setState({ listaUniversidades: unis });
+      if (this._isMounted) {
+        this.setState({ listaUniversidades: unis });
+      }
     } else {
       getUnivesities(page, data => {
         const newData = [...unis, ...data._embedded.universities];
@@ -377,11 +392,19 @@ class AdministradorBorrar extends Component {
     const userID = this.userIDProf.current.value;
     borrarProfesor(userID, form, this.handleShow, this.UserApi);
   }
+
   handleUniversidad(event, form) {
     event.preventDefault();
     const uni = this.idUni.current.value;
-    borrarUniversidad(uni, form, this.handleShow, this.UniversityApi);
+    borrarUniversidad(uni, form, this.handleShow, this.UniversityApi, ok => {
+      if (ok) {
+        this.getData();
+      } else {
+        alert("No se ha podido borrar la universidad");
+      }
+    });
   }
+
   handleAsignatura(event, form, that) {
     event.preventDefault();
     if (
@@ -391,11 +414,11 @@ class AdministradorBorrar extends Component {
     ) {
       const asignatura = this.nombreAsig.current.value;
       //this.setState({ datosSubidos: true });
-      borrarUniversidad(
-        Number.parseInt(asignatura),
+      borrarAsignatura(
+        parseInt(asignatura),
         form,
         this.handleShow,
-        this.UniversityApi
+        this.SubjectApi
       );
       that.setState({ uni: "" });
     }
@@ -417,7 +440,7 @@ class AdministradorBorrar extends Component {
         user,
         form,
         this.handleShow,
-        SubjectApi
+        this.SubjectApi
       );
       that.setState({ uni: "", asignatura: "" });
     }

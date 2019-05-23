@@ -466,10 +466,17 @@ class AdministradorCrear extends Component {
           ) {
             alert("El usuario especificado no existe");
           } else {
-            addProfessor(data.id, asignatura, this.SubjectApi);
-            form.reset();
-            this.handleShow();
-            that.setState({ uni: -1 });
+            addProfessor(data.id, asignatura, this.SubjectApi, ok => {
+              if (ok) {
+                form.reset();
+                this.handleShow();
+                that.setState({ uni: -1 });
+              } else {
+                alert(
+                  "No se ha podido relacionar el profesor con la asignatura"
+                );
+              }
+            });
           }
         });
       } else {

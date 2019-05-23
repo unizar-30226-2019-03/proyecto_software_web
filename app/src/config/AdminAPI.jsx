@@ -5,9 +5,7 @@ import Subject2 from "swagger_unicast/dist/model/Subject2";
 import SubjectApi from "swagger_unicast/dist/api/SubjectApi";
 
 const defaultClient = ApiClient.instance;
-/**
- *
- */
+
 export function hacerProfesor(username, form, handleShow, api) {
   // Configure Bearer (JWT) access token for authorization: bearerAuth
   let bearerAuth = defaultClient.authentications["bearerAuth"];
@@ -21,26 +19,21 @@ export function hacerProfesor(username, form, handleShow, api) {
   };
   api.findUserByUsername(opts, (error, data, response) => {
     if (error) {
-      alert("El nombre de usuario es incorrecto");
+      alert("El usuario introducido no existe");
     } else {
-      console.log(data);
       api.makeProfessor(data.id, (error, data, response) => {
         if (error) {
-          alert("El nombre de usuario es incorrecto");
+          alert("No se ha podido hacer profesor al usuario " + username);
           console.error(error);
         } else {
           form.reset();
           handleShow();
-          console.log("API called successfully.");
         }
       });
     }
   });
 }
 
-/**
- *
- */
 export function borrarProfesor(username, form, handleShow, api) {
   // Configure Bearer (JWT) access token for authorization: bearerAuth
   let bearerAuth = defaultClient.authentications["bearerAuth"];
@@ -54,12 +47,11 @@ export function borrarProfesor(username, form, handleShow, api) {
   };
   api.findUserByUsername(opts, (error, data, response) => {
     if (error) {
-      console.error(error);
+      alert("El usuario introducido no existe");
     } else {
-      console.log(data);
       api.eraseProfessor(data.id, (error, data, response) => {
         if (error) {
-          alert("El nombre de usuario es incorrecto");
+          alert("No se ha podido borrar al profesor " + username);
           console.error(error);
         } else {
           form.reset();
@@ -71,35 +63,32 @@ export function borrarProfesor(username, form, handleShow, api) {
   });
 }
 
-/**
- *
- */
-export function borrarUniversidad(uni, form, handleShow, api) {
+export function borrarUniversidad(uni, form, handleShow, api, callback) {
   // Configure Bearer (JWT) access token for authorization: bearerAuth
   let bearerAuth = defaultClient.authentications["bearerAuth"];
   bearerAuth.accessToken = getUserToken();
 
-  api.deleteUniversity(Number.parseInt(uni), (error, data, response) => {
+  api.deleteUniversity(parseInt(uni), (error, data, response) => {
     if (error) {
       console.error(error);
+      callback(false);
     } else {
       form.reset();
       handleShow();
+      callback(true);
     }
   });
 }
 
-/**
- *
- */
 export function borrarAsignatura(sub, form, handleShow, api) {
   // Configure Bearer (JWT) access token for authorization: bearerAuth
   let bearerAuth = defaultClient.authentications["bearerAuth"];
   bearerAuth.accessToken = getUserToken();
 
-  api.deleteSubject(Number.parseInt(sub), (error, data, response) => {
+  api.deleteSubject(parseInt(sub), (error, data, response) => {
     if (error) {
       console.error(error);
+      alert("No se ha podido borrar la asignatura");
     } else {
       form.reset();
       handleShow();
@@ -107,17 +96,13 @@ export function borrarAsignatura(sub, form, handleShow, api) {
   });
 }
 
-/**
- *
- */
 export function borrarProfeAsignatura(sub, prof, form, handleShow, api) {
   // Configure Bearer (JWT) access token for authorization: bearerAuth
   let bearerAuth = defaultClient.authentications["bearerAuth"];
   bearerAuth.accessToken = getUserToken();
-
   api.deleteProfessor(
-    Number.parseInt(sub),
-    Number.parseInt(prof),
+    parseInt(sub),
+    parseInt(prof),
     (error, data, response) => {
       if (error) {
         console.error(error);
@@ -274,17 +259,18 @@ function ligarUniAsig(uni, subject, SubjectApi) {
  * @param {Number} idUser ID del usuario
  * @param {Number} idSubj ID de la asignatura
  * @param {SubjectApi} SubjectApi API de las asignaturas
+ * @param {Function} callback Función a ejecutar tras añadir profesor
  */
-export function addProfessor(idUser, idSubj, SubjectApi) {
+export function addProfessor(idUser, idSubj, SubjectApi, callback) {
   // Configure Bearer (JWT) access token for authorization: bearerAuth
   let bearerAuth = defaultClient.authentications["bearerAuth"];
   bearerAuth.accessToken = getUserToken();
 
   SubjectApi.addProfessor(idSubj, idUser, (error, data, response) => {
     if (error) {
-      console.error(error);
+      callback(false);
     } else {
-      console.log("API called successfully.");
+      callback(true);
     }
   });
 }
