@@ -159,7 +159,7 @@ class Perfil extends Component {
     ) : (
       <div>
         <Helmet>
-          <title>Perfil</title>
+          <title>Perfil | UniCast</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         <BarraNavegacion

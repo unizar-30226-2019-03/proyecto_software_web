@@ -216,7 +216,7 @@ class Profesor extends Component {
     ) : (
       <div>
         <Helmet>
-          <title>Perfil</title>
+          <title>Profesor | UniCast</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         <BarraNavegacion
@@ -260,7 +260,9 @@ class Profesor extends Component {
                   to={`/chat/${this.props.match.params.id}`}
                   className="universidad"
                 >
-                  <Button className="boton-filtro">Enviar un mensaje</Button>
+                  <Button className="boton-filtro">
+                    Enviar un mensaje
+                  </Button>
                 </Link>
               </div>
               <div

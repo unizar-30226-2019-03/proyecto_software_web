@@ -523,7 +523,7 @@ class ViendoVideo extends Component {
     ) : (
       <div>
         <Helmet>
-          <title>UniCast | Vídeo</title>
+          <title>Vídeo | UniCast</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         <BarraNavegacion

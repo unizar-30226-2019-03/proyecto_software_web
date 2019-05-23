@@ -202,7 +202,7 @@ class SubirVideo extends Component {
     ) : (
       <div>
         <Helmet>
-          <title>Subir Video</title>
+          <title>Subir Video | UniCast</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         {this.state.datosSubidos ? (

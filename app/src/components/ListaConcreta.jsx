@@ -524,7 +524,7 @@ class ListaConcreta extends Component {
         ) : (
           <div>
             <Helmet>
-              <title>Lista</title>
+              <title>Lista | UniCast</title>
               <style>{"body { background-color: #fafafa; }"}</style>
             </Helmet>
             <BarraNavegacion

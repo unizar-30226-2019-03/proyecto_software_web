@@ -36,18 +36,12 @@ class Chat extends Component {
     getUser(this.props.match.params.id, data => {
       if (this._isMounted) {
         this.setState({ prof: data });
-        mensajesPropios(
-          parseInt(this.props.match.params.id),
-          mensajes => {
-            console.log(mensajes);
-          }
-        );
-        mensajesRecibidos(
-          parseInt(this.props.match.params.id),
-          mensajes => {
-            console.log(mensajes);
-          }
-        );
+        mensajesPropios(parseInt(this.props.match.params.id), mensajes => {
+          console.log(mensajes);
+        });
+        mensajesRecibidos(parseInt(this.props.match.params.id), mensajes => {
+          console.log(mensajes);
+        });
       }
     });
   }
@@ -82,7 +76,7 @@ class Chat extends Component {
     ) : (
       <div>
         <Helmet>
-          <title>Chat</title>
+          <title>Chat | UniCast</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         {console.log(this.state)}

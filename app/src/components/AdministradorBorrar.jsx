@@ -459,7 +459,7 @@ class AdministradorBorrar extends Component {
     ) : (
       <div>
         <Helmet>
-          <title>Borrar</title>
+          <title>Administrador | UniCast</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         <BarraAdmi />

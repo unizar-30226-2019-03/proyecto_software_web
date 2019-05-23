@@ -83,7 +83,7 @@ class Inicio extends Component {
     ) : (
       <div>
         <Helmet>
-          <title>Inicio</title>
+          <title>Inicio | UniCast</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         <BarraNavegacion

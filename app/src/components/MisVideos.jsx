@@ -369,7 +369,7 @@ class MisVideos extends Component {
     ) : (
       <div>
         <Helmet>
-          <title>Asignatura</title>
+          <title>Mis Vídeos | UniCast</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         <BarraNavegacion

@@ -235,7 +235,7 @@ class MensajesProfes extends Component {
     ) : (
       <div>
         <Helmet>
-          <title>Mensajes | Profesores</title>
+          <title>Profesores | UniCast</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         <BarraNavegacion

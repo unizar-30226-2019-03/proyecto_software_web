@@ -145,7 +145,7 @@ class Rankings extends Component {
     ) : (
       <div>
         <Helmet>
-          <title>Ránkings</title>
+          <title>Ránkings | UniCast</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         <BarraNavegacion

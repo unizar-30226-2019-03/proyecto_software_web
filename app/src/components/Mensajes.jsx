@@ -429,7 +429,7 @@ class Mensajes extends Component {
     ) : (
       <div>
         <Helmet>
-          <title>Mensajes</title>
+          <title>Mensajes | UniCast</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         <BarraNavegacion

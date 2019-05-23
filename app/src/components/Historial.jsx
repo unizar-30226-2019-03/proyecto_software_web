@@ -504,7 +504,7 @@ class Historial extends Component {
     ) : (
       <div>
         <Helmet>
-          <title>Historial</title>
+          <title>Historial | UniCast</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         <BarraNavegacion

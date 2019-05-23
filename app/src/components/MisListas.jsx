@@ -364,7 +364,7 @@ class MisListas extends Component {
     ) : (
       <div>
         <Helmet>
-          <title>Mis Listas</title>
+          <title>Mis Listas | UniCast</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         <BarraNavegacion

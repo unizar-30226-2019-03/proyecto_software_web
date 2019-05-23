@@ -163,7 +163,7 @@ class ResultadoBusqueda extends Component {
     ) : (
       <div>
         <Helmet>
-          <title>Resultados Búsqueda</title>
+          <title>Búsqueda | UniCast</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         <BarraNavegacion

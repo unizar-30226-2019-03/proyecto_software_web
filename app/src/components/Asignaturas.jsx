@@ -100,7 +100,7 @@ class Asignaturas extends Component {
     ) : (
       <div>
         <Helmet>
-          <title>Mis Asignaturas</title>
+          <title>Mis Asignaturas | UniCast</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         <BarraNavegacion

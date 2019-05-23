@@ -417,7 +417,7 @@ class EditarPerfil extends Component {
     ) : (
       <div>
         <Helmet>
-          <title>Editar Perfil</title>
+          <title>Editar Perfil | UniCast</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         {this.state.datosValidados ? (
