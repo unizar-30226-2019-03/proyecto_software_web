@@ -3,7 +3,7 @@ import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
 import ListaVerticalProfes from "./ListaVerticalProfes";
 import { Redirect, Link } from "react-router-dom";
-import { isSignedIn, getUserRole } from "../config/Auth";
+import { isSignedIn, getUserRole, getUserID } from "../config/Auth";
 import { findUserProfessors } from "../config/UserAPI";
 
 class ProfesoresLista extends Component {
@@ -51,7 +51,12 @@ class MensajesProfes extends Component {
   getData(page) {
     findUserProfessors(page, data => {
       if (this._isMounted) {
-        const profesores = this.state.profesores.slice().concat(data);
+        let profesores = this.state.profesores.slice().concat(data);
+        //Eliminamos el propio profesor (si lo es)
+        const index = profesores.findIndex(p => {
+          return p.id === getUserID();
+        });
+        profesores.splice(index, 1);
         this.setState({ page: page + 1, profesores: profesores });
       }
     });
