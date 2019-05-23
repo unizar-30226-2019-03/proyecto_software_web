@@ -1,8 +1,7 @@
 import React, { Component } from "react";
 import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
-import { Button, Form } from "react-bootstrap";
-import Popup from "reactjs-popup";
+import { Button } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
 import { isSignedIn, getUserID, getUserRole } from "../config/Auth";
 import {
@@ -65,8 +64,6 @@ class Perfil extends Component {
     this._isMounted = false;
     this.state = {
       contentMargin: "300px",
-      popUp: false,
-      popUpValidado: false,
       pass: "",
       passValida: -1,
       user: {},
@@ -75,10 +72,7 @@ class Perfil extends Component {
     };
     this.pass = React.createRef();
     this.getData = this.getData.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.abrirPopUp = this.abrirPopUp.bind(this);
-    this.cerrarPopUp = this.cerrarPopUp.bind(this);
     this.getUniFromUser = this.getUniFromUser.bind(this);
     this.getDegreeFromUser = this.getDegreeFromUser.bind(this);
   }
@@ -120,12 +114,6 @@ class Perfil extends Component {
     });
   }
 
-  handleSubmit(event) {
-    //const pass = this.pass.current.value;
-    event.preventDefault();
-    //Comprobar contraseña con la BD y si es correcto borrar
-  }
-
   handleChange(display) {
     if (display) {
       this.setState({
@@ -136,14 +124,6 @@ class Perfil extends Component {
         contentMargin: "70px"
       });
     }
-  }
-
-  abrirPopUp() {
-    this.setState({ popUp: true });
-  }
-
-  cerrarPopUp() {
-    this.setState({ popUp: false, popUpValidado: false });
   }
 
   render() {
@@ -270,72 +250,6 @@ class Perfil extends Component {
               padding: "30px 20px 0px 0px"
             }}
           />
-          <Popup
-            open={this.state.popUp}
-            onOpen={this.abrirPopUp}
-            onClose={this.cerrarPopUp}
-            trigger={
-              <div
-                style={{
-                  padding: "20px 20px 0px 0px"
-                }}
-              >
-                <div className="universidad">
-                  <Button className="btn-danger">Borrar cuenta</Button>
-                </div>
-              </div>
-            }
-            contentStyle={{ padding: "15px" }}
-            modal={true}
-          >
-            <div className="popup">
-              <div className="titulo">Confirmación borrado</div>
-              <p style={{ textAlign: "justify", marginTop: "20px" }}>
-                ¿Está seguro de que desea borrar la cuenta?
-              </p>
-              <p style={{ textAlign: "justify" }}>
-                Todos los datos que haya almacenado en la aplicación serán
-                borrados
-              </p>
-              <p style={{ textAlign: "justify" }}>
-                Introduzca la contraseña de su cuenta para confirmar
-              </p>
-              <Form
-                className="form"
-                onSubmit={e => {
-                  this.handleSubmit(e);
-                }}
-              >
-                <Form.Group controlId="password">
-                  <Form.Control
-                    required
-                    type="password"
-                    ref={this.pass}
-                    placeholder="Contraseña..."
-                    style={{
-                      border: this.state.passValida !== 0 ? "" : "1px solid red"
-                    }}
-                  />
-                </Form.Group>
-                <Button
-                  className="btn-danger"
-                  type="submit"
-                  style={{ float: "right" }}
-                >
-                  Confirmar borrado
-                </Button>
-              </Form>
-              <Button
-                className="boton-filtro"
-                style={{ float: "left" }}
-                onClick={() => {
-                  this.cerrarPopUp();
-                }}
-              >
-                Cancelar
-              </Button>
-            </div>
-          </Popup>
         </div>
       </div>
     );
