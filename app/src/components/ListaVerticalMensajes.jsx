@@ -1,8 +1,14 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { getUserID } from "../config/Auth";
 
 class MenuItem extends Component {
   render() {
+    const usuario =
+      parseInt(this.props.chat.sender.id) === getUserID()
+        ? this.props.chat.receiver
+        : this.props.chat.sender;
+
     return (
       <div
         style={{
@@ -11,12 +17,12 @@ class MenuItem extends Component {
         }}
       >
         <div style={{ flex: "10%" }}>
-          <Link to={`/chat/${this.props.chat.sender.id}`}>
+          <Link to={`/chat/${usuario.id}`}>
             <img
-              src={this.props.chat.sender.photo}
+              src={usuario.photo}
               width="80"
               height="80"
-              alt={this.props.chat.sender.username}
+              alt={usuario.username}
               style={{ borderRadius: "50%" }}
             />
           </Link>
@@ -43,11 +49,9 @@ class MenuItem extends Component {
                 wordWrap: "break-word",
                 width: "90%"
               }}
-              to={`/chat/${this.props.chat.sender.id}`}
+              to={`/chat/${usuario.id}`}
             >
-              {this.props.chat.sender.name +
-                " " +
-                this.props.chat.sender.surnames}
+              {usuario.name + " " + usuario.surnames}
             </Link>
           </div>
           <div

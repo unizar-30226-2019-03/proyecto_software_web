@@ -53,6 +53,7 @@ class Mensajes extends Component {
   getData() {
     getLastMessages(data => {
       if (this._isMounted) {
+        console.log(data);
         this.setState({ misChats: data });
       }
     });

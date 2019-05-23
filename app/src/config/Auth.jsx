@@ -64,7 +64,7 @@ export function getUserToken() {
  * Devuelve el ID único del usuario.
  */
 export function getUserID() {
-  return localStorage.getItem("userID");
+  return parseInt(localStorage.getItem("userID"));
 }
 
 /**

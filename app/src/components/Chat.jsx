@@ -5,12 +5,23 @@ import Messages from "./Messages";
 import { isSignedIn } from "../config/Auth";
 import { Redirect, Link } from "react-router-dom";
 import { getUser } from "../config/UserAPI";
+import {
+  getMessagesToReceiver,
+  getMessagesFromSender
+} from "../config/MessageApi";
 
 class Chat extends Component {
   constructor(props) {
     super(props);
-    this.state = { contentMargin: "300px", messages: [], prof: "" };
-    this.getData = this.getData.bind(this);
+    this.state = {
+      contentMargin: "300px",
+      messagesReceived: [],
+      messagesSent: [],
+      prof: "",
+      page: 0
+    };
+    this.getUser = this.getUser.bind(this);
+    this.getMessages = this.getMessages.bind(this);
     this.sendHandler = this.sendHandler.bind(this);
     this.addMessage = this.addMessage.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -19,7 +30,8 @@ class Chat extends Component {
   componentWillMount() {
     this._isMounted = true;
     if (isSignedIn()) {
-      this.getData();
+      this.getUser();
+      this.getMessages(0);
     }
   }
 
@@ -27,11 +39,20 @@ class Chat extends Component {
     this._isMounted = false;
   }
 
-  getData() {
+  getUser() {
     getUser(this.props.match.params.id, data => {
       if (this._isMounted) {
         this.setState({ prof: data });
       }
+    });
+  }
+
+  getMessages(page) {
+    getMessagesFromSender(parseInt(this.props.match.params.id), page, data => {
+      console.log(data);
+    });
+    getMessagesToReceiver(parseInt(this.props.match.params.id), page, data => {
+      console.log(data);
     });
   }
 
@@ -67,7 +88,6 @@ class Chat extends Component {
           <title>Chat | UniCast</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
-        {console.log(this.state)}
         <BarraNavegacion
           onChange={this.handleChange}
           activar={""}
