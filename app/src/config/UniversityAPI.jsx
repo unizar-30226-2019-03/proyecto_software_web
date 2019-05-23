@@ -15,7 +15,7 @@ export function getUnivesities(page, callback) {
     pragma: "no-cache", // String |
     expires: "0", // String |
     page: page, // Number | Número de la página a devolver
-    sort: ["null"] // [String] | Parámetros en la forma `($propertyname,)+[asc|desc]?`
+    sort: ["name"] // [String] | Parámetros en la forma `($propertyname,)+[asc|desc]?`
   };
   apiInstance.getUniversities(opts, (error, data, response) => {
     if (error) {

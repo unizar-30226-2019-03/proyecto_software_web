@@ -373,7 +373,7 @@ class AdministradorCrear extends Component {
   }
 
   getAllUniversities(unis, page) {
-    if (unis.length < 20) {
+    if (unis.length < 20 * page) {
       if (this._isMounted) {
         this.setState({ listaUniversidades: unis });
       }
