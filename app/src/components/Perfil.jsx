@@ -148,7 +148,14 @@ class Perfil extends Component {
 
   render() {
     return !isSignedIn() || getUserRole() === "ROLE_ADMIN" ? (
-      <Redirect to="/" />
+      <Redirect
+        to={{
+          pathname: "/",
+          state: {
+            url: `/perfil`
+          }
+        }}
+      />
     ) : (
       <div>
         <Helmet>

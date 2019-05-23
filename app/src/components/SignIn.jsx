@@ -503,7 +503,11 @@ class SignIn extends Component {
           <title>Crea tu cuenta de UniCast</title>
         </Helmet>
         {this.state.datosValidados & this.state.infoValidada ? (
-          <Redirect to={"/inicio"} />
+          this.props.location.state === undefined ? (
+            <Redirect to={"/inicio"} />
+          ) : (
+            <Redirect to={this.props.location.state.url} />
+          )
         ) : (
           <div>
             <div className="signin transform">

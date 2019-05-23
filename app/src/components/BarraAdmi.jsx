@@ -10,7 +10,7 @@ class BarraAdmi extends Component {
       <div>
         <Navbar bg="light" className="shadow-sm mb-5 bg-white" fixed="top">
           <Navbar.Brand style={{ marginLeft: "15px", height: "40px" }}>
-            <Link to="/">
+            <Link to="/administrador-crear">
               <img
                 alt="UniCast"
                 src={brand}

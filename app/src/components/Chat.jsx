@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
-import imagenUsuario from "../assets/user.png";
 import Messages from "./Messages";
 import { isSignedIn } from "../config/Auth";
 import { Redirect, Link } from "react-router-dom";

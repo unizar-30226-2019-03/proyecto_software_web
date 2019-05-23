@@ -89,7 +89,14 @@ class Asignaturas extends Component {
     const asignaturasFiltradas = this.filtrar(this.state.asignaturas);
     const listaAsign = ListaAsignaturas(asignaturasFiltradas);
     return !isSignedIn() || getUserRole() === "ROLE_ADMIN" ? (
-      <Redirect to="/" />
+      <Redirect
+        to={{
+          pathname: "/",
+          state: {
+            url: `/asignaturas`
+          }
+        }}
+      />
     ) : (
       <div>
         <Helmet>

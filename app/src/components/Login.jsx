@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Button, Form } from "react-bootstrap";
-import { Redirect, Link } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import uni from "../assets/UnicastNombre.png";
 import { UserApi } from "swagger_unicast";
@@ -14,7 +14,8 @@ class Login extends Component {
     this.state = {
       location: this.props.location,
       error: false,
-      validado: -1
+      validado: -1,
+      redirectSignIn: false
     };
     this.userID = React.createRef();
     this.pass = React.createRef();
@@ -53,7 +54,11 @@ class Login extends Component {
   };
 
   render() {
-    return (
+    return this.state.redirectSignIn ? (
+      <Redirect
+        to={{ pathname: "/registro", state: this.props.location.state }}
+      />
+    ) : (
       <div>
         <Helmet>
           <title>UniCast</title>
@@ -132,12 +137,16 @@ class Login extends Component {
                       style={{ textAlign: "left", padding: "5px 0px" }}
                     >
                       ¿No tienes cuenta?{" "}
-                      <Link
-                        style={{ color: "#007bff", textDecoration: "none" }}
-                        to="/registro"
+                      <span
+                        onClick={() => this.setState({ redirectSignIn: true })}
+                        style={{
+                          color: "#007bff",
+                          textDecoration: "none",
+                          cursor: "pointer"
+                        }}
                       >
                         Registrarse
-                      </Link>
+                      </span>
                     </p>
                   </Form>
                 </div>

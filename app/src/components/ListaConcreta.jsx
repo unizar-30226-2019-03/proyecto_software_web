@@ -509,7 +509,14 @@ class ListaConcreta extends Component {
 
   render() {
     return !isSignedIn() || getUserRole() === "ROLE_ADMIN" ? (
-      <Redirect to="/" />
+      <Redirect
+        to={{
+          pathname: "/",
+          state: {
+            url: `/listas`
+          }
+        }}
+      />
     ) : (
       <div>
         {this.state.borradoCompleto ? (

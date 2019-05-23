@@ -493,7 +493,14 @@ class Historial extends Component {
 
   render() {
     return !isSignedIn() || getUserRole() === "ROLE_ADMIN" ? (
-      <Redirect to="/" />
+      <Redirect
+        to={{
+          pathname: "/",
+          state: {
+            url: `/historial`
+          }
+        }}
+      />
     ) : (
       <div>
         <Helmet>

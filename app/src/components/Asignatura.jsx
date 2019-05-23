@@ -181,7 +181,14 @@ class Asignatura extends Component {
     const nombreAsig =
       this.state.asig.name === undefined ? "" : this.state.asig.name;
     return !isSignedIn() || getUserRole() === "ROLE_ADMIN" ? (
-      <Redirect to="/" />
+      <Redirect
+        to={{
+          pathname: "/",
+          state: {
+            url: `/asig/${this.props.match.params.id}`
+          }
+        }}
+      />
     ) : (
       <div>
         <Helmet>

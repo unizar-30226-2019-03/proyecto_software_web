@@ -152,7 +152,14 @@ class ResultadoBusqueda extends Component {
 
   render() {
     return !isSignedIn() || getUserRole() === "ROLE_ADMIN" ? (
-      <Redirect to="/" />
+      <Redirect
+        to={{
+          pathname: "/",
+          state: {
+            url: `/busqueda/${this.props.match.params.valor}`
+          }
+        }}
+      />
     ) : (
       <div>
         <Helmet>

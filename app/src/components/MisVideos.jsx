@@ -298,7 +298,9 @@ class MisVideos extends Component {
 
   componentWillMount() {
     this._isMounted = true;
-    this.getData();
+    if (isSignedIn()) {
+      this.getData();
+    }
   }
 
   componentWillUnmount() {
@@ -355,8 +357,15 @@ class MisVideos extends Component {
   }
 
   render() {
-    return !isSignedIn() || getUserRole() === "ROLE_ADMIN" ? (
-      <Redirect to="/" />
+    return !isSignedIn() || getUserRole() !== "ROLE_PROFESSOR" ? (
+      <Redirect
+        to={{
+          pathname: "/",
+          state: {
+            url: `/perfil`
+          }
+        }}
+      />
     ) : (
       <div>
         <Helmet>

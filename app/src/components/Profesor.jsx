@@ -204,7 +204,16 @@ class Profesor extends Component {
         : this.state.prof.description;
     const uni = this.state.uni === undefined ? "" : this.state.uni;
     const degree = this.state.degree === undefined ? "" : this.state.degree;
-    return (
+    return !isSignedIn() || getUserRole() === "ROLE_ADMIN" ? (
+      <Redirect
+        to={{
+          pathname: "/",
+          state: {
+            url: `/profesor/${this.props.match.params.id}`
+          }
+        }}
+      />
+    ) : (
       <div>
         <Helmet>
           <title>Perfil</title>
