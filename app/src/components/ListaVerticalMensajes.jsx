@@ -1,35 +1,27 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { FaTimes } from "react-icons/fa";
 
 class MenuItem extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      mostrarOpciones: false
-    };
-  }
-
   render() {
     return (
       <div
-        onMouseEnter={() => {
-          this.setState({ mostrarOpciones: true });
-        }}
-        onMouseLeave={() => {
-          this.setState({ mostrarOpciones: false });
-        }}
         style={{
           marginBottom: "16px",
           display: "flex"
         }}
       >
-        <div>
-          <Link to={`/chat/${this.props.url}`}>
-            <img src={this.props.img} width="120" height="80" alt="mensajeX" />
+        <div style={{ flex: "10%" }}>
+          <Link to={`/chat/${this.props.chat.sender.id}`}>
+            <img
+              src={this.props.chat.sender.photo}
+              width="80"
+              height="80"
+              alt={this.props.chat.sender.username}
+              style={{ borderRadius: "50%" }}
+            />
           </Link>
         </div>
-        <div style={{ marginTop: "0px" }}>
+        <div style={{ flex: "90%" }}>
           <div
             style={{
               marginLeft: "10px",
@@ -51,9 +43,11 @@ class MenuItem extends Component {
                 wordWrap: "break-word",
                 width: "90%"
               }}
-              to={`/chat/${this.props.url}`}
+              to={`/chat/${this.props.chat.sender.id}`}
             >
-              {this.props.url}
+              {this.props.chat.sender.name +
+                " " +
+                this.props.chat.sender.surnames}
             </Link>
           </div>
           <div
@@ -77,35 +71,11 @@ class MenuItem extends Component {
                   fontWeight: "500"
                 }}
               >
-                Contenido del mensaje. Saludos y motivos del mensaje, es el
-                último mensaje enviado por la persona "Apellido Apellido,
-                Nombre" al usuario, mientras llegue a verse en las dos lineas
-                reservadas. El contenido total del mensaje se podrá ver haciendo
-                click sobre cualquier parte del mensaje, donde se accederá al
-                chat completo entre las dos personas.
+                {this.props.chat.text}
               </div>
             </div>
           </div>
         </div>
-        {this.state.mostrarOpciones ? (
-          <div
-            style={{
-              position: "relative",
-              right: "0",
-              top: "0",
-              width: "fit-content",
-              height: "fit-content",
-              display: "flex"
-            }}
-          >
-            {" "}
-            <FaTimes
-              color={"#00000080"}
-              onClick={() => this.props.borrar(this.props.url)}
-              style={{ cursor: "pointer" }}
-            />
-          </div>
-        ) : null}
       </div>
     );
   }
@@ -113,9 +83,9 @@ class MenuItem extends Component {
 
 // All items component
 // Important! add unique key
-export const MenuVertical = (list, borrar) =>
-  list.map((el, index) => {
-    return <MenuItem key={index} />;
+export const MenuVertical = list =>
+  list.map(el => {
+    return <MenuItem key={el.id} chat={el} />;
   });
 
 class ListaVerticalMensajes extends Component {

@@ -29,13 +29,7 @@ class MensajesLista extends Component {
     return (
       <div>
         <div style={{ display: "block", marginRight: "70px" }}>
-          <div
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              marginTop: "25px"
-            }}
-          >
+          <div style={{ marginTop: "25px" }}>
             <ListaVerticalMensajes lista={this.state.listaChats} />
           </div>
         </div>
@@ -58,13 +52,17 @@ class Mensajes extends Component {
 
   getData() {
     getLastMessages(data => {
-      console.log(data);
+      if (this._isMounted) {
+        this.setState({ misChats: data });
+      }
     });
   }
 
   componentWillMount() {
     this._isMounted = true;
-    this.getData();
+    if (isSignedIn()) {
+      this.getData();
+    }
   }
 
   componentWillUnmount() {

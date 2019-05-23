@@ -14,13 +14,11 @@ export function checkNotification(notificationId, callback) {
   // Configure Bearer (JWT) access token for authorization: bearerAuth
   let bearerAuth = defaultClient.authentications["bearerAuth"];
   bearerAuth.accessToken = getUserToken();
-  console.log("HEY");
   apiInstance.checkNotification(notificationId, (error, data, response) => {
     if (error) {
       console.error(error);
       callback(false);
     } else {
-      console.log(data);
       callback(true);
     }
   });
