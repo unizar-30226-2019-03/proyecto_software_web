@@ -3,7 +3,7 @@ import { Button, Form } from "react-bootstrap";
 import { Redirect } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import uni from "../assets/UnicastNombre.png";
-import { signIn, setUserRole } from "../config/Auth";
+import { signIn, setUserRole, isSignedIn, getUserRole } from "../config/Auth";
 import { getUser, authUser } from "../config/UserAPI";
 
 class Login extends Component {
@@ -63,7 +63,8 @@ class Login extends Component {
         <Helmet>
           <title>UniCast</title>
         </Helmet>
-        {this.state.validado === 0 ? (
+        {this.state.validado === 0 ||
+        (isSignedIn() && getUserRole() !== "ROLE_ADMIN") ? (
           this.props.location.state === undefined ? (
             <Redirect to={"/inicio"} />
           ) : (
@@ -71,7 +72,8 @@ class Login extends Component {
           )
         ) : (
           <div>
-            {this.state.validado === 1 ? (
+            {this.state.validado === 1 ||
+            (isSignedIn() && getUserRole() === "ROLE_ADMIN") ? (
               <Redirect to={"/administrador-crear"} />
             ) : (
               <div>
