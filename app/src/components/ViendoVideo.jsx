@@ -226,12 +226,9 @@ class ViendoVideo extends Component {
 
   irAUltimoComentario() {
     if (!this.state.fijarComentarios) {
-      const e = this.state.comentarios[this.state.comentarios.length - 1];
-      if (e !== undefined) {
-        var elmnt = document.getElementById(e.usuario + e.tiempo);
-        if (elmnt !== null) {
-          scrollFunc(elmnt);
-        }
+      var elmnt = document.getElementById(`comment${this.state.comentarios.length-1}`);
+      if (elmnt !== null) {
+        scrollFunc(elmnt);
       }
     }
   }
@@ -338,11 +335,7 @@ class ViendoVideo extends Component {
   handleScroll(e) {
     const bottom =
       e.target.scrollHeight - e.target.scrollTop <= e.target.clientHeight + 10;
-    if (bottom) {
-      this.setState({ fijarComentarios: false });
-    } else {
-      this.setState({ fijarComentarios: true });
-    }
+    this.setState({ fijarComentarios: !bottom });
   }
 
   comentar(e) {
@@ -926,12 +919,12 @@ class ViendoVideo extends Component {
               }}
               onScroll={this.handleScroll}
             >
-              {this.state.comentarios.map(e => {
+              {this.state.comentarios.map((e, index) => {
                 const { tiempo, comentario, usuario, color } = e;
                 return (
                   <div
-                    key={usuario + tiempo}
-                    id={usuario + tiempo}
+                    key={`comment${index}`}
+                    id={`comment${index}`}
                     style={{
                       marginBottom: "10px",
                       display: "flex",

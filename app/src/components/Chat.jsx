@@ -26,18 +26,22 @@ class Chat extends Component {
     this.sendHandler = this.sendHandler.bind(this);
     this.addMessage = this.addMessage.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.iniciarReloj = this.iniciarReloj.bind(this);
+    this.pararReloj = this.pararReloj.bind(this);
   }
 
   componentWillMount() {
     this._isMounted = true;
     if (isSignedIn()) {
       this.getUser();
-      this.getMessages(0);
+      this.getMessages(0, true);
+      this.iniciarReloj();
     }
   }
 
   componentWillUnmount() {
     this._isMounted = false;
+    this.pararReloj();
   }
 
   getUser() {
@@ -48,7 +52,7 @@ class Chat extends Component {
     });
   }
 
-  getMessages(page) {
+  getMessages(page, updatePage) {
     getMessagesFromSender(
       parseInt(this.props.match.params.id),
       page,
@@ -66,7 +70,12 @@ class Chat extends Component {
               return el;
             });
             const messages = mergeSortedArray(sent, received).reverse();
-            this.setState({ messages: messages });
+            if (this._isMounted) {
+              this.setState({
+                messages: messages,
+                page: updatePage ? page + 1 : this.state.page
+              });
+            }
           }
         );
       }
@@ -92,10 +101,18 @@ class Chat extends Component {
       if (data !== false) {
         data.fromMe = true;
         let newMessages = this.state.messages.slice();
-        newMessages.unshift(data);
+        newMessages.push(data);
         this.setState({ messages: newMessages });
       }
     });
+  }
+
+  iniciarReloj() {
+    this.timerID = setInterval(() => this.getMessages(0, false), 1000);
+  }
+
+  pararReloj() {
+    clearInterval(this.timerID);
   }
 
   render() {
@@ -125,7 +142,11 @@ class Chat extends Component {
         >
           <div className="cabecera-asignatura">
             <Link
-              to={`/profesor/${this.props.match.params.id}`}
+              to={
+                this.state.prof.role === "ROLE_PROFESSOR"
+                  ? `/profesor/${this.props.match.params.id}`
+                  : `/chat/${this.props.match.params.id}`
+              }
               className="titulo-asignatura"
               style={{ color: "black", textDecoration: "none" }}
             >

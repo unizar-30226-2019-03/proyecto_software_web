@@ -4,7 +4,11 @@ import BarraNavegacion from "./BarraNavegacion";
 import ListaHorizontal, { Menu } from "./ListaHorizontal";
 import { Helmet } from "react-helmet";
 import { isSignedIn, getUserID, getUserRole } from "../config/Auth";
-import { getRecommendations, getVideosFromSubject } from "../config/VideoAPI";
+import {
+  getRecommendations,
+  getVideosFromSubject,
+  findTrendingVideos
+} from "../config/VideoAPI";
 import { getSubjectsOfUser } from "../config/UserAPI";
 
 class Inicio extends Component {
@@ -14,9 +18,11 @@ class Inicio extends Component {
     this.state = {
       contentMargin: "300px",
       displayAll: false,
+      displayTrending: false,
       asignaturas: [],
       videosAsignatura: [[]],
       recomendados: [],
+      trending: [],
       timeNow: new Date()
     };
     this.handleChange = this.handleChange.bind(this);
@@ -41,8 +47,12 @@ class Inicio extends Component {
     });
     getRecommendations((data, now) => {
       if (this._isMounted) {
+        console.log(data);
         this.setState({ recomendados: data, timeNow: now });
       }
+    });
+    findTrendingVideos(0, data => {
+      this.setState({ trending: data });
     });
   }
 
@@ -101,6 +111,42 @@ class Inicio extends Component {
         >
           <div>
             <div style={{ display: "flex" }}>
+              <h5 style={{ fontWeight: "bold" }}>
+                Vídeos populares de la última semana
+              </h5>
+              <div
+                className="boton-ver-todos-inicio"
+                onClick={() =>
+                  this.setState({
+                    displayTrending: !this.state.displayTrending
+                  })
+                }
+              >
+                {this.state.displayTrending ? "Ver menos" : "Ver todos"}
+              </div>
+            </div>
+            {this.state.displayTrending ? (
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  marginBottom: "50px",
+                  borderBottom: "1px solid lightgrey",
+                  overflow: "hidden",
+                  width: "93.45%"
+                }}
+              >
+                {Menu(this.state.trending, this.state.timeNow)}
+              </div>
+            ) : (
+              <ListaHorizontal
+                list={this.state.trending}
+                now={this.state.timeNow}
+              />
+            )}
+          </div>
+          <div>
+            <div style={{ display: "flex" }}>
               <h5 style={{ fontWeight: "bold" }}>Vídeos recomendados</h5>
               <div
                 className="boton-ver-todos-inicio"
@@ -122,7 +168,36 @@ class Inicio extends Component {
                   width: "93.45%"
                 }}
               >
-                {Menu(this.state.recomendados, this.state.timeNow)}
+                {this.state.recomendados.length === 0 ? (
+                  <div
+                    style={{
+                      color: "#00000080",
+                      padding: "10px",
+                      fontSize: "14px",
+                      textAlign: "left"
+                    }}
+                  >
+                    Actualmente no tiene recomendaciones, conforme haga uso de
+                    la app se le recomendarán vídeos según sus gustos.
+                  </div>
+                ) : (
+                  Menu(this.state.recomendados, this.state.timeNow)
+                )}
+              </div>
+            ) : this.state.recomendados.length === 0 ? (
+              <div
+                style={{
+                  color: "#00000080",
+                  padding: "10px",
+                  fontSize: "14px",
+                  textAlign: "left",
+                  marginBottom: "50px",
+                  borderBottom: "1px solid lightgrey",
+                  width: "93.45%"
+                }}
+              >
+                Actualmente no tiene recomendaciones, conforme haga uso de la
+                app se le recomendarán vídeos según sus gustos.
               </div>
             ) : (
               <ListaHorizontal

@@ -44,14 +44,14 @@ class ChatInput extends React.Component {
 }
 
 const MensajesChat = listaMensajes =>
-  listaMensajes.map(message => {
+  listaMensajes.map((message, index) => {
     return (
       <Message
         key={message.id}
         message={message.text}
         timestamp={message.timestamp}
         fromMe={message.fromMe}
-        id={message.id}
+        id={`mensaje${index}`}
       />
     );
   });
@@ -59,19 +59,29 @@ const MensajesChat = listaMensajes =>
 class Messages extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { width: 0 };
+    this.state = { width: 0, fijarChat: false };
     this.mensajes = MensajesChat(this.props.messages);
     this.handleResize = this.handleResize.bind(this);
+    this.handleScroll = this.handleScroll.bind(this);
     this.irAUltimoComentario = this.irAUltimoComentario.bind(this);
   }
 
   componentWillReceiveProps(newProps) {
-    this.mensajes = MensajesChat(newProps.messages);
+    if (newProps.messages.length !== this.props.messages.length) {
+      this.mensajes = MensajesChat(newProps.messages);
+      this.setState({ fijarChat: false });
+    }
   }
 
   handleResize() {
     const w = document.getElementById("messageList").clientWidth - 40;
     this.setState({ width: w });
+  }
+
+  handleScroll(e) {
+    const bottom =
+      e.target.scrollHeight - e.target.scrollTop <= e.target.clientHeight;
+    this.setState({ fijarChat: !bottom });
   }
 
   componentDidMount() {
@@ -80,23 +90,30 @@ class Messages extends React.Component {
     this.setState({ width: w });
   }
 
+  componentDidUpdate() {
+    if (!this.state.fijarChat) {
+      this.irAUltimoComentario();
+    }
+  }
+
   componentWillUnmount() {
     window.removeEventListener("resize", this.handleResize);
   }
 
   irAUltimoComentario() {
-    var el = document.getElementById("messageList");
-    if (el !== null) {
-      el.scrollTop = el.scrollHeight;
+    var element = document.getElementById(
+      `mensaje${this.props.messages.length - 1}`
+    );
+    if (element !== null) {
+      element.scrollIntoView({ behavior: "smooth" });
     }
   }
 
   render() {
     return (
       <div>
-        <div className="messages" id="messageList">
+        <div onScroll={this.handleScroll} className="messages" id="messageList">
           {this.mensajes}
-          {this.irAUltimoComentario()}
         </div>
         <ChatInput onSend={this.props.onSend} width={this.state.width} />
       </div>

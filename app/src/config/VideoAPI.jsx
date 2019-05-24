@@ -344,3 +344,25 @@ export function getVideosFromReproductionList(reproListId, page, callback) {
     }
   );
 }
+
+export function findTrendingVideos(page, callback) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  let opts = {
+    cacheControl: "no-cache, no-store, must-revalidate", // String |
+    pragma: "no-cache", // String |
+    expires: "0", // String |
+    projection: "videoWithSubject", // String | Incluir si se quiere obtener tambien la universidad y/o la asignatura en la respuesta
+    page: page // Number | Número de la página a devolver
+  };
+  apiInstance.findMostPopularLastWeekVideos(opts, (error, data, response) => {
+    if (error) {
+      console.error(error);
+      callback([]);
+    } else {
+      callback(data._embedded.videos);
+    }
+  });
+}
