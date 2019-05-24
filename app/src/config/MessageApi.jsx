@@ -44,7 +44,7 @@ export function getLastMessages(callback) {
     if (error) {
       console.error(error);
     } else {
-      callback(data._embedded.messages);
+      callback(data._embedded === undefined ? [] : data._embedded.messages);
     }
   });
 }
@@ -71,8 +71,9 @@ export function getMessagesFromSender(senderId, page, callback) {
   apiInstance.getMessagesFromSender(senderId, opts, (error, data, response) => {
     if (error) {
       console.error(error);
+      callback([]);
     } else {
-      callback(data._embedded.messages);
+      callback(data._embedded === undefined ? [] : data._embedded.messages);
     }
   });
 }
@@ -102,8 +103,9 @@ export function getMessagesToReceiver(receiverId, page, callback) {
     (error, data, response) => {
       if (error) {
         console.error(error);
+        callback([]);
       } else {
-        callback(data._embedded.messages);
+        callback(data._embedded === undefined ? [] : data._embedded.messages);
       }
     }
   );

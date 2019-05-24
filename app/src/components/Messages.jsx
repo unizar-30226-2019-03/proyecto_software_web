@@ -44,13 +44,14 @@ class ChatInput extends React.Component {
 }
 
 const MensajesChat = listaMensajes =>
-  listaMensajes.map((message, i) => {
+  listaMensajes.map(message => {
     return (
       <Message
-        key={i}
-        message={message.message}
+        key={message.id}
+        message={message.text}
+        timestamp={message.timestamp}
         fromMe={message.fromMe}
-        id={`mensaje${i}`}
+        id={message.id}
       />
     );
   });

@@ -7,7 +7,8 @@ import { Redirect, Link } from "react-router-dom";
 import { getUser } from "../config/UserAPI";
 import {
   getMessagesToReceiver,
-  getMessagesFromSender
+  getMessagesFromSender,
+  addMessage
 } from "../config/MessageApi";
 
 class Chat extends Component {
@@ -15,8 +16,7 @@ class Chat extends Component {
     super(props);
     this.state = {
       contentMargin: "300px",
-      messagesReceived: [],
-      messagesSent: [],
+      messages: [],
       prof: "",
       page: 0
     };
@@ -65,18 +65,20 @@ class Chat extends Component {
   }
 
   sendHandler(message) {
-    const messageObject = {
-      message: message,
-      fromMe: true
-    };
-    this.addMessage(messageObject);
+    this.addMessage(message);
   }
 
   addMessage(message) {
     // Append the message to the component state
-    const nuevosMensages = this.state.messages.slice();
-    nuevosMensages.push(message);
-    this.setState({ messages: nuevosMensages });
+    const receiver = parseInt(this.props.match.params.id);
+    addMessage(receiver, message, data => {
+      if (data !== false) {
+        data.fromMe = true;
+        let newMessages = this.state.messages.slice();
+        newMessages.unshift(data);
+        this.setState({ messages: newMessages });
+      }
+    });
   }
 
   render() {
@@ -106,7 +108,7 @@ class Chat extends Component {
         >
           <div className="cabecera-asignatura">
             <Link
-              to={`/profesor/${this.props.match.params.nombre}`}
+              to={`/profesor/${this.props.match.params.id}`}
               className="titulo-asignatura"
               style={{ color: "black", textDecoration: "none" }}
             >
@@ -114,8 +116,8 @@ class Chat extends Component {
                 src={this.state.prof.photo}
                 alt="icono usuario"
                 style={{ marginRight: "25px", borderRadius: "50%" }}
-                width="60"
-                height="40"
+                width="50"
+                height="50"
               />
               {this.state.prof.surnames}, {this.state.prof.name}
             </Link>

@@ -56,7 +56,9 @@ class MensajesProfes extends Component {
         const index = profesores.findIndex(p => {
           return p.id === getUserID();
         });
-        profesores.splice(index, 1);
+        if (index !== -1) {
+          profesores.splice(index, 1);
+        }
         this.setState({ page: page + 1, profesores: profesores });
       }
     });
