@@ -4,12 +4,13 @@ import { Helmet } from "react-helmet";
 import User_img from "../assets/user.png";
 import { Button } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
-import { isSignedIn, getUserRole } from "../config/Auth";
+import { isSignedIn, getUserRole, getUserID } from "../config/Auth";
 import {
   getUser,
   getUniversityOfUser,
   getDegreeOfUser,
-  getSubjectsAsProfessor
+  getSubjectsAsProfessor,
+  findUserProfessors
 } from "../config/UserAPI";
 
 class CamposMostrar extends Component {
@@ -125,7 +126,10 @@ class Profesor extends Component {
     this.state = {
       contentMargin: "300px",
       prof: "",
-      sub: []
+      sub: [],
+      page: 0,
+      esProfe: false,
+      profesores: []
     };
     this.getData = this.getData.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -168,13 +172,29 @@ class Profesor extends Component {
           this.setState({ sub: data });
         }
       });
+      const page = this.state.page;
+      findUserProfessors(page, data => {
+        if (this._isMounted) {
+          let profesores = this.state.profesores.slice().concat(data);
+          //Eliminamos el propio profesor (si lo es)
+          profesores.forEach(p => {
+            if (parseInt(p.id) === parseInt(this.props.match.params.id)) {
+              this.setState({ esProfe: true });
+            }
+          });
+          this.setState({ page: page + 1 });
+          if (parseInt(this.props.match.params.id) === parseInt(getUserID())) {
+            this.setState({ esProfe: false });
+          }
+        }
+      });
     });
   }
 
   getUniFromUser(id) {
     getUniversityOfUser(id, data => {
       if (this._isMounted) {
-        this.setState({ uni: data });
+        this.setState({ uni: data.name });
       }
     });
   }
@@ -182,9 +202,35 @@ class Profesor extends Component {
   getDegreeFromUser(id) {
     getDegreeOfUser(id, data => {
       if (this._isMounted) {
-        this.setState({ degree: data });
+        this.setState({ degree: data.name });
       }
     });
+  }
+
+  renderButton(esProfe) {
+    if (esProfe) {
+      return (
+        <div>
+          <Link
+            to={`/chat/${this.props.match.params.id}`}
+            className="universidad"
+          >
+            <Button className="boton-filtro">Enviar un mensaje</Button>
+          </Link>
+        </div>
+      );
+    } else {
+      return (
+        <Button
+          className="boton-filtro"
+          onClick={() =>
+            alert("Para enviar el mensaje, debes cursar una asignatura suya")
+          }
+        >
+          Enviar un mensaje
+        </Button>
+      );
+    }
   }
 
   render() {
@@ -255,16 +301,8 @@ class Profesor extends Component {
                 padding: "20px 20px 0px 0px"
               }}
             >
-              <div>
-                <Link
-                  to={`/chat/${this.props.match.params.id}`}
-                  className="universidad"
-                >
-                  <Button className="boton-filtro">
-                    Enviar un mensaje
-                  </Button>
-                </Link>
-              </div>
+              {this.renderButton(this.state.esProfe)}
+
               <div
                 style={{
                   padding: "40px 20px 0px 0px"
