@@ -258,13 +258,14 @@ export function crearAsigYLigar(SubjectApi, subject, shortname, uni) {
         cacheControl: "no-cache, no-store, must-revalidate", // String |
         pragma: "no-cache", // String |
         expires: "0", // String |
+        projection: "subjectWithUniversity", // String | Incluir si se quiere obtener tambien la universidad en la respuesta
         name: subject // String | Nombre a buscar
       };
       SubjectApi.findSubjectsByName(opts, (error, data, response) => {
         if (error) {
           console.error(error);
         } else {
-          ligarUniAsig(uni, data.id, SubjectApi);
+          ligarUniAsig(uni, data._embedded.subjects[0].id, SubjectApi);
         }
       });
     } else {
@@ -284,7 +285,6 @@ function ligarUniAsig(uni, subject, SubjectApi) {
   // Configure Bearer (JWT) access token for authorization: bearerAuth
   let bearerAuth = defaultClient.authentications["bearerAuth"];
   bearerAuth.accessToken = getUserToken();
-
   SubjectApi.putUniversity(subject, uni, (error, data, response) => {
     if (error) {
       console.error(error);

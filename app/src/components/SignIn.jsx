@@ -350,17 +350,17 @@ class SignIn extends Component {
     this._isMounted = false;
   }
 
-  getAllUniversities(universities, page) {
-    getUnivesities(page, data => {
-      universities.push(data._embedded.universities);
-      if (data._embedded.universities.length === 20) {
-        this.getAllUniversities(universities, page + 1);
-      } else {
-        if (this._isMounted) {
-          this.setState({ listaUniversidades: universities });
-        }
+  getAllUniversities(unis, page) {
+    if (unis.length < 20 * page) {
+      if (this._isMounted) {
+        this.setState({ listaUniversidades: unis });
       }
-    });
+    } else {
+      getUnivesities(page, data => {
+        const newData = [...unis, ...data._embedded.universities];
+        this.getAllUniversities(newData, page + 1);
+      });
+    }
   }
 
   back() {
