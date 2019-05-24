@@ -88,3 +88,26 @@ export function putFavouritesFirst(data) {
   data[0] = t1;
   return data;
 }
+
+/**
+ * Mezcla los dos arrays de forma ordenada descendiente por timestamps
+ * @param {Array} a Array ordenada por timestamps A
+ * @param {Array} b Array ordenada por timestamps B
+ */
+export function mergeSortedArray(a, b) {
+  var tempArray = [];
+  var ia = 0,
+    ib = 0;
+  while (ia < a.length || ib < b.length) {
+    if (typeof a[ia] === "undefined") {
+      tempArray.push(b[ib++]);
+    } else if (typeof b[ib] === "undefined") {
+      tempArray.push(a[ia++]);
+    } else if (a[ia].timestamp < b[ib].timestamp) {
+      tempArray.push(b[ib++]);
+    } else {
+      tempArray.push(a[ia++]);
+    }
+  }
+  return tempArray;
+}

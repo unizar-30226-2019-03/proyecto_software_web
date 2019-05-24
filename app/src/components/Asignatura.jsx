@@ -237,16 +237,43 @@ class Asignatura extends Component {
             <div style={{ flex: "85%" }}>
               <div>
                 <p style={{ fontWeight: "550" }}>Vídeos subidos</p>
-                <div style={{ display: "flex", flexWrap: "wrap" }}>
-                  {Menu(this.state.videos, this.state.timeNow)}
-                </div>
+                {this.state.videos.length === 0 ? (
+                  <div
+                    style={{
+                      color: "#00000080",
+                      padding: "10px",
+                      fontSize: "14px",
+                      textAlign: "left"
+                    }}
+                  >
+                    Esta asignatura no tiene vídeos, conforme suban vídeos se
+                    irán guardando aquí.
+                  </div>
+                ) : (
+                  <div style={{ display: "flex", flexWrap: "wrap" }}>
+                    {Menu(this.state.videos, this.state.timeNow)}
+                  </div>
+                )}
               </div>
             </div>
             <div className="profesores-asignatura" style={{ flex: "15%" }}>
               <div className="tit-prof">Profesorado</div>
-              <div className="prof">
-                {ListaProfesores(this.state.profesores)}
-              </div>
+              {this.state.profesores.length === 0 ? (
+                <div
+                  style={{
+                    color: "#00000080",
+                    padding: "10px",
+                    fontSize: "14px",
+                    textAlign: "left"
+                  }}
+                >
+                  Esta asignatura no tiene profesores asociados.
+                </div>
+              ) : (
+                <div className="prof">
+                  {ListaProfesores(this.state.profesores)}
+                </div>
+              )}
             </div>
           </div>
           <Notificacion

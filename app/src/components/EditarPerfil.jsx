@@ -92,9 +92,9 @@ const FormularioDatos = (
             {emailInvalido ? "Email inválido" : "Email *"}
           </Form.Label>
           <Form.Control
-            defaultValue={user.email}
+            defaultValue=""
             type="email"
-            required
+            placeholder="Si no escribe nada no se modificará su correo"
             ref={email}
           />
         </Form.Group>
@@ -111,7 +111,12 @@ const FormularioDatos = (
             ) : (
               <Form.Label>Contraseña*</Form.Label>
             )}
-            <Form.Control defaultValue="" type="password" ref={passwd} />
+            <Form.Control
+              placeholder="Si no escribe nada no se modificará su contraseña"
+              defaultValue=""
+              type="password"
+              ref={passwd}
+            />
           </Form.Group>
 
           <Form.Group as={Col} controlId="formGridPasswd2">
@@ -280,15 +285,17 @@ class EditarPerfil extends Component {
     this._isMounted = false;
   }
 
-  getAllUniversities(universities, page) {
-    getUnivesities(page, data => {
-      universities.push(data._embedded.universities);
-      if (data._embedded.universities.length === 20) {
-        this.getAllUniversities(universities, page + 1);
-      } else {
-        this.setState({ listaUniversidades: universities });
+  getAllUniversities(unis, page) {
+    if (unis.length < 20 * page) {
+      if (this._isMounted) {
+        this.setState({ listaUniversidades: unis });
       }
-    });
+    } else {
+      getUnivesities(page, data => {
+        const newData = [...unis, ...data._embedded.universities];
+        this.getAllUniversities(newData, page + 1);
+      });
+    }
   }
 
   handleChangeUni(e) {
@@ -341,8 +348,10 @@ class EditarPerfil extends Component {
 
     // Comprobar email
     if (!email.match(emailPattern)) {
-      ok = false;
-      this.setState({ emailInvalido: true });
+      if (email !== "") {
+        ok = false;
+        this.setState({ emailInvalido: true });
+      }
     } else {
       this.setState({ emailInvalido: false });
     }

@@ -412,13 +412,27 @@ class MisVideos extends Component {
           <div style={{ marginRight: "70px" }}>
             <div>
               <div>
-                <div style={{ display: "flex", flexWrap: "wrap" }}>
-                  {Menu(
-                    this.state.listaVideos,
-                    this.state.timestampNow,
-                    this.borrarVideo
-                  )}
-                </div>
+                {this.state.listaVideos.length === 0 ? (
+                  <div
+                    style={{
+                      color: "#00000080",
+                      padding: "10px",
+                      fontSize: "14px",
+                      textAlign: "left"
+                    }}
+                  >
+                    Actualmente no has subido ningún vídeo, conforme subas
+                    vídeos se irán guardando aquí.
+                  </div>
+                ) : (
+                  <div style={{ display: "flex", flexWrap: "wrap" }}>
+                    {Menu(
+                      this.state.listaVideos,
+                      this.state.timestampNow,
+                      this.borrarVideo
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>

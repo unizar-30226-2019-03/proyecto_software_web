@@ -220,21 +220,6 @@ class Perfil extends Component {
                   </h6>
                   <p>{this.state.user.username}</p>
                 </div>
-                <div
-                  style={{
-                    padding: "0px 20px 0px 0px"
-                  }}
-                >
-                  <h6
-                    style={{
-                      float: "left",
-                      padding: "0 20px 0 0"
-                    }}
-                  >
-                    <strong>Dirección de correo:</strong>
-                  </h6>
-                  <h6>{this.state.user.email}</h6>
-                </div>
               </div>
             </div>
           </div>

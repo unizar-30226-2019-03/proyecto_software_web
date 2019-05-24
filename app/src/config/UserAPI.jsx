@@ -118,6 +118,9 @@ export function updateUser(
   if (password === "") {
     delete opts.password;
   }
+  if (email === "") {
+    delete opts.email;
+  }
   apiInstance.updateUser(opts, (error, data, response) => {
     if (error) {
       console.error(error);
