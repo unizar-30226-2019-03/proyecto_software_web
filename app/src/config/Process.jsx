@@ -111,3 +111,27 @@ export function mergeSortedArray(a, b) {
   }
   return tempArray;
 }
+
+/**
+ * Añade los nuevos mensajes a los mensajes del chat
+ * @param {Array} newMessages Nuevos mensajes recibidos
+ * @param {Array} oldMessages Mensajes del chat
+ */
+export function parseNewMessages(newMessages, oldMessages) {
+  console.log(oldMessages, newMessages);
+  if (oldMessages.length === 0 && newMessages.length > 0) {
+    return newMessages;
+  }
+  if (newMessages[0].id === oldMessages[0].id) {
+    return oldMessages;
+  } else {
+    let i = 0;
+    var aux = [];
+    while (newMessages[i].id !== oldMessages[0].id) {
+      aux.push(newMessages[i]);
+      i++;
+    }
+    console.log(aux);
+    return [...aux, ...oldMessages];
+  }
+}

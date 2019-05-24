@@ -10,7 +10,7 @@ import {
   getMessagesFromSender,
   addMessage
 } from "../config/MessageApi";
-import { mergeSortedArray } from "../config/Process";
+import { mergeSortedArray, parseNewMessages } from "../config/Process";
 
 class Chat extends Component {
   constructor(props) {
@@ -18,11 +18,17 @@ class Chat extends Component {
     this.state = {
       contentMargin: "300px",
       messages: [],
+      receivedMessages: [],
+      sentMessages: [],
       prof: "",
-      page: 0
+      page: 0,
+      update: false
     };
     this.getUser = this.getUser.bind(this);
-    this.getMessages = this.getMessages.bind(this);
+    this.getNewMessages = this.getNewMessages.bind(this);
+    this.getAllFromSender = this.getAllFromSender.bind(this);
+    this.getAllSent = this.getAllSent.bind(this);
+    this.mergeMessages = this.mergeMessages.bind(this);
     this.sendHandler = this.sendHandler.bind(this);
     this.addMessage = this.addMessage.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -33,8 +39,9 @@ class Chat extends Component {
   componentWillMount() {
     this._isMounted = true;
     if (isSignedIn()) {
+      this.getAllFromSender(0, []);
+      this.getAllSent(0, []);
       this.getUser();
-      this.getMessages(0, true);
       this.iniciarReloj();
     }
   }
@@ -42,6 +49,12 @@ class Chat extends Component {
   componentWillUnmount() {
     this._isMounted = false;
     this.pararReloj();
+  }
+
+  componentDidUpdate() {
+    if (this.state.update) {
+      this.mergeMessages();
+    }
   }
 
   getUser() {
@@ -52,29 +65,90 @@ class Chat extends Component {
     });
   }
 
-  getMessages(page, updatePage) {
+  getAllFromSender(page, messages) {
+    if (messages.length < 20 * page) {
+      if (this._isMounted) {
+        this.setState({ receivedMessages: messages });
+      }
+    } else {
+      getMessagesFromSender(
+        parseInt(this.props.match.params.id),
+        page,
+        dataReceived => {
+          const received = dataReceived.map(el => {
+            el.fromMe = false;
+            return el;
+          });
+          const newData = [...messages, ...received];
+          this.getAllFromSender(page + 1, newData);
+        }
+      );
+    }
+  }
+
+  getAllSent(page, messages) {
+    if (messages.length < 20 * page) {
+      if (this._isMounted) {
+        this.setState({ sentMessages: messages, update: true });
+      }
+    } else {
+      getMessagesToReceiver(
+        parseInt(this.props.match.params.id),
+        page,
+        dataSent => {
+          const sent = dataSent.map(el => {
+            el.fromMe = true;
+            return el;
+          });
+          const newData = [...messages, ...sent];
+          this.getAllSent(page + 1, newData);
+        }
+      );
+    }
+  }
+
+  mergeMessages() {
+    const sent = this.state.sentMessages.slice();
+    const received = this.state.receivedMessages.slice();
+    const messages = mergeSortedArray(sent, received).reverse();
+    if (this._isMounted) {
+      this.setState({ messages: messages, update: false });
+    }
+  }
+
+  getNewMessages() {
     getMessagesFromSender(
       parseInt(this.props.match.params.id),
-      page,
+      0,
       dataReceived => {
-        const received = dataReceived.map(el => {
+        let received = dataReceived.map(el => {
           el.fromMe = false;
           return el;
         });
+        const newReceived = parseNewMessages(
+          received,
+          this.state.receivedMessages
+        );
+        if (
+          this._isMounted &&
+          newReceived.length !== this.state.receivedMessages.length
+        ) {
+          this.setState({ receivedMessages: newReceived, update: true });
+        }
         getMessagesToReceiver(
           parseInt(this.props.match.params.id),
-          page,
+          0,
           dataSent => {
             const sent = dataSent.map(el => {
               el.fromMe = true;
               return el;
             });
-            const messages = mergeSortedArray(sent, received).reverse();
-            if (this._isMounted) {
-              this.setState({
-                messages: messages,
-                page: updatePage ? page + 1 : this.state.page
-              });
+            const newSent = parseNewMessages(sent, this.state.sentMessages);
+            if (
+              this._isMounted &&
+              newSent.length !== this.state.sentMessages.length
+            ) {
+              this.setState({ sentMessages: newSent, update: true });
             }
           }
         );
@@ -108,7 +182,7 @@ class Chat extends Component {
   }
 
   iniciarReloj() {
-    this.timerID = setInterval(() => this.getMessages(0, false), 1000);
+    this.timerID = setInterval(() => this.getNewMessages(), 1000);
   }
 
   pararReloj() {
