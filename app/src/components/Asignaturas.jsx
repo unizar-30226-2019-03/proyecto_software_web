@@ -147,7 +147,21 @@ class Asignaturas extends Component {
                   />
                 </Dropdown.Menu>
               </Dropdown>
-              {listaAsign}
+              {asignaturasFiltradas.length === 0 ? (
+                <div
+                  style={{
+                    color: "#00000080",
+                    padding: "10px",
+                    fontSize: "14px",
+                    textAlign: "left"
+                  }}
+                >
+                  Actualmente no sigue a ninguna asignatura, conforme siga a
+                  asignaturas aparecerán aquí.
+                </div>
+              ) : (
+                listaAsign
+              )}
             </ListGroup>
           </div>
         </div>

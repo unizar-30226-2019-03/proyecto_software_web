@@ -178,7 +178,7 @@ class Inicio extends Component {
                     }}
                   >
                     Actualmente no tiene recomendaciones, conforme haga uso de
-                    la app se le recomendarán vídeos según sus gustos.
+                    la aplicación se le recomendarán vídeos según sus gustos.
                   </div>
                 ) : (
                   Menu(this.state.recomendados, this.state.timeNow)
@@ -197,7 +197,7 @@ class Inicio extends Component {
                 }}
               >
                 Actualmente no tiene recomendaciones, conforme haga uso de la
-                app se le recomendarán vídeos según sus gustos.
+                aplicación se le recomendarán vídeos según sus gustos.
               </div>
             ) : (
               <ListaHorizontal
