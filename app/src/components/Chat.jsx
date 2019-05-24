@@ -10,6 +10,7 @@ import {
   getMessagesFromSender,
   addMessage
 } from "../config/MessageApi";
+import { mergeSortedArray } from "../config/Process";
 
 class Chat extends Component {
   constructor(props) {
@@ -48,12 +49,28 @@ class Chat extends Component {
   }
 
   getMessages(page) {
-    getMessagesFromSender(parseInt(this.props.match.params.id), page, data => {
-      console.log(data);
-    });
-    getMessagesToReceiver(parseInt(this.props.match.params.id), page, data => {
-      console.log(data);
-    });
+    getMessagesFromSender(
+      parseInt(this.props.match.params.id),
+      page,
+      dataReceived => {
+        const received = dataReceived.map(el => {
+          el.fromMe = false;
+          return el;
+        });
+        getMessagesToReceiver(
+          parseInt(this.props.match.params.id),
+          page,
+          dataSent => {
+            const sent = dataSent.map(el => {
+              el.fromMe = true;
+              return el;
+            });
+            const messages = mergeSortedArray(sent, received).reverse();
+            this.setState({ messages: messages });
+          }
+        );
+      }
+    );
   }
 
   handleChange(display) {
