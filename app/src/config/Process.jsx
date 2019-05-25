@@ -116,9 +116,12 @@ export function mergeSortedArray(a, b) {
  * Añade los nuevos mensajes a los mensajes del chat
  * @param {Array} newMessages Nuevos mensajes recibidos
  * @param {Array} oldMessages Mensajes del chat
+ * @returns {Array} Mensajes nuevos y antiguos
  */
 export function parseNewMessages(newMessages, oldMessages) {
-  console.log(oldMessages, newMessages);
+  if (oldMessages.length === 0 && newMessages.length === 0) {
+    return [];
+  }
   if (oldMessages.length === 0 && newMessages.length > 0) {
     return newMessages;
   }
@@ -131,7 +134,6 @@ export function parseNewMessages(newMessages, oldMessages) {
       aux.push(newMessages[i]);
       i++;
     }
-    console.log(aux);
     return [...aux, ...oldMessages];
   }
 }

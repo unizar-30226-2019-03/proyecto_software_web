@@ -5,7 +5,7 @@ import { Navbar, Nav } from "react-bootstrap";
 import { FaBell, FaEnvelope, FaBars } from "react-icons/fa";
 import BarraBusqueda from "./BarraBusqueda";
 import BarraLateral from "./BarraLateral";
-import { signOut, getUserID } from "../config/Auth";
+import { signOut, getUserID, isSignedIn } from "../config/Auth";
 import { getUser } from "../config/UserAPI";
 import {
   getUserUncheckedNotifications,
@@ -163,8 +163,10 @@ class BarraNavegacion extends Component {
 
   componentWillMount() {
     this._isMounted = true;
-    this.getData();
-    this.getNotifications();
+    if (isSignedIn()) {
+      this.getData();
+      this.getNotifications();
+    }
   }
 
   componentDidMount() {

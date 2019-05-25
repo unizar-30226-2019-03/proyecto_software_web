@@ -9,6 +9,7 @@ import {
   getReproductionListVideoIn,
   addReproductionList
 } from "../config/ReproductionListAPI";
+import { isSignedIn } from "../config/Auth";
 
 export class ContenidoPopUp extends Component {
   constructor(props) {
@@ -37,7 +38,9 @@ export class ContenidoPopUp extends Component {
 
   componentWillMount() {
     this._isMounted = true;
-    this.getData();
+    if (isSignedIn()) {
+      this.getData();
+    }
   }
 
   componentWillUnmount() {

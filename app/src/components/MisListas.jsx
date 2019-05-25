@@ -81,7 +81,9 @@ class Lista extends Component {
 
   componentWillMount() {
     this._isMounted = true;
-    this.getData(this.props.list);
+    if (isSignedIn()) {
+      this.getData(this.props.list);
+    }
   }
 
   componentWillReceiveProps(newProps) {

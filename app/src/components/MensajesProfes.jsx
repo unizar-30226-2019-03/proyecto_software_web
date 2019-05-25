@@ -66,7 +66,9 @@ class MensajesProfes extends Component {
 
   componentWillMount() {
     this._isMounted = true;
-    this.getData(0);
+    if (isSignedIn()) {
+      this.getData(0);
+    }
   }
 
   componentWillUnmount() {

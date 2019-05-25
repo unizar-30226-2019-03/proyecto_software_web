@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { getTime } from "../config/Process";
 import IconoAsignaturaUniversidad from "./IconoAsignaturaUniversidad";
 import { getTimePassed, getScore, getVideoSubject } from "../config/VideoAPI";
+import { isSignedIn } from "../config/Auth";
 
 // One item component
 // selected prop will be passed
@@ -26,7 +27,9 @@ class MenuItem extends Component {
 
   componentWillMount() {
     this._isMounted = true;
-    this.getData();
+    if (isSignedIn()) {
+      this.getData();
+    }
   }
 
   componentWillUnmount() {

@@ -242,8 +242,6 @@ class Profesor extends Component {
       this.state.prof.username === undefined ? "" : this.state.prof.username;
     const foto =
       this.state.prof.photo === undefined ? User_img : this.state.prof.photo;
-    const correo =
-      this.state.prof.correo === undefined ? "" : this.state.prof.correo;
     const descr =
       this.state.prof.description === undefined
         ? ""
@@ -317,21 +315,6 @@ class Profesor extends Component {
                   <strong>Nombre de usuario:</strong>
                 </h6>
                 <p>{user_nom}</p>
-              </div>
-              <div
-                style={{
-                  padding: "0px 20px 0px 0px"
-                }}
-              >
-                <h6
-                  style={{
-                    float: "left",
-                    padding: "0 20px 0 0"
-                  }}
-                >
-                  <strong>Dirección de correo:</strong>
-                </h6>
-                <h6>{correo}</h6>
               </div>
             </div>
           </div>
