@@ -156,7 +156,7 @@ class Asignaturas extends Component {
                     textAlign: "left"
                   }}
                 >
-                  Actualmente no sigue a ninguna asignatura, conforme siga a
+                  Actualmente no sigue a ninguna asignatura, conforme siga
                   asignaturas aparecerán aquí.
                 </div>
               ) : (
