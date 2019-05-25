@@ -120,7 +120,7 @@ export function mergeSortedArray(a, b) {
  */
 export function parseNewMessages(newMessages, oldMessages) {
   if (oldMessages.length === 0 && newMessages.length === 0) {
-    return [];
+    return oldMessages;
   }
   if (oldMessages.length === 0 && newMessages.length > 0) {
     return newMessages;
@@ -153,28 +153,19 @@ export function parsearFecha(timestamp) {
   var minutos = hora[1];
   hora = hora[0];
   var horaTotal = hora + ":" + minutos;
-  var diaActual = String(new Date().getDate()).padStart(2, "0");
+  var diaActual = parseInt(String(new Date().getDate()).padStart(2, "0"));
 
   var mesActual = new Date().getMonth() + 1;
   var anyoActual = new Date().getFullYear();
   fecha = fecha.split("-");
-  var anyo = fecha[0];
-  var mes = fecha[1];
-  var dia = fecha[2];
+  var anyo = parseInt(fecha[0]);
+  var mes = parseInt(fecha[1]);
+  var dia = parseInt(fecha[2]);
 
   var preludio = "";
   if (mesActual === mes && anyoActual === anyo) {
-    if (
-      this.esAyer(
-        parseInt(dia),
-        parseInt(mes),
-        parseInt(anyo),
-        parseInt(diaActual),
-        parseInt(mesActual),
-        parseInt(anyoActual)
-      )
-    ) {
-      preludio = "ayer";
+    if (esAyer(dia, mes, anyo, diaActual, mesActual, anyoActual)) {
+      preludio = "Ayer";
     } else if (dia !== diaActual) {
       preludio = dia + "/" + mes + "/" + anyo;
     }
@@ -197,7 +188,7 @@ export function esBisiesto(anyo) {
  */
 export function diasDelMes(mes, anyo) {
   if (mes === 2) {
-    if (this.esBisiesto(anyo)) {
+    if (esBisiesto(anyo)) {
       return 29;
     } else {
       return 28;
@@ -229,7 +220,7 @@ export function esAyer(dia, mes, anyo, diaActual, mesActual, anyoActual) {
     return true;
   } else {
     if (mes + 1 === mesActual && anyo === anyoActual) {
-      return dia === this.diasDelMes(mes, anyo) && diaActual === 1;
+      return dia === diasDelMes(mes, anyo) && diaActual === 1;
     } else {
       if (anyo + 1 === anyoActual && mes === 12 && mesActual === 1) {
         return dia === 31 && diaActual === 1;
