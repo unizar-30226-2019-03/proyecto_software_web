@@ -222,7 +222,15 @@ class Chat extends Component {
                   : `/chat/${this.props.match.params.id}`
               }
               className="titulo-asignatura"
-              style={{ color: "black", textDecoration: "none" }}
+              style={{
+                color: "black",
+                textDecoration: "none",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                display: "-webkit-box",
+                WebkitLineClamp: "1",
+                WebkitBoxOrient: "vertical"
+              }}
             >
               <img
                 src={this.state.prof.photo}
