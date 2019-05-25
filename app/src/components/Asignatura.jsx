@@ -60,13 +60,16 @@ class Asignatura extends Component {
       notif: false,
       mensajeNotif: "",
       tiempoNotif: 0,
+      page: 0,
       profesores: [],
       videos: [],
-      timeNow: new Date()
+      timeNow: new Date(),
+      moreVideos: false
     };
     this.seguirAsig = this.seguirAsig.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.getData = this.getData.bind(this);
+    this.loadMoreVideos = this.loadMoreVideos.bind(this);
     this.iniciarReloj = this.iniciarReloj.bind(this);
     this.pararReloj = this.pararReloj.bind(this);
     this.tick = this.tick.bind(this);
@@ -101,9 +104,28 @@ class Asignatura extends Component {
     });
     getVideosFromSubject(subjectId, 0, (data, time) => {
       if (this._isMounted) {
-        this.setState({ videos: data, timeNow: time });
+        this.setState({
+          videos: data,
+          timeNow: time,
+          page: 1,
+          moreVideos: data.length === 20
+        });
       }
     });
+  }
+
+  loadMoreVideos() {
+    if (this.state.moreVideos) {
+      getVideosFromSubject(this.state.asig.id, this.state.page, data => {
+        if (this._isMounted) {
+          this.setState({
+            videos: [...this.state.videos, ...data],
+            page: this.state.page + 1,
+            moreVideos: data.length === 20
+          });
+        }
+      });
+    }
   }
 
   componentWillMount() {
@@ -250,8 +272,19 @@ class Asignatura extends Component {
                     irán guardando aquí.
                   </div>
                 ) : (
-                  <div style={{ display: "flex", flexWrap: "wrap" }}>
-                    {Menu(this.state.videos, this.state.timeNow)}
+                  <div>
+                    <div style={{ display: "flex", flexWrap: "wrap" }}>
+                      {Menu(this.state.videos, this.state.timeNow)}
+                    </div>
+                    <div
+                      onClick={() => this.loadMoreVideos()}
+                      className="cargar-mas-boton-asig zoom-item"
+                      style={{
+                        visibility: this.state.moreVideos ? "visible" : "hidden"
+                      }}
+                    >
+                      Cargar más
+                    </div>
                   </div>
                 )}
               </div>

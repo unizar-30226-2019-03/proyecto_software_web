@@ -47,12 +47,13 @@ class Inicio extends Component {
     });
     getRecommendations((data, now) => {
       if (this._isMounted) {
-        console.log(data);
         this.setState({ recomendados: data, timeNow: now });
       }
     });
     findTrendingVideos(0, data => {
-      this.setState({ trending: data });
+      if (this._isMounted) {
+        this.setState({ trending: data });
+      }
     });
   }
 

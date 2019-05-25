@@ -988,3 +988,11 @@ h3 {
 .share-button:hover:not(:active) {
   opacity: 0.75;
 }
+
+.cargar-mas-boton-asig {
+  color: black;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 15px;
+  margin-bottom: 20px;
+}
