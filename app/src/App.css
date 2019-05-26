@@ -1033,16 +1033,10 @@ h3 {
   text-align: right;
 }
 
-.spin-subir-video {
-  position: absolute;
-  top: 582px;
-  right: 146px;
-}
-
 .spin-editar-perfil {
   position: absolute;
-  top: 785px;
-  right: 146px;
+  top: 8px;
+  right: 5px;
 }
 
 .spin-inicio {

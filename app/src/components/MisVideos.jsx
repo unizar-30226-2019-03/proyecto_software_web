@@ -16,6 +16,7 @@ import {
 import { getUser } from "../config/UserAPI";
 import { FaEllipsisV } from "react-icons/fa";
 import { Notificacion } from "./MisListas";
+import { LoadingSpinUniCast } from "./LoadingSpin";
 
 // One item component
 // selected prop will be passed
@@ -265,7 +266,8 @@ class MisVideos extends Component {
       mensajeNotif: "",
       tiempoNotif: 0,
       page: 0,
-      moreVideos: false
+      moreVideos: false,
+      mostrarSpin: true
     };
     this.getData = this.getData.bind(this);
     this.handleScroll = this.handleScroll.bind(this);
@@ -283,7 +285,8 @@ class MisVideos extends Component {
           listaVideos: videos,
           timestampNow: time,
           page: 1,
-          moreVideos: videos.length === 20
+          moreVideos: videos.length === 20,
+          mostrarSpin: false
         });
       }
     });
@@ -437,7 +440,9 @@ class MisVideos extends Component {
           <div style={{ marginRight: "70px" }}>
             <div>
               <div>
-                {this.state.listaVideos.length === 0 ? (
+                {this.state.mostrarSpin ? (
+                  <LoadingSpinUniCast className="spin-ranking" />
+                ) : this.state.listaVideos.length === 0 ? (
                   <div
                     style={{
                       color: "#00000080",

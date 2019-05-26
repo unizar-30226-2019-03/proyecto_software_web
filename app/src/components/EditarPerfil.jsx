@@ -205,7 +205,7 @@ const FormularioDatos = (
 
         <Button
           className="boton-filtro"
-          style={{ float: "right", width: "130px" }}
+          style={{ float: "right", width: "130px", position: "relative" }}
           type="submit"
         >
           Confirmar

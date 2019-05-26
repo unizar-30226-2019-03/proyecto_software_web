@@ -99,11 +99,11 @@ const FormularioDatos = (
         <Button
           className="boton-filtro"
           type="submit"
-          style={{ float: "right", width: "130px" }}
+          style={{ float: "right", width: "130px", position: "relative" }}
         >
           Confirmar
           {mostrarSpin ? (
-            <LoadingSpinUniCast className="spin-subir-video" />
+            <LoadingSpinUniCast className="spin-editar-perfil" />
           ) : null}
         </Button>
       </Form>
