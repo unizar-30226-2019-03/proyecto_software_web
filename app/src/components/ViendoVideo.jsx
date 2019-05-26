@@ -211,13 +211,7 @@ class ViendoVideo extends Component {
       }
     });
   }
-  /**
-   * para cada comentario cuyo tiempo esta entre tiempoInicio y tiempoFin, 
-   * si no esta incluido en la Lista lista, lo añade 
-   * @param {Number} tiempoInicio 
-   * @param {Number} tiempoFin 
-   * @param {Array} lista 
-   */
+
   recogerComentarios(tiempoInicio, tiempoFin, lista) {
     const res = this.state.totalComentarios.filter(
       com => com.tiempo >= tiempoInicio && com.tiempo <= tiempoFin
@@ -229,9 +223,7 @@ class ViendoVideo extends Component {
     });
     return lista;
   }
-  /**
-   * Hace scroll hasta la posición final del último comentario
-   */
+
   irAUltimoComentario() {
     if (!this.state.fijarComentarios) {
       var elmnt = document.getElementById(`comment${this.state.comentarios.length-1}`);
@@ -240,10 +232,7 @@ class ViendoVideo extends Component {
       }
     }
   }
-  /**
-   * Almacena en comentarios todos los nuevos comentarios del video
-   * @param {estado} estado 
-   */
+
   recibirEstadoVideo(estado) {
     var nuevosComentarios = this.state.comentarios.slice();
     const ultimoComentario = nuevosComentarios[nuevosComentarios.length - 1];
@@ -277,10 +266,7 @@ class ViendoVideo extends Component {
       tiempoVideo: currentTime
     });
   }
-  /**
-   * Si obtenerNuevosComentarios es igual a true y todavía no se están obteniendo,
-   * pone obteniendoComentarios a true y obtiene los comentarios del video de la siguiente página
-   */
+
   componentDidUpdate() {
     if (
       this.state.obtenerNuevosComentarios &&
@@ -298,11 +284,7 @@ class ViendoVideo extends Component {
       this.getReproductionLists();
     }
   }
-  /**
-   * Obtiene los comentarios del video video de la página page
-   * @param {video} video video del que se desea obtener los comentarios
-   * @param {Number} page número de página a recuperar
-   */
+
   obtenerComentarios(video, page) {
     getCommentsByVideo(video.id, page, comentarios => {
       let obtenerMas = false;
@@ -319,11 +301,7 @@ class ViendoVideo extends Component {
       }
     });
   }
-  /**
-   * Asigna a asig la asignatura del video, y si la asignatura no está en la lista de asignaturas del usuario, 
-   * es decir, no la sigue, pone siguiendoAsig a false; en caso contrario lo pone a true
-   * @param {video} video 
-   */
+
   obtenerAsignaturaUni(video) {
     getVideoSubject(video.id, asig => {
       if (this._isMounted) {
@@ -359,11 +337,7 @@ class ViendoVideo extends Component {
       e.target.scrollHeight - e.target.scrollTop <= e.target.clientHeight + 10;
     this.setState({ fijarComentarios: !bottom });
   }
-  /**
-   * Cuando se haya pulsado enter, si el nuevo comentario no es vacío,
-   * añade el nuevo comentario y lo sube al servidor
-   * @param {Event} e 
-   */
+
   comentar(e) {
     const comentario = this.comentario.current.value;
     if (comentario.length > 0) {
@@ -383,14 +357,6 @@ class ViendoVideo extends Component {
     }
   }
 
-  /**
-   * Si anyadir=true, añade el video al lsita lista; en caso contrario, lo borra. Asigna a notif el valor de mostrar
-   * y a mensajeNotif el valor de mensaje e inicia el reloj.
-   * @param {boolean} mostrar 
-   * @param {lista} lista 
-   * @param {mensaje} mensaje 
-   * @param {boolean} anyadir 
-   */
   guardarVideo(idLista, mensaje, anyadir, callback) {
     const idVideo = this.state.video.id;
     if (anyadir) {
@@ -430,25 +396,16 @@ class ViendoVideo extends Component {
     }
     this.iniciarReloj();
   }
-   /**
-   * Pone el reloj a 0 y lo inicia
-   */
+
   iniciarReloj() {
     this.pararReloj();
     this.timerID = setInterval(() => this.tick(), 1000);
   }
 
-  /**
-   * Detiene la ejecución del reloj
-   */
   pararReloj() {
     clearInterval(this.timerID);
   }
-  
-  /**
-   * suma un tick (suma 1 a tiempo)
-   * Si tiempo==3,pone tiempo a 0 y para el reloj
-   */
+
   tick() {
     let t = this.state.tiempoNotif;
     if (t === 3) {
@@ -459,9 +416,6 @@ class ViendoVideo extends Component {
     this.setState({ tiempoNotif: t + 1 });
   }
 
-  /**
-   * Detiene la ejecución del reloj
-   */
   componentWillUnmount() {
     this._isMounted = false;
     this.pararReloj();
@@ -499,10 +453,7 @@ class ViendoVideo extends Component {
     }
     this.setState({ adecuacion: nextValue });
   }
-  /**
-   * Añade la puntuación de claridad, calidad y adecuación actual a los votos
-   * Si hay algún error, lo muesetra por consola
-   */
+
   puntuar() {
     addVote(
       this.state.video.id,
@@ -522,10 +473,7 @@ class ViendoVideo extends Component {
       }
     );
   }
-  /**
-   * Si siguiendoAsig=false, relaciona el usuario con la asignatura y se inicia el reloj.
-   * Si siguiendoAsi=true, elimina la relación del usuario con la asignatura e inicia el reloj.
-   */
+
   seguirAsig() {
     !this.state.siguiendoAsig
       ? SubscribeSubject(this.state.asig.id, ok => {

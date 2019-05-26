@@ -310,12 +310,6 @@ class EditarPerfil extends Component {
     this.setState({ description: e.target.value });
   }
 
-  /**
-   * Comprueba que nombre, apellidos, userID, email, pass y pass2, y foto son correctas.
-   * De ser así, actualiza el usuario. Si se ha actualizado el usuario, pondrá datosValidos a true,
-   * y datosInvalidos a false. En el caso contrario será al reves.
-   * @param {*} event 
-   */
   handleSubmitDatos(event) {
     event.preventDefault();
     const nombre = this.nombre.current.value;

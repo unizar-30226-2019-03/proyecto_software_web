@@ -13,10 +13,6 @@ class BarraBusqueda extends Component {
     this.keyPress = this.keyPress.bind(this);
   }
 
-  /**
-   * Pone buscar a false
-   * @param {*} newProps 
-   */
   componentWillReceiveProps(newProps) {
     this.setState({ buscar: false });
   }
@@ -25,10 +21,6 @@ class BarraBusqueda extends Component {
     this.setState({ value: e.target.value });
   }
 
-  /**
-   * Si se ha pulsado el enter, si length>0, pone buscar a true
-   * @param {*} e 
-   */
   keyPress(e) {
     if (e.keyCode === 13) {
       //ESTO CAMBIA DE PÁGINA window.location = "/";
