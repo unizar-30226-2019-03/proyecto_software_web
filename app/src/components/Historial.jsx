@@ -30,7 +30,11 @@ class HistorialLista extends Component {
     this.abrirPopUp = this.abrirPopUp.bind(this);
     this.cerrarPopUp = this.cerrarPopUp.bind(this);
   }
-
+  /**
+   * Se ejecutará cuando el componente reciba propiedades nuevas,
+   * para actualizar el estado del componente
+   * @param {Object} nextProps propiedades a actualizar en el componente
+   */
   componentWillReceiveProps(nextProps) {
     this.setState({
       listaVideos: nextProps.historial.map(e => {
@@ -39,11 +43,15 @@ class HistorialLista extends Component {
       listasRepro: nextProps.listasRepro
     });
   }
-
+  /**
+   * Actualiza el valor de popUp a true
+   */
   abrirPopUp() {
     this.setState({ popUp: true });
   }
-
+  /**
+   * Actualiza el valor de popUp a false
+   */
   cerrarPopUp() {
     this.setState({ popUp: false });
   }
@@ -312,7 +320,11 @@ class Historial extends Component {
       this.getReproductionLists();
     }
   }
-
+  /**
+   * Obtiene una lista de vídeos reproducidos por el usuario
+   * y actualiza el estado del componente
+   * @param {Number} page pagina a obtener
+   */
   getHistorial(page) {
     getDisplaysByUser(page, data => {
       if (this._isMounted) {
@@ -332,7 +344,9 @@ class Historial extends Component {
       }
     });
   }
-
+  /**
+   * Borra el historial de videos
+   */
   borrarHistorial() {
     this.state.miHistorial.map(elmnt => {
       deleteVideoFromDisplay(parseInt(elmnt.video.id), ok => {
@@ -354,7 +368,10 @@ class Historial extends Component {
     });
     this.iniciarReloj();
   }
-
+  /**
+   * Actualiza el componente asignando a busqueda el historial
+   * @param {Event} e evento producido
+   */
   buscarHistorial(e) {
     e.preventDefault();
     this.setState({ busqueda: e.target.value });
@@ -362,7 +379,11 @@ class Historial extends Component {
       this.setState({ historialFiltrado: [], filtrado: false });
     }
   }
-
+  /**
+   * Cuando se haya pulsado enter, actualiza historialFiltrado con todos los videos del historial
+   * que contengan alguna de las palabras buscadas
+   * @param {Event} e evento producido
+   */
   keyDown(e) {
     if (this.state.busqueda !== "") {
       if (e.keyCode === 13) {
@@ -387,6 +408,13 @@ class Historial extends Component {
     }
   }
 
+  /**
+   * Añade o borra el video de nombre nombreVideo a la Lista de videos lista
+   * @param {String} nombreVideo nombre del video a añadir o borrar
+   * @param {String} mensaje mensaje de notificación al añadir
+   * @param {listaVideos} lista lista de videos a la que añadir el video nombreVideo
+   * @param {Boolean} anyadir Si es true añade, si es false borra
+   */
   anyadirVideoALista(idVideo, mensaje, idLista, anyadir, callback) {
     //Añadir o borrar de la lista lista, dependiendo del parametro anyadir
     if (anyadir) {
@@ -426,7 +454,11 @@ class Historial extends Component {
     }
     this.iniciarReloj();
   }
-
+  /**
+   * Elimina el video con id idVideo del historial
+   * @param {Number} idVideo id del video a eliminar
+   * @param {String} nombreVideo nombre del video a eliminar
+   */
   borrarVideo(idVideo, nombreVideo) {
     deleteVideoFromDisplay(parseInt(idVideo), ok => {
       if (ok) {
@@ -471,16 +503,24 @@ class Historial extends Component {
       this.setState({ contentMargin: "70px" });
     }
   }
-
+  /**
+   * Pone el reloj a 0 y lo inicia
+   */
   iniciarReloj() {
     this.pararReloj();
     this.timerID = setInterval(() => this.tick(), 1000);
   }
 
+  /**
+   * Detiene la ejecución del reloj
+   */
   pararReloj() {
     clearInterval(this.timerID);
   }
-
+  /**
+   * suma un tick (suma 1 a tiempo)
+   * Si tiempo==3,pone tiempo a 0 y para el reloj
+   */
   tick() {
     let t = this.state.tiempo;
     if (t === 3) {

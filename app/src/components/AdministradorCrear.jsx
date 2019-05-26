@@ -227,6 +227,11 @@ class FormularioProfeAsignatura extends React.Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
+   /**
+   * Busca todas las asignaturas de la universidad deseada.
+   * Si se ha realizado correctamente, actualiza asignaturas con dichas asignaturas, y asigna true a showAsig.
+   * Si la universidad no tiene un valor válido (es -1), asigna false a showAsig y a asignaturas un array vacío.
+   */
   handleChange(event) {
     //Buscar asignaturas según la universidad
     const uni = parseInt(event.target.value);
@@ -384,11 +389,16 @@ class AdministradorCrear extends Component {
       });
     }
   }
-
+   /**
+   * Pone show a false
+   */
   handleClose() {
     this.setState({ show: false });
   }
 
+   /**
+   * Pone show a true
+   */
   handleShow() {
     this.setState({ show: true });
   }
@@ -435,6 +445,12 @@ class AdministradorCrear extends Component {
     }
   }
 
+   /**
+   * Si no existe la asignatura nombreAsig, la crea y la asocia a la universidad
+   * uniAsig. Si ya existía, asocia dicha asignatura a la universidad uniAsig.
+   * @param {event} event 
+   * @param {*} form 
+   */
   handleAsignatura(event, form) {
     event.preventDefault();
     const uni = parseInt(this.uniAsig.current.value);
@@ -446,7 +462,13 @@ class AdministradorCrear extends Component {
       this.handleShow();
     }
   }
-
+  /**
+   * Si uniUn es correcto (distinto de -1) y asignUn no es null, si existe el usuario userUn,
+   * asigna dicha asignatura a dicho usuario.
+   * @param {event} event 
+   * @param {*} form 
+   * @param {*} that 
+   */
   handleProfeAsignatura(event, form, that) {
     event.preventDefault();
 

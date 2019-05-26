@@ -106,6 +106,11 @@ class FormularioAsignatura extends React.Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
+  /**
+   * Si es una universidad (valor distinto de -1), asgna a asignaturas las asignaturas de la universidad,
+   * y pone showAsig a true. En caso contrario pone showAsig a false y a asignaturas le asigna un vector vacío.
+   * @param {event} event 
+   */
   handleChange(event) {
     //Buscar asignaturas según la universidad
     const uni = parseInt(event.target.value);
@@ -201,6 +206,11 @@ class FormularioProfeAsignatura extends React.Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
+  /**
+   * Si es una universidad (valor distinto de -1), asgna a asignaturas las asignaturas de la universidad,
+   * y pone showAsig a true. En caso contrario pone showAsig a false y a asignaturas le asigna un vector vacío.
+   * @param {event} event 
+   */
   handleChange(event) {
     //Buscar asignaturas según la universidad
     const uni = parseInt(event.target.value);
@@ -215,6 +225,11 @@ class FormularioProfeAsignatura extends React.Component {
     this.setState({ uni: uni, showProfe: false });
   }
 
+  /**
+   * Si es una asignatura (valor distinto de null y de -1), asgna a profesores los profesores de la asignatura,
+   * y pone showProfe a true. En caso contrario pone showProfe a false y a profesores le asigna un vector vacío.
+   * @param {event} event 
+   */
   handleChangeProfes(event) {
     //Buscar asignaturas según la universidad
     const asignatura = parseInt(event.target.value);
@@ -379,20 +394,36 @@ class AdministradorBorrar extends Component {
     }
   }
 
+  /**
+   * Pone show a false
+   */
   handleClose() {
     this.setState({ show: false });
   }
 
+  /**
+   * Pone show a true
+   */
   handleShow() {
     this.setState({ show: true });
   }
 
+  /**
+   * Busca el usuario userIDProf y lo convierte a un usuario normal
+   * @param {event} event 
+   * @param {*} form 
+   */
   handleProfesor(event, form) {
     event.preventDefault();
     const userID = this.userIDProf.current.value;
     borrarProfesor(userID, form, this.handleShow, this.UserApi);
   }
 
+  /**
+   * Elimina la universidad con id idUni
+   * @param {*} event 
+   * @param {*} form 
+   */
   handleUniversidad(event, form) {
     event.preventDefault();
     const uni = this.idUni.current.value;
@@ -405,6 +436,12 @@ class AdministradorBorrar extends Component {
     });
   }
 
+  /**
+   * Si uniAsig y nombreAsig tienen valores válidos, elimina la asignatura y asigna a uni la cadena vacía
+   * @param {*} event 
+   * @param {*} form 
+   * @param {*} that 
+   */
   handleAsignatura(event, form, that) {
     event.preventDefault();
     if (
@@ -424,6 +461,13 @@ class AdministradorBorrar extends Component {
     }
   }
 
+  /**
+   * Si uniUn, asignUn y userUn tienen valores válidos, elimina la asociación del profesor con 
+   * la asignatura
+   * @param {*} event 
+   * @param {*} form 
+   * @param {*} that 
+   */
   handleProfeAsignatura(event, form, that) {
     event.preventDefault();
     if (

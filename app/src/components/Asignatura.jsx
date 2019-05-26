@@ -121,16 +121,23 @@ class Asignatura extends Component {
     this._isMounted = false;
     this.pararReloj();
   }
-
+  /**
+   * Pone el reloj a 0 y lo inicia
+   */
   iniciarReloj() {
     this.pararReloj();
     this.timerID = setInterval(() => this.tick(), 1000);
   }
-
+  /**
+   * Detiene la ejecución del reloj
+   */
   pararReloj() {
     clearInterval(this.timerID);
   }
-
+  /**
+   * suma un tick (suma 1 a tiempo)
+   * Si tiempo==3,pone tiempo a 0 y para el reloj
+   */
   tick() {
     let t = this.state.tiempoNotif;
     if (t === 3) {
@@ -149,6 +156,12 @@ class Asignatura extends Component {
     }
   }
 
+  /**
+   * Si no se sigue a la asignatura, relaciona al usuario con la asignatura. Si se ha realizado correctamente,
+   * pone siguiendoAsig y notif a true, pone "Siguiendo a ..."(la asignatura) en mensajeNotif, e inicia el reloj.
+   * Si no sigue a la asignatura, elimina la relación del usuario con la asignatura. Si se ha realizado correctamente,
+   * pone siguiendoAsig a false, notif a true y en mensajeNotif pone "Dejando de seguir a ..."(la asignatura), e inicia el reloj.
+   */
   seguirAsig() {
     !this.state.siguiendoAsig
       ? SubscribeSubject(this.state.asig.id, ok => {

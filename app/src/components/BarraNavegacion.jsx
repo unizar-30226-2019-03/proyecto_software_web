@@ -236,16 +236,23 @@ class BarraNavegacion extends Component {
       document.removeEventListener("click", this.hideDropdownNotif);
     });
   }
-
+  /**
+   * Pone el reloj a 0 y lo inicia
+   */
   iniciarReloj() {
     this.pararReloj();
     this.timerID = setInterval(() => this.tick(), 1000);
   }
-
+  /**
+   * Detiene la ejecución del reloj
+   */
   pararReloj() {
     clearInterval(this.timerID);
   }
-
+  /**
+   * suma un tick (suma 1 a tiempo)
+   * Si tiempo==5,pone tiempo a 0 y para el reloj
+   */
   tick() {
     let t = this.state.tiempoCheck;
     if (t === 5) {
