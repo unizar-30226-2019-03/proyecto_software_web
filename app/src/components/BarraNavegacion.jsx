@@ -5,8 +5,7 @@ import { Navbar, Nav } from "react-bootstrap";
 import { FaBell, FaEnvelope, FaBars } from "react-icons/fa";
 import BarraBusqueda from "./BarraBusqueda";
 import BarraLateral from "./BarraLateral";
-import { signOut, getUserID, isSignedIn } from "../config/Auth";
-import { getUser } from "../config/UserAPI";
+import { signOut, isSignedIn, getUserPhoto, getUserRole } from "../config/Auth";
 import {
   getUserUncheckedNotifications,
   checkNotification
@@ -23,11 +22,8 @@ class Notificacion extends Component {
     };
   }
 
-  componentWillReceiveProps(newProps) {
-    this.setState({ timeNow: newProps.now, notif: newProps.notif });
-  }
-
   render() {
+    console.log(this.state.notif);
     return (
       <div>
         {this.state.notif.notificationCategory === "videos" ? (
@@ -120,7 +116,6 @@ class BarraNavegacion extends Component {
       displayNotif: false,
       hide: this.props.hide,
       busqueda: this.props.nuevoTit,
-      user: {},
       unCheckedNotifications: [],
       bolaNotif: false,
       tiempoCheck: 0,
@@ -130,21 +125,12 @@ class BarraNavegacion extends Component {
     this.hideDropdown = this.hideDropdown.bind(this);
     this.showSideBar = this.showSideBar.bind(this);
     this.resize = this.resize.bind(this);
-    this.getData = this.getData.bind(this);
     this.getNotifications = this.getNotifications.bind(this);
     this.showDropdownNotif = this.showDropdownNotif.bind(this);
     this.hideDropdownNotif = this.hideDropdownNotif.bind(this);
     this.iniciarReloj = this.iniciarReloj.bind(this);
     this.pararReloj = this.pararReloj.bind(this);
     this.tick = this.tick.bind(this);
-  }
-
-  getData() {
-    getUser(getUserID(), data => {
-      if (this._isMounted) {
-        this.setState({ user: data });
-      }
-    });
   }
 
   getNotifications() {
@@ -164,7 +150,6 @@ class BarraNavegacion extends Component {
   componentWillMount() {
     this._isMounted = true;
     if (isSignedIn()) {
-      this.getData();
       this.getNotifications();
     }
   }
@@ -355,7 +340,7 @@ class BarraNavegacion extends Component {
               <div className="dropdown" style={{ top: "5px" }}>
                 <img
                   alt="usuario"
-                  src={this.state.user.photo}
+                  src={getUserPhoto()}
                   width="30"
                   height="30"
                   onClick={this.showDropdown}
@@ -364,7 +349,7 @@ class BarraNavegacion extends Component {
                 {this.state.displayMenu ? (
                   <div className="dropdown-content">
                     <Link to="/perfil">Mi perfil</Link>
-                    {this.state.user.role === "ROLE_PROFESSOR" ? (
+                    {getUserRole() === "ROLE_PROFESSOR" ? (
                       <Link to="/mis-videos">Mis vídeos</Link>
                     ) : null}
                     <Link to="/" onClick={() => signOut()}>

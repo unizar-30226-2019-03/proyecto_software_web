@@ -26,7 +26,8 @@ class Inicio extends Component {
       trending: [],
       timeNow: new Date(),
       spinRecom: true,
-      spinPopulares: true
+      spinPopulares: true,
+      spinAsignaturas: true
     };
     this.handleChange = this.handleChange.bind(this);
     this.getData = this.getData.bind(this);
@@ -45,7 +46,7 @@ class Inicio extends Component {
         return null;
       });
       if (this._isMounted) {
-        this.setState({ asignaturas: data });
+        this.setState({ asignaturas: data, spinAsignaturas: false });
       }
     });
     getRecommendations((data, now) => {
@@ -279,14 +280,28 @@ class Inicio extends Component {
                     </div>
                   </Link>
                 </div>
-                <ListaHorizontal
-                  list={
-                    this.state.videosAsignatura[index] === undefined
-                      ? []
-                      : this.state.videosAsignatura[index]
-                  }
-                  now={this.state.timeNow}
-                />
+                {this.state.videosAsignatura[index] === undefined ||
+                this.state.videosAsignatura[index].length === 0 ? (
+                  <div
+                    style={{
+                      color: "#00000080",
+                      padding: "10px",
+                      fontSize: "14px",
+                      textAlign: "left",
+                      marginBottom: "50px",
+                      borderBottom: "1px solid lightgrey",
+                      width: "93.45%",
+                      position: "relative"
+                    }}
+                  >
+                    <LoadingSpinUniCast className="spin-inicio" />
+                  </div>
+                ) : (
+                  <ListaHorizontal
+                    list={this.state.videosAsignatura[index]}
+                    now={this.state.timeNow}
+                  />
+                )}
               </div>
             );
           })}

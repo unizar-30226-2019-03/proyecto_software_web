@@ -306,7 +306,6 @@ export function getRecommendations(callback) {
       console.error(error);
     } else {
       const now = ApiClient.parseDate(response.headers.date);
-      console.log(data._embedded.videos);
       callback(data._embedded.videos, now);
     }
   });

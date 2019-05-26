@@ -16,6 +16,7 @@ import {
   deleteVideoFromReproductionList,
   getUserReproductionLists
 } from "../config/ReproductionListAPI";
+import { LoadingSpinUniCast } from "./LoadingSpin";
 
 class HistorialLista extends Component {
   constructor(props) {
@@ -290,7 +291,8 @@ class Historial extends Component {
       mensajeNotif: "",
       tiempo: 0,
       page: 0,
-      moreVideos: false
+      moreVideos: false,
+      mostrarSpin: true
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleResize = this.handleResize.bind(this);
@@ -324,7 +326,8 @@ class Historial extends Component {
         this.setState({
           page: page + 1,
           miHistorial: newState,
-          moreVideos: data._embedded.displays.length === 20
+          moreVideos: data._embedded.displays.length === 20,
+          mostrarSpin: false
         });
       }
     });
@@ -546,7 +549,9 @@ class Historial extends Component {
               </h5>
             </div>
           </div>{" "}
-          {this.state.miHistorial.length === 0 ? (
+          {this.state.mostrarSpin ? (
+            <LoadingSpinUniCast className="spin-ranking" />
+          ) : this.state.miHistorial.length === 0 ? (
             <div
               style={{
                 color: "#00000080",

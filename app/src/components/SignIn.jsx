@@ -10,7 +10,9 @@ import {
   restriccionNombre,
   restriccionUser,
   emailPattern,
-  restriccion
+  restriccion,
+  setUserRole,
+  setUserPhoto
 } from "../config/Auth";
 import {
   getUnivesities,
@@ -492,6 +494,8 @@ class SignIn extends Component {
                 }
               } else {
                 signIn(data2);
+                setUserRole(data.role);
+                setUserPhoto(data.photo);
                 if (this._isMounted) {
                   this.setState({ infoValidada: true });
                 }

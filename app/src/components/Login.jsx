@@ -3,7 +3,13 @@ import { Button, Form } from "react-bootstrap";
 import { Redirect } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import uni from "../assets/UnicastNombre.png";
-import { signIn, setUserRole, isSignedIn, getUserRole } from "../config/Auth";
+import {
+  signIn,
+  setUserRole,
+  isSignedIn,
+  getUserRole,
+  setUserPhoto
+} from "../config/Auth";
 import { getUser, authUser } from "../config/UserAPI";
 import { LoadingSpinUniCast } from "./LoadingSpin";
 
@@ -45,6 +51,7 @@ class Login extends Component {
         getUser(data.id, user => {
           // validaeo será 1 si es admin, y 0 si es un usuario normal o profesor
           setUserRole(user.role);
+          setUserPhoto(user.photo);
           if (this._isMounted) {
             this.setState({
               validado: user.role === "ROLE_ADMIN" ? 1 : 0

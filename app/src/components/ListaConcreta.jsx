@@ -14,6 +14,7 @@ import {
   getUserReproductionLists,
   addVideotoReproductionList
 } from "../config/ReproductionListAPI";
+import { LoadingSpinUniCast } from "./LoadingSpin";
 
 class Lista extends Component {
   constructor(props) {
@@ -290,7 +291,8 @@ class ListaConcreta extends Component {
       timestamp: new Date(),
       page: 0,
       borradoCompleto: false,
-      moreVideos: false
+      moreVideos: false,
+      mostrarSpin: true
     };
     this.getData = this.getData.bind(this);
     this.getReproductionLists = this.getReproductionLists.bind(this);
@@ -319,7 +321,8 @@ class ListaConcreta extends Component {
           miLista: newState,
           page: page + 1,
           timestamp: now,
-          moreVideos: data.length === 20
+          moreVideos: data.length === 20,
+          mostrarSpin: false
         });
       }
     });
@@ -565,7 +568,9 @@ class ListaConcreta extends Component {
                   </h5>
                 </div>
               </div>{" "}
-              {this.state.miLista.length === 0 ? (
+              {this.state.mostrarSpin ? (
+                <LoadingSpinUniCast className="spin-ranking" />
+              ) : this.state.miLista.length === 0 ? (
                 <div
                   style={{
                     color: "#00000080",

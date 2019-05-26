@@ -14,6 +14,7 @@ import {
 import { getUser, getSubjectsOfUser } from "../config/UserAPI";
 import { Notificacion } from "./MisListas";
 import { getVideosFromSubject } from "../config/VideoAPI";
+import { LoadingSpinUniCast } from "./LoadingSpin";
 
 export const Profesor = ({ user }) => {
   return (
@@ -65,7 +66,8 @@ class Asignatura extends Component {
       videos: [],
       timeNow: new Date(),
       moreVideos: false,
-      updateSubject: false
+      updateSubject: false,
+      mostrarSpin: true
     };
     this.seguirAsig = this.seguirAsig.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -109,7 +111,8 @@ class Asignatura extends Component {
           videos: data,
           timeNow: time,
           page: 1,
-          moreVideos: data.length === 20
+          moreVideos: data.length === 20,
+          mostrarSpin: false
         });
       }
     });
@@ -264,7 +267,9 @@ class Asignatura extends Component {
             <div style={{ flex: "85%" }}>
               <div>
                 <p style={{ fontWeight: "550" }}>Vídeos subidos</p>
-                {this.state.videos.length === 0 ? (
+                {this.state.mostrarSpin ? (
+                  <LoadingSpinUniCast className="spin-ranking" />
+                ) : this.state.videos.length === 0 ? (
                   <div
                     style={{
                       color: "#00000080",
