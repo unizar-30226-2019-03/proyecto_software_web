@@ -151,8 +151,8 @@ export function parsearFecha(timestamp) {
   var hora = aux[1];
   hora = hora.split(":");
   var minutos = hora[1];
-  hora = hora[0];
-  var horaTotal = hora + ":" + minutos;
+  hora = parseInt(hora[0]) + 2;
+  var horaTotal = hora.toString() + ":" + minutos;
   var diaActual = parseInt(String(new Date().getDate()).padStart(2, "0"));
 
   var mesActual = new Date().getMonth() + 1;
