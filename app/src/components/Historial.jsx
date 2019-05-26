@@ -16,6 +16,7 @@ import {
   deleteVideoFromReproductionList,
   getUserReproductionLists
 } from "../config/ReproductionListAPI";
+import { LoadingSpinUniCast } from "./LoadingSpin";
 
 class HistorialLista extends Component {
   constructor(props) {
@@ -297,10 +298,13 @@ class Historial extends Component {
       notif: false,
       mensajeNotif: "",
       tiempo: 0,
-      page: 0
+      page: 0,
+      moreVideos: false,
+      mostrarSpin: true
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleResize = this.handleResize.bind(this);
+    this.handleScroll = this.handleScroll.bind(this);
     this.borrarHistorial = this.borrarHistorial.bind(this);
     this.buscarHistorial = this.buscarHistorial.bind(this);
     this.keyDown = this.keyDown.bind(this);
@@ -328,9 +332,14 @@ class Historial extends Component {
   getHistorial(page) {
     getDisplaysByUser(page, data => {
       if (this._isMounted) {
+        const newState = this.state.miHistorial
+          .slice()
+          .concat(data._embedded.displays);
         this.setState({
           page: page + 1,
-          miHistorial: data._embedded.displays
+          miHistorial: newState,
+          moreVideos: data._embedded.displays.length === 20,
+          mostrarSpin: false
         });
       }
     });
@@ -468,6 +477,7 @@ class Historial extends Component {
           historialFiltrado: [],
           busqueda: "",
           filtrado: false,
+          miHistorial: [],
           page: 0
         });
         this.getHistorial(0);
@@ -488,12 +498,24 @@ class Historial extends Component {
 
   componentDidMount() {
     window.addEventListener("resize", this.handleResize);
+    window.addEventListener("scroll", this.handleScroll);
   }
 
   componentWillUnmount() {
     this._isMounted = false;
     this.pararReloj();
     window.removeEventListener("resize", this.handleResize);
+    window.removeEventListener("scroll", this.handleScroll);
+  }
+
+  handleScroll() {
+    var d = document.documentElement;
+    var offset = d.scrollTop + window.innerHeight;
+    var height = d.offsetHeight;
+
+    if (offset >= height && this.state.moreVideos) {
+      this.getHistorial(this.state.page);
+    }
   }
 
   handleChange(display) {
@@ -567,7 +589,9 @@ class Historial extends Component {
               </h5>
             </div>
           </div>{" "}
-          {this.state.miHistorial.length === 0 ? (
+          {this.state.mostrarSpin ? (
+            <LoadingSpinUniCast className="spin-ranking" />
+          ) : this.state.miHistorial.length === 0 ? (
             <div
               style={{
                 color: "#00000080",

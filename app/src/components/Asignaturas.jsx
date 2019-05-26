@@ -6,6 +6,7 @@ import { Link, Redirect } from "react-router-dom";
 import CustomToggle from "./CustomToggle";
 import { isSignedIn, getUserID, getUserRole } from "../config/Auth";
 import { getSubjectsOfUser } from "../config/UserAPI";
+import { LoadingSpinUniCast } from "./LoadingSpin";
 
 const ItemAsignatura = ({ nombre, uni, foto, id }) => {
   return (
@@ -40,7 +41,8 @@ class Asignaturas extends Component {
     this.state = {
       contentMargin: "300px",
       filtro: "",
-      asignaturas: []
+      asignaturas: [],
+      mostrarSpin: true
     };
     this.handleChange = this.handleChange.bind(this);
     this.getData = this.getData.bind(this);
@@ -62,7 +64,7 @@ class Asignaturas extends Component {
   getData() {
     getSubjectsOfUser(getUserID(), data => {
       if (this._isMounted) {
-        this.setState({ asignaturas: data });
+        this.setState({ asignaturas: data, mostrarSpin: false });
       }
     });
   }
@@ -151,7 +153,9 @@ class Asignaturas extends Component {
                   />
                 </Dropdown.Menu>
               </Dropdown>
-              {asignaturasFiltradas.length === 0 ? (
+              {this.state.mostrarSpin ? (
+                <LoadingSpinUniCast className="spin-ranking" />
+              ) : asignaturasFiltradas.length === 0 ? (
                 <div
                   style={{
                     color: "#00000080",
@@ -160,7 +164,7 @@ class Asignaturas extends Component {
                     textAlign: "left"
                   }}
                 >
-                  Actualmente no sigue a ninguna asignatura, conforme siga a
+                  Actualmente no sigue a ninguna asignatura, conforme siga
                   asignaturas aparecerán aquí.
                 </div>
               ) : (

@@ -400,7 +400,6 @@ class AdministradorBorrar extends Component {
   handleClose() {
     this.setState({ show: false });
   }
-
   /**
    * Pone show a true
    */
@@ -411,7 +410,7 @@ class AdministradorBorrar extends Component {
   /**
    * Busca el usuario userIDProf y lo convierte a un usuario normal
    * @param {event} event 
-   * @param {*} form 
+   * @param {HTMLElement} form 
    */
   handleProfesor(event, form) {
     event.preventDefault();
@@ -422,7 +421,7 @@ class AdministradorBorrar extends Component {
   /**
    * Elimina la universidad con id idUni
    * @param {*} event 
-   * @param {*} form 
+   * @param {{HTMLElement} form 
    */
   handleUniversidad(event, form) {
     event.preventDefault();
@@ -439,7 +438,7 @@ class AdministradorBorrar extends Component {
   /**
    * Si uniAsig y nombreAsig tienen valores válidos, elimina la asignatura y asigna a uni la cadena vacía
    * @param {*} event 
-   * @param {*} form 
+   * @param {{HTMLElement} form 
    * @param {*} that 
    */
   handleAsignatura(event, form, that) {
@@ -465,7 +464,7 @@ class AdministradorBorrar extends Component {
    * Si uniUn, asignUn y userUn tienen valores válidos, elimina la asociación del profesor con 
    * la asignatura
    * @param {*} event 
-   * @param {*} form 
+   * @param {{HTMLElement} form 
    * @param {*} that 
    */
   handleProfeAsignatura(event, form, that) {
