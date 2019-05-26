@@ -380,6 +380,7 @@ class BarraNavegacion extends Component {
           <BarraLateral
             activate={this.props.activar}
             show={this.state.displaySide ? "active" : ""}
+            updateSubject={this.props.updateSubject}
           />
         </div>
       </div>

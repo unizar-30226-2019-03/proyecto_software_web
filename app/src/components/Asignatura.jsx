@@ -64,7 +64,8 @@ class Asignatura extends Component {
       profesores: [],
       videos: [],
       timeNow: new Date(),
-      moreVideos: false
+      moreVideos: false,
+      updateSubject: false
     };
     this.seguirAsig = this.seguirAsig.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -160,7 +161,7 @@ class Asignatura extends Component {
       this.pararReloj();
       this.setState({ notif: false });
     }
-    this.setState({ tiempoNotif: t + 1 });
+    this.setState({ tiempoNotif: t + 1, updateSubject: false });
   }
 
   handleChange(display) {
@@ -193,6 +194,9 @@ class Asignatura extends Component {
             this.iniciarReloj();
           }
         });
+    if (this._isMounted) {
+      this.setState({ updateSubject: true });
+    }
   }
 
   render() {
@@ -222,6 +226,7 @@ class Asignatura extends Component {
           activar={nombreAsig}
           displaySide={true}
           hide={false}
+          updateSubject={this.state.updateSubject}
         />
         <div
           className="transform"

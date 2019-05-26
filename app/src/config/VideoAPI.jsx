@@ -146,13 +146,12 @@ export function getVideosFromUploader(page, callback) {
     expires: "0", // String |
     page: page, // Number | Número de la página a devolver
     sort: ["timestamp,desc"], // [String] | Parámetros en la forma `($propertyname,)+[asc|desc]?`
-    projection: "videoWithSubject" // String | Incluir si se quiere obtener tambien la universidad y/o la asignatura en la respuesta
+    projection: "videoWithSubjectAndUniversity" // String | Incluir si se quiere obtener tambien la universidad y/o la asignatura en la respuesta
   };
   apiInstance.getVideosFromUploader(opts, (error, data, response) => {
     if (error) {
       console.error(error);
     } else {
-      console.log(data._embedded.videos);
       const now = ApiClient.parseDate(response.headers.date);
       callback(data._embedded.videos, now);
     }
@@ -173,7 +172,7 @@ export function getVideo(id, callback) {
     cacheControl: "no-cache, no-store, must-revalidate", // String |
     pragma: "no-cache", // String |
     expires: "0", // String |
-    projection: "videoWithSubject" // String | Incluir si se quiere obtener tambien la universidad y/o la asignatura en la respuesta
+    projection: "videoWithSubjectAndUniversity" // String | Incluir si se quiere obtener tambien la universidad y/o la asignatura en la respuesta
   };
 
   apiInstance.getVideo(id, opts, (error, data, response) => {
@@ -274,7 +273,8 @@ export function getVideosFromSubject(subjectId, page, callback) {
     pragma: "no-cache", // String |
     expires: "0", // String |
     page: page, // Number | Número de la página a devolver
-    sort: ["timestamp,desc"] // [String] | Parámetros en la forma `($propertyname,)+[asc|desc]?`
+    sort: ["timestamp,desc"], // [String] | Parámetros en la forma `($propertyname,)+[asc|desc]?`
+    projection: "videoWithSubjectAndUniversity" // String | Incluir si se quiere obtener tambien la universidad y/o la asignatura en la respuesta
   };
   apiInstance.getVideosFromSubject(subjectId, opts, (error, data, response) => {
     if (error) {
@@ -299,13 +299,14 @@ export function getRecommendations(callback) {
     cacheControl: "no-cache, no-store, must-revalidate", // String |
     pragma: "no-cache", // String |
     expires: "0", // String |
-    projection: "videoWithSubject" // String | Incluir si se quiere obtener tambien la universidad y/o la asignatura en la respuesta
+    projection: "videoWithSubjectAndUniversity" // String | Incluir si se quiere obtener tambien la universidad y/o la asignatura en la respuesta
   };
   apiInstance.findRecommendedVideos(opts, (error, data, response) => {
     if (error) {
       console.error(error);
     } else {
       const now = ApiClient.parseDate(response.headers.date);
+      console.log(data._embedded.videos);
       callback(data._embedded.videos, now);
     }
   });
@@ -328,7 +329,7 @@ export function getVideosFromReproductionList(reproListId, page, callback) {
     expires: "0", // String |
     page: page, // Number | Número de la página a devolver
     sort: ["null"], // [String] | Parámetros en la forma `($propertyname,)+[asc|desc]?`
-    projection: "videoWithSubject" // String | Incluir si se quiere obtener tambien la universidad y/o la asignatura en la respuesta
+    projection: "videoWithSubjectAndUniversity" // String | Incluir si se quiere obtener tambien la universidad y/o la asignatura en la respuesta
   };
   apiInstance.getVideosFromReproductionList(
     reproListId,
@@ -353,7 +354,7 @@ export function findTrendingVideos(page, callback) {
     cacheControl: "no-cache, no-store, must-revalidate", // String |
     pragma: "no-cache", // String |
     expires: "0", // String |
-    projection: "videoWithSubject", // String | Incluir si se quiere obtener tambien la universidad y/o la asignatura en la respuesta
+    projection: "videoWithSubjectAndUniversity", // String | Incluir si se quiere obtener tambien la universidad y/o la asignatura en la respuesta
     page: page // Number | Número de la página a devolver
   };
   apiInstance.findMostPopularLastWeekVideos(opts, (error, data, response) => {

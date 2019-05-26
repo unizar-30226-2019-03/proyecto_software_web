@@ -21,8 +21,7 @@ import {
   generadorColores,
   scrollFunc,
   getTimePassed,
-  getVideo,
-  getVideoSubject
+  getVideo
 } from "../config/VideoAPI";
 import { getCommentsByVideo, addComment } from "../config/CommentsAPI";
 import { getUser, getSubjectsOfUser } from "../config/UserAPI";
@@ -134,6 +133,7 @@ class ViendoVideo extends Component {
       adecuacion: 2.5,
       claridad: 2.5,
       asig: {},
+      university: {},
       video: {},
       timeNow: null,
       page: 0,
@@ -178,12 +178,16 @@ class ViendoVideo extends Component {
               if (data.secsFromBeg >= video.seconds - 1) {
                 this.setState({
                   video: video,
+                  asig: video.subject,
+                  university: video.university,
                   timeNow: time,
                   tiempoInicial: 0
                 });
               } else {
                 this.setState({
                   video: video,
+                  asig: video.subject,
+                  university: video.university,
                   timeNow: time,
                   tiempoInicial: data.secsFromBeg
                 });
@@ -198,7 +202,7 @@ class ViendoVideo extends Component {
           }
         });
       }
-      this.obtenerAsignaturaUni(video);
+      this.obtenerAsignaturaUni(video.subject);
       this.obtenerComentarios(video, this.state.page);
     });
   }
@@ -226,7 +230,9 @@ class ViendoVideo extends Component {
 
   irAUltimoComentario() {
     if (!this.state.fijarComentarios) {
-      var elmnt = document.getElementById(`comment${this.state.comentarios.length-1}`);
+      var elmnt = document.getElementById(
+        `comment${this.state.comentarios.length - 1}`
+      );
       if (elmnt !== null) {
         scrollFunc(elmnt);
       }
@@ -302,25 +308,20 @@ class ViendoVideo extends Component {
     });
   }
 
-  obtenerAsignaturaUni(video) {
-    getVideoSubject(video.id, asig => {
+  obtenerAsignaturaUni(asig) {
+    getProfessorsFromSubject(asig.id, data => {
       if (this._isMounted) {
-        this.setState({ asig: asig });
+        this.setState({ profesores: data });
       }
-      getProfessorsFromSubject(asig.id, data => {
-        if (this._isMounted) {
-          this.setState({ profesores: data });
-        }
+    });
+    getSubjectsOfUser(getUserID(), subjects => {
+      const found = subjects.find(s => {
+        return s.id === asig.id;
       });
-      getSubjectsOfUser(getUserID(), subjects => {
-        const found = subjects.find(s => {
-          return s.id === asig.id;
-        });
-        //Si no la ha encontrado -> No sigue la asignatura
-        if (this._isMounted) {
-          this.setState({ siguiendoAsig: found === undefined ? false : true });
-        }
-      });
+      //Si no la ha encontrado -> No sigue la asignatura
+      if (this._isMounted) {
+        this.setState({ siguiendoAsig: found === undefined ? false : true });
+      }
     });
   }
 
@@ -499,10 +500,6 @@ class ViendoVideo extends Component {
   }
 
   render() {
-    const photo =
-      this.state.asig.university === undefined
-        ? ""
-        : this.state.asig.university.photo;
     const currentUrl = window.location.href;
     return !isSignedIn() || getUserRole() === "ROLE_ADMIN" ? (
       <Redirect
@@ -853,7 +850,7 @@ class ViendoVideo extends Component {
               <div style={{ display: "flex", marginBottom: "20px" }}>
                 <Link to={`/asig/${this.state.asig.id}`}>
                   <img
-                    src={photo}
+                    src={this.state.university.photo}
                     style={{ borderRadius: "50%" }}
                     height="40"
                     width="40"

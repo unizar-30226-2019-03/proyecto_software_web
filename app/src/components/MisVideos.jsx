@@ -14,7 +14,6 @@ import {
   deleteVideo
 } from "../config/VideoAPI";
 import { getUser } from "../config/UserAPI";
-import { getSubjectById } from "../config/SubjectAPI";
 import { FaEllipsisV } from "react-icons/fa";
 import { Notificacion } from "./MisListas";
 
@@ -25,38 +24,29 @@ class MiVideoItem extends Component {
     super(props);
     this._isMounted = false;
     this.state = {
-      asig: {},
       mostrarOpciones: false,
       popUp: false,
       mostrarNotif: false,
       mensaje: ""
     };
-    this.getData = this.getData.bind(this);
     this.abrirPopUp = this.abrirPopUp.bind(this);
     this.cerrarPopUp = this.cerrarPopUp.bind(this);
   }
 
-  getData() {
-    getSubjectById(parseInt(this.props.subject.id), data => {
-      if (this._isMounted) {
-        this.setState({ asig: data });
-      }
-    });
-  }
-
   abrirPopUp() {
-    this.setState({ popUp: true });
+    if (this._isMounted) {
+      this.setState({ popUp: true });
+    }
   }
 
   cerrarPopUp() {
-    this.setState({ popUp: false, mostrarOpciones: false });
+    if (this._isMounted) {
+      this.setState({ popUp: false, mostrarOpciones: false });
+    }
   }
 
   componentWillMount() {
     this._isMounted = true;
-    if (isSignedIn()) {
-      this.getData();
-    }
   }
 
   componentWillUnmount() {
@@ -178,20 +168,22 @@ class MiVideoItem extends Component {
             <div style={{ float: "left", marginTop: "5px" }}>
               <Link
                 to={`/asig/${
-                  this.state.asig.id === undefined ? "" : this.state.asig.id
+                  this.props.subject.id === undefined
+                    ? ""
+                    : this.props.subject.id
                 }`}
                 style={{ textDecoration: "none" }}
               >
                 <IconoAsignaturaUniversidad
                   name={
-                    this.state.asig.abbreviation === undefined
+                    this.props.subject.abbreviation === undefined
                       ? ""
-                      : this.state.asig.abbreviation
+                      : this.props.subject.abbreviation
                   }
                   image={
-                    this.state.asig.university === undefined
+                    this.props.university === undefined
                       ? ""
-                      : this.state.asig.university.photo
+                      : this.props.university.photo
                   }
                 />
               </Link>
@@ -254,6 +246,7 @@ const Menu = (list, now, borrarVideo) =>
         timestamp={getTimePassed(timestamp, now)}
         showRating={score === null ? false : true}
         subject={el.subject}
+        university={el.university}
         borrarVideo={borrarVideo}
       />
     );
