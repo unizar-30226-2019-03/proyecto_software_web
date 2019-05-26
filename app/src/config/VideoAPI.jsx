@@ -253,7 +253,6 @@ export function deleteVideo(id, callback) {
       console.error(error);
       callback(false);
     } else {
-      console.log("API called successfully.");
       callback(true);
     }
   });

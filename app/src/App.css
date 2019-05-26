@@ -1044,3 +1044,9 @@ h3 {
   top: 785px;
   right: 146px;
 }
+
+.spin-inicio {
+  position: absolute;
+  top: 0;
+  left: 50%;
+}

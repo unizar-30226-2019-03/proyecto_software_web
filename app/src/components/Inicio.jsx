@@ -10,6 +10,7 @@ import {
   findTrendingVideos
 } from "../config/VideoAPI";
 import { getSubjectsOfUser } from "../config/UserAPI";
+import { LoadingSpinUniCast } from "./LoadingSpin";
 
 class Inicio extends Component {
   constructor() {
@@ -23,7 +24,9 @@ class Inicio extends Component {
       videosAsignatura: [[]],
       recomendados: [],
       trending: [],
-      timeNow: new Date()
+      timeNow: new Date(),
+      spinRecom: true,
+      spinPopulares: true
     };
     this.handleChange = this.handleChange.bind(this);
     this.getData = this.getData.bind(this);
@@ -47,12 +50,12 @@ class Inicio extends Component {
     });
     getRecommendations((data, now) => {
       if (this._isMounted) {
-        this.setState({ recomendados: data, timeNow: now });
+        this.setState({ recomendados: data, timeNow: now, spinRecom: false });
       }
     });
     findTrendingVideos(0, data => {
       if (this._isMounted) {
-        this.setState({ trending: data });
+        this.setState({ trending: data, spinPopulares: false });
       }
     });
   }
@@ -126,24 +129,41 @@ class Inicio extends Component {
                 {this.state.displayTrending ? "Ver menos" : "Ver todos"}
               </div>
             </div>
-            {this.state.displayTrending ? (
+            {!this.state.spinPopulares ? (
+              this.state.displayTrending ? (
+                <div
+                  style={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    marginBottom: "50px",
+                    borderBottom: "1px solid lightgrey",
+                    overflow: "hidden",
+                    width: "93.45%"
+                  }}
+                >
+                  {Menu(this.state.trending, this.state.timeNow)}
+                </div>
+              ) : (
+                <ListaHorizontal
+                  list={this.state.trending}
+                  now={this.state.timeNow}
+                />
+              )
+            ) : (
               <div
                 style={{
-                  display: "flex",
-                  flexWrap: "wrap",
+                  color: "#00000080",
+                  padding: "10px",
+                  fontSize: "14px",
+                  textAlign: "left",
                   marginBottom: "50px",
                   borderBottom: "1px solid lightgrey",
-                  overflow: "hidden",
-                  width: "93.45%"
+                  width: "93.45%",
+                  position: "relative"
                 }}
               >
-                {Menu(this.state.trending, this.state.timeNow)}
+                <LoadingSpinUniCast className="spin-inicio" />
               </div>
-            ) : (
-              <ListaHorizontal
-                list={this.state.trending}
-                now={this.state.timeNow}
-              />
             )}
           </div>
           <div>
@@ -186,19 +206,38 @@ class Inicio extends Component {
                 )}
               </div>
             ) : this.state.recomendados.length === 0 ? (
-              <div
-                style={{
-                  color: "#00000080",
-                  padding: "10px",
-                  fontSize: "14px",
-                  textAlign: "left",
-                  marginBottom: "50px",
-                  borderBottom: "1px solid lightgrey",
-                  width: "93.45%"
-                }}
-              >
-                Actualmente no tiene recomendaciones, conforme haga uso de la
-                aplicación se le recomendarán vídeos según sus gustos.
+              <div style={{ position: "relative" }}>
+                {!this.state.spinRecom ? (
+                  <div
+                    style={{
+                      color: "#00000080",
+                      padding: "10px",
+                      fontSize: "14px",
+                      textAlign: "left",
+                      marginBottom: "50px",
+                      borderBottom: "1px solid lightgrey",
+                      width: "93.45%"
+                    }}
+                  >
+                    Actualmente no tiene recomendaciones, conforme haga uso de
+                    la aplicación se le recomendarán vídeos según sus gustos.
+                  </div>
+                ) : (
+                  <div
+                    style={{
+                      color: "#00000080",
+                      padding: "10px",
+                      fontSize: "14px",
+                      textAlign: "left",
+                      marginBottom: "50px",
+                      borderBottom: "1px solid lightgrey",
+                      width: "93.45%",
+                      position: "relative"
+                    }}
+                  >
+                    <LoadingSpinUniCast className="spin-inicio" />
+                  </div>
+                )}
               </div>
             ) : (
               <ListaHorizontal

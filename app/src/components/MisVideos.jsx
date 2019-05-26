@@ -270,9 +270,12 @@ class MisVideos extends Component {
       user: {},
       notif: false,
       mensajeNotif: "",
-      tiempoNotif: 0
+      tiempoNotif: 0,
+      page: 0,
+      moreVideos: false
     };
     this.getData = this.getData.bind(this);
+    this.handleScroll = this.handleScroll.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.borrarVideo = this.borrarVideo.bind(this);
     this.iniciarReloj = this.iniciarReloj.bind(this);
@@ -285,7 +288,9 @@ class MisVideos extends Component {
       if (this._isMounted) {
         this.setState({
           listaVideos: videos,
-          timestampNow: time
+          timestampNow: time,
+          page: 1,
+          moreVideos: videos.length === 20
         });
       }
     });
@@ -303,9 +308,36 @@ class MisVideos extends Component {
     }
   }
 
+  componentDidMount() {
+    window.addEventListener("scroll", this.handleScroll);
+  }
+
   componentWillUnmount() {
     this._isMounted = false;
     this.pararReloj();
+    window.removeEventListener("scroll", this.handleScroll);
+  }
+
+  handleScroll() {
+    var d = document.documentElement;
+    var offset = d.scrollTop + window.innerHeight;
+    var height = d.offsetHeight;
+
+    if (offset >= height && this.state.moreVideos) {
+      this.loadMoreVideos(this.state.page);
+    }
+  }
+
+  loadMoreVideos(page) {
+    getVideosFromUploader(page, (videos, time) => {
+      if (this._isMounted) {
+        this.setState({
+          listaVideos: [...this.state.listaVideos, ...videos],
+          page: page + 1,
+          moreVideos: videos.length === 20
+        });
+      }
+    });
   }
 
   borrarVideo(id) {
