@@ -296,6 +296,12 @@
     background-color: #235da9;
     border-color: #235da9;
   }
+
+  .spin-login {
+    position: absolute;
+    top: 30px;
+    right: 100px;
+  }
 }
 
 @media screen and (max-width: 599px) {
@@ -329,7 +335,7 @@
   }
   .boton-login {
     position: relative;
-    width: 123px;
+    width: 150px;
     float: right;
     top: 15px;
     background-color: #235da9;
@@ -341,6 +347,12 @@
     float: right;
     background-color: #235da9;
     border-color: #235da9;
+  }
+
+  .spin-login {
+    position: absolute;
+    top: 24px;
+    right: 5px;
   }
 }
 
@@ -396,11 +408,17 @@
 
   .boton-signin-reg {
     position: relative;
-    width: 110px;
+    width: 150px;
     margin-top: 0px;
     background-color: #235da9;
     border-color: #235da9;
-    left: calc(100% - 29.5%);
+    left: calc(100% - 36.5%);
+  }
+
+  .spin-signin {
+    position: absolute;
+    top: 9px;
+    right: 5px;
   }
 }
 
@@ -446,11 +464,17 @@
 
   .boton-signin-reg {
     position: relative;
-    width: 110px;
+    width: 140px;
     margin-top: 0px;
     background-color: #235da9;
     border-color: #235da9;
-    left: calc(100% - 49.3%);
+    left: calc(100% - 58.3%);
+  }
+
+  .spin-signin {
+    position: absolute;
+    top: 9px;
+    right: 5px;
   }
 }
 
@@ -489,11 +513,17 @@
 
   .boton-signin-reg {
     position: relative;
-    width: 110px;
+    width: 140px;
     margin-top: 0px;
     background-color: #235da9;
     border-color: #235da9;
-    left: calc(100% - 185px);
+    left: calc(100% - 215px);
+  }
+
+  .spin-signin {
+    position: absolute;
+    top: 9px;
+    right: 5px;
   }
 }
 
@@ -1001,4 +1031,16 @@ h3 {
   color: #00000080;
   font-size: 11px;
   text-align: right;
+}
+
+.spin-subir-video {
+  position: absolute;
+  top: 582px;
+  right: 146px;
+}
+
+.spin-editar-perfil {
+  position: absolute;
+  top: 785px;
+  right: 146px;
 }

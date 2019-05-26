@@ -15,6 +15,7 @@
     "react-helmet": "^5.2.0",
     "react-horizontal-scrolling-menu": "^0.5.7",
     "react-icons": "^3.4.0",
+    "react-loading-spin": "^1.0.9",
     "react-player": "^1.9.3",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
