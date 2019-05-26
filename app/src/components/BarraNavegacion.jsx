@@ -11,19 +11,56 @@ import {
   checkNotification
 } from "../config/NotificationAPI";
 import { getTimePassed } from "../config/VideoAPI";
+import { getUser } from "../config/UserAPI";
+import { getSubjectById } from "../config/SubjectAPI";
 
 class Notificacion extends Component {
   constructor(props) {
     super(props);
+    this._isMounted = false;
     this.state = {
       unChecked: true,
       timeNow: this.props.now,
-      notif: this.props.notif
+      notif: this.props.notif,
+      mensaje: "",
+      mostrarSpin: true
     };
+    this.getUserNotif = this.getUserNotif.bind(this);
+    this.getSubjectNotif = this.getSubjectNotif.bind(this);
+  }
+
+  componentWillMount() {
+    this._isMounted = true;
+    if (isSignedIn()) {
+      if (this.props.notif.notificationCategory === "messages") {
+        this.getUserNotif();
+      } else {
+        this.getSubjectNotif();
+      }
+    }
+  }
+
+  getUserNotif() {
+    getUser(this.props.notif.creatorId, data => {
+      if (this._isMounted) {
+        this.setState({ mensaje: data.username, mostrarSpin: false });
+      }
+    });
+  }
+
+  getSubjectNotif() {
+    getSubjectById(this.props.notif.creatorId, data => {
+      if (this._isMounted) {
+        this.setState({ mensaje: data.name, mostrarSpin: false });
+      }
+    });
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render() {
-    console.log(this.state.notif);
     return (
       <div>
         {this.state.notif.notificationCategory === "videos" ? (
@@ -51,7 +88,9 @@ class Notificacion extends Component {
                 display: "inline-block"
               }}
             >
-              Nuevo vídeo subido
+              {this.state.mostrarSpin
+                ? "Cargando..."
+                : `Nuevo vídeo de ${this.state.mensaje}`}
             </span>
             <span
               style={{
@@ -60,8 +99,10 @@ class Notificacion extends Component {
                 fontSize: "12px"
               }}
             >
-              Hace{" "}
-              {getTimePassed(this.state.notif.timestamp, this.state.timeNow)}
+              {this.state.mostrarSpin
+                ? null
+                : `Hace 
+              ${getTimePassed(this.state.notif.timestamp, this.state.timeNow)}`}
             </span>
           </div>
         ) : (
@@ -83,7 +124,9 @@ class Notificacion extends Component {
                 visibility: this.state.unChecked ? "visible" : "hidden"
               }}
             />
-            Nuevo mensaje recibido
+            {this.state.mostrarSpin
+              ? "Cargando..."
+              : `Nuevo mensaje de ${this.state.mensaje}`}
             <span
               style={{
                 marginLeft: "10px",
@@ -91,8 +134,10 @@ class Notificacion extends Component {
                 fontSize: "12px"
               }}
             >
-              Hace{" "}
-              {getTimePassed(this.state.notif.timestamp, this.state.timeNow)}
+              {this.state.mostrarSpin
+                ? null
+                : `Hace 
+              ${getTimePassed(this.state.notif.timestamp, this.state.timeNow)}`}
             </span>
           </div>
         )}

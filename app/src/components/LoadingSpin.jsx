@@ -7,7 +7,7 @@ export const LoadingSpinUniCast = props => (
       duration="2s"
       width="2px"
       timingFunction="ease-in-out"
-      size="18px"
+      size={props.size === undefined ? "18px" : props.size}
       primaryColor="#235da9"
       secondaryColor="lightgrey"
     />
