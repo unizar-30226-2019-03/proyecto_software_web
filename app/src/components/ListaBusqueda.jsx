@@ -17,18 +17,28 @@ class MenuItem extends Component {
     this.cerrarPopUp = this.cerrarPopUp.bind(this);
     this.recibirHijo = this.recibirHijo.bind(this);
   }
-
+  /**
+   * Si anyadir=true, anyadir a la lista lista, sino borrar de la lista lista
+   * @param {lista} lista 
+   * @param {*} mensaje 
+   * @param {boolean} anyadir 
+   * @param {*} callback 
+   */
   recibirHijo(lista, mensaje, anyadir, callback) {
     //SI anyadir = true, anyadir a la lista lista, sino borrar de la lista lista
     this.props.anyadirALista(this.props.id, mensaje, lista, anyadir, ok => {
       callback(ok);
     });
   }
-
+  /**
+   * Pone popUp a true
+   */
   abrirPopUp() {
     this.setState({ popUp: true });
   }
-
+  /**
+   * Pone popUp y mostrarOpciones a false
+   */
   cerrarPopUp() {
     this.setState({ popUp: false, mostrarOpciones: false });
   }
@@ -256,7 +266,10 @@ class ListaBusqueda extends Component {
       this.props.actualizarListas
     );
   }
-
+  /**
+   * Asigna a menu el MenuVertical con las propiedades de newProps
+   * @param {*} newProps 
+   */
   componentWillReceiveProps(newProps) {
     this.menu = MenuVertical(
       newProps.lista,
