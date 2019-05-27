@@ -227,6 +227,11 @@ class FormularioProfeAsignatura extends React.Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
+   /**
+   * Busca todas las asignaturas de la universidad deseada.
+   * Si se ha realizado correctamente, actualiza asignaturas con dichas asignaturas, y asigna true a showAsig.
+   * Si la universidad no tiene un valor válido (es -1), asigna false a showAsig y a asignaturas un array vacío.
+   */
   handleChange(event) {
     //Buscar asignaturas según la universidad
     const uni = parseInt(event.target.value);
@@ -361,7 +366,9 @@ class AdministradorCrear extends Component {
       this.getData();
     }
   }
-
+  /**
+   * Pone _isMounted a false
+   */
   componentWillUnmount() {
     this._isMounted = false;
   }
@@ -384,21 +391,34 @@ class AdministradorCrear extends Component {
       });
     }
   }
-
+   /**
+   * Pone show a false
+   */
   handleClose() {
     this.setState({ show: false });
   }
-
+   /**
+   * Pone show a true
+   */
   handleShow() {
     this.setState({ show: true });
   }
-
+  /**
+   * Busca el usuario con id userID y lo convierte en profesor
+   * @param {*} event 
+   * @param {HTMLElement} form 
+   */
   handleProfesor(event, form) {
     event.preventDefault();
     const userID = this.userIDProf.current.value;
     hacerProfesor(userID, form, this.handleShow, this.UserApi);
   }
-
+  /**
+   * Si fotoUni es una imagen, crea una universidad con nombre nombreUnin, imagen fotoUni, 
+   * formulario de entrada form, API UniversityApi.
+   * @param {*} event 
+   * @param {HTMLElement} form 
+   */
   handleUniversidad(event, form) {
     event.preventDefault();
     if (checkFileExtensionImage(this.fotoUni.current.value)) {
@@ -422,7 +442,12 @@ class AdministradorCrear extends Component {
       alert("Debe introducir una imágen válida");
     }
   }
-
+  /**
+   * Si uniCarr es distinto a -1, si no existe la carrera de nombre nombreCarrera, la crea y la asocia a la universidad uniCarr.
+   * Si ya existía, asocia dicha carrera a la universidad.
+   * @param {*} event 
+   * @param {HTMLElement} form 
+   */
   handleCarrera(event, form) {
     event.preventDefault();
     const uni = parseInt(this.uniCarr.current.value);
@@ -434,7 +459,12 @@ class AdministradorCrear extends Component {
       this.handleShow();
     }
   }
-
+   /**
+   * Si no existe la asignatura nombreAsig, la crea y la asocia a la universidad
+   * uniAsig. Si ya existía, asocia dicha asignatura a la universidad uniAsig.
+   * @param {event} event 
+   * @param {HTMLElement} form 
+   */
   handleAsignatura(event, form) {
     event.preventDefault();
     const uni = parseInt(this.uniAsig.current.value);
@@ -446,7 +476,13 @@ class AdministradorCrear extends Component {
       this.handleShow();
     }
   }
-
+  /**
+   * Si uniUn es correcto (distinto de -1) y asignUn no es null, si existe el usuario userUn,
+   * asigna dicha asignatura a dicho usuario.
+   * @param {event} event 
+   * @param {HTMLElement} form 
+   * @param {*} that 
+   */
   handleProfeAsignatura(event, form, that) {
     event.preventDefault();
 

@@ -32,7 +32,10 @@ class Inicio extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.getData = this.getData.bind(this);
   }
-
+  /**
+   * Obtiene las asignaturas del usuario y obtiene los videos de esas asignaturas.
+   * Obtiene los videos recomendados para el usuario, y obtiene los videos que son tendencia.
+   */
   getData() {
     getSubjectsOfUser(getUserID(), data => {
       data.map((asig, index) => {
@@ -60,14 +63,20 @@ class Inicio extends Component {
       }
     });
   }
-
+  /**
+   * Pone _isMounted a true. Si el usuario esta loggeado,
+   * Obtiene las asignaturas del usuario y obtiene los videos de esas asignaturas.
+   * Obtiene los videos recomendados para el usuario, y obtiene los videos que son tendencia.
+   */
   componentWillMount() {
     this._isMounted = true;
     if (isSignedIn()) {
       this.getData();
     }
   }
-
+  /**
+   * Pone _isMounted a false.
+   */
   componentWillUnmount() {
     this._isMounted = false;
   }
