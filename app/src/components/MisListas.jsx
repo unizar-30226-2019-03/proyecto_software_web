@@ -288,7 +288,6 @@ class MisListas extends Component {
 
   ackLista() {
     const numACK = this.state.listasCargadas + 1;
-    console.log(numACK, this.state.numListas);
     if (numACK === this.state.numListas) {
       this.setState({ mostrarSpin: false });
     }

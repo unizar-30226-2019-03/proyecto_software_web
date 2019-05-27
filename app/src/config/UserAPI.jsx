@@ -249,6 +249,7 @@ export function getSubjectsOfUser(id, callback) {
     if (error) {
       console.error(error);
     } else {
+      data._embedded.subjects.sort((a, b) => a.name.localeCompare(b.name));
       callback(data._embedded.subjects);
     }
   });
