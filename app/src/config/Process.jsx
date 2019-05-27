@@ -130,6 +130,7 @@ export function parseNewMessages(newMessages, oldMessages) {
   } else {
     let i = 0;
     var aux = [];
+    console.log(newMessages, oldMessages);
     while (newMessages[i].id !== oldMessages[0].id) {
       aux.push(newMessages[i]);
       i++;

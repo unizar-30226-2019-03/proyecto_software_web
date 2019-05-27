@@ -42,7 +42,6 @@ class Chat extends Component {
       this.getAllFromSender(0, []);
       this.getAllSent(0, []);
       this.getUser();
-      this.iniciarReloj();
     }
   }
 
@@ -53,7 +52,19 @@ class Chat extends Component {
 
   componentDidUpdate() {
     if (this.state.update) {
+      this.pararReloj();
       this.mergeMessages();
+      this.iniciarReloj();
+    }
+  }
+
+  componentWillReceiveProps(newProps) {
+    if (this.props.match.params.id !== newProps.match.params.id) {
+      console.log("HEEY");
+      this.pararReloj();
+      this.getAllFromSender(0, []);
+      this.getAllSent(0, []);
+      this.getUser();
     }
   }
 
@@ -67,10 +78,12 @@ class Chat extends Component {
 
   getAllFromSender(page, messages) {
     if (messages.length < 20 * page) {
+      console.log("paramos", messages.length, page + 1);
       if (this._isMounted) {
         this.setState({ receivedMessages: messages });
       }
     } else {
+      console.log("seguimos");
       getMessagesFromSender(
         parseInt(this.props.match.params.id),
         page,
@@ -88,10 +101,12 @@ class Chat extends Component {
 
   getAllSent(page, messages) {
     if (messages.length < 20 * page) {
+      console.log("paramos", messages.length, page);
       if (this._isMounted) {
         this.setState({ sentMessages: messages, update: true });
       }
     } else {
+      console.log("seguimos");
       getMessagesToReceiver(
         parseInt(this.props.match.params.id),
         page,
@@ -198,6 +213,7 @@ class Chat extends Component {
           activar={""}
           displaySide={true}
           hide={false}
+          onChat={this.props.match.params.id}
         />
         <div
           className="transform"

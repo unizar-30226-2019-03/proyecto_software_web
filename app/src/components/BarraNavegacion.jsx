@@ -31,7 +31,6 @@ class Notificacion extends Component {
 
   componentWillMount() {
     this._isMounted = true;
-    console.log(this.props);
     if (isSignedIn()) {
       if (this.props.notif.notificationCategory === "messages") {
         this.getUserNotif();
@@ -183,15 +182,42 @@ class BarraNavegacion extends Component {
 
   getNotifications() {
     getUserUncheckedNotifications(0, (data, now) => {
-      if (this._isMounted) {
-        if (!this.state.displayNotif) {
-          this.setState({ unCheckedNotifications: data, timeNow: now });
-          if (data.length > 0) {
-            this.setState({ bolaNotif: true });
+      if (!this.state.displayNotif) {
+        if (this.props.onChat !== undefined) {
+          const idCreator = parseInt(this.props.onChat);
+          var newNotifications = [];
+          data.forEach(elmnt => {
+            const notif = elmnt.notification;
+            if (notif.notificationCategory !== "messages") {
+              newNotifications.push(elmnt);
+            } else {
+              if (notif.creatorId !== idCreator) {
+                newNotifications.push(elmnt);
+              } else {
+                //Check notification
+                checkNotification(notif.id);
+              }
+            }
+          });
+          if (this._isMounted) {
+            this.setState({
+              unCheckedNotifications: newNotifications,
+              timeNow: now
+            });
+            if (newNotifications.length > 0) {
+              this.setState({ bolaNotif: true });
+            }
+          }
+        } else {
+          if (this._isMounted) {
+            this.setState({ unCheckedNotifications: data, timeNow: now });
+            if (data.length > 0) {
+              this.setState({ bolaNotif: true });
+            }
           }
         }
-        this.iniciarReloj();
       }
+      this.iniciarReloj();
     });
   }
 
@@ -341,6 +367,7 @@ class BarraNavegacion extends Component {
                       visibility: !this.state.bolaNotif ? "hidden" : "visible"
                     }}
                   >
+                    {/*console.log(this.state.unCheckedNotifications)*/}
                     {this.state.unCheckedNotifications.length}
                   </span>
                 </div>

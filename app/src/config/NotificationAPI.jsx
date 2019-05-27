@@ -17,9 +17,13 @@ export function checkNotification(notificationId, callback) {
   apiInstance.checkNotification(notificationId, (error, data, response) => {
     if (error) {
       console.error(error);
-      callback(false);
+      if (callback !== undefined) {
+        callback(false);
+      }
     } else {
-      callback(true);
+      if (callback !== undefined) {
+        callback(true);
+      }
     }
   });
 }

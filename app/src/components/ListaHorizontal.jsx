@@ -177,13 +177,24 @@ const ArrowR = () => {
 class HMenuArr extends Component {
   constructor(props) {
     super(props);
+    this._isMounted = false;
     this.state = {
       menu: this.props.menu
     };
   }
 
+  componentWillMount() {
+    this._isMounted = true;
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
   componentWillReceiveProps(newProps) {
-    this.setState({ menu: newProps.menu });
+    if (this._isMounted) {
+      this.setState({ menu: newProps.menu });
+    }
   }
 
   render() {
