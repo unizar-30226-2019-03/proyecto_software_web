@@ -72,7 +72,11 @@ class Asignaturas extends Component {
   cambiaFiltro(e) {
     this.setState({ filtro: e.target.value.toLowerCase().trim() });
   }
-
+  /**
+   * Devuelve el array lista filtrado de la siguiente forma:
+   * o bien son la cadena vacía, o bien su nombre empieza por filtro.
+   * @param {Array} lista 
+   */
   filtrar(lista) {
     let asig = lista.filter(
       a => "" || a.name.toLowerCase().startsWith(this.state.filtro)

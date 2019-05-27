@@ -28,6 +28,11 @@ class Lista extends Component {
     this.cerrarPopUp = this.cerrarPopUp.bind(this);
   }
 
+  /**
+   * Asigna a listaVideos y a listasRepro, el historial y listasRepro
+   * de nextProps
+   * @param {*} nextProps 
+   */
   componentWillReceiveProps(nextProps) {
     this.setState({
       listaVideos: nextProps.historial,
@@ -35,10 +40,16 @@ class Lista extends Component {
     });
   }
 
+  /**
+   * Pone popUp a true
+   */
   abrirPopUp() {
     this.setState({ popUp: true });
   }
 
+  /**
+   * Pone popUp a false
+   */
   cerrarPopUp() {
     this.setState({ popUp: false });
   }
@@ -328,6 +339,11 @@ class ListaConcreta extends Component {
     });
   }
 
+  /**
+   * Obtiene las listas de reproducción del usuario, y si
+   * _isMounted=true, coloca la lista de reproducción de 
+   * favoritos primero, y se la asigna a listasRepro.
+   */
   getReproductionLists() {
     getUserReproductionLists(data => {
       if (this._isMounted) {
@@ -337,6 +353,10 @@ class ListaConcreta extends Component {
     });
   }
 
+  /**
+   * Borra la lista de reproducción con id idLista. Si se ha realizado
+   * correctamente pone borradoCompleto a true.
+   */
   borrarLista() {
     //Borrar la lista en el servidor
     deleteReproductionList(this.state.idLista, ok => {
