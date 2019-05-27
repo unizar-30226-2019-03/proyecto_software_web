@@ -65,8 +65,7 @@ class Lista extends Component {
       lista: {},
       videos: [],
       timeNow: new Date(),
-      popUp: false,
-      mostrarSpin: true
+      popUp: false
     };
     this.abrirPopUp = this.abrirPopUp.bind(this);
 
@@ -75,12 +74,12 @@ class Lista extends Component {
 
   getData(list) {
     getVideosFromReproductionList(list.id, 0, (data, now) => {
+      this.props.loadACK();
       if (this._isMounted) {
         this.setState({
           lista: list,
           videos: data,
-          timeNow: now,
-          mostrarSpin: false
+          timeNow: now
         });
       }
     });
@@ -136,62 +135,64 @@ class Lista extends Component {
               marginLeft: "10px",
               marginTop: "-5px"
             }}
-          > {this.state.lista.name === "Favoritos" ? null :
-            <Popup
-              open={this.state.popUp}
-              onOpen={this.abrirPopUp}
-              arrow={false}
-              position={"bottom left"}
-              contentStyle={{
-                width: "250px",
-                maxHeight: "300px",
-                overflow: "scroll",
-                padding: "16px 20px",
-                marginTop: "10px",
-                border: "0",
-                zIndex: "1000",
-                boxShadow:
-                  "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4)"
-              }}
-              repositionOnResize
-              trigger={
-                <div style={{ cursor: "pointer" }}>
-                  <FaRegTrashAlt className="icono-lista" />
+          >
+            {" "}
+            {this.state.lista.name === "Favoritos" ? null : (
+              <Popup
+                open={this.state.popUp}
+                onOpen={this.abrirPopUp}
+                arrow={false}
+                position={"bottom left"}
+                contentStyle={{
+                  width: "250px",
+                  maxHeight: "300px",
+                  overflow: "scroll",
+                  padding: "16px 20px",
+                  marginTop: "10px",
+                  border: "0",
+                  zIndex: "1000",
+                  boxShadow:
+                    "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4)"
+                }}
+                repositionOnResize
+                trigger={
+                  <div style={{ cursor: "pointer" }}>
+                    <FaRegTrashAlt className="icono-lista" />
+                  </div>
+                }
+              >
+                <div style={{ padding: "5px 10px" }}>
+                  <div
+                    style={{
+                      fontWeight: "550",
+                      fontSize: "16px",
+                      borderBottom: "1px solid lightgrey"
+                    }}
+                  >
+                    ¿Estás seguro?
+                  </div>
+                  <div style={{ fontSize: "13px", paddingTop: "10px" }}>
+                    Una vez eliminada no habrá vuelta atrás.
+                  </div>
+                  <div
+                    style={{
+                      color: "red",
+                      fontSize: "14px",
+                      paddingTop: "10px",
+                      width: "fit-content",
+                      height: "fit-content",
+                      cursor: "pointer"
+                    }}
+                    onClick={() => {
+                      this.cerrarPopUp();
+                      this.props.borrar(this.state.lista);
+                    }}
+                  >
+                    Sí, eliminar
+                  </div>
                 </div>
-              }
-            >
-              <div style={{ padding: "5px 10px" }}>
-                <div
-                  style={{
-                    fontWeight: "550",
-                    fontSize: "16px",
-                    borderBottom: "1px solid lightgrey"
-                  }}
-                >
-                  ¿Estás seguro?
-                </div>
-                <div style={{ fontSize: "13px", paddingTop: "10px" }}>
-                  Una vez eliminada no habrá vuelta atrás.
-                </div>
-                <div
-                  style={{
-                    color: "red",
-                    fontSize: "14px",
-                    paddingTop: "10px",
-                    width: "fit-content",
-                    height: "fit-content",
-                    cursor: "pointer"
-                  }}
-                  onClick={() => {
-                    this.cerrarPopUp();
-                    this.props.borrar(this.state.lista);
-                  }}
-                >
-                  Sí, eliminar
-                </div>
-              </div>
-            </Popup>
-          }
+              </Popup>
+            )}
           </div>
           {this.state.videos.length === 0 ? null : (
             <div style={{ marginRight: "0", marginLeft: "auto" }}>
@@ -206,9 +207,7 @@ class Lista extends Component {
             </div>
           )}
         </div>
-        {this.state.mostrarSpin ? (
-          <LoadingSpinUniCast className="spin-ranking" />
-        ) : this.state.videos.length === 0 ? (
+        {this.state.videos.length === 0 ? (
           <div
             style={{
               width: "93.45%",
@@ -245,12 +244,15 @@ class MisListas extends Component {
       misListas: [],
       listaCreada: null,
       deshacer: true,
-      mostrarSpin: true
+      mostrarSpin: true,
+      numListas: 0,
+      listasCargadas: 0
     };
     this.nombreLista = React.createRef();
     this.getData = this.getData.bind(this);
     this.crearLista = this.crearLista.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.ackLista = this.ackLista.bind(this);
     this.abrirPopUp = this.abrirPopUp.bind(this);
     this.cerrarPopUp = this.cerrarPopUp.bind(this);
     this.deshacer = this.deshacer.bind(this);
@@ -276,9 +278,21 @@ class MisListas extends Component {
     getUserReproductionLists(data => {
       if (this._isMounted) {
         const sortedData = putFavouritesFirst(data);
-        this.setState({ misListas: sortedData, mostrarSpin: false });
+        this.setState({
+          misListas: sortedData,
+          numListas: sortedData.length
+        });
       }
     });
+  }
+
+  ackLista() {
+    const numACK = this.state.listasCargadas + 1;
+    console.log(numACK, this.state.numListas);
+    if (numACK === this.state.numListas) {
+      this.setState({ mostrarSpin: false });
+    }
+    this.setState({ listasCargadas: numACK });
   }
 
   handleChange(display) {
@@ -449,13 +463,29 @@ class MisListas extends Component {
                 </div>
               </Popup>
             </div>
-            {this.state.mostrarSpin ? (
+            <div
+              style={{
+                display: this.state.mostrarSpin ? "block" : "none"
+              }}
+            >
               <LoadingSpinUniCast className="spin-ranking" />
-            ) : (
-              this.state.misListas.map(e => {
-                return <Lista list={e} key={e.id} borrar={this.borrarLista} />;
-              })
-            )}
+            </div>
+            <div
+              style={{
+                visibility: this.state.mostrarSpin ? "hidden" : "visible"
+              }}
+            >
+              {this.state.misListas.map(e => {
+                return (
+                  <Lista
+                    list={e}
+                    key={e.id}
+                    borrar={this.borrarLista}
+                    loadACK={this.ackLista}
+                  />
+                );
+              })}
+            </div>
             <Notificacion
               mostrar={this.state.notif}
               mensaje={this.state.mensajeNotif}
