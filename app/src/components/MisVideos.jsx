@@ -267,7 +267,8 @@ class MisVideos extends Component {
       tiempoNotif: 0,
       page: 0,
       moreVideos: false,
-      mostrarSpin: true
+      mostrarSpin: true,
+      mostrarSpinFoto: true
     };
     this.getData = this.getData.bind(this);
     this.handleScroll = this.handleScroll.bind(this);
@@ -279,6 +280,11 @@ class MisVideos extends Component {
   }
 
   getData() {
+    getUser(getUserID(), data => {
+      if (this._isMounted) {
+        this.setState({ user: data, mostrarSpinFoto: false });
+      }
+    });
     getVideosFromUploader(0, (videos, time) => {
       if (this._isMounted) {
         this.setState({
@@ -288,11 +294,6 @@ class MisVideos extends Component {
           moreVideos: videos.length === 20,
           mostrarSpin: false
         });
-      }
-    });
-    getUser(getUserID(), data => {
-      if (this._isMounted) {
-        this.setState({ user: data });
       }
     });
   }
@@ -415,13 +416,17 @@ class MisVideos extends Component {
         >
           <div className="cabecera-asignatura">
             <div className="titulo-asignatura">
-              <img
-                src={this.state.user.photo}
-                alt="icono asignatura"
-                style={{ marginRight: "25px", borderRadius: "50%" }}
-                width="60"
-                height="60"
-              />
+              {this.state.mostrarSpinFoto ? (
+                <LoadingSpinUniCast className="spin-notif" />
+              ) : (
+                <img
+                  src={this.state.user.photo}
+                  alt="icono asignatura"
+                  style={{ marginRight: "25px", borderRadius: "50%" }}
+                  width="60"
+                  height="60"
+                />
+              )}
               Vídeos subidos
             </div>
             <div className="universidad">

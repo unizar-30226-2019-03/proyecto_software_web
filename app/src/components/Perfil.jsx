@@ -9,6 +9,7 @@ import {
   getUniversityOfUser,
   getDegreeOfUser
 } from "../config/UserAPI";
+import { LoadingSpinUniCast } from "./LoadingSpin";
 
 class CamposMostrar extends Component {
   renderCampo(nombre, contenido) {
@@ -68,7 +69,8 @@ class Perfil extends Component {
       passValida: -1,
       user: {},
       uni: {},
-      degree: {}
+      degree: {},
+      mostrarSpin: true
     };
     this.pass = React.createRef();
     this.getData = this.getData.bind(this);
@@ -109,7 +111,7 @@ class Perfil extends Component {
   getDegreeFromUser(id) {
     getDegreeOfUser(id, data => {
       if (this._isMounted) {
-        this.setState({ degree: data });
+        this.setState({ degree: data, mostrarSpin: false });
       }
     });
   }
@@ -155,86 +157,92 @@ class Perfil extends Component {
             marginTop: "80px"
           }}
         >
-          <h5>{`${this.state.user.name} ${this.state.user.surnames}`}</h5>
-          <div>
-            <div style={{ marginTop: "40px" }}>
-              <div
-                style={{
-                  float: "left",
-                  padding: "0 60px 0 0"
-                }}
-              >
-                <img
-                  src={this.state.user.photo}
-                  alt="Foto de perfil"
-                  width="160px"
-                  height="160px"
-                  style={{ borderRadius: "50%" }}
-                />
-              </div>
+          {this.state.mostrarSpin ? (
+            <LoadingSpinUniCast className="spin-ranking" />
+          ) : (
+            <div>
+              <h5>{`${this.state.user.name} ${this.state.user.surnames}`}</h5>
               <div>
-                <div
-                  style={{
-                    padding: "20px 20px 0px 0px",
-                    float: "left",
-                    marginBottom: "10px"
-                  }}
-                >
-                  <Link to="/editar-perfil" className="universidad">
-                    <Button className="boton-filtro">Editar perfil</Button>
-                  </Link>
-                </div>
-                {this.state.user.role === "ROLE_PROFESSOR" ? (
+                <div style={{ marginTop: "40px" }}>
                   <div
-                    style={{
-                      padding: "20px 20px 0px 0px"
-                    }}
-                  >
-                    <Link to="/subir-video" className="universidad">
-                      <Button className="boton-filtro">Subir vídeo</Button>
-                    </Link>
-                  </div>
-                ) : (
-                  <div
-                    style={{
-                      padding: "20px 20px 0px 0px",
-                      visibility: "hidden"
-                    }}
-                  >
-                    a
-                  </div>
-                )}
-
-                <div
-                  style={{
-                    padding: "40px 20px 0px 0px"
-                  }}
-                >
-                  <h6
                     style={{
                       float: "left",
-                      padding: "0 20px 0 0"
+                      padding: "0 60px 0 0"
                     }}
                   >
-                    <strong>Nombre de usuario:</strong>
-                  </h6>
-                  <p>{this.state.user.username}</p>
+                    <img
+                      src={this.state.user.photo}
+                      alt="Foto de perfil"
+                      width="160px"
+                      height="160px"
+                      style={{ borderRadius: "50%" }}
+                    />
+                  </div>
+                  <div>
+                    <div
+                      style={{
+                        padding: "20px 20px 0px 0px",
+                        float: "left",
+                        marginBottom: "10px"
+                      }}
+                    >
+                      <Link to="/editar-perfil" className="universidad">
+                        <Button className="boton-filtro">Editar perfil</Button>
+                      </Link>
+                    </div>
+                    {this.state.user.role === "ROLE_PROFESSOR" ? (
+                      <div
+                        style={{
+                          padding: "20px 20px 0px 0px"
+                        }}
+                      >
+                        <Link to="/subir-video" className="universidad">
+                          <Button className="boton-filtro">Subir vídeo</Button>
+                        </Link>
+                      </div>
+                    ) : (
+                      <div
+                        style={{
+                          padding: "20px 20px 0px 0px",
+                          visibility: "hidden"
+                        }}
+                      >
+                        a
+                      </div>
+                    )}
+
+                    <div
+                      style={{
+                        padding: "40px 20px 0px 0px"
+                      }}
+                    >
+                      <h6
+                        style={{
+                          float: "left",
+                          padding: "0 20px 0 0"
+                        }}
+                      >
+                        <strong>Nombre de usuario:</strong>
+                      </h6>
+                      <p>{this.state.user.username}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
+              <div style={{ marginTop: "80px" }}>
+                <CamposMostrar
+                  description={this.state.user.description}
+                  uni={this.state.uni.name}
+                  degree={this.state.degree.name}
+                />
+              </div>
+              <div
+                style={{
+                  padding: "30px 20px 0px 0px"
+                }}
+              />
             </div>
-          </div>
-          <div style={{ marginTop: "80px" }}>
-            <CamposMostrar
-              description={this.state.user.description}
-              uni={this.state.uni.name}
-              degree={this.state.degree.name}
-            />
-          </div>
-          <div
-            style={{
-              padding: "30px 20px 0px 0px"
-            }}
-          />
+          )}
         </div>
       </div>
     );

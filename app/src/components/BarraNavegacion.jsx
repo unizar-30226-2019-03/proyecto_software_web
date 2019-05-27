@@ -31,6 +31,7 @@ class Notificacion extends Component {
 
   componentWillMount() {
     this._isMounted = true;
+    console.log(this.props);
     if (isSignedIn()) {
       if (this.props.notif.notificationCategory === "messages") {
         this.getUserNotif();
@@ -269,15 +270,15 @@ class BarraNavegacion extends Component {
     });
   }
   /**
-  * Pone el reloj a 0 y lo inicia
-  */
+   * Pone el reloj a 0 y lo inicia
+   */
   iniciarReloj() {
     this.pararReloj();
     this.timerID = setInterval(() => this.tick(), 1000);
   }
-/**
- * Detiene la ejecución del reloj
- */
+  /**
+   * Detiene la ejecución del reloj
+   */
   pararReloj() {
     clearInterval(this.timerID);
   }

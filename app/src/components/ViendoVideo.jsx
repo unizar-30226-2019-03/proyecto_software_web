@@ -51,6 +51,7 @@ import {
   EmailShareButton,
   EmailIcon
 } from "react-share";
+import { LoadingSpinUniCast } from "./LoadingSpin";
 
 const StarRating = ({ nombre, puntuacion, onStarClick, size }) => {
   return (
@@ -139,7 +140,9 @@ class ViendoVideo extends Component {
       page: 0,
       siguiendoAsig: false,
       tiempoInicial: 0,
-      profesores: []
+      profesores: [],
+      mostrarSpinIcono: true,
+      mostrarSpinProfesores: true
     };
     this.getData = this.getData.bind(this);
     this.getReproductionLists = this.getReproductionLists.bind(this);
@@ -181,7 +184,8 @@ class ViendoVideo extends Component {
                   asig: video.subject,
                   university: video.university,
                   timeNow: time,
-                  tiempoInicial: 0
+                  tiempoInicial: 0,
+                  mostrarSpinIcono: false
                 });
               } else {
                 this.setState({
@@ -189,7 +193,8 @@ class ViendoVideo extends Component {
                   asig: video.subject,
                   university: video.university,
                   timeNow: time,
-                  tiempoInicial: data.secsFromBeg
+                  tiempoInicial: data.secsFromBeg,
+                  mostrarSpinIcono: false
                 });
               }
             }
@@ -197,7 +202,10 @@ class ViendoVideo extends Component {
             this.setState({
               video: video,
               timeNow: time,
-              tiempoInicial: 0
+              asig: video.subject,
+              university: video.university,
+              tiempoInicial: 0,
+              mostrarSpinIcono: false
             });
           }
         });
@@ -216,11 +224,11 @@ class ViendoVideo extends Component {
     });
   }
   /**
-   * para cada comentario cuyo tiempo esta entre tiempoInicio y tiempoFin, 
-   * si no esta incluido en la Lista lista, lo añade 
-   * @param {Number} tiempoInicio 
-   * @param {Number} tiempoFin 
-   * @param {Array} lista 
+   * para cada comentario cuyo tiempo esta entre tiempoInicio y tiempoFin,
+   * si no esta incluido en la Lista lista, lo añade
+   * @param {Number} tiempoInicio
+   * @param {Number} tiempoFin
+   * @param {Array} lista
    */
   recogerComentarios(tiempoInicio, tiempoFin, lista) {
     const res = this.state.totalComentarios.filter(
@@ -248,7 +256,7 @@ class ViendoVideo extends Component {
   }
   /**
    * Almacena en comentarios todos los nuevos comentarios del video
-   * @param {estado} estado 
+   * @param {estado} estado
    */
   recibirEstadoVideo(estado) {
     var nuevosComentarios = this.state.comentarios.slice();
@@ -326,9 +334,9 @@ class ViendoVideo extends Component {
     });
   }
   /**
-   * Asigna a asig la asignatura del video, y si la asignatura no está en la lista de asignaturas del usuario, 
+   * Asigna a asig la asignatura del video, y si la asignatura no está en la lista de asignaturas del usuario,
    * es decir, no la sigue, pone siguiendoAsig a false; en caso contrario lo pone a true
-   * @param {video} video 
+   * @param {video} video
    */
   obtenerAsignaturaUni(asig) {
     getProfessorsFromSubject(asig.id, data => {
@@ -342,7 +350,10 @@ class ViendoVideo extends Component {
       });
       //Si no la ha encontrado -> No sigue la asignatura
       if (this._isMounted) {
-        this.setState({ siguiendoAsig: found === undefined ? false : true });
+        this.setState({
+          siguiendoAsig: found === undefined ? false : true,
+          mostrarSpinProfesores: false
+        });
       }
     });
   }
@@ -363,7 +374,7 @@ class ViendoVideo extends Component {
   /**
    * Cuando se haya pulsado enter, si el nuevo comentario no es vacío,
    * añade el nuevo comentario y lo sube al servidor
-   * @param {Event} e 
+   * @param {Event} e
    */
   comentar(e) {
     const comentario = this.comentario.current.value;
@@ -386,10 +397,10 @@ class ViendoVideo extends Component {
   /**
    * Si anyadir=true, añade el video al lsita lista; en caso contrario, lo borra. Asigna a notif el valor de mostrar
    * y a mensajeNotif el valor de mensaje e inicia el reloj.
-   * @param {boolean} mostrar 
-   * @param {lista} lista 
-   * @param {mensaje} mensaje 
-   * @param {boolean} anyadir 
+   * @param {Number} idLista ID de la lista de reproducción
+   * @param {String} mensaje Mensaje a mostrar en el popup informativo
+   * @param {boolean} anyadir True si añadir a la lista, false si borrar de la lista
+   * @param {Function} callback Función a ejecutar para mostrar el feedback
    */
   guardarVideo(idLista, mensaje, anyadir, callback) {
     const idVideo = this.state.video.id;
@@ -430,7 +441,7 @@ class ViendoVideo extends Component {
     }
     this.iniciarReloj();
   }
-   /**
+  /**
    * Pone el reloj a 0 y lo inicia
    */
   iniciarReloj() {
@@ -896,38 +907,56 @@ class ViendoVideo extends Component {
             </div>
             <div className="datos-video">
               <div style={{ display: "flex", marginBottom: "20px" }}>
-                <Link to={`/asig/${this.state.asig.id}`}>
-                  <img
-                    src={this.state.university.photo}
-                    style={{ borderRadius: "50%" }}
-                    height="40"
-                    width="40"
-                    alt="Canal"
-                  />
-                </Link>
-                <Link
-                  className="nombre-canal"
-                  to={`/asig/${this.state.asig.id}`}
-                >
-                  {this.state.asig.name}
-                </Link>
-                <Button className="boton-seguir" onClick={this.seguirAsig}>
-                  {this.state.siguiendoAsig
-                    ? "DEJAR DE SEGUIR"
-                    : "SEGUIR ASIGNATURA"}
-                </Button>
+                {this.state.mostrarSpinIcono ? (
+                  <LoadingSpinUniCast className="nombre-canal" />
+                ) : (
+                  <div>
+                    <Link to={`/asig/${this.state.asig.id}`}>
+                      <img
+                        src={this.state.university.photo}
+                        style={{ borderRadius: "50%" }}
+                        height="40"
+                        width="40"
+                        alt="Canal"
+                      />
+                    </Link>
+                    <Link
+                      className="nombre-canal"
+                      to={`/asig/${this.state.asig.id}`}
+                    >
+                      {this.state.asig.name}
+                    </Link>
+                  </div>
+                )}
+                {this.state.mostrarSpinProfesores ? (
+                  <div style={{ marginRight: "0", marginLeft: "auto" }}>
+                    <LoadingSpinUniCast />
+                  </div>
+                ) : (
+                  <Button className="boton-seguir" onClick={this.seguirAsig}>
+                    {this.state.siguiendoAsig
+                      ? "DEJAR DE SEGUIR"
+                      : "SEGUIR ASIGNATURA"}
+                  </Button>
+                )}
               </div>
               <div style={{ marginLeft: "48px" }}>
                 <p style={{ fontSize: "15px" }}>
                   {this.state.video.description}
                 </p>
               </div>
-              <div style={{ marginLeft: "48px" }}>
-                <p style={{ fontWeight: "550" }}>Profesores de la asignatura</p>
-                <div style={{ display: "flex" }}>
-                  {ListaProfesores(this.state.profesores)}
+              {this.state.mostrarSpinProfesores ? (
+                <LoadingSpinUniCast className="spin-ranking" />
+              ) : (
+                <div style={{ marginLeft: "48px" }}>
+                  <p style={{ fontWeight: "550" }}>
+                    Profesores de la asignatura
+                  </p>
+                  <div style={{ display: "flex" }}>
+                    {ListaProfesores(this.state.profesores)}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
           <div

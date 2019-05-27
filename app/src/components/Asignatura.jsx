@@ -67,7 +67,8 @@ class Asignatura extends Component {
       timeNow: new Date(),
       moreVideos: false,
       updateSubject: false,
-      mostrarSpin: true
+      mostrarSpin: true,
+      mostrarSpinFoto: true
     };
     this.seguirAsig = this.seguirAsig.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -86,7 +87,7 @@ class Asignatura extends Component {
     });
     getSubjectById(subjectId, data => {
       if (this._isMounted) {
-        this.setState({ asig: data });
+        this.setState({ asig: data, mostrarSpinFoto: false });
       }
       getSubjectsOfUser(getUserID(), subjects => {
         const found = subjects.find(s => {
@@ -252,16 +253,20 @@ class Asignatura extends Component {
           }}
         >
           <div className="cabecera-asignatura">
-            <div className="titulo-asignatura">
-              <img
-                src={photo}
-                alt="icono asignatura"
-                style={{ marginRight: "25px", borderRadius: "50%" }}
-                width="60"
-                height="60"
-              />
-              {nombreAsig}
-            </div>
+            {this.state.mostrarSpinFoto ? (
+              <LoadingSpinUniCast className="titulo-asignatura" />
+            ) : (
+              <div className="titulo-asignatura">
+                <img
+                  src={photo}
+                  alt="icono asignatura"
+                  style={{ marginRight: "25px", borderRadius: "50%" }}
+                  width="60"
+                  height="60"
+                />
+                {nombreAsig}
+              </div>
+            )}
             <div className="universidad">
               <Button
                 onClick={this.seguirAsig}

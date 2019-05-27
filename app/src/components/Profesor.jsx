@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet";
 import User_img from "../assets/user.png";
 import { Button } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
-import { isSignedIn, getUserRole } from "../config/Auth";
+import { isSignedIn, getUserRole, getUserID } from "../config/Auth";
 import {
   getUser,
   getUniversityOfUser,
@@ -12,6 +12,7 @@ import {
   getSubjectsAsProfessor,
   findUserProfessors
 } from "../config/UserAPI";
+import { LoadingSpinUniCast } from "./LoadingSpin";
 
 class CamposMostrar extends Component {
   renderCampo(nombre, contenido) {
@@ -128,7 +129,8 @@ class Profesor extends Component {
       prof: "",
       sub: [],
       esProfe: false,
-      profesores: []
+      profesores: [],
+      mostrarSpin: true
     };
     this.getData = this.getData.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -185,7 +187,7 @@ class Profesor extends Component {
         }
       });
       if (this._isMounted) {
-        this.setState({ esProfe: esProfe });
+        this.setState({ esProfe: esProfe, mostrarSpin: false });
       }
     } else {
       findUserProfessors(page, data => {
@@ -282,51 +284,60 @@ class Profesor extends Component {
             marginTop: "80px"
           }}
         >
-          <h5>
-            {nombre} {apellidos}
-          </h5>
-          <div style={{ marginTop: "40px" }}>
-            <div
-              style={{
-                float: "left",
-                padding: "0 60px 0 0"
-              }}
-            >
-              <img
-                src={foto}
-                alt="Foto de perfil"
-                width="160px"
-                height="160px"
-                style={{ borderRadius: "50%" }}
-              />
-            </div>
-            <div
-              style={{
-                padding: "20px 20px 0px 0px"
-              }}
-            >
-              {this.renderButton(this.state.esProfe)}
-
-              <div
-                style={{
-                  padding: "40px 20px 0px 0px"
-                }}
-              >
-                <h6
+          {this.state.mostrarSpin ? (
+            <LoadingSpinUniCast className="spin-ranking" />
+          ) : (
+            <div>
+              <h5>
+                {nombre} {apellidos}
+              </h5>
+              <div style={{ marginTop: "40px" }}>
+                <div
                   style={{
                     float: "left",
-                    padding: "0 20px 0 0"
+                    padding: "0 60px 0 0"
                   }}
                 >
-                  <strong>Nombre de usuario:</strong>
-                </h6>
-                <p>{user_nom}</p>
+                  <img
+                    src={foto}
+                    alt="Foto de perfil"
+                    width="160px"
+                    height="160px"
+                    style={{ borderRadius: "50%" }}
+                  />
+                </div>
+                <div
+                  style={{
+                    padding: "20px 20px 0px 0px"
+                  }}
+                >
+                  {parseInt(this.props.match.params.id) === getUserID() &&
+                  this.state.esProfe
+                    ? null
+                    : this.renderButton(this.state.esProfe)}
+
+                  <div
+                    style={{
+                      padding: "40px 20px 0px 0px"
+                    }}
+                  >
+                    <h6
+                      style={{
+                        float: "left",
+                        padding: "0 20px 0 0"
+                      }}
+                    >
+                      <strong>Nombre de usuario:</strong>
+                    </h6>
+                    <p>{user_nom}</p>
+                  </div>
+                </div>
               </div>
+              <br />
+              <CamposMostrar description={descr} uni={uni} degree={degree} />
+              <AsignaturasProf sub={this.state.sub} />
             </div>
-          </div>
-          <br />
-          <CamposMostrar description={descr} uni={uni} degree={degree} />
-          <AsignaturasProf sub={this.state.sub} />
+          )}
         </div>
       </div>
     );
