@@ -14,6 +14,7 @@ import {
   addVideotoReproductionList,
   deleteVideoFromReproductionList
 } from "../config/ReproductionListAPI";
+import { LoadingSpinUniCast } from "./LoadingSpin";
 
 class ResultadoBusqueda extends Component {
   constructor(props) {
@@ -29,7 +30,8 @@ class ResultadoBusqueda extends Component {
       notif: false,
       mensajeNotif: "",
       asignaturas: false,
-      timeNow: new Date()
+      timeNow: new Date(),
+      mostrarSpin: true
     };
     this.handleChange = this.handleChange.bind(this);
     this.anyadirVideoALista = this.anyadirVideoALista.bind(this);
@@ -59,7 +61,7 @@ class ResultadoBusqueda extends Component {
     });
     findSubjectsContainingName(titulo, data => {
       if (this._isMounted) {
-        this.setState({ listaAsignaturas: data });
+        this.setState({ listaAsignaturas: data, mostrarSpin: false });
       }
     });
   }
@@ -219,7 +221,9 @@ class ResultadoBusqueda extends Component {
               </div>
             </div>
             {!this.state.asignaturas ? (
-              this.state.lista.length > 0 ? (
+              this.state.mostrarSpin ? (
+                <LoadingSpinUniCast className="spin-ranking" />
+              ) : this.state.lista.length > 0 ? (
                 <ListaBusqueda
                   lista={this.state.lista}
                   anyadirALista={this.anyadirVideoALista}
@@ -233,6 +237,8 @@ class ResultadoBusqueda extends Component {
                   nombre por el que buscar.
                 </div>
               )
+            ) : this.state.mostrarSpin ? (
+              <LoadingSpinUniCast className="spin-ranking" />
             ) : this.state.listaAsignaturas.length > 0 ? (
               <BusquedaAsignaturas lista={this.state.listaAsignaturas} />
             ) : (

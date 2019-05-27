@@ -140,6 +140,7 @@ class Asignatura extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    this.setState({ mostrarSpin: true });
     this.getData(parseInt(nextProps.match.params.id));
   }
 
@@ -301,7 +302,9 @@ class Asignatura extends Component {
             </div>
             <div className="profesores-asignatura" style={{ flex: "15%" }}>
               <div className="tit-prof">Profesorado</div>
-              {this.state.profesores.length === 0 ? (
+              {this.state.mostrarSpin ? (
+                <LoadingSpinUniCast className="spin-ranking" />
+              ) : this.state.profesores.length === 0 ? (
                 <div
                   style={{
                     color: "#00000080",
