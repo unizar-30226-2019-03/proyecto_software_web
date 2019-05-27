@@ -31,7 +31,7 @@ class Lista extends Component {
   /**
    * Asigna a listaVideos y a listasRepro, el historial y listasRepro
    * de nextProps
-   * @param {*} nextProps 
+   * @param {*} nextProps
    */
   componentWillReceiveProps(nextProps) {
     this.setState({
@@ -341,7 +341,7 @@ class ListaConcreta extends Component {
 
   /**
    * Obtiene las listas de reproducción del usuario, y si
-   * _isMounted=true, coloca la lista de reproducción de 
+   * _isMounted=true, coloca la lista de reproducción de
    * favoritos primero, y se la asigna a listasRepro.
    */
   getReproductionLists() {
@@ -565,7 +565,7 @@ class ListaConcreta extends Component {
         ) : (
           <div>
             <Helmet>
-              <title>Lista | UniCast</title>
+              <title>{`${this.state.nombreLista} | UniCast`}</title>
               <style>{"body { background-color: #fafafa; }"}</style>
             </Helmet>
             <BarraNavegacion

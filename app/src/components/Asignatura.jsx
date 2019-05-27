@@ -235,7 +235,7 @@ class Asignatura extends Component {
     ) : (
       <div>
         <Helmet>
-          <title>Asignatura | UniCast</title>
+          <title>{`${this.state.asig.name} | UniCast`}</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         <BarraNavegacion

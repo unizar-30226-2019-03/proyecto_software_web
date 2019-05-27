@@ -572,7 +572,7 @@ class ViendoVideo extends Component {
     ) : (
       <div>
         <Helmet>
-          <title>Vídeo | UniCast</title>
+          <title>{`${this.state.video.title} | UniCast`}</title>
           <style>{"body { background-color: #fafafa; }"}</style>
         </Helmet>
         <BarraNavegacion
