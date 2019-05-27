@@ -289,8 +289,7 @@ class Inicio extends Component {
                     </div>
                   </Link>
                 </div>
-                {this.state.videosAsignatura[index] === undefined ||
-                this.state.videosAsignatura[index].length === 0 ? (
+                {this.state.videosAsignatura[index] === undefined ? (
                   <div
                     style={{
                       color: "#00000080",
@@ -304,6 +303,21 @@ class Inicio extends Component {
                     }}
                   >
                     <LoadingSpinUniCast className="spin-inicio" />
+                  </div>
+                ) : this.state.videosAsignatura[index].length === 0 ? (
+                  <div
+                    style={{
+                      color: "#00000080",
+                      padding: "10px",
+                      fontSize: "14px",
+                      textAlign: "left",
+                      marginBottom: "50px",
+                      borderBottom: "1px solid lightgrey",
+                      width: "93.45%"
+                    }}
+                  >
+                    En estos momentos no hay ningún vídeo subido de esta
+                    asignatura.
                   </div>
                 ) : (
                   <ListaHorizontal
