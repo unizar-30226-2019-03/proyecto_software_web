@@ -33,7 +33,13 @@ class BarraLateral extends Component {
 
   componentWillReceiveProps(newProps) {
     this.setState({ activar: newProps.show });
-    this.getData();
+    if (
+      newProps.updateSubject !== undefined &&
+      newProps.updateSubject === true &&
+      this.props.updateSubject === false
+    ) {
+      this.getData();
+    }
   }
 
   active(name) {

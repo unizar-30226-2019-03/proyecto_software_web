@@ -8,6 +8,7 @@ import { FaTrophy } from "react-icons/fa";
 import { isSignedIn, getUserRole } from "../config/Auth";
 import { getSubjectRanking } from "../config/SubjectAPI";
 import { getScore } from "../config/VideoAPI";
+import { LoadingSpinUniCast } from "./LoadingSpin";
 
 class ItemAsignatura extends Component {
   render() {
@@ -81,7 +82,8 @@ class Rankings extends Component {
     this.state = {
       contentMargin: "300px",
       filtro: "",
-      asignaturas: []
+      asignaturas: [],
+      mostrarSpin: true
     };
     this.handleChange = this.handleChange.bind(this);
     this.cambiaFiltro = this.cambiaFiltro.bind(this);
@@ -96,7 +98,7 @@ class Rankings extends Component {
         return a;
       });
       if (this._isMounted) {
-        this.setState({ asignaturas: ranking });
+        this.setState({ asignaturas: ranking, mostrarSpin: false });
       }
     });
   }
@@ -191,7 +193,11 @@ class Rankings extends Component {
                   />
                 </Dropdown.Menu>
               </Dropdown>
-              {listaAsign}
+              {this.state.mostrarSpin ? (
+                <LoadingSpinUniCast className="spin-ranking" />
+              ) : (
+                listaAsign
+              )}
             </ListGroup>
           </div>
         </div>

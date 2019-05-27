@@ -14,6 +14,7 @@ import {
   getUserReproductionLists,
   addVideotoReproductionList
 } from "../config/ReproductionListAPI";
+import { LoadingSpinUniCast } from "./LoadingSpin";
 
 class Lista extends Component {
   constructor(props) {
@@ -289,12 +290,15 @@ class ListaConcreta extends Component {
       tiempo: 0,
       timestamp: new Date(),
       page: 0,
-      borradoCompleto: false
+      borradoCompleto: false,
+      moreVideos: false,
+      mostrarSpin: true
     };
     this.getData = this.getData.bind(this);
     this.getReproductionLists = this.getReproductionLists.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleResize = this.handleResize.bind(this);
+    this.handleScroll = this.handleScroll.bind(this);
     this.borrarLista = this.borrarLista.bind(this);
     this.buscarEnLista = this.buscarEnLista.bind(this);
     this.keyDown = this.keyDown.bind(this);
@@ -312,11 +316,13 @@ class ListaConcreta extends Component {
         : this.state.idLista;
     getVideosFromReproductionList(id, page, (data, now) => {
       if (this._isMounted) {
-        let newState = this.state.miLista.slice().concat(data);
+        const newState = this.state.miLista.slice().concat(data);
         this.setState({
           miLista: newState,
           page: page + 1,
-          timestamp: now
+          timestamp: now,
+          moreVideos: data.length === 20,
+          mostrarSpin: false
         });
       }
     });
@@ -456,6 +462,7 @@ class ListaConcreta extends Component {
 
   componentDidMount() {
     window.addEventListener("resize", this.handleResize);
+    window.addEventListener("scroll", this.handleScroll);
   }
 
   componentWillMount() {
@@ -466,7 +473,10 @@ class ListaConcreta extends Component {
           idLista: parseInt(
             this.props.location.search.split("&")[0].split("=")[1]
           ),
-          nombreLista: this.props.location.search.split("&")[1].split("=")[1]
+          nombreLista: this.props.location.search
+            .split("&")[1]
+            .split("=")[1]
+            .replace(/%20/g, " ")
         });
       }
       this.getData(0);
@@ -478,6 +488,7 @@ class ListaConcreta extends Component {
     this._isMounted = false;
     this.pararReloj();
     window.removeEventListener("resize", this.handleResize);
+    window.removeEventListener("scroll", this.handleScroll);
   }
 
   handleChange(display) {
@@ -485,6 +496,16 @@ class ListaConcreta extends Component {
       this.setState({ contentMargin: "300px" });
     } else {
       this.setState({ contentMargin: "70px" });
+    }
+  }
+
+  handleScroll() {
+    var d = document.documentElement;
+    var offset = d.scrollTop + window.innerHeight;
+    var height = d.offsetHeight;
+
+    if (offset >= height && this.state.moreVideos) {
+      this.getData(this.state.page);
     }
   }
 
@@ -547,7 +568,9 @@ class ListaConcreta extends Component {
                   </h5>
                 </div>
               </div>{" "}
-              {this.state.miLista.length === 0 ? (
+              {this.state.mostrarSpin ? (
+                <LoadingSpinUniCast className="spin-ranking" />
+              ) : this.state.miLista.length === 0 ? (
                 <div
                   style={{
                     color: "#00000080",

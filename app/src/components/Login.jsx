@@ -3,8 +3,15 @@ import { Button, Form } from "react-bootstrap";
 import { Redirect } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import uni from "../assets/UnicastNombre.png";
-import { signIn, setUserRole, isSignedIn, getUserRole } from "../config/Auth";
+import {
+  signIn,
+  setUserRole,
+  isSignedIn,
+  getUserRole,
+  setUserPhoto
+} from "../config/Auth";
 import { getUser, authUser } from "../config/UserAPI";
+import { LoadingSpinUniCast } from "./LoadingSpin";
 
 class Login extends Component {
   constructor(props) {
@@ -14,7 +21,8 @@ class Login extends Component {
       location: this.props.location,
       error: false,
       validado: -1,
-      redirectSignIn: false
+      redirectSignIn: false,
+      mostrarSpin: false
     };
     this.userID = React.createRef();
     this.pass = React.createRef();
@@ -36,13 +44,14 @@ class Login extends Component {
     authUser(username, pass, data => {
       if (data === false) {
         if (this._isMounted) {
-          this.setState({ error: true });
+          this.setState({ error: true, mostrarSpin: false });
         }
       } else {
         signIn(data);
         getUser(data.id, user => {
           // validaeo será 1 si es admin, y 0 si es un usuario normal o profesor
           setUserRole(user.role);
+          setUserPhoto(user.photo);
           if (this._isMounted) {
             this.setState({
               validado: user.role === "ROLE_ADMIN" ? 1 : 0
@@ -79,7 +88,12 @@ class Login extends Component {
               <div>
                 <div className="login transform">
                   <img className="userIcon" src={uni} alt="UniCast" />
-                  <Form onSubmit={e => this.handleSubmit(e)}>
+                  <Form
+                    onSubmit={e => {
+                      this.setState({ mostrarSpin: true });
+                      this.handleSubmit(e);
+                    }}
+                  >
                     <Form.Group controlId="formBasicEmail">
                       {this.state.error ? (
                         <Form.Label
@@ -117,10 +131,14 @@ class Login extends Component {
                         placeholder="Contraseña"
                       />
                     </Form.Group>
-
-                    <Button className="boton-login" type="submit">
-                      Iniciar Sesión
-                    </Button>
+                    <div style={{ position: "relative" }}>
+                      <Button className="boton-login" type="submit">
+                        Iniciar Sesión
+                      </Button>
+                      {this.state.mostrarSpin ? (
+                        <LoadingSpinUniCast className="spin-login" />
+                      ) : null}
+                    </div>
                     <p
                       className="textInfo"
                       to="/recuperacion"
@@ -140,7 +158,11 @@ class Login extends Component {
                     >
                       ¿No tienes cuenta?{" "}
                       <span
-                        onClick={() => this.setState({ redirectSignIn: true })}
+                        onClick={() => {
+                          if (this._isMounted) {
+                            this.setState({ redirectSignIn: true });
+                          }
+                        }}
                         style={{
                           color: "#007bff",
                           textDecoration: "none",

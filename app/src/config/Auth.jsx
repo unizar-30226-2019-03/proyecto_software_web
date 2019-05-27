@@ -54,6 +54,14 @@ export function setUserRole(role) {
 }
 
 /**
+ * Guarda la foto de perfil del usuario
+ * @param {String} photo Foto de perfil del usuario
+ */
+export function setUserPhoto(photo) {
+  localStorage.setItem("photo", photo);
+}
+
+/**
  * Devuelve el Token de sesión del usuario.
  */
 export function getUserToken() {
@@ -72,4 +80,8 @@ export function getUserID() {
  */
 export function getUserRole() {
   return localStorage.getItem("role");
+}
+
+export function getUserPhoto() {
+  return localStorage.getItem("photo");
 }

@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet";
 import User_img from "../assets/user.png";
 import { Button } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
-import { isSignedIn, getUserRole, getUserID } from "../config/Auth";
+import { isSignedIn, getUserRole } from "../config/Auth";
 import {
   getUser,
   getUniversityOfUser,
@@ -127,12 +127,12 @@ class Profesor extends Component {
       contentMargin: "300px",
       prof: "",
       sub: [],
-      page: 0,
       esProfe: false,
       profesores: []
     };
     this.getData = this.getData.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.checkProfessor = this.checkProfessor.bind(this);
     this.getUniFromUser = this.getUniFromUser.bind(this);
     this.getDegreeFromUser = this.getDegreeFromUser.bind(this);
   }
@@ -172,23 +172,27 @@ class Profesor extends Component {
           this.setState({ sub: data });
         }
       });
-      const page = this.state.page;
-      findUserProfessors(page, data => {
-        if (this._isMounted) {
-          let profesores = this.state.profesores.slice().concat(data);
-          //Eliminamos el propio profesor (si lo es)
-          profesores.forEach(p => {
-            if (parseInt(p.id) === parseInt(this.props.match.params.id)) {
-              this.setState({ esProfe: true });
-            }
-          });
-          this.setState({ page: page + 1 });
-          if (parseInt(this.props.match.params.id) === parseInt(getUserID())) {
-            this.setState({ esProfe: false });
-          }
+      this.checkProfessor([], 0);
+    });
+  }
+
+  checkProfessor(professors, page) {
+    if (professors.length < 20 * page) {
+      var esProfe = false;
+      professors.forEach(p => {
+        if (p.id === parseInt(this.props.match.params.id)) {
+          esProfe = true;
         }
       });
-    });
+      if (this._isMounted) {
+        this.setState({ esProfe: esProfe });
+      }
+    } else {
+      findUserProfessors(page, data => {
+        const newProfessors = [...professors, ...data];
+        this.checkProfessor(newProfessors, page + 1);
+      });
+    }
   }
 
   getUniFromUser(id) {
@@ -221,14 +225,16 @@ class Profesor extends Component {
       );
     } else {
       return (
-        <Button
-          className="boton-filtro"
-          onClick={() =>
-            alert("Para enviar el mensaje, debes cursar una asignatura suya")
-          }
+        <div
+          style={{
+            color: "#00000080",
+            fontSize: "14px",
+            textAlign: "left"
+          }}
         >
-          Enviar un mensaje
-        </Button>
+          Sigue alguna asignatura de este profesor para poder enviarle un
+          mensaje.
+        </div>
       );
     }
   }

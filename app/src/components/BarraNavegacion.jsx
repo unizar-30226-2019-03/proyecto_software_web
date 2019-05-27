@@ -5,26 +5,59 @@ import { Navbar, Nav } from "react-bootstrap";
 import { FaBell, FaEnvelope, FaBars } from "react-icons/fa";
 import BarraBusqueda from "./BarraBusqueda";
 import BarraLateral from "./BarraLateral";
-import { signOut, getUserID, isSignedIn } from "../config/Auth";
-import { getUser } from "../config/UserAPI";
+import { signOut, isSignedIn, getUserPhoto, getUserRole } from "../config/Auth";
 import {
   getUserUncheckedNotifications,
   checkNotification
 } from "../config/NotificationAPI";
 import { getTimePassed } from "../config/VideoAPI";
+import { getUser } from "../config/UserAPI";
+import { getSubjectById } from "../config/SubjectAPI";
 
 class Notificacion extends Component {
   constructor(props) {
     super(props);
+    this._isMounted = false;
     this.state = {
       unChecked: true,
       timeNow: this.props.now,
-      notif: this.props.notif
+      notif: this.props.notif,
+      mensaje: "",
+      mostrarSpin: true
     };
+    this.getUserNotif = this.getUserNotif.bind(this);
+    this.getSubjectNotif = this.getSubjectNotif.bind(this);
   }
 
-  componentWillReceiveProps(newProps) {
-    this.setState({ timeNow: newProps.now, notif: newProps.notif });
+  componentWillMount() {
+    this._isMounted = true;
+    if (isSignedIn()) {
+      if (this.props.notif.notificationCategory === "messages") {
+        this.getUserNotif();
+      } else {
+        this.getSubjectNotif();
+      }
+    }
+  }
+
+  getUserNotif() {
+    getUser(this.props.notif.creatorId, data => {
+      if (this._isMounted) {
+        this.setState({ mensaje: data.username, mostrarSpin: false });
+      }
+    });
+  }
+
+  getSubjectNotif() {
+    getSubjectById(this.props.notif.creatorId, data => {
+      if (this._isMounted) {
+        this.setState({ mensaje: data.name, mostrarSpin: false });
+      }
+    });
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render() {
@@ -55,7 +88,9 @@ class Notificacion extends Component {
                 display: "inline-block"
               }}
             >
-              Nuevo vídeo subido
+              {this.state.mostrarSpin
+                ? "Cargando..."
+                : `Nuevo vídeo de ${this.state.mensaje}`}
             </span>
             <span
               style={{
@@ -64,8 +99,10 @@ class Notificacion extends Component {
                 fontSize: "12px"
               }}
             >
-              Hace{" "}
-              {getTimePassed(this.state.notif.timestamp, this.state.timeNow)}
+              {this.state.mostrarSpin
+                ? null
+                : `Hace 
+              ${getTimePassed(this.state.notif.timestamp, this.state.timeNow)}`}
             </span>
           </div>
         ) : (
@@ -87,7 +124,9 @@ class Notificacion extends Component {
                 visibility: this.state.unChecked ? "visible" : "hidden"
               }}
             />
-            Nuevo mensaje recibido
+            {this.state.mostrarSpin
+              ? "Cargando..."
+              : `Nuevo mensaje de ${this.state.mensaje}`}
             <span
               style={{
                 marginLeft: "10px",
@@ -95,8 +134,10 @@ class Notificacion extends Component {
                 fontSize: "12px"
               }}
             >
-              Hace{" "}
-              {getTimePassed(this.state.notif.timestamp, this.state.timeNow)}
+              {this.state.mostrarSpin
+                ? null
+                : `Hace 
+              ${getTimePassed(this.state.notif.timestamp, this.state.timeNow)}`}
             </span>
           </div>
         )}
@@ -120,7 +161,6 @@ class BarraNavegacion extends Component {
       displayNotif: false,
       hide: this.props.hide,
       busqueda: this.props.nuevoTit,
-      user: {},
       unCheckedNotifications: [],
       bolaNotif: false,
       tiempoCheck: 0,
@@ -130,21 +170,12 @@ class BarraNavegacion extends Component {
     this.hideDropdown = this.hideDropdown.bind(this);
     this.showSideBar = this.showSideBar.bind(this);
     this.resize = this.resize.bind(this);
-    this.getData = this.getData.bind(this);
     this.getNotifications = this.getNotifications.bind(this);
     this.showDropdownNotif = this.showDropdownNotif.bind(this);
     this.hideDropdownNotif = this.hideDropdownNotif.bind(this);
     this.iniciarReloj = this.iniciarReloj.bind(this);
     this.pararReloj = this.pararReloj.bind(this);
     this.tick = this.tick.bind(this);
-  }
-
-  getData() {
-    getUser(getUserID(), data => {
-      if (this._isMounted) {
-        this.setState({ user: data });
-      }
-    });
   }
 
   getNotifications() {
@@ -164,7 +195,6 @@ class BarraNavegacion extends Component {
   componentWillMount() {
     this._isMounted = true;
     if (isSignedIn()) {
-      this.getData();
       this.getNotifications();
     }
   }
@@ -355,7 +385,7 @@ class BarraNavegacion extends Component {
               <div className="dropdown" style={{ top: "5px" }}>
                 <img
                   alt="usuario"
-                  src={this.state.user.photo}
+                  src={getUserPhoto()}
                   width="30"
                   height="30"
                   onClick={this.showDropdown}
@@ -364,7 +394,7 @@ class BarraNavegacion extends Component {
                 {this.state.displayMenu ? (
                   <div className="dropdown-content">
                     <Link to="/perfil">Mi perfil</Link>
-                    {this.state.user.role === "ROLE_PROFESSOR" ? (
+                    {getUserRole() === "ROLE_PROFESSOR" ? (
                       <Link to="/mis-videos">Mis vídeos</Link>
                     ) : null}
                     <Link to="/" onClick={() => signOut()}>
@@ -380,6 +410,7 @@ class BarraNavegacion extends Component {
           <BarraLateral
             activate={this.props.activar}
             show={this.state.displaySide ? "active" : ""}
+            updateSubject={this.props.updateSubject}
           />
         </div>
       </div>

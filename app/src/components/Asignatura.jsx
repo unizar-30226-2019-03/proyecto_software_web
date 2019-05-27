@@ -14,6 +14,7 @@ import {
 import { getUser, getSubjectsOfUser } from "../config/UserAPI";
 import { Notificacion } from "./MisListas";
 import { getVideosFromSubject } from "../config/VideoAPI";
+import { LoadingSpinUniCast } from "./LoadingSpin";
 
 export const Profesor = ({ user }) => {
   return (
@@ -60,13 +61,18 @@ class Asignatura extends Component {
       notif: false,
       mensajeNotif: "",
       tiempoNotif: 0,
+      page: 0,
       profesores: [],
       videos: [],
-      timeNow: new Date()
+      timeNow: new Date(),
+      moreVideos: false,
+      updateSubject: false,
+      mostrarSpin: true
     };
     this.seguirAsig = this.seguirAsig.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.getData = this.getData.bind(this);
+    this.loadMoreVideos = this.loadMoreVideos.bind(this);
     this.iniciarReloj = this.iniciarReloj.bind(this);
     this.pararReloj = this.pararReloj.bind(this);
     this.tick = this.tick.bind(this);
@@ -101,9 +107,29 @@ class Asignatura extends Component {
     });
     getVideosFromSubject(subjectId, 0, (data, time) => {
       if (this._isMounted) {
-        this.setState({ videos: data, timeNow: time });
+        this.setState({
+          videos: data,
+          timeNow: time,
+          page: 1,
+          moreVideos: data.length === 20,
+          mostrarSpin: false
+        });
       }
     });
+  }
+
+  loadMoreVideos() {
+    if (this.state.moreVideos) {
+      getVideosFromSubject(this.state.asig.id, this.state.page, data => {
+        if (this._isMounted) {
+          this.setState({
+            videos: [...this.state.videos, ...data],
+            page: this.state.page + 1,
+            moreVideos: data.length === 20
+          });
+        }
+      });
+    }
   }
 
   componentWillMount() {
@@ -139,7 +165,7 @@ class Asignatura extends Component {
       this.pararReloj();
       this.setState({ notif: false });
     }
-    this.setState({ tiempoNotif: t + 1 });
+    this.setState({ tiempoNotif: t + 1, updateSubject: false });
   }
 
   handleChange(display) {
@@ -172,6 +198,9 @@ class Asignatura extends Component {
             this.iniciarReloj();
           }
         });
+    if (this._isMounted) {
+      this.setState({ updateSubject: true });
+    }
   }
 
   render() {
@@ -201,6 +230,7 @@ class Asignatura extends Component {
           activar={nombreAsig}
           displaySide={true}
           hide={false}
+          updateSubject={this.state.updateSubject}
         />
         <div
           className="transform"
@@ -238,7 +268,9 @@ class Asignatura extends Component {
             <div style={{ flex: "85%" }}>
               <div>
                 <p style={{ fontWeight: "550" }}>Vídeos subidos</p>
-                {this.state.videos.length === 0 ? (
+                {this.state.mostrarSpin ? (
+                  <LoadingSpinUniCast className="spin-ranking" />
+                ) : this.state.videos.length === 0 ? (
                   <div
                     style={{
                       color: "#00000080",
@@ -251,8 +283,19 @@ class Asignatura extends Component {
                     irán guardando aquí.
                   </div>
                 ) : (
-                  <div style={{ display: "flex", flexWrap: "wrap" }}>
-                    {Menu(this.state.videos, this.state.timeNow)}
+                  <div>
+                    <div style={{ display: "flex", flexWrap: "wrap" }}>
+                      {Menu(this.state.videos, this.state.timeNow)}
+                    </div>
+                    <div
+                      onClick={() => this.loadMoreVideos()}
+                      className="cargar-mas-boton-asig zoom-item"
+                      style={{
+                        visibility: this.state.moreVideos ? "visible" : "hidden"
+                      }}
+                    >
+                      Cargar más
+                    </div>
                   </div>
                 )}
               </div>

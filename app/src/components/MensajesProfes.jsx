@@ -5,6 +5,7 @@ import ListaVerticalProfes from "./ListaVerticalProfes";
 import { Redirect, Link } from "react-router-dom";
 import { isSignedIn, getUserRole, getUserID } from "../config/Auth";
 import { findUserProfessors } from "../config/UserAPI";
+import { LoadingSpinUniCast } from "./LoadingSpin";
 
 class ProfesoresLista extends Component {
   constructor(props) {
@@ -42,7 +43,8 @@ class MensajesProfes extends Component {
     this.state = {
       contentMargin: "300px",
       profesores: [],
-      page: 0
+      page: 0,
+      mostrarSpin: true
     };
     this.getData = this.getData.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -59,7 +61,11 @@ class MensajesProfes extends Component {
         if (index !== -1) {
           profesores.splice(index, 1);
         }
-        this.setState({ page: page + 1, profesores: profesores });
+        this.setState({
+          page: page + 1,
+          profesores: profesores,
+          mostrarSpin: false
+        });
       }
     });
   }
@@ -128,7 +134,9 @@ class MensajesProfes extends Component {
               {"Profesores"}
             </Link>
           </div>
-          {this.state.profesores.length === 0 ? (
+          {this.state.mostrarSpin ? (
+            <LoadingSpinUniCast className="spin-ranking" />
+          ) : this.state.profesores.length === 0 ? (
             <div
               style={{
                 color: "#00000080",
