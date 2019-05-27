@@ -5,7 +5,6 @@ import ListaVerticalMensajes from "./ListaVerticalMensajes";
 import { isSignedIn, getUserRole } from "../config/Auth";
 import { Redirect, Link } from "react-router-dom";
 import { getLastMessages } from "../config/MessageApi";
-import { LoadingSpinUniCast } from "./LoadingSpin";
 
 class MensajesLista extends Component {
   constructor(props) {
@@ -45,8 +44,7 @@ class Mensajes extends Component {
     this._isMounted = false;
     this.state = {
       contentMargin: "300px",
-      misChats: [],
-      mostrarSpin: true
+      misChats: []
     };
     this.getData = this.getData.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -55,7 +53,7 @@ class Mensajes extends Component {
   getData() {
     getLastMessages(data => {
       if (this._isMounted) {
-        this.setState({ misChats: data, mostrarSpin: false });
+        this.setState({ misChats: data });
       }
     });
   }
@@ -125,9 +123,7 @@ class Mensajes extends Component {
                 {"Profesores"}
               </Link>
             </div>
-            {this.state.mostrarSpin ? (
-              <LoadingSpinUniCast className="spin-ranking" />
-            ) : this.state.misChats.length === 0 ? (
+            {this.state.misChats.length === 0 ? (
               <div
                 style={{
                   color: "#00000080",

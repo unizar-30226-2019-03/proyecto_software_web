@@ -129,6 +129,12 @@ class Chat extends Component {
           received,
           this.state.receivedMessages
         );
+        if (
+          this._isMounted &&
+          newReceived.length !== this.state.receivedMessages.length
+        ) {
+          this.setState({ receivedMessages: newReceived, update: true });
+        }
         getMessagesToReceiver(
           parseInt(this.props.match.params.id),
           0,
@@ -138,12 +144,11 @@ class Chat extends Component {
               return el;
             });
             const newSent = parseNewMessages(sent, this.state.sentMessages);
-            if (this._isMounted) {
-              this.setState({
-                sentMessages: newSent,
-                update: true,
-                receivedMessages: newReceived
-              });
+            if (
+              this._isMounted &&
+              newSent.length !== this.state.sentMessages.length
+            ) {
+              this.setState({ sentMessages: newSent, update: true });
             }
           }
         );
@@ -217,15 +222,7 @@ class Chat extends Component {
                   : `/chat/${this.props.match.params.id}`
               }
               className="titulo-asignatura"
-              style={{
-                color: "black",
-                textDecoration: "none",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                display: "-webkit-box",
-                WebkitLineClamp: "1",
-                WebkitBoxOrient: "vertical"
-              }}
+              style={{ color: "black", textDecoration: "none" }}
             >
               <img
                 src={this.state.prof.photo}

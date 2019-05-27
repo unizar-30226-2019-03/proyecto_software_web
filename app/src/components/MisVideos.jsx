@@ -14,9 +14,9 @@ import {
   deleteVideo
 } from "../config/VideoAPI";
 import { getUser } from "../config/UserAPI";
+import { getSubjectById } from "../config/SubjectAPI";
 import { FaEllipsisV } from "react-icons/fa";
 import { Notificacion } from "./MisListas";
-import { LoadingSpinUniCast } from "./LoadingSpin";
 
 // One item component
 // selected prop will be passed
@@ -25,29 +25,38 @@ class MiVideoItem extends Component {
     super(props);
     this._isMounted = false;
     this.state = {
+      asig: {},
       mostrarOpciones: false,
       popUp: false,
       mostrarNotif: false,
       mensaje: ""
     };
+    this.getData = this.getData.bind(this);
     this.abrirPopUp = this.abrirPopUp.bind(this);
     this.cerrarPopUp = this.cerrarPopUp.bind(this);
   }
 
+  getData() {
+    getSubjectById(parseInt(this.props.subject.id), data => {
+      if (this._isMounted) {
+        this.setState({ asig: data });
+      }
+    });
+  }
+
   abrirPopUp() {
-    if (this._isMounted) {
-      this.setState({ popUp: true });
-    }
+    this.setState({ popUp: true });
   }
 
   cerrarPopUp() {
-    if (this._isMounted) {
-      this.setState({ popUp: false, mostrarOpciones: false });
-    }
+    this.setState({ popUp: false, mostrarOpciones: false });
   }
 
   componentWillMount() {
     this._isMounted = true;
+    if (isSignedIn()) {
+      this.getData();
+    }
   }
 
   componentWillUnmount() {
@@ -169,22 +178,20 @@ class MiVideoItem extends Component {
             <div style={{ float: "left", marginTop: "5px" }}>
               <Link
                 to={`/asig/${
-                  this.props.subject.id === undefined
-                    ? ""
-                    : this.props.subject.id
+                  this.state.asig.id === undefined ? "" : this.state.asig.id
                 }`}
                 style={{ textDecoration: "none" }}
               >
                 <IconoAsignaturaUniversidad
                   name={
-                    this.props.subject.abbreviation === undefined
+                    this.state.asig.abbreviation === undefined
                       ? ""
-                      : this.props.subject.abbreviation
+                      : this.state.asig.abbreviation
                   }
                   image={
-                    this.props.university === undefined
+                    this.state.asig.university === undefined
                       ? ""
-                      : this.props.university.photo
+                      : this.state.asig.university.photo
                   }
                 />
               </Link>
@@ -247,7 +254,6 @@ const Menu = (list, now, borrarVideo) =>
         timestamp={getTimePassed(timestamp, now)}
         showRating={score === null ? false : true}
         subject={el.subject}
-        university={el.university}
         borrarVideo={borrarVideo}
       />
     );
@@ -264,13 +270,9 @@ class MisVideos extends Component {
       user: {},
       notif: false,
       mensajeNotif: "",
-      tiempoNotif: 0,
-      page: 0,
-      moreVideos: false,
-      mostrarSpin: true
+      tiempoNotif: 0
     };
     this.getData = this.getData.bind(this);
-    this.handleScroll = this.handleScroll.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.borrarVideo = this.borrarVideo.bind(this);
     this.iniciarReloj = this.iniciarReloj.bind(this);
@@ -283,10 +285,7 @@ class MisVideos extends Component {
       if (this._isMounted) {
         this.setState({
           listaVideos: videos,
-          timestampNow: time,
-          page: 1,
-          moreVideos: videos.length === 20,
-          mostrarSpin: false
+          timestampNow: time
         });
       }
     });
@@ -304,36 +303,9 @@ class MisVideos extends Component {
     }
   }
 
-  componentDidMount() {
-    window.addEventListener("scroll", this.handleScroll);
-  }
-
   componentWillUnmount() {
     this._isMounted = false;
     this.pararReloj();
-    window.removeEventListener("scroll", this.handleScroll);
-  }
-
-  handleScroll() {
-    var d = document.documentElement;
-    var offset = d.scrollTop + window.innerHeight;
-    var height = d.offsetHeight;
-
-    if (offset >= height && this.state.moreVideos) {
-      this.loadMoreVideos(this.state.page);
-    }
-  }
-
-  loadMoreVideos(page) {
-    getVideosFromUploader(page, (videos, time) => {
-      if (this._isMounted) {
-        this.setState({
-          listaVideos: [...this.state.listaVideos, ...videos],
-          page: page + 1,
-          moreVideos: videos.length === 20
-        });
-      }
-    });
   }
 
   borrarVideo(id) {
@@ -440,9 +412,7 @@ class MisVideos extends Component {
           <div style={{ marginRight: "70px" }}>
             <div>
               <div>
-                {this.state.mostrarSpin ? (
-                  <LoadingSpinUniCast className="spin-ranking" />
-                ) : this.state.listaVideos.length === 0 ? (
+                {this.state.listaVideos.length === 0 ? (
                   <div
                     style={{
                       color: "#00000080",

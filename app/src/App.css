@@ -296,12 +296,6 @@
     background-color: #235da9;
     border-color: #235da9;
   }
-
-  .spin-login {
-    position: absolute;
-    top: 30px;
-    right: 100px;
-  }
 }
 
 @media screen and (max-width: 599px) {
@@ -335,7 +329,7 @@
   }
   .boton-login {
     position: relative;
-    width: 150px;
+    width: 123px;
     float: right;
     top: 15px;
     background-color: #235da9;
@@ -347,12 +341,6 @@
     float: right;
     background-color: #235da9;
     border-color: #235da9;
-  }
-
-  .spin-login {
-    position: absolute;
-    top: 24px;
-    right: 5px;
   }
 }
 
@@ -408,17 +396,11 @@
 
   .boton-signin-reg {
     position: relative;
-    width: 150px;
+    width: 110px;
     margin-top: 0px;
     background-color: #235da9;
     border-color: #235da9;
-    left: calc(100% - 36.5%);
-  }
-
-  .spin-signin {
-    position: absolute;
-    top: 9px;
-    right: 5px;
+    left: calc(100% - 29.5%);
   }
 }
 
@@ -464,17 +446,11 @@
 
   .boton-signin-reg {
     position: relative;
-    width: 140px;
+    width: 110px;
     margin-top: 0px;
     background-color: #235da9;
     border-color: #235da9;
-    left: calc(100% - 58.3%);
-  }
-
-  .spin-signin {
-    position: absolute;
-    top: 9px;
-    right: 5px;
+    left: calc(100% - 49.3%);
   }
 }
 
@@ -513,17 +489,11 @@
 
   .boton-signin-reg {
     position: relative;
-    width: 140px;
+    width: 110px;
     margin-top: 0px;
     background-color: #235da9;
     border-color: #235da9;
-    left: calc(100% - 215px);
-  }
-
-  .spin-signin {
-    position: absolute;
-    top: 9px;
-    right: 5px;
+    left: calc(100% - 185px);
   }
 }
 
@@ -912,7 +882,7 @@ h3 {
   margin-bottom: 20px;
 }
 .message-body {
-  max-width: 75%;
+  max-width: 50%;
   display: inline-block;
   padding: 5px 15px;
   background-color: #ececec;
@@ -1017,40 +987,4 @@ h3 {
 
 .share-button:hover:not(:active) {
   opacity: 0.75;
-}
-
-.cargar-mas-boton-asig {
-  color: black;
-  font-weight: 500;
-  cursor: pointer;
-  font-size: 15px;
-  margin-bottom: 20px;
-}
-
-.timestamp-message {
-  color: #00000080;
-  font-size: 11px;
-  text-align: right;
-}
-
-.spin-editar-perfil {
-  position: absolute;
-  top: 8px;
-  right: 5px;
-}
-
-.spin-inicio {
-  position: absolute;
-  top: 0;
-  left: 50%;
-}
-
-.spin-ranking {
-  margin-left: 50%;
-  margin-top: 10%;
-}
-
-.spin-notif {
-  width: 10px;
-  height: 10px;
 }

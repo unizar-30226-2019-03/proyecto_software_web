@@ -4,11 +4,38 @@ import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { getTime } from "../config/Process";
 import IconoAsignaturaUniversidad from "./IconoAsignaturaUniversidad";
-import { getTimePassed, getScore } from "../config/VideoAPI";
+import { getTimePassed, getScore, getVideoSubject } from "../config/VideoAPI";
+import { isSignedIn } from "../config/Auth";
 
 // One item component
 // selected prop will be passed
 class MenuItem extends Component {
+  constructor(props) {
+    super(props);
+    this._isMounted = false;
+    this.state = { asig: {} };
+    this.getData = this.getData.bind(this);
+  }
+
+  getData() {
+    getVideoSubject(parseInt(this.props.id), data => {
+      if (this._isMounted) {
+        this.setState({ asig: data });
+      }
+    });
+  }
+
+  componentWillMount() {
+    this._isMounted = true;
+    if (isSignedIn()) {
+      this.getData();
+    }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
   render() {
     return (
       <div>
@@ -60,19 +87,19 @@ class MenuItem extends Component {
           <div style={{ display: "flex" }}>
             <div style={{ marginTop: "5px" }}>
               <Link
-                to={`/asig/${this.props.subject.id}`}
+                to={`/asig/${this.state.asig.id}`}
                 style={{ textDecoration: "none" }}
               >
                 <IconoAsignaturaUniversidad
                   name={
-                    this.props.subject.abbreviation === undefined
+                    this.state.asig.abbreviation === undefined
                       ? ""
-                      : this.props.subject.abbreviation
+                      : this.state.asig.abbreviation
                   }
                   image={
-                    this.props.university === undefined
+                    this.state.asig.university === undefined
                       ? ""
-                      : this.props.university.photo
+                      : this.state.asig.university.photo
                   }
                 />
               </Link>
@@ -127,7 +154,6 @@ export const Menu = (list, now) =>
         timestamp={getTimePassed(timestamp, now)}
         showRating={score === null ? false : true}
         subject={el.subject}
-        university={el.university}
       />
     );
   });

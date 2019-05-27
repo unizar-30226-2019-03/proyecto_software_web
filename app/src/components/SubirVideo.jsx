@@ -10,7 +10,6 @@ import {
 } from "../config/Process";
 import { UploadVideo } from "../config/VideoAPI";
 import { getSubjectsAsProfessor } from "../config/UserAPI";
-import { LoadingSpinUniCast } from "./LoadingSpin";
 
 const FormularioDatos = (
   handleSubmit,
@@ -21,18 +20,11 @@ const FormularioDatos = (
   asignatura,
   img_valida,
   video_valido,
-  listaAsignaturas,
-  mostrarSpin,
-  handleSpin
+  listaAsignaturas
 ) => {
   return (
     <div style={{ margin: "0 20% 0 0" }}>
-      <Form
-        onSubmit={e => {
-          handleSubmit(e);
-          handleSpin();
-        }}
-      >
+      <Form onSubmit={e => handleSubmit(e)}>
         <Form.Row>
           <Form.Group as={Col} controlId="formGridTitulo">
             <Form.Label>Título</Form.Label>
@@ -69,14 +61,14 @@ const FormularioDatos = (
         </Form.Row>
 
         <Form.Group controlId="formGridMiniatura">
-          <Form.Label className={img_valida === 0 ? "text-danger" : ""}>
-            {img_valida === 0
-              ? "Introduzca un formato de imagen válido"
-              : "Miniatura del video"}
-          </Form.Label>
+          <Form.Label>Foto de miniatura del video</Form.Label>
           <Form.Control type="file" accept="image/*" ref={miniatura} required />
         </Form.Group>
-
+        {img_valida === 0 ? (
+          <p class="text-danger">Introduzca un formato de imagen válido</p>
+        ) : (
+          ""
+        )}
         <Form.Group controlId="exampleForm.ControlDescripcion">
           <Form.Label>Descripción</Form.Label>
           <Form.Control
@@ -89,22 +81,20 @@ const FormularioDatos = (
           />
         </Form.Group>
         <Form.Group controlId="formGridVideo">
-          <Form.Label className={video_valido === 0 ? "text-danger" : ""}>
-            {video_valido === 0
-              ? "Introduzca un formato de imagen válido"
-              : "Vídeo"}
-          </Form.Label>
+          <Form.Label>Vídeo</Form.Label>
           <Form.Control type="file" accept="video/*" ref={video} required />
         </Form.Group>
+        {video_valido === 0 ? (
+          <p class="text-danger">Introduzca un formato de imagen válido</p>
+        ) : (
+          ""
+        )}
         <Button
           className="boton-filtro"
           type="submit"
-          style={{ float: "right", width: "130px", position: "relative" }}
+          style={{ float: "right" }}
         >
           Confirmar
-          {mostrarSpin ? (
-            <LoadingSpinUniCast className="spin-editar-perfil" />
-          ) : null}
         </Button>
       </Form>
       <Link to="/perfil">
@@ -129,8 +119,7 @@ class SubirVideo extends Component {
       img_valida: -1,
       video_valido: -1,
       listaAsignaturas: [],
-      error: false,
-      mostrarSpin: false
+      error: false
     };
     this.titulo = React.createRef();
     this.miniatura = React.createRef();
@@ -138,7 +127,6 @@ class SubirVideo extends Component {
     this.video = React.createRef();
     this.asignatura = React.createRef();
     this.getData = this.getData.bind(this);
-    this.handleSpin = this.handleSpin.bind(this);
     this.handleSubmitDatos = this.handleSubmitDatos.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
@@ -162,36 +150,17 @@ class SubirVideo extends Component {
     this._isMounted = false;
   }
 
-  handleSpin() {
-    const miniatura = this.miniatura.current.value;
-    const video = this.video.current.value;
-    if (
-      this._isMounted &&
-      checkFileExtensionVideo(video) &&
-      checkFileExtensionImage(miniatura)
-    ) {
-      this.setState({ mostrarSpin: true });
-    }
-  }
-
   handleSubmitDatos(event) {
     event.preventDefault();
     const titulo = this.titulo.current.value;
     const descripcion = this.descripcion.current.value;
     const miniatura = this.miniatura.current.value;
     const video = this.video.current.value;
-    let img_valida = this.state.img_valida;
-    let video_valido = this.state.video_valido;
-    let ok = true;
     if (!checkFileExtensionImage(miniatura)) {
-      ok = false;
-      img_valida = 0;
-    }
-    if (!checkFileExtensionVideo(video)) {
-      ok = false;
-      video_valido = 0;
-    }
-    if (ok) {
+      this.setState({ img_valida: 0 });
+    } else if (!checkFileExtensionVideo(video)) {
+      this.setState({ video_valido: 0 });
+    } else {
       UploadVideo(
         this.video.current.files[0],
         this.miniatura.current.files[0],
@@ -200,23 +169,12 @@ class SubirVideo extends Component {
         parseInt(this.asignatura.current.value),
         ok => {
           if (ok) {
-            if (this._isMounted) {
-              this.setState({ datosSubidos: true });
-            }
+            this.setState({ datosSubidos: true });
           } else {
-            if (this._isMounted) {
-              this.setState({ error: true, mostrarSpin: false });
-            }
+            this.setState({ error: true });
           }
         }
       );
-    } else {
-      if (this._isMounted) {
-        this.setState({
-          video_valido: video_valido,
-          img_valida: img_valida
-        });
-      }
     }
   }
   handleChange(display) {
@@ -280,9 +238,7 @@ class SubirVideo extends Component {
                   this.asignatura,
                   this.state.img_valida,
                   this.state.video_valido,
-                  this.state.listaAsignaturas,
-                  this.state.mostrarSpin,
-                  this.handleSpin
+                  this.state.listaAsignaturas
                 )}
               </div>
             </div>

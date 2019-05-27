@@ -10,16 +10,13 @@ import {
   restriccionNombre,
   restriccionUser,
   emailPattern,
-  restriccion,
-  setUserRole,
-  setUserPhoto
+  restriccion
 } from "../config/Auth";
 import {
   getUnivesities,
   getDegreesFromUnivesity
 } from "../config/UniversityAPI";
 import { addUser } from "../config/UserAPI";
-import { LoadingSpinUniCast } from "./LoadingSpin";
 
 const FormularioDatos = (
   handleSubmit,
@@ -204,17 +201,10 @@ const FormularioInfo = (
   errorFoto,
   universidades,
   carreras,
-  handleChangeUni,
-  mostrarSpin,
-  handleSpin
+  handleChangeUni
 ) => {
   return (
-    <Form
-      onSubmit={e => {
-        handleSubmit(e);
-        handleSpin();
-      }}
-    >
+    <Form onSubmit={e => handleSubmit(e)}>
       <Form.Group controlId="formGridUni">
         <Form.Label>¿En qué universidad estudias?</Form.Label>
         <Form.Control
@@ -277,9 +267,7 @@ const FormularioInfo = (
       </Form.Group>
       <Button className="boton-signin-reg" type="submit">
         Registrarse
-        {mostrarSpin ? <LoadingSpinUniCast className="spin-signin" /> : null}
       </Button>
-
       <p
         className=""
         style={{
@@ -321,8 +309,7 @@ class SignIn extends Component {
       pass: "",
       listaUniversidades: [],
       listaCarreras: [],
-      page: 0,
-      mostrarSpin: false
+      page: 0
     };
     this.nombre = React.createRef();
     this.apellidos = React.createRef();
@@ -340,7 +327,6 @@ class SignIn extends Component {
     this.handleSubmitInfo = this.handleSubmitInfo.bind(this);
     this.back = this.back.bind(this);
     this.getAllUniversities = this.getAllUniversities.bind(this);
-    this.handleSpin = this.handleSpin.bind(this);
   }
 
   getData() {
@@ -489,13 +475,8 @@ class SignIn extends Component {
             this.state.pass,
             (error, data2, response) => {
               if (error) {
-                if (this._isMounted) {
-                  this.setState({ mostrarSpin: false });
-                }
               } else {
                 signIn(data2);
-                setUserRole(data.role);
-                setUserPhoto(data.photo);
                 if (this._isMounted) {
                   this.setState({ infoValidada: true });
                 }
@@ -504,12 +485,6 @@ class SignIn extends Component {
           );
         }
       );
-    }
-  }
-
-  handleSpin() {
-    if (this._isMounted) {
-      this.setState({ mostrarSpin: true });
     }
   }
 
@@ -558,9 +533,7 @@ class SignIn extends Component {
                     this.state.errorFoto,
                     this.state.listaUniversidades,
                     this.state.listaCarreras,
-                    this.handleChangeUni,
-                    this.state.mostrarSpin,
-                    this.handleSpin
+                    this.handleChangeUni
                   )}
             </div>
           </div>

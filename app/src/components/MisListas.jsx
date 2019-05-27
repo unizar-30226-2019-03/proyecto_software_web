@@ -14,7 +14,6 @@ import {
 } from "../config/ReproductionListAPI";
 import { getVideosFromReproductionList } from "../config/VideoAPI";
 import { putFavouritesFirst } from "../config/Process";
-import { LoadingSpinUniCast } from "./LoadingSpin";
 
 export const Notificacion = ({ mostrar, mensaje, handleClick, deshacer }) => {
   return (
@@ -65,8 +64,7 @@ class Lista extends Component {
       lista: {},
       videos: [],
       timeNow: new Date(),
-      popUp: false,
-      mostrarSpin: true
+      popUp: false
     };
     this.abrirPopUp = this.abrirPopUp.bind(this);
 
@@ -76,12 +74,7 @@ class Lista extends Component {
   getData(list) {
     getVideosFromReproductionList(list.id, 0, (data, now) => {
       if (this._isMounted) {
-        this.setState({
-          lista: list,
-          videos: data,
-          timeNow: now,
-          mostrarSpin: false
-        });
+        this.setState({ lista: list, videos: data, timeNow: now });
       }
     });
   }
@@ -136,7 +129,7 @@ class Lista extends Component {
               marginLeft: "10px",
               marginTop: "-5px"
             }}
-          > {this.state.lista.name === "Favoritos" ? null :
+          >
             <Popup
               open={this.state.popUp}
               onOpen={this.abrirPopUp}
@@ -191,7 +184,6 @@ class Lista extends Component {
                 </div>
               </div>
             </Popup>
-          }
           </div>
           {this.state.videos.length === 0 ? null : (
             <div style={{ marginRight: "0", marginLeft: "auto" }}>
@@ -206,9 +198,7 @@ class Lista extends Component {
             </div>
           )}
         </div>
-        {this.state.mostrarSpin ? (
-          <LoadingSpinUniCast className="spin-ranking" />
-        ) : this.state.videos.length === 0 ? (
+        {this.state.videos.length === 0 ? (
           <div
             style={{
               width: "93.45%",
@@ -244,8 +234,7 @@ class MisListas extends Component {
       tiempo: 0,
       misListas: [],
       listaCreada: null,
-      deshacer: true,
-      mostrarSpin: true
+      deshacer: true
     };
     this.nombreLista = React.createRef();
     this.getData = this.getData.bind(this);
@@ -276,7 +265,7 @@ class MisListas extends Component {
     getUserReproductionLists(data => {
       if (this._isMounted) {
         const sortedData = putFavouritesFirst(data);
-        this.setState({ misListas: sortedData, mostrarSpin: false });
+        this.setState({ misListas: sortedData });
       }
     });
   }
@@ -449,13 +438,9 @@ class MisListas extends Component {
                 </div>
               </Popup>
             </div>
-            {this.state.mostrarSpin ? (
-              <LoadingSpinUniCast className="spin-ranking" />
-            ) : (
-              this.state.misListas.map(e => {
-                return <Lista list={e} key={e.id} borrar={this.borrarLista} />;
-              })
-            )}
+            {this.state.misListas.map(e => {
+              return <Lista list={e} key={e.id} borrar={this.borrarLista} />;
+            })}
             <Notificacion
               mostrar={this.state.notif}
               mensaje={this.state.mensajeNotif}

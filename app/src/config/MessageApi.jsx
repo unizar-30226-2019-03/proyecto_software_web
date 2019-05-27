@@ -44,9 +44,7 @@ export function getLastMessages(callback) {
     if (error) {
       console.error(error);
     } else {
-      callback(
-        data._embedded.messages === undefined ? [] : data._embedded.messages
-      );
+      callback(data._embedded === undefined ? [] : data._embedded.messages);
     }
   });
 }

@@ -18,7 +18,6 @@ import {
   getUnivesities,
   getDegreesFromUnivesity
 } from "../config/UniversityAPI";
-import { LoadingSpinUniCast } from "./LoadingSpin";
 
 const FormularioDatos = (
   handleSubmit,
@@ -43,18 +42,11 @@ const FormularioDatos = (
   passNoValida,
   listaUniversidades,
   listaCarreras,
-  handleChangeUni,
-  mostrarSpin,
-  handleSpin
+  handleChangeUni
 ) => {
   return (
     <div style={{ margin: "0 20% 0 0" }}>
-      <Form
-        onSubmit={e => {
-          handleSubmit(e);
-          handleSpin();
-        }}
-      >
+      <Form onSubmit={e => handleSubmit(e)}>
         <Form.Row>
           <Form.Group as={Col} controlId="formGridName">
             <Form.Label style={{ color: nombreInvalido ? "red" : "black" }}>
@@ -205,13 +197,10 @@ const FormularioDatos = (
 
         <Button
           className="boton-filtro"
-          style={{ float: "right", width: "130px", position: "relative" }}
+          style={{ float: "right" }}
           type="submit"
         >
           Confirmar
-          {mostrarSpin ? (
-            <LoadingSpinUniCast className="spin-editar-perfil" />
-          ) : null}
         </Button>
 
         <Link to="/perfil">
@@ -249,8 +238,7 @@ class EditarPerfil extends Component {
       userInvalido: false,
       emailInvalido: false,
       passNoIguales: false,
-      passNoValida: false,
-      mostrarSpin: false
+      passNoValida: false
     };
     this.nombre = React.createRef();
     this.apellidos = React.createRef();
@@ -262,7 +250,6 @@ class EditarPerfil extends Component {
     this.universidad = React.createRef();
     this.carrera = React.createRef();
     this.getData = this.getData.bind(this);
-    this.handleSpin = this.handleSpin.bind(this);
     this.handleSubmitDatos = this.handleSubmitDatos.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleChangeUni = this.handleChangeUni.bind(this);
@@ -296,47 +283,6 @@ class EditarPerfil extends Component {
 
   componentWillUnmount() {
     this._isMounted = false;
-  }
-
-  handleSpin() {
-    const nombre = this.nombre.current.value;
-    const apellidos = this.apellidos.current.value;
-    const userID = this.userID.current.value;
-    const email = this.email.current.value;
-    const pass = this.pass.current.value;
-    const pass2 = this.pass2.current.value;
-    const foto = this.foto.current.value;
-    let ok = true;
-    if (!nombre.match(restriccionNombre)) {
-      ok = false;
-    }
-    if (!apellidos.match(restriccionNombre)) {
-      ok = false;
-    }
-    if (!userID.match(restriccionUser)) {
-      ok = false;
-    }
-    if (!email.match(emailPattern)) {
-      if (email !== "") {
-        ok = false;
-      }
-    }
-    if (pass.match(restriccion)) {
-      if (pass !== pass2) {
-        ok = false;
-      }
-    } else {
-      if (pass !== "") {
-        ok = false;
-      }
-    }
-    if (!checkFileExtensionImage(foto) && foto !== "") {
-      ok = false;
-    }
-
-    if (this._isMounted && ok) {
-      this.setState({ mostrarSpin: true });
-    }
   }
 
   getAllUniversities(unis, page) {
@@ -444,24 +390,14 @@ class EditarPerfil extends Component {
         this.foto.current.files[0],
         updated => {
           if (updated) {
-            if (this._isMounted) {
-              this.setState({ datosValidados: true, datosInvalidos: false });
-            }
+            this.setState({ datosValidados: true, datosInvalidos: false });
           } else {
-            if (this._isMounted) {
-              this.setState({
-                datosValidados: false,
-                datosInvalidos: true,
-                mostrarSpin: false
-              });
-            }
+            this.setState({ datosValidados: false, datosInvalidos: true });
           }
         }
       );
     } else {
-      if (this._isMounted) {
-        this.setState({ datosValidados: false, datosInvalidos: true });
-      }
+      this.setState({ datosValidados: false, datosInvalidos: true });
     }
   }
 
@@ -543,9 +479,7 @@ class EditarPerfil extends Component {
                   this.state.passNoValida,
                   this.state.listaUniversidades,
                   this.state.listaCarreras,
-                  this.handleChangeUni,
-                  this.state.mostrarSpin,
-                  this.handleSpin
+                  this.handleChangeUni
                 )}
               </div>
             </div>
