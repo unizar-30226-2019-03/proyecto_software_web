@@ -183,6 +183,7 @@ class Asignatura extends Component {
             this.setState({
               siguiendoAsig: !this.state.siguiendoAsig,
               notif: true,
+              updateSubject: true,
               mensajeNotif: `Siguiendo a ${this.state.asig.name}`
             });
             this.iniciarReloj();
@@ -193,14 +194,12 @@ class Asignatura extends Component {
             this.setState({
               siguiendoAsig: !this.state.siguiendoAsig,
               notif: true,
+              updateSubject: true,
               mensajeNotif: `Dejando de seguir a ${this.state.asig.name}`
             });
             this.iniciarReloj();
           }
         });
-    if (this._isMounted) {
-      this.setState({ updateSubject: true });
-    }
   }
 
   render() {
