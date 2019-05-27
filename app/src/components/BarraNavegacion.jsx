@@ -64,7 +64,8 @@ class Notificacion extends Component {
     return (
       <div>
         {this.state.notif.notificationCategory === "videos" ? (
-          <div
+          <Link
+            to={`/asig/${this.state.notif.creatorId}`}
             onMouseEnter={() => {
               checkNotification(this.state.notif.id, ok => {
                 if (ok) {
@@ -104,9 +105,10 @@ class Notificacion extends Component {
                 : `Hace 
               ${getTimePassed(this.state.notif.timestamp, this.state.timeNow)}`}
             </span>
-          </div>
+          </Link>
         ) : (
-          <div
+          <Link
+            to={`/chat/${this.state.notif.creatorId}`}
             onMouseEnter={() => {
               checkNotification(this.state.notif.id, ok => {
                 if (ok) {
@@ -139,7 +141,7 @@ class Notificacion extends Component {
                 : `Hace 
               ${getTimePassed(this.state.notif.timestamp, this.state.timeNow)}`}
             </span>
-          </div>
+          </Link>
         )}
       </div>
     );
