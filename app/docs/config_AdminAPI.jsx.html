@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: config/AdminAPI.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: config/AdminAPI.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Funciones de la API del administrador
+ *
+ * @author UniCast
+ *
+ * @requires ../node_modules/swagger_unicast/dist/ApiClient.js:ApiClient
+ * @requires ../node_modules/swagger_unicast/dist/api/SubjectApi.js:SubjectApi
+ * @requires ../node_modules/swagger_unicast/dist/model/Subject2.js:Subject2
+ * @requires ../node_modules/swagger_unicast/dist/model/Degree2.js:Degree2
+ * @requires ./Auth.js:getUserToken
+ */
+
+import ApiClient from "swagger_unicast/dist/ApiClient";
+import SubjectApi from "swagger_unicast/dist/api/SubjectApi";
+import Subject2 from "swagger_unicast/dist/model/Subject2";
+import { Degree2 } from "swagger_unicast";
+import { getUserToken } from "./Auth";
+
+const defaultClient = ApiClient.instance;
+
+/**
+ * Busca un usuario y lo convierte a profesor
+ * @param {String} username Nombre de usuario
+ * @param {HTMLElement} form Formulario a resetear
+ * @param {Function} handleShow Función a ejecutar
+ * @param {UserApi} api API de usuario
+ */
+export function hacerProfesor(username, form, handleShow, api) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  let opts = {
+    cacheControl: "no-cache, no-store, must-revalidate", // String |
+    pragma: "no-cache", // String |
+    expires: "0", // String |
+    username: username // String | Comienzo del username del usuario a buscar
+  };
+  api.findUserByUsername(opts, (error, data, response) => {
+    if (error) {
+      alert("El usuario introducido no existe");
+    } else {
+      api.makeProfessor(data.id, (error, data, response) => {
+        if (error) {
+          alert("No se ha podido hacer profesor al usuario " + username);
+          console.error(error);
+        } else {
+          form.reset();
+          handleShow();
+        }
+      });
+    }
+  });
+}
+
+/**
+ *
+ * Busca un usuario y lo convierte a usuario normal
+ * @param {String} username Nombre de usuario
+ * @param {HTMLElement} form Formulario a resetear
+ * @param {Function} handleShow Función a ejecutar
+ * @param {UserApi} api API de usuario
+ */
+export function borrarProfesor(username, form, handleShow, api) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  let opts = {
+    cacheControl: "no-cache, no-store, must-revalidate", // String |
+    pragma: "no-cache", // String |
+    expires: "0", // String |
+    username: username // String | Comienzo del username del usuario a buscar
+  };
+  api.findUserByUsername(opts, (error, data, response) => {
+    if (error) {
+      alert("El usuario introducido no existe");
+    } else {
+      api.eraseProfessor(data.id, (error, data, response) => {
+        if (error) {
+          alert("No se ha podido borrar al profesor " + username);
+          console.error(error);
+        } else {
+          form.reset();
+          handleShow();
+          console.log("API called successfully.");
+        }
+      });
+    }
+  });
+}
+
+/**
+ *
+ * Elimina la universidad que tenga el id especificado
+ * @param {Number} uni ID de la universidad
+ * @param {HTMLElement} form Formulario a resetear
+ * @param {Function} handleShow Función a ejecutar
+ * @param {UniversityApi} api API de universidad
+ * @param {Function} callback Función a ejecutar tras realizar la operación
+ */
+export function borrarUniversidad(uni, form, handleShow, api, callback) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  api.deleteUniversity(parseInt(uni), (error, data, response) => {
+    if (error) {
+      console.error(error);
+      callback(false);
+    } else {
+      form.reset();
+      handleShow();
+      callback(true);
+    }
+  });
+}
+
+/**
+ *
+ * Elimina la asignatura que tenga el id especificado
+ * @param {Number} sub ID de la asignatura
+ * @param {HTMLElement} form Formulario a resetear
+ * @param {Function} handleShow Función a ejecutar
+ * @param {SubjectApi} api API de asignatura
+ */
+export function borrarAsignatura(sub, form, handleShow, api) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  api.deleteSubject(parseInt(sub), (error, data, response) => {
+    if (error) {
+      console.error(error);
+      alert("No se ha podido borrar la asignatura");
+    } else {
+      form.reset();
+      handleShow();
+    }
+  });
+}
+
+/**
+ * Elimina la asociación de un profesor con una asignatura
+ * @param {Number} sub ID de la asignatura
+ * @param {Number} prof ID del profesor
+ * @param {HTMLElement} form Formulario a resetear
+ * @param {Function} handleShow Función a ejecutar
+ * @param {SubjectApi} api API de asignatura
+ */
+export function borrarProfeAsignatura(sub, prof, form, handleShow, api) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+  api.deleteProfessor(
+    parseInt(sub),
+    parseInt(prof),
+    (error, data, response) => {
+      if (error) {
+        console.error(error);
+      } else {
+        form.reset();
+        handleShow();
+      }
+    }
+  );
+}
+/**
+ * Crea la universidad cuyo nombre y foto son los especificados
+ * en los parámetros. Si ya existe la universidad, muestra un
+ * mensaje informando de que ya existía.
+ * @param {String} uni Nombre de la universidad
+ * @param {File} file Imagen de la universidad
+ * @param {HTMLElement} form Formulario de entrada
+ * @param {Function} handleShow Callback a ejecutar
+ * @param {UniversityApi} api API de la universidad
+ * @param {Function} callback Función a ejecutar tras crear la universidad
+ */
+export function crearUniversidad(uni, file, form, handleShow, api, callback) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  api.addUniversity(uni, file, (error, data, response) => {
+    if (error) {
+      callback(false);
+    } else {
+      form.reset();
+      handleShow();
+      callback(true);
+    }
+  });
+}
+
+/**
+ * Si no existe la carrera, la crea y la asocia a la universidad
+ * especificada. Si ya existía, asocia dicha carrera a la universidad.
+ * @param {DegreeApi} DegreeApi API de las carreras
+ * @param {String} carrera Nombre de la carrera
+ * @param {Number} uni ID de la universidad
+ */
+export function crearCarreraYLigar(DegreeApi, carrera, uni) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  let degree2 = new Degree2(carrera); // Degree2 | Carrera a añadir
+  DegreeApi.addDegree(degree2, (error, data, response) => {
+    if (error) {
+      //console.error(error);
+      //Ya existe, conseguir el id de la carrera
+      let opts = {
+        cacheControl: "no-cache, no-store, must-revalidate", // String |
+        pragma: "no-cache", // String |
+        expires: "0", // String |
+        name: carrera // String | Nombre a buscar
+      };
+      DegreeApi.findDegreesByName(opts, (error, data, response) => {
+        if (error) {
+          console.error(error);
+        } else {
+          ligarUniCarr(uni, data.id, DegreeApi);
+        }
+      });
+    } else {
+      ligarUniCarr(uni, data.id, DegreeApi);
+    }
+  });
+}
+
+/**
+ * Asocia la carrera y la universidad especificadas.
+ * @param {Number} uniID ID de la universidad
+ * @param {Number} carreraID ID de la carrera
+ * @param {DegreeApi} DegreeApi API de las carreras
+ */
+function ligarUniCarr(uniID, carreraID, DegreeApi) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+  //Ligar carrera a universidad
+  DegreeApi.putDegreeUniversity(carreraID, uniID, (error, data, response) => {
+    if (error) {
+      console.error("error");
+    } else {
+      console.log("API called successfully.");
+    }
+  });
+}
+
+/**
+ * Si no existe la asignatura, la crea y la asocia a la universidad
+ * especificada. Si ya existía, asocia dicha asignatura a la universidad.
+ * @param {SubjectApi} SubjectApi API de las asignaturas
+ * @param {String} subject Nombre de la asignatura
+ * @param {String} shortname Nombre abreviado de la asignatura
+ * @param {Number} uni ID de la universidad
+ */
+export function crearAsigYLigar(SubjectApi, subject, shortname, uni) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  let subject2 = new Subject2(subject, shortname.substr(0, 5)); // Subject2 | Asignatura a añadir
+  SubjectApi.addSubject(subject2, (error, data, response) => {
+    if (error) {
+      //console.error(error);
+      //Ya existe, buscarla y ligarla
+      let opts = {
+        cacheControl: "no-cache, no-store, must-revalidate", // String |
+        pragma: "no-cache", // String |
+        expires: "0", // String |
+        projection: "subjectWithUniversity", // String | Incluir si se quiere obtener tambien la universidad en la respuesta
+        name: subject // String | Nombre a buscar
+      };
+      SubjectApi.findSubjectsByName(opts, (error, data, response) => {
+        if (error) {
+          console.error(error);
+        } else {
+          ligarUniAsig(uni, data._embedded.subjects[0].id, SubjectApi);
+        }
+      });
+    } else {
+      ligarUniAsig(uni, data.id, SubjectApi);
+    }
+  });
+}
+
+/**
+ * Liga la asignatura especificada a la universidad
+ * especificada.
+ * @param {Number} uni ID de la universidad
+ * @param {Number} subject ID de la asignatura
+ * @param {SubjectApi} SubjectApi API de las asignaturas
+ */
+function ligarUniAsig(uni, subject, SubjectApi) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+  SubjectApi.putUniversity(subject, uni, (error, data, response) => {
+    if (error) {
+      console.error(error);
+    } else {
+      console.log("API called successfully.");
+    }
+  });
+}
+
+/**
+ * Asigna la asignatura especificada al usuario especificado
+ * @param {Number} idUser ID del usuario
+ * @param {Number} idSubj ID de la asignatura
+ * @param {SubjectApi} SubjectApi API de las asignaturas
+ * @param {Function} callback Función a ejecutar tras añadir profesor
+ */
+export function addProfessor(idUser, idSubj, SubjectApi, callback) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  SubjectApi.addProfessor(idSubj, idUser, (error, data, response) => {
+    if (error) {
+      callback(false);
+    } else {
+      callback(true);
+    }
+  });
+}
+
+/**
+ * Elimina la asociación de un usuario con una asignatura
+ * @param {Number} userId ID del usuario
+ * @param {Number} subjectId ID de la asignatura
+ * @param {Function} callback Función a ejecutar tras
+ */
+export function deleteProfessor(userId, subjectId, callback) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  let apiInstance = new SubjectApi();
+  apiInstance.deleteProfessor(subjectId, userId, (error, data, response) => {
+    if (error) {
+      console.error(error);
+      callback(false);
+    } else {
+      callback(true);
+    }
+  });
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="App.html">App</a></li><li><a href="BarraNavegacion.html">BarraNavegacion</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addComment">addComment</a></li><li><a href="global.html#addMessage">addMessage</a></li><li><a href="global.html#addProfessor">addProfessor</a></li><li><a href="global.html#addReproductionList">addReproductionList</a></li><li><a href="global.html#addUser">addUser</a></li><li><a href="global.html#addVideotoReproductionList">addVideotoReproductionList</a></li><li><a href="global.html#addVote">addVote</a></li><li><a href="global.html#authUser">authUser</a></li><li><a href="global.html#borrarAsignatura">borrarAsignatura</a></li><li><a href="global.html#borrarProfeAsignatura">borrarProfeAsignatura</a></li><li><a href="global.html#borrarProfesor">borrarProfesor</a></li><li><a href="global.html#borrarUniversidad">borrarUniversidad</a></li><li><a href="global.html#checkFileExtensionImage">checkFileExtensionImage</a></li><li><a href="global.html#checkFileExtensionVideo">checkFileExtensionVideo</a></li><li><a href="global.html#checkNotification">checkNotification</a></li><li><a href="global.html#crearAsigYLigar">crearAsigYLigar</a></li><li><a href="global.html#crearCarreraYLigar">crearCarreraYLigar</a></li><li><a href="global.html#crearUniversidad">crearUniversidad</a></li><li><a href="global.html#deleteProfessor">deleteProfessor</a></li><li><a href="global.html#deleteReproductionList">deleteReproductionList</a></li><li><a href="global.html#deleteVideo">deleteVideo</a></li><li><a href="global.html#deleteVideoFromDisplay">deleteVideoFromDisplay</a></li><li><a href="global.html#deleteVideoFromReproductionList">deleteVideoFromReproductionList</a></li><li><a href="global.html#diasDelMes">diasDelMes</a></li><li><a href="global.html#emailPattern">emailPattern</a></li><li><a href="global.html#esAyer">esAyer</a></li><li><a href="global.html#esBisiesto">esBisiesto</a></li><li><a href="global.html#f_filterResults">f_filterResults</a></li><li><a href="global.html#f_scrollTop">f_scrollTop</a></li><li><a href="global.html#findSubjectByName">findSubjectByName</a></li><li><a href="global.html#findSubjectsContainingName">findSubjectsContainingName</a></li><li><a href="global.html#findUserProfessors">findUserProfessors</a></li><li><a href="global.html#findVideosContainingTitle">findVideosContainingTitle</a></li><li><a href="global.html#generadorColores">generadorColores</a></li><li><a href="global.html#getCommentsByVideo">getCommentsByVideo</a></li><li><a href="global.html#getDegreeOfUser">getDegreeOfUser</a></li><li><a href="global.html#getDegreesFromUnivesity">getDegreesFromUnivesity</a></li><li><a href="global.html#getDisplaysByUser">getDisplaysByUser</a></li><li><a href="global.html#getLastMessages">getLastMessages</a></li><li><a href="global.html#getMessagesFromSender">getMessagesFromSender</a></li><li><a href="global.html#getMessagesToReceiver">getMessagesToReceiver</a></li><li><a href="global.html#getProfessorsFromSubject">getProfessorsFromSubject</a></li><li><a href="global.html#getRecommendations">getRecommendations</a></li><li><a href="global.html#getReproductionListVideoIn">getReproductionListVideoIn</a></li><li><a href="global.html#getScore">getScore</a></li><li><a href="global.html#getSubjectById">getSubjectById</a></li><li><a href="global.html#getSubjectRanking">getSubjectRanking</a></li><li><a href="global.html#getSubjectsAsProfessor">getSubjectsAsProfessor</a></li><li><a href="global.html#getSubjectsFromUniveristy">getSubjectsFromUniveristy</a></li><li><a href="global.html#getSubjectsOfUser">getSubjectsOfUser</a></li><li><a href="global.html#getTime">getTime</a></li><li><a href="global.html#getTimePassed">getTimePassed</a></li><li><a href="global.html#getUniversityOfUser">getUniversityOfUser</a></li><li><a href="global.html#getUnivesities">getUnivesities</a></li><li><a href="global.html#getUser">getUser</a></li><li><a href="global.html#getUserByUsername">getUserByUsername</a></li><li><a href="global.html#getUserID">getUserID</a></li><li><a href="global.html#getUserNotifications">getUserNotifications</a></li><li><a href="global.html#getUserPhoto">getUserPhoto</a></li><li><a href="global.html#getUserReproductionLists">getUserReproductionLists</a></li><li><a href="global.html#getUserRole">getUserRole</a></li><li><a href="global.html#getUserToken">getUserToken</a></li><li><a href="global.html#getUserUncheckedNotifications">getUserUncheckedNotifications</a></li><li><a href="global.html#getVideo">getVideo</a></li><li><a href="global.html#getVideoDisplay">getVideoDisplay</a></li><li><a href="global.html#getVideosFromReproductionList">getVideosFromReproductionList</a></li><li><a href="global.html#getVideosFromSubject">getVideosFromSubject</a></li><li><a href="global.html#getVideosFromUploader">getVideosFromUploader</a></li><li><a href="global.html#getVideoSubject">getVideoSubject</a></li><li><a href="global.html#hacerProfesor">hacerProfesor</a></li><li><a href="global.html#isSignedIn">isSignedIn</a></li><li><a href="global.html#ligarUniAsig">ligarUniAsig</a></li><li><a href="global.html#ligarUniCarr">ligarUniCarr</a></li><li><a href="global.html#mergeSortedArray">mergeSortedArray</a></li><li><a href="global.html#parsearFecha">parsearFecha</a></li><li><a href="global.html#parseNewMessages">parseNewMessages</a></li><li><a href="global.html#putFavouritesFirst">putFavouritesFirst</a></li><li><a href="global.html#RemoveAccents">RemoveAccents</a></li><li><a href="global.html#restriccion">restriccion</a></li><li><a href="global.html#restriccionNombre">restriccionNombre</a></li><li><a href="global.html#restriccionUser">restriccionUser</a></li><li><a href="global.html#scrollFunc">scrollFunc</a></li><li><a href="global.html#setUserPhoto">setUserPhoto</a></li><li><a href="global.html#setUserRole">setUserRole</a></li><li><a href="global.html#signIn">signIn</a></li><li><a href="global.html#signOut">signOut</a></li><li><a href="global.html#SubscribeSubject">SubscribeSubject</a></li><li><a href="global.html#UnsubscribeSubject">UnsubscribeSubject</a></li><li><a href="global.html#updateDisplay">updateDisplay</a></li><li><a href="global.html#updateUser">updateUser</a></li><li><a href="global.html#UploadVideo">UploadVideo</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.2</a> on Tue May 28 2019 16:31:38 GMT+0200 (hora de verano de Europa central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

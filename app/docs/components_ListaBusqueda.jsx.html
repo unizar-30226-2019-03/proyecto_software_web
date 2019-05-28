@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/ListaBusqueda.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/ListaBusqueda.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { Component } from "react";
+import { Link } from "react-router-dom";
+import { FaPlus } from "react-icons/fa";
+import Popup from "reactjs-popup";
+import { getTime } from "../config/Process";
+import { getScore, getTimePassed } from "../config/VideoAPI";
+import { ContenidoPopUp } from "./ListaVertical";
+
+class MenuItem extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      mostrarOpciones: false,
+      popUp: false
+    };
+    this.abrirPopUp = this.abrirPopUp.bind(this);
+    this.cerrarPopUp = this.cerrarPopUp.bind(this);
+    this.recibirHijo = this.recibirHijo.bind(this);
+  }
+  /**
+   * Si anyadir=true, anyadir a la lista lista, sino borrar de la lista lista
+   * @param {lista} lista 
+   * @param {*} mensaje 
+   * @param {boolean} anyadir 
+   * @param {*} callback 
+   */
+  recibirHijo(lista, mensaje, anyadir, callback) {
+    //SI anyadir = true, anyadir a la lista lista, sino borrar de la lista lista
+    this.props.anyadirALista(this.props.id, mensaje, lista, anyadir, ok => {
+      callback(ok);
+    });
+  }
+  /**
+   * Pone popUp a true
+   */
+  abrirPopUp() {
+    this.setState({ popUp: true });
+  }
+  /**
+   * Pone popUp y mostrarOpciones a false
+   */
+  cerrarPopUp() {
+    this.setState({ popUp: false, mostrarOpciones: false });
+  }
+
+  render() {
+    return (
+      &lt;div
+        onMouseEnter={() => {
+          this.setState({ mostrarOpciones: true });
+        }}
+        onMouseLeave={() => {
+          this.setState({ mostrarOpciones: false });
+          this.cerrarPopUp();
+        }}
+        style={{
+          marginBottom: "16px",
+          display: "flex"
+        }}
+      >
+        &lt;div>
+          &lt;Link
+            to={`/video?id=${this.props.id}`}
+            style={{ position: "relative" }}
+          >
+            &lt;img src={this.props.img} width="240" height="140" alt="videoX" />
+            &lt;div
+              style={{
+                color: "white",
+                fontSize: "12px",
+                textAlign: "center",
+                backgroundColor: "rgba(0,0,0,0.7)",
+                textDecoration: "none",
+                width: "fit-content",
+                height: "fit-content",
+                position: "absolute",
+                right: "3px",
+                top: "60px",
+                borderRadius: "3px",
+                zIndex: "100"
+              }}
+            >
+              {this.props.duracion}
+            &lt;/div>
+            {this.props.showRating ? (
+              &lt;div
+                style={{
+                  color: this.props.rating >= 50 ? "#228B22" : "#DC143C",
+                  fontSize: "12px",
+                  textAlign: "center",
+                  backgroundColor: "rgba(0,0,0,0.7)",
+                  textDecoration: "none",
+                  width: "40px",
+                  height: "fit-content",
+                  position: "absolute",
+                  left: "4px",
+                  top: "60px",
+                  borderRadius: "3px",
+                  zIndex: "100"
+                }}
+              >
+                {this.props.rating + "%"}
+              &lt;/div>
+            ) : null}
+          &lt;/Link>
+        &lt;/div>
+        &lt;div style={{ marginTop: "5px" }}>
+          &lt;div
+            style={{
+              marginLeft: "10px",
+              lineHeight: "normal",
+              marginBottom: "10px"
+            }}
+          >
+            &lt;Link
+              style={{
+                textDecoration: "none",
+                color: "black",
+                fontSize: "20px",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                display: "-webkit-box",
+                WebkitLineClamp: "2",
+                WebkitBoxOrient: "vertical",
+                fontWeight: "400",
+                wordWrap: "break-word",
+                width: "90%"
+              }}
+              to={`/video?id=${this.props.id}`}
+            >
+              {this.props.url}
+            &lt;/Link>
+          &lt;/div>
+          &lt;div
+            style={{
+              marginLeft: "10px",
+              lineHeight: "normal",
+              marginBottom: "3px"
+            }}
+          >
+            &lt;Link
+              style={{
+                textDecoration: "none",
+                color: "#00000080",
+                fontSize: "12px",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                display: "-webkit-box",
+                WebkitLineClamp: "1",
+                WebkitBoxOrient: "vertical",
+                fontWeight: "500"
+              }}
+              to={`/asig/${this.props.canalId}`}
+            >
+              {this.props.canal}
+            &lt;/Link>
+            &lt;div style={{ marginTop: "10px", width: "90%" }}>
+              &lt;div
+                style={{
+                  textDecoration: "none",
+                  color: "#00000080",
+                  fontSize: "12px",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  display: "-webkit-box",
+                  WebkitLineClamp: "3",
+                  WebkitBoxOrient: "vertical",
+                  fontWeight: "500"
+                }}
+              >
+                {this.props.descripcion}
+              &lt;/div>
+            &lt;/div>
+          &lt;/div>
+        &lt;/div>
+        {this.state.mostrarOpciones ? (
+          &lt;div
+            style={{
+              position: "relative",
+              right: "0",
+              top: "0",
+              width: "fit-content",
+              height: "fit-content",
+              display: "flex"
+            }}
+          >
+            {" "}
+            &lt;Popup
+              open={this.state.popUp}
+              onOpen={this.abrirPopUp}
+              onClose={this.cerrarPopUp}
+              arrow={false}
+              position="bottom right"
+              contentStyle={{
+                width: "250px",
+                zIndex: "1000",
+                maxHeight: "300px",
+                overflow: "scroll",
+                padding: "16px 20px",
+                border: "0",
+                marginTop: "10px",
+                boxShadow:
+                  "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4)"
+              }}
+              trigger={
+                &lt;FaPlus
+                  color={"#00000080"}
+                  size={14}
+                  style={{ marginRight: "5px", cursor: "pointer" }}
+                />
+              }
+            >
+              &lt;ContenidoPopUp
+                video={this.props.url}
+                videoId={this.props.id}
+                listaRepro={this.props.listaRepro}
+                enviarPadre={this.recibirHijo}
+                actualizarListas={this.props.actualizarListas}
+              />
+            &lt;/Popup>
+          &lt;/div>
+        ) : null}
+      &lt;/div>
+    );
+  }
+}
+
+// All items component
+// Important! add unique key
+export const MenuVertical = (
+  list,
+  anyadir,
+  listaRepro,
+  time,
+  actualizarListas
+) =>
+  list.map(video => {
+    return (
+      &lt;MenuItem
+        url={video.title}
+        canal={video.subject.name}
+        canalId={video.subject.id}
+        key={video.id}
+        id={video.id}
+        anyadirALista={anyadir}
+        actualizarListas={actualizarListas}
+        img={video.thumbnailUrl}
+        listaRepro={listaRepro}
+        duracion={getTime(video.seconds)}
+        rating={getScore(video.score)}
+        timestamp={getTimePassed(video.timestamp, time)}
+        descripcion={video.description}
+        showRating={video.score === null ? false : true}
+      />
+    );
+  });
+
+class ListaBusqueda extends Component {
+  constructor(props) {
+    super(props);
+    this.menu = MenuVertical(
+      this.props.lista,
+      this.props.anyadirALista,
+      this.props.listaRepro,
+      this.props.time,
+      this.props.actualizarListas
+    );
+  }
+  /**
+   * Asigna a menu el MenuVertical con las propiedades de newProps
+   * @param {*} newProps 
+   */
+  componentWillReceiveProps(newProps) {
+    this.menu = MenuVertical(
+      newProps.lista,
+      newProps.anyadirALista,
+      newProps.listaRepro,
+      newProps.time,
+      newProps.actualizarListas
+    );
+  }
+  render() {
+    return &lt;div>{this.menu}&lt;/div>;
+  }
+}
+
+export default ListaBusqueda;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="App.html">App</a></li><li><a href="BarraNavegacion.html">BarraNavegacion</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addComment">addComment</a></li><li><a href="global.html#addMessage">addMessage</a></li><li><a href="global.html#addProfessor">addProfessor</a></li><li><a href="global.html#addReproductionList">addReproductionList</a></li><li><a href="global.html#addUser">addUser</a></li><li><a href="global.html#addVideotoReproductionList">addVideotoReproductionList</a></li><li><a href="global.html#addVote">addVote</a></li><li><a href="global.html#authUser">authUser</a></li><li><a href="global.html#borrarAsignatura">borrarAsignatura</a></li><li><a href="global.html#borrarProfeAsignatura">borrarProfeAsignatura</a></li><li><a href="global.html#borrarProfesor">borrarProfesor</a></li><li><a href="global.html#borrarUniversidad">borrarUniversidad</a></li><li><a href="global.html#checkFileExtensionImage">checkFileExtensionImage</a></li><li><a href="global.html#checkFileExtensionVideo">checkFileExtensionVideo</a></li><li><a href="global.html#checkNotification">checkNotification</a></li><li><a href="global.html#crearAsigYLigar">crearAsigYLigar</a></li><li><a href="global.html#crearCarreraYLigar">crearCarreraYLigar</a></li><li><a href="global.html#crearUniversidad">crearUniversidad</a></li><li><a href="global.html#deleteProfessor">deleteProfessor</a></li><li><a href="global.html#deleteReproductionList">deleteReproductionList</a></li><li><a href="global.html#deleteVideo">deleteVideo</a></li><li><a href="global.html#deleteVideoFromDisplay">deleteVideoFromDisplay</a></li><li><a href="global.html#deleteVideoFromReproductionList">deleteVideoFromReproductionList</a></li><li><a href="global.html#diasDelMes">diasDelMes</a></li><li><a href="global.html#emailPattern">emailPattern</a></li><li><a href="global.html#esAyer">esAyer</a></li><li><a href="global.html#esBisiesto">esBisiesto</a></li><li><a href="global.html#f_filterResults">f_filterResults</a></li><li><a href="global.html#f_scrollTop">f_scrollTop</a></li><li><a href="global.html#findSubjectByName">findSubjectByName</a></li><li><a href="global.html#findSubjectsContainingName">findSubjectsContainingName</a></li><li><a href="global.html#findUserProfessors">findUserProfessors</a></li><li><a href="global.html#findVideosContainingTitle">findVideosContainingTitle</a></li><li><a href="global.html#generadorColores">generadorColores</a></li><li><a href="global.html#getCommentsByVideo">getCommentsByVideo</a></li><li><a href="global.html#getDegreeOfUser">getDegreeOfUser</a></li><li><a href="global.html#getDegreesFromUnivesity">getDegreesFromUnivesity</a></li><li><a href="global.html#getDisplaysByUser">getDisplaysByUser</a></li><li><a href="global.html#getLastMessages">getLastMessages</a></li><li><a href="global.html#getMessagesFromSender">getMessagesFromSender</a></li><li><a href="global.html#getMessagesToReceiver">getMessagesToReceiver</a></li><li><a href="global.html#getProfessorsFromSubject">getProfessorsFromSubject</a></li><li><a href="global.html#getRecommendations">getRecommendations</a></li><li><a href="global.html#getReproductionListVideoIn">getReproductionListVideoIn</a></li><li><a href="global.html#getScore">getScore</a></li><li><a href="global.html#getSubjectById">getSubjectById</a></li><li><a href="global.html#getSubjectRanking">getSubjectRanking</a></li><li><a href="global.html#getSubjectsAsProfessor">getSubjectsAsProfessor</a></li><li><a href="global.html#getSubjectsFromUniveristy">getSubjectsFromUniveristy</a></li><li><a href="global.html#getSubjectsOfUser">getSubjectsOfUser</a></li><li><a href="global.html#getTime">getTime</a></li><li><a href="global.html#getTimePassed">getTimePassed</a></li><li><a href="global.html#getUniversityOfUser">getUniversityOfUser</a></li><li><a href="global.html#getUnivesities">getUnivesities</a></li><li><a href="global.html#getUser">getUser</a></li><li><a href="global.html#getUserByUsername">getUserByUsername</a></li><li><a href="global.html#getUserID">getUserID</a></li><li><a href="global.html#getUserNotifications">getUserNotifications</a></li><li><a href="global.html#getUserPhoto">getUserPhoto</a></li><li><a href="global.html#getUserReproductionLists">getUserReproductionLists</a></li><li><a href="global.html#getUserRole">getUserRole</a></li><li><a href="global.html#getUserToken">getUserToken</a></li><li><a href="global.html#getUserUncheckedNotifications">getUserUncheckedNotifications</a></li><li><a href="global.html#getVideo">getVideo</a></li><li><a href="global.html#getVideoDisplay">getVideoDisplay</a></li><li><a href="global.html#getVideosFromReproductionList">getVideosFromReproductionList</a></li><li><a href="global.html#getVideosFromSubject">getVideosFromSubject</a></li><li><a href="global.html#getVideosFromUploader">getVideosFromUploader</a></li><li><a href="global.html#getVideoSubject">getVideoSubject</a></li><li><a href="global.html#hacerProfesor">hacerProfesor</a></li><li><a href="global.html#isSignedIn">isSignedIn</a></li><li><a href="global.html#ligarUniAsig">ligarUniAsig</a></li><li><a href="global.html#ligarUniCarr">ligarUniCarr</a></li><li><a href="global.html#mergeSortedArray">mergeSortedArray</a></li><li><a href="global.html#parsearFecha">parsearFecha</a></li><li><a href="global.html#parseNewMessages">parseNewMessages</a></li><li><a href="global.html#putFavouritesFirst">putFavouritesFirst</a></li><li><a href="global.html#RemoveAccents">RemoveAccents</a></li><li><a href="global.html#restriccion">restriccion</a></li><li><a href="global.html#restriccionNombre">restriccionNombre</a></li><li><a href="global.html#restriccionUser">restriccionUser</a></li><li><a href="global.html#scrollFunc">scrollFunc</a></li><li><a href="global.html#setUserPhoto">setUserPhoto</a></li><li><a href="global.html#setUserRole">setUserRole</a></li><li><a href="global.html#signIn">signIn</a></li><li><a href="global.html#signOut">signOut</a></li><li><a href="global.html#SubscribeSubject">SubscribeSubject</a></li><li><a href="global.html#UnsubscribeSubject">UnsubscribeSubject</a></li><li><a href="global.html#updateDisplay">updateDisplay</a></li><li><a href="global.html#updateUser">updateUser</a></li><li><a href="global.html#UploadVideo">UploadVideo</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.2</a> on Tue May 28 2019 16:31:38 GMT+0200 (hora de verano de Europa central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

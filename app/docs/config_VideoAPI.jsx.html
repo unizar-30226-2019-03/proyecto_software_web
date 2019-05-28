@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: config/VideoAPI.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: config/VideoAPI.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Funciones de la API de los vídeos
+ *
+ * @author UniCast
+ *
+ * @requires ../node_modules/swagger_unicast/dist/ApiClient.js:ApiClient
+ * @requires ../node_modules/swagger_unicast/dist/api/VideoApi.js:VideoApi
+ * @requires ./Auth.js:getUserToken
+ */
+
+import ApiClient from "swagger_unicast/dist/ApiClient";
+import VideoApi from "swagger_unicast/dist/api/VideoApi";
+import { getUserToken } from "./Auth";
+
+const apiInstance = new VideoApi(); //Instancia de la API de vídeos
+const defaultClient = ApiClient.instance;
+
+/**
+ * Genera un color aleatorio a partir del nombre del usuario
+ * @param {String} usuario Nombre del usuario
+ *
+ * @returns {String} Color RGB
+ */
+export function generadorColores(usuario) {
+  var hash = 0;
+  if (usuario.length === 0) return hash;
+  for (let i = 0; i &lt; usuario.length; i++) {
+    hash = usuario.charCodeAt(i) + ((hash &lt;&lt; 5) - hash);
+    hash = hash &amp; hash;
+  }
+  var color = "#";
+  for (let i = 0; i &lt; 3; i++) {
+    var value = (hash >> (i * 8)) &amp; 255;
+    color += ("00" + value.toString(16)).substr(-2);
+  }
+  return color;
+}
+
+/**
+ * Hace un scroll hasta la posición final del elemento sin
+ * hacer un scroll completo en la pantalla.
+ * @param {Element} elemento div a scrollear
+ */
+export function scrollFunc(elemento) {
+  var docPos = f_scrollTop();
+  elemento.scrollIntoView();
+  window.scrollTo(0, docPos);
+}
+
+/**
+ * Devuelve la posición hasta la que hacer scroll
+ *
+ * @returns {Number} Posición
+ */
+function f_scrollTop() {
+  return f_filterResults(
+    window.pageYOffset ? window.pageYOffset : 0,
+    document.documentElement ? document.documentElement.scrollTop : 0,
+    document.body ? document.body.scrollTop : 0
+  );
+}
+
+/**
+ * Calcula la posición correcta para hacer scroll
+ * @param {Number} n_win Offset en la componente Y de la pantalla
+ * @param {Number} n_docel Posición superior del elemento
+ * @param {Number} n_body Posición superior del documento
+ *
+ * @returns {Number} Posición
+ */
+function f_filterResults(n_win, n_docel, n_body) {
+  var n_result = n_win ? n_win : 0;
+  if (n_docel &amp;&amp; (!n_result || n_result > n_docel)) n_result = n_docel;
+  return n_body &amp;&amp; (!n_result || n_result > n_body) ? n_body : n_result;
+}
+
+/**
+ * Devuelve un String indicando los minutos, horas, días, semanas, meses o años
+ * transcurridos desde que se subió hasta el momento.
+ * @param {Date} date1 Timestamp de un vídeo
+ * @param {Date} now Tiempo actual del servidor
+ *
+ * @returns {String} Tiempo transcurrido desde la marca temporal hasta ahora
+ */
+export function getTimePassed(date1, now) {
+  const diffMs = now - date1;
+  const diffMins = Math.round(diffMs / 60000);
+  if (diffMins > 60) {
+    const diffHrs = Math.floor(diffMs / 3600000);
+    if (diffHrs > 24) {
+      const diffDays = Math.floor(diffMs / 86400000);
+      if (diffDays > 7) {
+        const diffWeeks = Math.floor(diffMs / 604800000);
+        if (diffWeeks > 4) {
+          const diffMonths = Math.floor(diffMs / 2629800000);
+          if (diffMonths > 12) {
+            const diffYears = Math.floor(diffMs / 31556952000);
+            return `${diffYears} años`;
+          } else {
+            return `${diffMonths} meses`;
+          }
+        } else {
+          return `${diffWeeks} semanas`;
+        }
+      } else {
+        return `${diffDays} días`;
+      }
+    } else {
+      return `${diffHrs} horas`;
+    }
+  } else {
+    return `${diffMins} minutos`;
+  }
+}
+
+/**
+ * Devuelve la puntuación de un vídeo sobre 100
+ * @param {Number} score Puntuación de un vídeo
+ *
+ * @returns {Number} Puntuación sobre 100
+ */
+export function getScore(score) {
+  return Math.round((score * 100) / 5);
+}
+
+/**
+ * Crea un vídeo y lo guarda en el servidor.
+ * @param {File} video Vídeo a subir
+ * @param {File} img Miniatura del vídeo
+ * @param {String} title Título del vídeo
+ * @param {String} description Descripción del vídeo
+ * @param {Number} subjectId ID de la asignatura del vídeo
+ * @param {Function} f Función a ejecutar tras petición a la API
+ */
+export function UploadVideo(video, img, title, description, subjectId, f) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  apiInstance.addVideo(
+    video,
+    img,
+    title,
+    description,
+    subjectId,
+    (error, data, response) => {
+      if (error) {
+        f(false);
+      } else {
+        f(true);
+      }
+    }
+  );
+}
+
+/**
+ * Obtiene los vídeos un usuario, con un máximo
+ * de 20 vídeos (dichos vídeos serán elegidos según la página especificada).
+ * @param {Number} page Número de página a obtener
+ * @param {Function} callback Función a ejecutar tras obtener los vídeos
+ */
+export function getVideosFromUploader(page, callback) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  const opts = {
+    cacheControl: "no-cache, no-store, must-revalidate", // String |
+    pragma: "no-cache", // String |
+    expires: "0", // String |
+    page: page, // Number | Número de la página a devolver
+    sort: ["timestamp,desc"], // [String] | Parámetros en la forma `($propertyname,)+[asc|desc]?`
+    projection: "videoWithSubjectAndUniversity" // String | Incluir si se quiere obtener tambien la universidad y/o la asignatura en la respuesta
+  };
+  apiInstance.getVideosFromUploader(opts, (error, data, response) => {
+    if (error) {
+      console.error(error);
+    } else {
+      const now = ApiClient.parseDate(response.headers.date);
+      callback(data._embedded.videos, now);
+    }
+  });
+}
+
+/**
+ * Obtiene el vídeo con el id especificado
+ * @param {Number} id ID del vídeo
+ * @param {Function} callback Función a ejecutar tras obtener el vídeo
+ */
+export function getVideo(id, callback) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  const opts = {
+    cacheControl: "no-cache, no-store, must-revalidate", // String |
+    pragma: "no-cache", // String |
+    expires: "0", // String |
+    projection: "videoWithSubjectAndUniversity" // String | Incluir si se quiere obtener tambien la universidad y/o la asignatura en la respuesta
+  };
+
+  apiInstance.getVideo(id, opts, (error, data, response) => {
+    if (error) {
+      console.error(error);
+    } else {
+      const now = ApiClient.parseDate(response.headers.date);
+      callback(data, now);
+    }
+  });
+}
+
+/**
+ * Obtiene la asignatura correspondiente al vídeo especificado
+ * @param {Number} id ID del vídeo
+ * @param {Function} callback Función a ejecutar tras obtener la asignatura
+ */
+export function getVideoSubject(id, callback) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  const opts = {
+    cacheControl: "no-cache, no-store, must-revalidate", // String |
+    pragma: "no-cache", // String |
+    expires: "0", // String |
+    projection: "subjectWithUniversity" // String | Incluir si se quiere obtener tambien la universidad en la respuesta
+  };
+  apiInstance.getVideoSubject(id, opts, (error, data, response) => {
+    if (error) {
+      console.error(error);
+    } else {
+      callback(data);
+    }
+  });
+}
+
+/**
+ * Obtiene todos los vídeos cuyo título contenga el título especificado
+ * @param {String} title Título por el que buscar vídeos
+ * @param {Function} callback Función a ejecutar tras obtener los datos
+ */
+export function findVideosContainingTitle(title, callback) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  let opts = {
+    cacheControl: "no-cache, no-store, must-revalidate", // String |
+    pragma: "no-cache", // String |
+    expires: "0", // String |
+    projection: "videoWithSubject", // String | Incluir si se quiere obtener tambien la universidad y/o la asignatura en la respuesta
+    title: title // String | String a buscar en el titulo de videos
+  };
+  apiInstance.findVideosContainingTitle(opts, (error, data, response) => {
+    if (error) {
+      console.error(error);
+    } else {
+      const now = ApiClient.parseDate(response.headers.date);
+      callback(data._embedded.videos, now);
+    }
+  });
+}
+
+/**
+ * Borra un vídeo, solamente puede borrarlo el autor del vídeo
+ * @param {Number} id ID del vídeo
+ * @param {Function} callback Función a ejecutar tras borrar el vídeo
+ */
+export function deleteVideo(id, callback) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  apiInstance.deleteVideo(id, (error, data, response) => {
+    if (error) {
+      console.error(error);
+      callback(false);
+    } else {
+      callback(true);
+    }
+  });
+}
+
+/**
+ * Obtiene los vídeos de una asignatura concreta
+ * @param {Number} subjectId ID de la asignatura
+ * @param {Number} page Número de página
+ * @param {Function} callback Función a ejecutar tras obtener los vídeos
+ */
+export function getVideosFromSubject(subjectId, page, callback) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  let opts = {
+    cacheControl: "no-cache, no-store, must-revalidate", // String |
+    pragma: "no-cache", // String |
+    expires: "0", // String |
+    page: page, // Number | Número de la página a devolver
+    sort: ["timestamp,desc"], // [String] | Parámetros en la forma `($propertyname,)+[asc|desc]?`
+    projection: "videoWithSubjectAndUniversity" // String | Incluir si se quiere obtener tambien la universidad y/o la asignatura en la respuesta
+  };
+  apiInstance.getVideosFromSubject(subjectId, opts, (error, data, response) => {
+    if (error) {
+      console.error(error);
+    } else {
+      const now = ApiClient.parseDate(response.headers.date);
+      callback(data._embedded.videos, now);
+    }
+  });
+}
+
+/**
+ * Obtiene los vídeos recomendados para un usuario
+ * @param {Function} callback Función a ejecutar tras obtener los datos
+ */
+export function getRecommendations(callback) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  let opts = {
+    cacheControl: "no-cache, no-store, must-revalidate", // String |
+    pragma: "no-cache", // String |
+    expires: "0", // String |
+    projection: "videoWithSubjectAndUniversity" // String | Incluir si se quiere obtener tambien la universidad y/o la asignatura en la respuesta
+  };
+  apiInstance.findRecommendedVideos(opts, (error, data, response) => {
+    if (error) {
+      console.error(error);
+    } else {
+      const now = ApiClient.parseDate(response.headers.date);
+      callback(data._embedded.videos, now);
+    }
+  });
+}
+
+/**
+ * Obitene los vídeos de una lista de reproducción
+ * @param {Number} reproListId ID de la lista de reproducción
+ * @param {Number} page Página a obtener
+ * @param {Function} callback Función a ejecutar tras obtener los datos
+ */
+export function getVideosFromReproductionList(reproListId, page, callback) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  let opts = {
+    cacheControl: "no-cache, no-store, must-revalidate", // String |
+    pragma: "no-cache", // String |
+    expires: "0", // String |
+    page: page, // Number | Número de la página a devolver
+    sort: ["null"], // [String] | Parámetros en la forma `($propertyname,)+[asc|desc]?`
+    projection: "videoWithSubjectAndUniversity" // String | Incluir si se quiere obtener tambien la universidad y/o la asignatura en la respuesta
+  };
+  apiInstance.getVideosFromReproductionList(
+    reproListId,
+    opts,
+    (error, data, response) => {
+      if (error) {
+        console.error(error);
+      } else {
+        const now = ApiClient.parseDate(response.headers.date);
+        callback(data._embedded.videos, now);
+      }
+    }
+  );
+}
+
+export function findTrendingVideos(page, callback) {
+  // Configure Bearer (JWT) access token for authorization: bearerAuth
+  let bearerAuth = defaultClient.authentications["bearerAuth"];
+  bearerAuth.accessToken = getUserToken();
+
+  let opts = {
+    cacheControl: "no-cache, no-store, must-revalidate", // String |
+    pragma: "no-cache", // String |
+    expires: "0", // String |
+    projection: "videoWithSubjectAndUniversity", // String | Incluir si se quiere obtener tambien la universidad y/o la asignatura en la respuesta
+    page: page // Number | Número de la página a devolver
+  };
+  apiInstance.findMostPopularLastWeekVideos(opts, (error, data, response) => {
+    if (error) {
+      console.error(error);
+      callback([]);
+    } else {
+      callback(data._embedded.videos);
+    }
+  });
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="App.html">App</a></li><li><a href="BarraNavegacion.html">BarraNavegacion</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addComment">addComment</a></li><li><a href="global.html#addMessage">addMessage</a></li><li><a href="global.html#addProfessor">addProfessor</a></li><li><a href="global.html#addReproductionList">addReproductionList</a></li><li><a href="global.html#addUser">addUser</a></li><li><a href="global.html#addVideotoReproductionList">addVideotoReproductionList</a></li><li><a href="global.html#addVote">addVote</a></li><li><a href="global.html#authUser">authUser</a></li><li><a href="global.html#borrarAsignatura">borrarAsignatura</a></li><li><a href="global.html#borrarProfeAsignatura">borrarProfeAsignatura</a></li><li><a href="global.html#borrarProfesor">borrarProfesor</a></li><li><a href="global.html#borrarUniversidad">borrarUniversidad</a></li><li><a href="global.html#checkFileExtensionImage">checkFileExtensionImage</a></li><li><a href="global.html#checkFileExtensionVideo">checkFileExtensionVideo</a></li><li><a href="global.html#checkNotification">checkNotification</a></li><li><a href="global.html#crearAsigYLigar">crearAsigYLigar</a></li><li><a href="global.html#crearCarreraYLigar">crearCarreraYLigar</a></li><li><a href="global.html#crearUniversidad">crearUniversidad</a></li><li><a href="global.html#deleteProfessor">deleteProfessor</a></li><li><a href="global.html#deleteReproductionList">deleteReproductionList</a></li><li><a href="global.html#deleteVideo">deleteVideo</a></li><li><a href="global.html#deleteVideoFromDisplay">deleteVideoFromDisplay</a></li><li><a href="global.html#deleteVideoFromReproductionList">deleteVideoFromReproductionList</a></li><li><a href="global.html#diasDelMes">diasDelMes</a></li><li><a href="global.html#emailPattern">emailPattern</a></li><li><a href="global.html#esAyer">esAyer</a></li><li><a href="global.html#esBisiesto">esBisiesto</a></li><li><a href="global.html#f_filterResults">f_filterResults</a></li><li><a href="global.html#f_scrollTop">f_scrollTop</a></li><li><a href="global.html#findSubjectByName">findSubjectByName</a></li><li><a href="global.html#findSubjectsContainingName">findSubjectsContainingName</a></li><li><a href="global.html#findUserProfessors">findUserProfessors</a></li><li><a href="global.html#findVideosContainingTitle">findVideosContainingTitle</a></li><li><a href="global.html#generadorColores">generadorColores</a></li><li><a href="global.html#getCommentsByVideo">getCommentsByVideo</a></li><li><a href="global.html#getDegreeOfUser">getDegreeOfUser</a></li><li><a href="global.html#getDegreesFromUnivesity">getDegreesFromUnivesity</a></li><li><a href="global.html#getDisplaysByUser">getDisplaysByUser</a></li><li><a href="global.html#getLastMessages">getLastMessages</a></li><li><a href="global.html#getMessagesFromSender">getMessagesFromSender</a></li><li><a href="global.html#getMessagesToReceiver">getMessagesToReceiver</a></li><li><a href="global.html#getProfessorsFromSubject">getProfessorsFromSubject</a></li><li><a href="global.html#getRecommendations">getRecommendations</a></li><li><a href="global.html#getReproductionListVideoIn">getReproductionListVideoIn</a></li><li><a href="global.html#getScore">getScore</a></li><li><a href="global.html#getSubjectById">getSubjectById</a></li><li><a href="global.html#getSubjectRanking">getSubjectRanking</a></li><li><a href="global.html#getSubjectsAsProfessor">getSubjectsAsProfessor</a></li><li><a href="global.html#getSubjectsFromUniveristy">getSubjectsFromUniveristy</a></li><li><a href="global.html#getSubjectsOfUser">getSubjectsOfUser</a></li><li><a href="global.html#getTime">getTime</a></li><li><a href="global.html#getTimePassed">getTimePassed</a></li><li><a href="global.html#getUniversityOfUser">getUniversityOfUser</a></li><li><a href="global.html#getUnivesities">getUnivesities</a></li><li><a href="global.html#getUser">getUser</a></li><li><a href="global.html#getUserByUsername">getUserByUsername</a></li><li><a href="global.html#getUserID">getUserID</a></li><li><a href="global.html#getUserNotifications">getUserNotifications</a></li><li><a href="global.html#getUserPhoto">getUserPhoto</a></li><li><a href="global.html#getUserReproductionLists">getUserReproductionLists</a></li><li><a href="global.html#getUserRole">getUserRole</a></li><li><a href="global.html#getUserToken">getUserToken</a></li><li><a href="global.html#getUserUncheckedNotifications">getUserUncheckedNotifications</a></li><li><a href="global.html#getVideo">getVideo</a></li><li><a href="global.html#getVideoDisplay">getVideoDisplay</a></li><li><a href="global.html#getVideosFromReproductionList">getVideosFromReproductionList</a></li><li><a href="global.html#getVideosFromSubject">getVideosFromSubject</a></li><li><a href="global.html#getVideosFromUploader">getVideosFromUploader</a></li><li><a href="global.html#getVideoSubject">getVideoSubject</a></li><li><a href="global.html#hacerProfesor">hacerProfesor</a></li><li><a href="global.html#isSignedIn">isSignedIn</a></li><li><a href="global.html#ligarUniAsig">ligarUniAsig</a></li><li><a href="global.html#ligarUniCarr">ligarUniCarr</a></li><li><a href="global.html#mergeSortedArray">mergeSortedArray</a></li><li><a href="global.html#parsearFecha">parsearFecha</a></li><li><a href="global.html#parseNewMessages">parseNewMessages</a></li><li><a href="global.html#putFavouritesFirst">putFavouritesFirst</a></li><li><a href="global.html#RemoveAccents">RemoveAccents</a></li><li><a href="global.html#restriccion">restriccion</a></li><li><a href="global.html#restriccionNombre">restriccionNombre</a></li><li><a href="global.html#restriccionUser">restriccionUser</a></li><li><a href="global.html#scrollFunc">scrollFunc</a></li><li><a href="global.html#setUserPhoto">setUserPhoto</a></li><li><a href="global.html#setUserRole">setUserRole</a></li><li><a href="global.html#signIn">signIn</a></li><li><a href="global.html#signOut">signOut</a></li><li><a href="global.html#SubscribeSubject">SubscribeSubject</a></li><li><a href="global.html#UnsubscribeSubject">UnsubscribeSubject</a></li><li><a href="global.html#updateDisplay">updateDisplay</a></li><li><a href="global.html#updateUser">updateUser</a></li><li><a href="global.html#UploadVideo">UploadVideo</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.2</a> on Tue May 28 2019 16:31:38 GMT+0200 (hora de verano de Europa central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/Historial.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/Historial.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { Component } from "react";
+import BarraNavegacion from "./BarraNavegacion";
+import { Helmet } from "react-helmet";
+import { Redirect } from "react-router-dom";
+import Popup from "reactjs-popup";
+import { Notificacion } from "./MisListas";
+import { RemoveAccents, putFavouritesFirst } from "../config/Process";
+import { isSignedIn, getUserRole } from "../config/Auth";
+import {
+  getDisplaysByUser,
+  deleteVideoFromDisplay
+} from "../config/DisplayAPI";
+import ListaVertical from "./ListaVertical";
+import {
+  addVideotoReproductionList,
+  deleteVideoFromReproductionList,
+  getUserReproductionLists
+} from "../config/ReproductionListAPI";
+import { LoadingSpinUniCast } from "./LoadingSpin";
+
+class HistorialLista extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      popUp: false,
+      listasRepro: this.props.listasRepro,
+      listaVideos: this.props.historial.map(e => {
+        return e.video;
+      })
+    };
+    this.abrirPopUp = this.abrirPopUp.bind(this);
+    this.cerrarPopUp = this.cerrarPopUp.bind(this);
+  }
+  /**
+   * Se ejecutará cuando el componente reciba propiedades nuevas,
+   * para actualizar el estado del componente
+   * @param {Object} nextProps propiedades a actualizar en el componente
+   */
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      listaVideos: nextProps.historial.map(e => {
+        return e.video;
+      }),
+      listasRepro: nextProps.listasRepro
+    });
+  }
+  /**
+   * Actualiza el valor de popUp a true
+   */
+  abrirPopUp() {
+    this.setState({ popUp: true });
+  }
+  /**
+   * Actualiza el valor de popUp a false
+   */
+  cerrarPopUp() {
+    this.setState({ popUp: false });
+  }
+
+  render() {
+    return (
+      &lt;div>
+        {!this.props.fixed ? (
+          &lt;div style={{ display: "block", marginRight: "70px" }}>
+            &lt;div className="profesores-asignatura">
+              &lt;input
+                onChange={this.props.handleChange}
+                onKeyDown={this.props.keyDown}
+                defaultValue={this.props.busqueda}
+                style={{
+                  fontSize: "14px",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  display: "-webkit-box",
+                  WebkitLineClamp: "1",
+                  WebkitBoxOrient: "vertical",
+                  backgroundColor: "#fafafa",
+                  borderWidth: "0px 0px 1px 0px",
+                  borderColor: "lightgrey",
+                  width: "calc(100% - 67%)",
+                  color: "#00000080",
+                  outline: "none"
+                }}
+                placeholder={"Buscar en el historial de reproducción"}
+              />
+              &lt;Popup
+                open={this.state.popUp}
+                onOpen={this.abrirPopUp}
+                onClose={this.cerrarPopUp}
+                repositionOnResize
+                position="bottom left"
+                arrow={false}
+                contentStyle={{
+                  width: "250px",
+                  maxHeight: "300px",
+                  overflow: "scroll",
+                  padding: "16px 20px",
+                  marginTop: "10px",
+                  border: "0",
+                  zIndex: "1000",
+                  boxShadow:
+                    "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4)"
+                }}
+                trigger={
+                  &lt;div
+                    style={{
+                      cursor: "pointer",
+                      fontSize: "14px",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      display: "-webkit-box",
+                      WebkitLineClamp: "1",
+                      WebkitBoxOrient: "vertical",
+                      width: "fit-content"
+                    }}
+                    className="tit-prof"
+                  >
+                    BORRAR TODO EL HISTORIAL
+                  &lt;/div>
+                }
+              >
+                &lt;div style={{ padding: "5px 10px" }}>
+                  &lt;div
+                    style={{
+                      fontWeight: "550",
+                      fontSize: "16px",
+                      borderBottom: "1px solid lightgrey"
+                    }}
+                  >
+                    ¿Estás seguro?
+                  &lt;/div>
+                  &lt;div style={{ fontSize: "13px", paddingTop: "10px" }}>
+                    Una vez eliminada no habrá vuelta atrás.
+                  &lt;/div>
+                  &lt;div
+                    style={{
+                      color: "red",
+                      fontSize: "14px",
+                      paddingTop: "10px",
+                      width: "fit-content",
+                      height: "fit-content",
+                      cursor: "pointer"
+                    }}
+                    onClick={() => {
+                      this.cerrarPopUp();
+                      this.props.borrar();
+                    }}
+                  >
+                    Sí, eliminar
+                  &lt;/div>
+                &lt;/div>
+              &lt;/Popup>
+            &lt;/div>
+            &lt;div>
+              &lt;div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  marginTop: "25px"
+                }}
+              >
+                &lt;ListaVertical
+                  lista={this.state.listaVideos}
+                  anyadirALista={this.props.anyadirVideoALista}
+                  borrar={this.props.borrarVideo}
+                  listaRepro={this.state.listasRepro}
+                  actualizarListas={this.props.actualizarListas}
+                />
+              &lt;/div>
+            &lt;/div>
+          &lt;/div>
+        ) : (
+          &lt;div style={{ display: "flex", marginRight: "70px" }}>
+            &lt;div style={{ paddingRight: "300px" }}>
+              &lt;div>
+                &lt;div
+                  style={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    marginTop: "25px"
+                  }}
+                >
+                  &lt;ListaVertical
+                    lista={this.state.listaVideos}
+                    anyadirALista={this.props.anyadirVideoALista}
+                    borrar={this.props.borrarVideo}
+                    listaRepro={this.state.listasRepro}
+                    actualizarListas={this.props.actualizarListas}
+                  />
+                &lt;/div>
+              &lt;/div>
+            &lt;/div>
+            &lt;div
+              className="profesores-asignatura"
+              style={{ position: "fixed", right: "70px" }}
+            >
+              &lt;input
+                onChange={this.props.handleChange}
+                onKeyDown={this.props.keyDown}
+                defaultValue={this.props.busqueda}
+                style={{
+                  fontSize: "14px",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  display: "-webkit-box",
+                  WebkitLineClamp: "1",
+                  WebkitBoxOrient: "vertical",
+                  backgroundColor: "#fafafa",
+                  borderWidth: "0px 0px 1px 0px",
+                  borderColor: "lightgrey",
+                  width: "100%",
+                  color: "#00000080",
+                  outline: "none"
+                }}
+                placeholder={"Buscar en el historial de reproducción"}
+              />
+              &lt;Popup
+                open={this.state.popUp}
+                onOpen={this.abrirPopUp}
+                onClose={this.cerrarPopUp}
+                repositionOnResize
+                position="bottom center"
+                arrow={false}
+                contentStyle={{
+                  width: "250px",
+                  maxHeight: "300px",
+                  overflow: "scroll",
+                  padding: "16px 20px",
+                  border: "0",
+                  marginTop: "10px",
+                  zIndex: "1000",
+                  boxShadow:
+                    "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4)"
+                }}
+                trigger={
+                  &lt;div
+                    style={{
+                      cursor: "pointer",
+                      fontSize: "14px"
+                    }}
+                    className="tit-prof"
+                  >
+                    BORRAR TODO EL HISTORIAL
+                  &lt;/div>
+                }
+              >
+                &lt;div style={{ padding: "5px 10px" }}>
+                  &lt;div
+                    style={{
+                      fontWeight: "550",
+                      fontSize: "16px",
+                      borderBottom: "1px solid lightgrey"
+                    }}
+                  >
+                    ¿Estás seguro?
+                  &lt;/div>
+                  &lt;div style={{ fontSize: "13px", paddingTop: "10px" }}>
+                    Una vez eliminada no habrá vuelta atrás.
+                  &lt;/div>
+                  &lt;div
+                    style={{
+                      color: "red",
+                      fontSize: "14px",
+                      paddingTop: "10px",
+                      width: "fit-content",
+                      height: "fit-content",
+                      cursor: "pointer"
+                    }}
+                    onClick={() => {
+                      this.cerrarPopUp();
+                      this.props.borrar();
+                    }}
+                  >
+                    Sí, eliminar
+                  &lt;/div>
+                &lt;/div>
+              &lt;/Popup>
+            &lt;/div>
+          &lt;/div>
+        )}
+      &lt;/div>
+    );
+  }
+}
+
+class Historial extends Component {
+  constructor() {
+    super();
+    this._isMounted = false;
+    this.state = {
+      contentMargin: "300px",
+      fixed: window.innerWidth >= 970,
+      busqueda: "",
+      miHistorial: [],
+      historialFiltrado: [],
+      listasRepro: [],
+      filtrado: false,
+      notif: false,
+      mensajeNotif: "",
+      tiempo: 0,
+      page: 0,
+      moreVideos: false,
+      mostrarSpin: true
+    };
+    this.handleChange = this.handleChange.bind(this);
+    this.handleResize = this.handleResize.bind(this);
+    this.handleScroll = this.handleScroll.bind(this);
+    this.borrarHistorial = this.borrarHistorial.bind(this);
+    this.buscarHistorial = this.buscarHistorial.bind(this);
+    this.keyDown = this.keyDown.bind(this);
+    this.borrarVideo = this.borrarVideo.bind(this);
+    this.anyadirVideoALista = this.anyadirVideoALista.bind(this);
+    this.iniciarReloj = this.iniciarReloj.bind(this);
+    this.pararReloj = this.pararReloj.bind(this);
+    this.tick = this.tick.bind(this);
+    this.getHistorial = this.getHistorial.bind(this);
+    this.getReproductionLists = this.getReproductionLists.bind(this);
+  }
+
+  componentWillMount() {
+    this._isMounted = true;
+    if (isSignedIn()) {
+      this.getHistorial(0);
+      this.getReproductionLists();
+    }
+  }
+  /**
+   * Obtiene una lista de vídeos reproducidos por el usuario
+   * y actualiza el estado del componente
+   * @param {Number} page pagina a obtener
+   */
+  getHistorial(page) {
+    getDisplaysByUser(page, data => {
+      if (this._isMounted) {
+        const newState = this.state.miHistorial
+          .slice()
+          .concat(data._embedded.displays);
+        this.setState({
+          page: page + 1,
+          miHistorial: newState,
+          moreVideos: data._embedded.displays.length === 20,
+          mostrarSpin: false
+        });
+      }
+    });
+  }
+
+  getReproductionLists() {
+    getUserReproductionLists(data => {
+      if (this._isMounted) {
+        const sortedData = putFavouritesFirst(data);
+        this.setState({ listasRepro: sortedData });
+      }
+    });
+  }
+  /**
+   * Borra el historial de videos
+   */
+  borrarHistorial() {
+    this.state.miHistorial.map(elmnt => {
+      deleteVideoFromDisplay(parseInt(elmnt.video.id), ok => {
+        if (ok) {
+          this.setState({
+            historialFiltrado: [],
+            busqueda: "",
+            filtrado: false,
+            page: 0
+          });
+        }
+      });
+      return null;
+    });
+    this.setState({
+      miHistorial: [],
+      notif: true,
+      mensajeNotif: "Historial completo borrado"
+    });
+    this.iniciarReloj();
+  }
+  /**
+   * Actualiza el componente asignando a busqueda el historial
+   * @param {Event} e evento producido
+   */
+  buscarHistorial(e) {
+    e.preventDefault();
+    this.setState({ busqueda: e.target.value });
+    if (e.target.value === "") {
+      this.setState({ historialFiltrado: [], filtrado: false });
+    }
+  }
+  /**
+   * Cuando se haya pulsado enter, actualiza historialFiltrado con todos los videos del historial
+   * que contengan alguna de las palabras buscadas
+   * @param {Event} e evento producido
+   */
+  keyDown(e) {
+    if (this.state.busqueda !== "") {
+      if (e.keyCode === 13) {
+        const palabras = this.state.busqueda.split(" ");
+        var resultado = [];
+        this.state.miHistorial.forEach(e => {
+          const video = e.video;
+          for (let index = 0; index &lt; palabras.length; index++) {
+            const element = palabras[index];
+            if (
+              RemoveAccents(video.title)
+                .toLowerCase()
+                .includes(RemoveAccents(element).toLowerCase())
+            ) {
+              resultado.push({ video });
+              break;
+            }
+          }
+        });
+        this.setState({ historialFiltrado: resultado, filtrado: true });
+      }
+    }
+  }
+  /**
+   * Añade o borra el video de nombre nombreVideo a la Lista de videos lista
+   * @param {String} nombreVideo nombre del video a añadir o borrar
+   * @param {String} mensaje mensaje de notificación al añadir
+   * @param {listaVideos} lista lista de videos a la que añadir el video nombreVideo
+   * @param {Boolean} anyadir Si es true añade, si es false borra
+   */
+  anyadirVideoALista(idVideo, mensaje, idLista, anyadir, callback) {
+    //Añadir o borrar de la lista lista, dependiendo del parametro anyadir
+    if (anyadir) {
+      //Añadir el video
+      addVideotoReproductionList(idLista, idVideo, ok => {
+        if (ok) {
+          this.setState({
+            notif: true,
+            mensajeNotif: mensaje
+          });
+          callback(true);
+        } else {
+          this.setState({
+            notif: true,
+            mensajeNotif: "No se ha podido añadir a la lista"
+          });
+          callback(false);
+        }
+      });
+    } else {
+      //Borrar el video
+      deleteVideoFromReproductionList(idLista, idVideo, ok => {
+        if (ok) {
+          this.setState({
+            notif: true,
+            mensajeNotif: mensaje
+          });
+          callback(true);
+        } else {
+          this.setState({
+            notif: true,
+            mensajeNotif: "No se ha podido borrar de la lista"
+          });
+          callback(false);
+        }
+      });
+    }
+    this.iniciarReloj();
+  }
+
+  /**
+   * Elimina el video con id idVideo del historial
+   * @param {Number} idVideo id del video a eliminar
+   * @param {String} nombreVideo nombre del video a eliminar
+   */
+  borrarVideo(idVideo, nombreVideo) {
+    deleteVideoFromDisplay(parseInt(idVideo), ok => {
+      if (ok) {
+        this.setState({
+          notif: true,
+          mensajeNotif: `Vídeo ${nombreVideo.toUpperCase()} eliminado del historial`,
+          historialFiltrado: [],
+          busqueda: "",
+          filtrado: false,
+          miHistorial: [],
+          page: 0
+        });
+        this.getHistorial(0);
+      }
+    });
+    this.iniciarReloj();
+  }
+
+  handleResize() {
+    if (this.state.miHistorial.length > 0) {
+      if (window.innerWidth &lt;= 970) {
+        this.setState({ fixed: false });
+      } else {
+        this.setState({ fixed: true });
+      }
+    }
+  }
+
+  componentDidMount() {
+    window.addEventListener("resize", this.handleResize);
+    window.addEventListener("scroll", this.handleScroll);
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+    this.pararReloj();
+    window.removeEventListener("resize", this.handleResize);
+    window.removeEventListener("scroll", this.handleScroll);
+  }
+
+  handleScroll() {
+    var d = document.documentElement;
+    var offset = d.scrollTop + window.innerHeight;
+    var height = d.offsetHeight;
+
+    if (offset >= height &amp;&amp; this.state.moreVideos) {
+      this.getHistorial(this.state.page);
+    }
+  }
+
+  handleChange(display) {
+    if (display) {
+      this.setState({ contentMargin: "300px" });
+    } else {
+      this.setState({ contentMargin: "70px" });
+    }
+  }
+  /**
+   * Pone el reloj a 0 y lo inicia
+   */
+  iniciarReloj() {
+    this.pararReloj();
+    this.timerID = setInterval(() => this.tick(), 1000);
+  }
+  /**
+   * Detiene la ejecución del reloj
+   */
+  pararReloj() {
+    clearInterval(this.timerID);
+  }
+  /**
+   * suma un tick (suma 1 a tiempo)
+   * Si tiempo==3,pone tiempo a 0 y para el reloj
+   */
+  tick() {
+    let t = this.state.tiempo;
+    if (t === 3) {
+      t = -1;
+      this.pararReloj();
+      this.setState({ notif: false });
+    }
+    this.setState({ tiempo: t + 1 });
+  }
+
+  render() {
+    return !isSignedIn() || getUserRole() === "ROLE_ADMIN" ? (
+      &lt;Redirect
+        to={{
+          pathname: "/",
+          state: {
+            url: `/historial`
+          }
+        }}
+      />
+    ) : (
+      &lt;div>
+        &lt;Helmet>
+          &lt;title>Historial | UniCast&lt;/title>
+          &lt;style>{"body { background-color: #fafafa; }"}&lt;/style>
+        &lt;/Helmet>
+        &lt;BarraNavegacion
+          onChange={this.handleChange}
+          activar={"historial"}
+          displaySide={true}
+          hide={false}
+        />
+        &lt;div
+          className="transform"
+          style={{
+            marginLeft: this.state.contentMargin,
+            marginTop: "80px"
+          }}
+        >
+          &lt;div className="cabecera-asignatura">
+            &lt;div>
+              &lt;h5 style={{ fontWeight: "bold" }}>
+                Historial de reproducciones
+              &lt;/h5>
+            &lt;/div>
+          &lt;/div>{" "}
+          {this.state.mostrarSpin ? (
+            &lt;LoadingSpinUniCast className="spin-ranking" />
+          ) : this.state.miHistorial.length === 0 ? (
+            &lt;div
+              style={{
+                color: "#00000080",
+                padding: "10px",
+                fontSize: "14px",
+                textAlign: "center"
+              }}
+            >
+              Historial vacío, conforme visualices vídeos se irán guardando
+              aquí.
+            &lt;/div>
+          ) : (
+            &lt;HistorialLista
+              fixed={this.state.fixed}
+              borrar={this.borrarHistorial}
+              handleChange={this.buscarHistorial}
+              keyDown={this.keyDown}
+              historial={
+                !this.state.filtrado
+                  ? this.state.miHistorial
+                  : this.state.historialFiltrado
+              }
+              listasRepro={this.state.listasRepro}
+              busqueda={this.state.busqueda}
+              borrarVideo={this.borrarVideo}
+              anyadirVideoALista={this.anyadirVideoALista}
+              actualizarListas={this.getReproductionLists}
+            />
+          )}
+        &lt;/div>
+        &lt;Notificacion
+          mostrar={this.state.notif}
+          mensaje={this.state.mensajeNotif}
+          deshacer={false}
+        />
+      &lt;/div>
+    );
+  }
+}
+
+export default Historial;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="App.html">App</a></li><li><a href="BarraNavegacion.html">BarraNavegacion</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addComment">addComment</a></li><li><a href="global.html#addMessage">addMessage</a></li><li><a href="global.html#addProfessor">addProfessor</a></li><li><a href="global.html#addReproductionList">addReproductionList</a></li><li><a href="global.html#addUser">addUser</a></li><li><a href="global.html#addVideotoReproductionList">addVideotoReproductionList</a></li><li><a href="global.html#addVote">addVote</a></li><li><a href="global.html#authUser">authUser</a></li><li><a href="global.html#borrarAsignatura">borrarAsignatura</a></li><li><a href="global.html#borrarProfeAsignatura">borrarProfeAsignatura</a></li><li><a href="global.html#borrarProfesor">borrarProfesor</a></li><li><a href="global.html#borrarUniversidad">borrarUniversidad</a></li><li><a href="global.html#checkFileExtensionImage">checkFileExtensionImage</a></li><li><a href="global.html#checkFileExtensionVideo">checkFileExtensionVideo</a></li><li><a href="global.html#checkNotification">checkNotification</a></li><li><a href="global.html#crearAsigYLigar">crearAsigYLigar</a></li><li><a href="global.html#crearCarreraYLigar">crearCarreraYLigar</a></li><li><a href="global.html#crearUniversidad">crearUniversidad</a></li><li><a href="global.html#deleteProfessor">deleteProfessor</a></li><li><a href="global.html#deleteReproductionList">deleteReproductionList</a></li><li><a href="global.html#deleteVideo">deleteVideo</a></li><li><a href="global.html#deleteVideoFromDisplay">deleteVideoFromDisplay</a></li><li><a href="global.html#deleteVideoFromReproductionList">deleteVideoFromReproductionList</a></li><li><a href="global.html#diasDelMes">diasDelMes</a></li><li><a href="global.html#emailPattern">emailPattern</a></li><li><a href="global.html#esAyer">esAyer</a></li><li><a href="global.html#esBisiesto">esBisiesto</a></li><li><a href="global.html#f_filterResults">f_filterResults</a></li><li><a href="global.html#f_scrollTop">f_scrollTop</a></li><li><a href="global.html#findSubjectByName">findSubjectByName</a></li><li><a href="global.html#findSubjectsContainingName">findSubjectsContainingName</a></li><li><a href="global.html#findUserProfessors">findUserProfessors</a></li><li><a href="global.html#findVideosContainingTitle">findVideosContainingTitle</a></li><li><a href="global.html#generadorColores">generadorColores</a></li><li><a href="global.html#getCommentsByVideo">getCommentsByVideo</a></li><li><a href="global.html#getDegreeOfUser">getDegreeOfUser</a></li><li><a href="global.html#getDegreesFromUnivesity">getDegreesFromUnivesity</a></li><li><a href="global.html#getDisplaysByUser">getDisplaysByUser</a></li><li><a href="global.html#getLastMessages">getLastMessages</a></li><li><a href="global.html#getMessagesFromSender">getMessagesFromSender</a></li><li><a href="global.html#getMessagesToReceiver">getMessagesToReceiver</a></li><li><a href="global.html#getProfessorsFromSubject">getProfessorsFromSubject</a></li><li><a href="global.html#getRecommendations">getRecommendations</a></li><li><a href="global.html#getReproductionListVideoIn">getReproductionListVideoIn</a></li><li><a href="global.html#getScore">getScore</a></li><li><a href="global.html#getSubjectById">getSubjectById</a></li><li><a href="global.html#getSubjectRanking">getSubjectRanking</a></li><li><a href="global.html#getSubjectsAsProfessor">getSubjectsAsProfessor</a></li><li><a href="global.html#getSubjectsFromUniveristy">getSubjectsFromUniveristy</a></li><li><a href="global.html#getSubjectsOfUser">getSubjectsOfUser</a></li><li><a href="global.html#getTime">getTime</a></li><li><a href="global.html#getTimePassed">getTimePassed</a></li><li><a href="global.html#getUniversityOfUser">getUniversityOfUser</a></li><li><a href="global.html#getUnivesities">getUnivesities</a></li><li><a href="global.html#getUser">getUser</a></li><li><a href="global.html#getUserByUsername">getUserByUsername</a></li><li><a href="global.html#getUserID">getUserID</a></li><li><a href="global.html#getUserNotifications">getUserNotifications</a></li><li><a href="global.html#getUserPhoto">getUserPhoto</a></li><li><a href="global.html#getUserReproductionLists">getUserReproductionLists</a></li><li><a href="global.html#getUserRole">getUserRole</a></li><li><a href="global.html#getUserToken">getUserToken</a></li><li><a href="global.html#getUserUncheckedNotifications">getUserUncheckedNotifications</a></li><li><a href="global.html#getVideo">getVideo</a></li><li><a href="global.html#getVideoDisplay">getVideoDisplay</a></li><li><a href="global.html#getVideosFromReproductionList">getVideosFromReproductionList</a></li><li><a href="global.html#getVideosFromSubject">getVideosFromSubject</a></li><li><a href="global.html#getVideosFromUploader">getVideosFromUploader</a></li><li><a href="global.html#getVideoSubject">getVideoSubject</a></li><li><a href="global.html#hacerProfesor">hacerProfesor</a></li><li><a href="global.html#isSignedIn">isSignedIn</a></li><li><a href="global.html#ligarUniAsig">ligarUniAsig</a></li><li><a href="global.html#ligarUniCarr">ligarUniCarr</a></li><li><a href="global.html#mergeSortedArray">mergeSortedArray</a></li><li><a href="global.html#parsearFecha">parsearFecha</a></li><li><a href="global.html#parseNewMessages">parseNewMessages</a></li><li><a href="global.html#putFavouritesFirst">putFavouritesFirst</a></li><li><a href="global.html#RemoveAccents">RemoveAccents</a></li><li><a href="global.html#restriccion">restriccion</a></li><li><a href="global.html#restriccionNombre">restriccionNombre</a></li><li><a href="global.html#restriccionUser">restriccionUser</a></li><li><a href="global.html#scrollFunc">scrollFunc</a></li><li><a href="global.html#setUserPhoto">setUserPhoto</a></li><li><a href="global.html#setUserRole">setUserRole</a></li><li><a href="global.html#signIn">signIn</a></li><li><a href="global.html#signOut">signOut</a></li><li><a href="global.html#SubscribeSubject">SubscribeSubject</a></li><li><a href="global.html#UnsubscribeSubject">UnsubscribeSubject</a></li><li><a href="global.html#updateDisplay">updateDisplay</a></li><li><a href="global.html#updateUser">updateUser</a></li><li><a href="global.html#UploadVideo">UploadVideo</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.2</a> on Tue May 28 2019 16:31:38 GMT+0200 (hora de verano de Europa central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

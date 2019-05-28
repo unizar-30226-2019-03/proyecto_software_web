@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/Asignatura.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/Asignatura.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { Component } from "react";
+import BarraNavegacion from "./BarraNavegacion";
+import { Helmet } from "react-helmet";
+import { Button } from "react-bootstrap";
+import { Link, Redirect } from "react-router-dom";
+import { Menu } from "./ListaHorizontal";
+import { isSignedIn, getUserID, getUserRole } from "../config/Auth";
+import {
+  SubscribeSubject,
+  UnsubscribeSubject,
+  getSubjectById,
+  getProfessorsFromSubject
+} from "../config/SubjectAPI";
+import { getUser, getSubjectsOfUser } from "../config/UserAPI";
+import { Notificacion } from "./MisListas";
+import { getVideosFromSubject } from "../config/VideoAPI";
+import { LoadingSpinUniCast } from "./LoadingSpin";
+
+export const Profesor = ({ user }) => {
+  return (
+    &lt;div
+      style={{
+        marginRight: "20px",
+        textAlign: "center",
+        marginBottom: "10px"
+      }}
+    >
+      &lt;Link
+        to={`/profesor/${user.id}`}
+        style={{ textDecoration: "none", color: "black", display: "flex" }}
+      >
+        &lt;img
+          src={user.photo}
+          alt="profesor"
+          width="30"
+          height="30"
+          style={{ borderRadius: "50%" }}
+        />
+        &lt;p style={{ marginLeft: "10px", marginTop: "3px", fontWeight: "500" }}>
+          {user.username}
+        &lt;/p>
+      &lt;/Link>
+    &lt;/div>
+  );
+};
+
+export const ListaProfesores = list =>
+  list.map(el => {
+    return &lt;Profesor user={el} key={el.id} />;
+  });
+
+class Asignatura extends Component {
+  constructor() {
+    super();
+    this._isMounted = false;
+    this.state = {
+      contentMargin: "300px",
+      siguiendoAsig: false,
+      user: {},
+      asig: {},
+      notif: false,
+      mensajeNotif: "",
+      tiempoNotif: 0,
+      page: 0,
+      profesores: [],
+      videos: [],
+      timeNow: new Date(),
+      moreVideos: false,
+      updateSubject: false,
+      mostrarSpin: true,
+      mostrarSpinFoto: true
+    };
+    this.seguirAsig = this.seguirAsig.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.getData = this.getData.bind(this);
+    this.loadMoreVideos = this.loadMoreVideos.bind(this);
+    this.iniciarReloj = this.iniciarReloj.bind(this);
+    this.pararReloj = this.pararReloj.bind(this);
+    this.tick = this.tick.bind(this);
+  }
+
+  getData(subjectId) {
+    getUser(getUserID(), data => {
+      if (this._isMounted) {
+        this.setState({ user: data });
+      }
+    });
+    getSubjectById(subjectId, data => {
+      if (this._isMounted) {
+        this.setState({ asig: data, mostrarSpinFoto: false });
+      }
+      getSubjectsOfUser(getUserID(), subjects => {
+        const found = subjects.find(s => {
+          return s.id === data.id;
+        });
+        //Si no la ha encontrado -> No sigue la asignatura
+        if (this._isMounted) {
+          this.setState({
+            siguiendoAsig: found === undefined ? false : true
+          });
+        }
+      });
+    });
+    getProfessorsFromSubject(subjectId, data => {
+      if (this._isMounted) {
+        this.setState({ profesores: data });
+      }
+    });
+    getVideosFromSubject(subjectId, 0, (data, time) => {
+      if (this._isMounted) {
+        this.setState({
+          videos: data,
+          timeNow: time,
+          page: 1,
+          moreVideos: data.length === 20,
+          mostrarSpin: false
+        });
+      }
+    });
+  }
+
+  loadMoreVideos() {
+    if (this.state.moreVideos) {
+      getVideosFromSubject(this.state.asig.id, this.state.page, data => {
+        if (this._isMounted) {
+          this.setState({
+            videos: [...this.state.videos, ...data],
+            page: this.state.page + 1,
+            moreVideos: data.length === 20
+          });
+        }
+      });
+    }
+  }
+
+  componentWillMount() {
+    this._isMounted = true;
+    if (isSignedIn()) {
+      this.getData(parseInt(this.props.match.params.id));
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({ mostrarSpin: true });
+    this.getData(parseInt(nextProps.match.params.id));
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+    this.pararReloj();
+  }
+
+  /**
+   * Pone el reloj a 0 y lo inicia
+   */
+  iniciarReloj() {
+    this.pararReloj();
+    this.timerID = setInterval(() => this.tick(), 1000);
+  }
+  /**
+   * Detiene la ejecución del reloj
+   */
+  pararReloj() {
+    clearInterval(this.timerID);
+  }
+  /**
+   * suma un tick (suma 1 a tiempo)
+   * Si tiempo==3,pone tiempo a 0 y para el reloj
+   */
+  tick() {
+    let t = this.state.tiempoNotif;
+    if (t === 3) {
+      t = -1;
+      this.pararReloj();
+      this.setState({ notif: false });
+    }
+    this.setState({ tiempoNotif: t + 1, updateSubject: false });
+  }
+
+  handleChange(display) {
+    if (display) {
+      this.setState({ contentMargin: "300px" });
+    } else {
+      this.setState({ contentMargin: "70px" });
+    }
+  }
+  /**
+   * Si no se sigue a la asignatura, relaciona al usuario con la asignatura. Si se ha realizado correctamente,
+   * pone siguiendoAsig y notif a true, pone "Siguiendo a ..."(la asignatura) en mensajeNotif, e inicia el reloj.
+   * Si no sigue a la asignatura, elimina la relación del usuario con la asignatura. Si se ha realizado correctamente,
+   * pone siguiendoAsig a false, notif a true y en mensajeNotif pone "Dejando de seguir a ..."(la asignatura), e inicia el reloj.
+   */
+  seguirAsig() {
+    !this.state.siguiendoAsig
+      ? SubscribeSubject(this.state.asig.id, ok => {
+          if (ok) {
+            this.setState({
+              siguiendoAsig: !this.state.siguiendoAsig,
+              notif: true,
+              updateSubject: true,
+              mensajeNotif: `Siguiendo a ${this.state.asig.name}`
+            });
+            this.iniciarReloj();
+          }
+        })
+      : UnsubscribeSubject(this.state.asig.id, ok => {
+          if (ok) {
+            this.setState({
+              siguiendoAsig: !this.state.siguiendoAsig,
+              notif: true,
+              updateSubject: true,
+              mensajeNotif: `Dejando de seguir a ${this.state.asig.name}`
+            });
+            this.iniciarReloj();
+          }
+        });
+  }
+
+  render() {
+    const photo =
+      this.state.asig.university === undefined
+        ? ""
+        : this.state.asig.university.photo;
+    const nombreAsig =
+      this.state.asig.name === undefined ? "" : this.state.asig.name;
+    return !isSignedIn() || getUserRole() === "ROLE_ADMIN" ? (
+      &lt;Redirect
+        to={{
+          pathname: "/",
+          state: {
+            url: `/asig/${this.props.match.params.id}`
+          }
+        }}
+      />
+    ) : (
+      &lt;div>
+        &lt;Helmet>
+          &lt;title>{`${this.state.asig.name} | UniCast`}&lt;/title>
+          &lt;style>{"body { background-color: #fafafa; }"}&lt;/style>
+        &lt;/Helmet>
+        &lt;BarraNavegacion
+          onChange={this.handleChange}
+          activar={nombreAsig}
+          displaySide={true}
+          hide={false}
+          updateSubject={this.state.updateSubject}
+        />
+        &lt;div
+          className="transform"
+          style={{
+            marginLeft: this.state.contentMargin,
+            marginTop: "80px"
+          }}
+        >
+          &lt;div className="cabecera-asignatura">
+            {this.state.mostrarSpinFoto ? (
+              &lt;LoadingSpinUniCast className="titulo-asignatura" />
+            ) : (
+              &lt;div className="titulo-asignatura">
+                &lt;img
+                  src={photo}
+                  alt="icono asignatura"
+                  style={{ marginRight: "25px", borderRadius: "50%" }}
+                  width="60"
+                  height="60"
+                />
+                {nombreAsig}
+              &lt;/div>
+            )}
+            &lt;div className="universidad">
+              &lt;Button
+                onClick={this.seguirAsig}
+                style={{
+                  backgroundColor: "#235da9",
+                  borderColor: "#235da9"
+                }}
+              >
+                {this.state.siguiendoAsig
+                  ? "DEJAR DE SEGUIR"
+                  : "SEGUIR ASIGNATURA"}
+              &lt;/Button>
+            &lt;/div>
+          &lt;/div>
+          &lt;div style={{ display: "flex", marginRight: "70px" }}>
+            &lt;div style={{ flex: "85%" }}>
+              &lt;div>
+                &lt;p style={{ fontWeight: "550" }}>Vídeos subidos&lt;/p>
+                {this.state.mostrarSpin ? (
+                  &lt;LoadingSpinUniCast className="spin-ranking" />
+                ) : this.state.videos.length === 0 ? (
+                  &lt;div
+                    style={{
+                      color: "#00000080",
+                      padding: "10px",
+                      fontSize: "14px",
+                      textAlign: "left"
+                    }}
+                  >
+                    Esta asignatura no tiene vídeos, conforme suban vídeos se
+                    irán guardando aquí.
+                  &lt;/div>
+                ) : (
+                  &lt;div>
+                    &lt;div style={{ display: "flex", flexWrap: "wrap" }}>
+                      {Menu(this.state.videos, this.state.timeNow)}
+                    &lt;/div>
+                    &lt;div
+                      onClick={() => this.loadMoreVideos()}
+                      className="cargar-mas-boton-asig zoom-item"
+                      style={{
+                        visibility: this.state.moreVideos ? "visible" : "hidden"
+                      }}
+                    >
+                      Cargar más
+                    &lt;/div>
+                  &lt;/div>
+                )}
+              &lt;/div>
+            &lt;/div>
+            &lt;div className="profesores-asignatura" style={{ flex: "15%" }}>
+              &lt;div className="tit-prof">Profesorado&lt;/div>
+              {this.state.mostrarSpin ? (
+                &lt;LoadingSpinUniCast className="spin-ranking" />
+              ) : this.state.profesores.length === 0 ? (
+                &lt;div
+                  style={{
+                    color: "#00000080",
+                    padding: "10px",
+                    fontSize: "14px",
+                    textAlign: "left"
+                  }}
+                >
+                  Esta asignatura no tiene profesores asociados.
+                &lt;/div>
+              ) : (
+                &lt;div className="prof">
+                  {ListaProfesores(this.state.profesores)}
+                &lt;/div>
+              )}
+            &lt;/div>
+          &lt;/div>
+          &lt;Notificacion
+            mostrar={this.state.notif}
+            mensaje={this.state.mensajeNotif}
+            deshacer={false}
+          />
+        &lt;/div>
+      &lt;/div>
+    );
+  }
+}
+
+export default Asignatura;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="App.html">App</a></li><li><a href="BarraNavegacion.html">BarraNavegacion</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addComment">addComment</a></li><li><a href="global.html#addMessage">addMessage</a></li><li><a href="global.html#addProfessor">addProfessor</a></li><li><a href="global.html#addReproductionList">addReproductionList</a></li><li><a href="global.html#addUser">addUser</a></li><li><a href="global.html#addVideotoReproductionList">addVideotoReproductionList</a></li><li><a href="global.html#addVote">addVote</a></li><li><a href="global.html#authUser">authUser</a></li><li><a href="global.html#borrarAsignatura">borrarAsignatura</a></li><li><a href="global.html#borrarProfeAsignatura">borrarProfeAsignatura</a></li><li><a href="global.html#borrarProfesor">borrarProfesor</a></li><li><a href="global.html#borrarUniversidad">borrarUniversidad</a></li><li><a href="global.html#checkFileExtensionImage">checkFileExtensionImage</a></li><li><a href="global.html#checkFileExtensionVideo">checkFileExtensionVideo</a></li><li><a href="global.html#checkNotification">checkNotification</a></li><li><a href="global.html#crearAsigYLigar">crearAsigYLigar</a></li><li><a href="global.html#crearCarreraYLigar">crearCarreraYLigar</a></li><li><a href="global.html#crearUniversidad">crearUniversidad</a></li><li><a href="global.html#deleteProfessor">deleteProfessor</a></li><li><a href="global.html#deleteReproductionList">deleteReproductionList</a></li><li><a href="global.html#deleteVideo">deleteVideo</a></li><li><a href="global.html#deleteVideoFromDisplay">deleteVideoFromDisplay</a></li><li><a href="global.html#deleteVideoFromReproductionList">deleteVideoFromReproductionList</a></li><li><a href="global.html#diasDelMes">diasDelMes</a></li><li><a href="global.html#emailPattern">emailPattern</a></li><li><a href="global.html#esAyer">esAyer</a></li><li><a href="global.html#esBisiesto">esBisiesto</a></li><li><a href="global.html#f_filterResults">f_filterResults</a></li><li><a href="global.html#f_scrollTop">f_scrollTop</a></li><li><a href="global.html#findSubjectByName">findSubjectByName</a></li><li><a href="global.html#findSubjectsContainingName">findSubjectsContainingName</a></li><li><a href="global.html#findUserProfessors">findUserProfessors</a></li><li><a href="global.html#findVideosContainingTitle">findVideosContainingTitle</a></li><li><a href="global.html#generadorColores">generadorColores</a></li><li><a href="global.html#getCommentsByVideo">getCommentsByVideo</a></li><li><a href="global.html#getDegreeOfUser">getDegreeOfUser</a></li><li><a href="global.html#getDegreesFromUnivesity">getDegreesFromUnivesity</a></li><li><a href="global.html#getDisplaysByUser">getDisplaysByUser</a></li><li><a href="global.html#getLastMessages">getLastMessages</a></li><li><a href="global.html#getMessagesFromSender">getMessagesFromSender</a></li><li><a href="global.html#getMessagesToReceiver">getMessagesToReceiver</a></li><li><a href="global.html#getProfessorsFromSubject">getProfessorsFromSubject</a></li><li><a href="global.html#getRecommendations">getRecommendations</a></li><li><a href="global.html#getReproductionListVideoIn">getReproductionListVideoIn</a></li><li><a href="global.html#getScore">getScore</a></li><li><a href="global.html#getSubjectById">getSubjectById</a></li><li><a href="global.html#getSubjectRanking">getSubjectRanking</a></li><li><a href="global.html#getSubjectsAsProfessor">getSubjectsAsProfessor</a></li><li><a href="global.html#getSubjectsFromUniveristy">getSubjectsFromUniveristy</a></li><li><a href="global.html#getSubjectsOfUser">getSubjectsOfUser</a></li><li><a href="global.html#getTime">getTime</a></li><li><a href="global.html#getTimePassed">getTimePassed</a></li><li><a href="global.html#getUniversityOfUser">getUniversityOfUser</a></li><li><a href="global.html#getUnivesities">getUnivesities</a></li><li><a href="global.html#getUser">getUser</a></li><li><a href="global.html#getUserByUsername">getUserByUsername</a></li><li><a href="global.html#getUserID">getUserID</a></li><li><a href="global.html#getUserNotifications">getUserNotifications</a></li><li><a href="global.html#getUserPhoto">getUserPhoto</a></li><li><a href="global.html#getUserReproductionLists">getUserReproductionLists</a></li><li><a href="global.html#getUserRole">getUserRole</a></li><li><a href="global.html#getUserToken">getUserToken</a></li><li><a href="global.html#getUserUncheckedNotifications">getUserUncheckedNotifications</a></li><li><a href="global.html#getVideo">getVideo</a></li><li><a href="global.html#getVideoDisplay">getVideoDisplay</a></li><li><a href="global.html#getVideosFromReproductionList">getVideosFromReproductionList</a></li><li><a href="global.html#getVideosFromSubject">getVideosFromSubject</a></li><li><a href="global.html#getVideosFromUploader">getVideosFromUploader</a></li><li><a href="global.html#getVideoSubject">getVideoSubject</a></li><li><a href="global.html#hacerProfesor">hacerProfesor</a></li><li><a href="global.html#isSignedIn">isSignedIn</a></li><li><a href="global.html#ligarUniAsig">ligarUniAsig</a></li><li><a href="global.html#ligarUniCarr">ligarUniCarr</a></li><li><a href="global.html#mergeSortedArray">mergeSortedArray</a></li><li><a href="global.html#parsearFecha">parsearFecha</a></li><li><a href="global.html#parseNewMessages">parseNewMessages</a></li><li><a href="global.html#putFavouritesFirst">putFavouritesFirst</a></li><li><a href="global.html#RemoveAccents">RemoveAccents</a></li><li><a href="global.html#restriccion">restriccion</a></li><li><a href="global.html#restriccionNombre">restriccionNombre</a></li><li><a href="global.html#restriccionUser">restriccionUser</a></li><li><a href="global.html#scrollFunc">scrollFunc</a></li><li><a href="global.html#setUserPhoto">setUserPhoto</a></li><li><a href="global.html#setUserRole">setUserRole</a></li><li><a href="global.html#signIn">signIn</a></li><li><a href="global.html#signOut">signOut</a></li><li><a href="global.html#SubscribeSubject">SubscribeSubject</a></li><li><a href="global.html#UnsubscribeSubject">UnsubscribeSubject</a></li><li><a href="global.html#updateDisplay">updateDisplay</a></li><li><a href="global.html#updateUser">updateUser</a></li><li><a href="global.html#UploadVideo">UploadVideo</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.2</a> on Tue May 28 2019 16:31:38 GMT+0200 (hora de verano de Europa central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

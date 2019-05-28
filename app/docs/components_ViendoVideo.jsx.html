@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/ViendoVideo.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/ViendoVideo.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { Component } from "react";
+import BarraNavegacion from "./BarraNavegacion";
+import { Helmet } from "react-helmet";
+import { Link, Redirect } from "react-router-dom";
+import { Button } from "react-bootstrap";
+import Video from "./Video";
+import {
+  FaShareAlt,
+  FaRegBookmark,
+  FaRegStar,
+  FaStar,
+  FaStarHalf
+} from "react-icons/fa";
+import { getTime, putFavouritesFirst } from "../config/Process";
+import Popup from "reactjs-popup";
+import StarRatingComponent from "react-star-rating-component";
+import { ContenidoPopUp } from "./ListaVertical";
+import { Notificacion } from "./MisListas";
+import { isSignedIn, getUserID, getUserRole } from "../config/Auth";
+import {
+  generadorColores,
+  scrollFunc,
+  getTimePassed,
+  getVideo
+} from "../config/VideoAPI";
+import { getCommentsByVideo, addComment } from "../config/CommentsAPI";
+import { getUser, getSubjectsOfUser } from "../config/UserAPI";
+import {
+  SubscribeSubject,
+  UnsubscribeSubject,
+  getProfessorsFromSubject
+} from "../config/SubjectAPI";
+import { updateDisplay, getVideoDisplay } from "../config/DisplayAPI";
+import { addVote } from "../config/VoteAPI";
+import {
+  getUserReproductionLists,
+  addVideotoReproductionList,
+  deleteVideoFromReproductionList
+} from "../config/ReproductionListAPI";
+import {
+  FacebookShareButton,
+  FacebookIcon,
+  LinkedinShareButton,
+  LinkedinIcon,
+  PinterestShareButton,
+  PinterestIcon,
+  RedditShareButton,
+  RedditIcon,
+  TwitterShareButton,
+  TwitterIcon,
+  EmailShareButton,
+  EmailIcon
+} from "react-share";
+import { LoadingSpinUniCast } from "./LoadingSpin";
+
+const StarRating = ({ nombre, puntuacion, onStarClick, size }) => {
+  return (
+    &lt;StarRatingComponent
+      name={nombre}
+      starCount={5}
+      value={puntuacion}
+      onStarClick={onStarClick}
+      renderStarIcon={() => {
+        return (
+          &lt;span>
+            &lt;FaStar size={size} />
+          &lt;/span>
+        );
+      }}
+      renderStarIconHalf={() => {
+        return (
+          &lt;span>
+            &lt;span style={{ position: "absolute", zIndex: "-1" }}>
+              &lt;FaStar size={size} />
+            &lt;/span>
+            &lt;span>
+              &lt;FaStarHalf size={size} color={"#ffb400"} />
+            &lt;/span>
+          &lt;/span>
+        );
+      }}
+    />
+  );
+};
+
+const Profesor = ({ user }) => {
+  return (
+    &lt;div style={{ marginRight: "20px", textAlign: "center" }}>
+      &lt;Link
+        to={`/profesor/${user.id}`}
+        style={{ textDecoration: "none", color: "black" }}
+      >
+        &lt;img
+          src={user.photo}
+          alt="profesor"
+          width="40"
+          height="40"
+          style={{ borderRadius: "50%" }}
+        />
+        &lt;p>{user.username}&lt;/p>
+      &lt;/Link>
+    &lt;/div>
+  );
+};
+
+const ListaProfesores = list =>
+  list.map(el => {
+    return &lt;Profesor user={el} key={el.id} />;
+  });
+
+class ViendoVideo extends Component {
+  constructor() {
+    super();
+    this._isMounted = false;
+    this.state = {
+      contentMargin: "15%",
+      user: {},
+      totalComentarios: [],
+      listasRepro: [],
+      obtenerNuevosComentarios: false,
+      obteniendoComentarios: false,
+      comentarios: [],
+      fijarComentarios: false,
+      alturaComentarios: 0,
+      anchuraComentarios: 0,
+      tiempoVideo: 0,
+      notif: false,
+      mensajeNotif: "",
+      tiempoNotif: 0,
+      popUpGuardar: false,
+      popUpPuntuar: false,
+      popUpCompartir: false,
+      calidad: 2.5,
+      adecuacion: 2.5,
+      claridad: 2.5,
+      asig: {},
+      university: {},
+      video: {},
+      timeNow: null,
+      page: 0,
+      siguiendoAsig: false,
+      tiempoInicial: 0,
+      profesores: [],
+      mostrarSpinIcono: true,
+      mostrarSpinProfesores: true
+    };
+    this.getData = this.getData.bind(this);
+    this.getReproductionLists = this.getReproductionLists.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.recogerComentarios = this.recogerComentarios.bind(this);
+    this.recibirEstadoVideo = this.recibirEstadoVideo.bind(this);
+    this.irAUltimoComentario = this.irAUltimoComentario.bind(this);
+    this.handleScroll = this.handleScroll.bind(this);
+    this.comentar = this.comentar.bind(this);
+    this.guardarVideo = this.guardarVideo.bind(this);
+    this.iniciarReloj = this.iniciarReloj.bind(this);
+    this.pararReloj = this.pararReloj.bind(this);
+    this.tick = this.tick.bind(this);
+    this.onStarClickAdecuacion = this.onStarClickAdecuacion.bind(this);
+    this.onStarClickCalidad = this.onStarClickCalidad.bind(this);
+    this.onStarClickClaridad = this.onStarClickClaridad.bind(this);
+    this.puntuar = this.puntuar.bind(this);
+    this.obtenerComentarios = this.obtenerComentarios.bind(this);
+    this.obtenerAsignaturaUni = this.obtenerAsignaturaUni.bind(this);
+    this.seguirAsig = this.seguirAsig.bind(this);
+    this.comentario = React.createRef();
+  }
+
+  getData() {
+    getUser(getUserID(), user => {
+      if (this._isMounted) {
+        this.setState({ user: user });
+      }
+    });
+    const id = this.props.location.search.split("=")[1];
+    getVideo(parseInt(id), (video, time) => {
+      if (this._isMounted) {
+        getVideoDisplay(video.id, data => {
+          if (data !== false) {
+            if (this._isMounted) {
+              if (data.secsFromBeg >= video.seconds - 1) {
+                this.setState({
+                  video: video,
+                  asig: video.subject,
+                  university: video.university,
+                  timeNow: time,
+                  tiempoInicial: 0,
+                  mostrarSpinIcono: false
+                });
+              } else {
+                this.setState({
+                  video: video,
+                  asig: video.subject,
+                  university: video.university,
+                  timeNow: time,
+                  tiempoInicial: data.secsFromBeg,
+                  mostrarSpinIcono: false
+                });
+              }
+            }
+          } else {
+            this.setState({
+              video: video,
+              timeNow: time,
+              asig: video.subject,
+              university: video.university,
+              tiempoInicial: 0,
+              mostrarSpinIcono: false
+            });
+          }
+        });
+      }
+      this.obtenerAsignaturaUni(video.subject);
+      this.obtenerComentarios(video, this.state.page);
+    });
+  }
+
+  getReproductionLists() {
+    getUserReproductionLists(data => {
+      if (this._isMounted) {
+        const sortedData = putFavouritesFirst(data);
+        this.setState({ listasRepro: sortedData });
+      }
+    });
+  }
+  /**
+   * para cada comentario cuyo tiempo esta entre tiempoInicio y tiempoFin,
+   * si no esta incluido en la Lista lista, lo añade
+   * @param {Number} tiempoInicio
+   * @param {Number} tiempoFin
+   * @param {Array} lista
+   */
+  recogerComentarios(tiempoInicio, tiempoFin, lista) {
+    const res = this.state.totalComentarios.filter(
+      com => com.tiempo >= tiempoInicio &amp;&amp; com.tiempo &lt;= tiempoFin
+    );
+    res.forEach(e => {
+      if (!lista.includes(e)) {
+        lista.push(e);
+      }
+    });
+    return lista;
+  }
+  /**
+   * Hace scroll hasta la posición final del último comentario
+   */
+  irAUltimoComentario() {
+    if (!this.state.fijarComentarios) {
+      var elmnt = document.getElementById(
+        `comment${this.state.comentarios.length - 1}`
+      );
+      if (elmnt !== null) {
+        scrollFunc(elmnt);
+      }
+    }
+  }
+  /**
+   * Almacena en comentarios todos los nuevos comentarios del video
+   * @param {estado} estado
+   */
+  recibirEstadoVideo(estado) {
+    var nuevosComentarios = this.state.comentarios.slice();
+    const ultimoComentario = nuevosComentarios[nuevosComentarios.length - 1];
+    const currentTime = Math.floor(estado.currentTime);
+    if (ultimoComentario === undefined) {
+      nuevosComentarios = this.recogerComentarios(
+        0,
+        currentTime,
+        nuevosComentarios
+      );
+    } else {
+      nuevosComentarios = this.recogerComentarios(
+        ultimoComentario.tiempo,
+        currentTime,
+        nuevosComentarios
+      );
+    }
+    const altura =
+      document.getElementById("div-comentarios").clientHeight -
+      document.getElementById("cabecera-comentarios").clientHeight -
+      document.getElementById("zona-escribir-comentarios").clientHeight -
+      10;
+    if (currentTime > this.state.tiempoVideo) {
+      updateDisplay(this.state.video.id, currentTime);
+    }
+    this.setState({
+      comentarios: nuevosComentarios,
+      alturaComentarios: altura,
+      anchuraComentarios: document.getElementById("div-comentarios")
+        .clientWidth,
+      tiempoVideo: currentTime
+    });
+  }
+  /**
+   * Si obtenerNuevosComentarios es igual a true y todavía no se están obteniendo,
+   * pone obteniendoComentarios a true y obtiene los comentarios del video de la siguiente página
+   */
+  componentDidUpdate() {
+    if (
+      this.state.obtenerNuevosComentarios &amp;&amp;
+      !this.state.obteniendoComentarios
+    ) {
+      this.setState({ obteniendoComentarios: true });
+      this.obtenerComentarios(this.state.video, this.state.page + 1);
+    }
+  }
+
+  componentWillMount() {
+    this._isMounted = true;
+    if (isSignedIn()) {
+      this.getData();
+      this.getReproductionLists();
+    }
+  }
+  /**
+   * Obtiene los comentarios del video video de la página page
+   * @param {video} video video del que se desea obtener los comentarios
+   * @param {Number} page número de página a recuperar
+   */
+  obtenerComentarios(video, page) {
+    getCommentsByVideo(video.id, page, comentarios => {
+      let obtenerMas = false;
+      if (comentarios.length === 20) {
+        obtenerMas = true;
+      }
+      if (this._isMounted) {
+        this.setState({
+          totalComentarios: [...this.state.totalComentarios, ...comentarios],
+          page: page,
+          obtenerNuevosComentarios: obtenerMas,
+          obteniendoComentarios: false
+        });
+      }
+    });
+  }
+  /**
+   * Asigna a asig la asignatura del video, y si la asignatura no está en la lista de asignaturas del usuario,
+   * es decir, no la sigue, pone siguiendoAsig a false; en caso contrario lo pone a true
+   * @param {video} video
+   */
+  obtenerAsignaturaUni(asig) {
+    getProfessorsFromSubject(asig.id, data => {
+      if (this._isMounted) {
+        this.setState({ profesores: data });
+      }
+    });
+    getSubjectsOfUser(getUserID(), subjects => {
+      const found = subjects.find(s => {
+        return s.id === asig.id;
+      });
+      //Si no la ha encontrado -> No sigue la asignatura
+      if (this._isMounted) {
+        this.setState({
+          siguiendoAsig: found === undefined ? false : true,
+          mostrarSpinProfesores: false
+        });
+      }
+    });
+  }
+
+  handleChange(display) {
+    if (display) {
+      this.setState({ contentMargin: "320px" });
+    } else {
+      this.setState({ contentMargin: "15%" });
+    }
+  }
+
+  handleScroll(e) {
+    const bottom =
+      e.target.scrollHeight - e.target.scrollTop &lt;= e.target.clientHeight + 10;
+    this.setState({ fijarComentarios: !bottom });
+  }
+  /**
+   * Cuando se haya pulsado enter, si el nuevo comentario no es vacío,
+   * añade el nuevo comentario y lo sube al servidor
+   * @param {Event} e
+   */
+  comentar(e) {
+    const comentario = this.comentario.current.value;
+    if (comentario.length > 0) {
+      if (e.keyCode === 13) {
+        //Enviar comentario
+        var nuevosComentarios = this.state.comentarios.slice();
+        const usuario = this.state.user.username;
+        const tiempo = this.state.tiempoVideo;
+        const color = generadorColores(usuario);
+        nuevosComentarios.push({ tiempo, comentario, usuario, color });
+        this.comentario.current.value = "";
+        this.setState({ comentarios: nuevosComentarios });
+        // Subir comentario al servidor
+        addComment(comentario, tiempo, this.state.video.id);
+        e.preventDefault();
+      }
+    }
+  }
+  /**
+   * Si anyadir=true, añade el video al lsita lista; en caso contrario, lo borra. Asigna a notif el valor de mostrar
+   * y a mensajeNotif el valor de mensaje e inicia el reloj.
+   * @param {Number} idLista ID de la lista de reproducción
+   * @param {String} mensaje Mensaje a mostrar en el popup informativo
+   * @param {boolean} anyadir True si añadir a la lista, false si borrar de la lista
+   * @param {Function} callback Función a ejecutar para mostrar el feedback
+   */
+  guardarVideo(idLista, mensaje, anyadir, callback) {
+    const idVideo = this.state.video.id;
+    if (anyadir) {
+      //Añadir el video
+      addVideotoReproductionList(idLista, idVideo, ok => {
+        if (ok) {
+          this.setState({
+            notif: true,
+            mensajeNotif: mensaje
+          });
+          callback(true);
+        } else {
+          this.setState({
+            notif: true,
+            mensajeNotif: "No se ha podido añadir a la lista"
+          });
+          callback(false);
+        }
+      });
+    } else {
+      //Borrar el video
+      deleteVideoFromReproductionList(idLista, idVideo, ok => {
+        if (ok) {
+          this.setState({
+            notif: true,
+            mensajeNotif: mensaje
+          });
+          callback(true);
+        } else {
+          this.setState({
+            notif: true,
+            mensajeNotif: "No se ha podido borrar de la lista"
+          });
+          callback(false);
+        }
+      });
+    }
+    this.iniciarReloj();
+  }
+  /**
+   * Pone el reloj a 0 y lo inicia
+   */
+  iniciarReloj() {
+    this.pararReloj();
+    this.timerID = setInterval(() => this.tick(), 1000);
+  }
+  /**
+   * Detiene la ejecución del reloj
+   */
+  pararReloj() {
+    clearInterval(this.timerID);
+  }
+  /**
+   * suma un tick (suma 1 a tiempo)
+   * Si tiempo==3,pone tiempo a 0 y para el reloj
+   */
+  tick() {
+    let t = this.state.tiempoNotif;
+    if (t === 3) {
+      t = -1;
+      this.pararReloj();
+      this.setState({ notif: false });
+    }
+    this.setState({ tiempoNotif: t + 1 });
+  }
+  /**
+   * Detiene la ejecución del reloj
+   */
+  componentWillUnmount() {
+    this._isMounted = false;
+    this.pararReloj();
+  }
+
+  onStarClickClaridad(nextValue, prevValue, name, e) {
+    const xPos =
+      (e.pageX - e.currentTarget.getBoundingClientRect().left) /
+      e.currentTarget.offsetWidth;
+
+    if (xPos &lt;= 0.5) {
+      nextValue -= 0.5;
+    }
+    this.setState({ claridad: nextValue });
+  }
+
+  onStarClickCalidad(nextValue, prevValue, name, e) {
+    const xPos =
+      (e.pageX - e.currentTarget.getBoundingClientRect().left) /
+      e.currentTarget.offsetWidth;
+
+    if (xPos &lt;= 0.5) {
+      nextValue -= 0.5;
+    }
+    this.setState({ calidad: nextValue });
+  }
+
+  onStarClickAdecuacion(nextValue, prevValue, name, e) {
+    const xPos =
+      (e.pageX - e.currentTarget.getBoundingClientRect().left) /
+      e.currentTarget.offsetWidth;
+
+    if (xPos &lt;= 0.5) {
+      nextValue -= 0.5;
+    }
+    this.setState({ adecuacion: nextValue });
+  }
+  /**
+   * Añade la puntuación de claridad, calidad y adecuación actual a los votos
+   * Si hay algún error, lo muesetra por consola
+   */
+  puntuar() {
+    addVote(
+      this.state.video.id,
+      this.state.adecuacion,
+      this.state.claridad,
+      this.state.calidad,
+      exito => {
+        if (exito) {
+          this.setState({ notif: true, mensajeNotif: "Voto registrado!" });
+        } else {
+          this.setState({
+            notif: true,
+            mensajeNotif: "Error, intente votar el vídeo en otro momento"
+          });
+        }
+        this.iniciarReloj();
+      }
+    );
+  }
+  /**
+   * Si siguiendoAsig=false, relaciona el usuario con la asignatura y se inicia el reloj.
+   * Si siguiendoAsi=true, elimina la relación del usuario con la asignatura e inicia el reloj.
+   */
+  seguirAsig() {
+    !this.state.siguiendoAsig
+      ? SubscribeSubject(this.state.asig.id, ok => {
+          if (ok) {
+            this.setState({
+              siguiendoAsig: !this.state.siguiendoAsig,
+              notif: true,
+              mensajeNotif: `Siguiendo a ${this.state.asig.name}`
+            });
+            this.iniciarReloj();
+          }
+        })
+      : UnsubscribeSubject(this.state.asig.id, ok => {
+          if (ok) {
+            this.setState({
+              siguiendoAsig: !this.state.siguiendoAsig,
+              notif: true,
+              mensajeNotif: `Dejando de seguir a ${this.state.asig.name}`
+            });
+            this.iniciarReloj();
+          }
+        });
+  }
+
+  render() {
+    const currentUrl = window.location.href;
+    return !isSignedIn() || getUserRole() === "ROLE_ADMIN" ? (
+      &lt;Redirect
+        to={{
+          pathname: "/",
+          state: {
+            url: `/video?id=${this.props.location.search.split("=")[1]}`
+          }
+        }}
+      />
+    ) : (
+      &lt;div>
+        &lt;Helmet>
+          &lt;title>{`${this.state.video.title} | UniCast`}&lt;/title>
+          &lt;style>{"body { background-color: #fafafa; }"}&lt;/style>
+        &lt;/Helmet>
+        &lt;BarraNavegacion
+          onChange={this.handleChange}
+          displaySide={false}
+          hide={true}
+        />
+        &lt;div
+          className="transform"
+          style={{
+            marginLeft: this.state.contentMargin,
+            marginTop: "70px",
+            display: "flex"
+          }}
+        >
+          &lt;div className="reproductor">
+            &lt;Video
+              src={this.state.video.url}
+              thumbnailUrl={this.state.video.thumbnailUrl}
+              enviarEstado={this.recibirEstadoVideo}
+              time={this.state.tiempoInicial}
+            />
+            &lt;div className="datos-video">
+              &lt;p className="titulo-video">{this.state.video.title}&lt;/p>
+              &lt;div style={{ display: "flex" }}>
+                &lt;p className="fecha-subida-video">
+                  Subido hace{" "}
+                  {getTimePassed(
+                    this.state.video.timestamp,
+                    this.state.timeNow
+                  )}
+                &lt;/p>
+                &lt;div
+                  style={{
+                    position: "relative",
+                    marginLeft: "auto",
+                    marginRight: "0",
+                    top: "-5px"
+                  }}
+                >
+                  &lt;Popup
+                    open={this.state.popUpPuntuar}
+                    onOpen={() =>
+                      this.setState({
+                        popUpPuntuar: true,
+                        popUpGuardar: false,
+                        popUpCompartir: false
+                      })
+                    }
+                    onClose={() => this.setState({ popUpPuntuar: false })}
+                    arrow={false}
+                    position="top left"
+                    contentStyle={{
+                      width: "250px",
+                      zIndex: "1000",
+                      maxHeight: "300px",
+                      overflow: "scroll",
+                      padding: "16px 20px",
+                      border: "0",
+                      marginTop: "10px",
+                      boxShadow:
+                        "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4)"
+                    }}
+                    trigger={
+                      &lt;div
+                        style={{
+                          color: "black",
+                          textDecoration: "none",
+                          float: "left",
+                          cursor: "pointer",
+                          marginRight: "20px"
+                        }}
+                      >
+                        &lt;p
+                          style={{
+                            marginRight: "5px",
+                            float: "left",
+                            color: "#00000080",
+                            fontWeight: "500",
+                            fontSize: "18px"
+                          }}
+                        >
+                          Valorar
+                        &lt;/p>
+                        &lt;FaRegStar size={30} color={"#00000080"} />
+                      &lt;/div>
+                    }
+                  >
+                    &lt;div>
+                      &lt;div
+                        style={{
+                          borderBottom: "1px solid lightgrey",
+                          fontWeight: "450"
+                        }}
+                      >
+                        Puntuar vídeo...
+                      &lt;/div>
+                      &lt;div
+                        style={{
+                          paddingTop: "15px",
+                          fontSize: "14px",
+                          borderBottom: "1px solid lightgrey"
+                        }}
+                      >
+                        &lt;div style={{ display: "flex" }}>
+                          &lt;div
+                            style={{
+                              marginTop: "2px",
+                              marginRight: "10px",
+                              fontWeight: "500"
+                            }}
+                          >
+                            Claridad:
+                          &lt;/div>
+                          &lt;div style={{ marginLeft: "auto", marginRight: "0" }}>
+                            &lt;StarRating
+                              nombre="claridad"
+                              puntuacion={this.state.claridad}
+                              onStarClick={this.onStarClickClaridad}
+                              size={20}
+                            />
+                          &lt;/div>
+                        &lt;/div>
+                        &lt;div style={{ display: "flex" }}>
+                          &lt;div
+                            style={{
+                              marginTop: "2px",
+                              marginRight: "10px",
+                              fontWeight: "500"
+                            }}
+                          >
+                            Calidad:
+                          &lt;/div>
+                          &lt;div style={{ marginLeft: "auto", marginRight: "0" }}>
+                            &lt;StarRating
+                              nombre="calidad"
+                              puntuacion={this.state.calidad}
+                              onStarClick={this.onStarClickCalidad}
+                              size={20}
+                            />
+                          &lt;/div>
+                        &lt;/div>
+                        &lt;div style={{ display: "flex" }}>
+                          &lt;div
+                            style={{
+                              marginTop: "2px",
+                              marginRight: "10px",
+                              fontWeight: "500"
+                            }}
+                          >
+                            Adecuación:
+                          &lt;/div>
+                          &lt;div style={{ marginLeft: "auto", marginRight: "0" }}>
+                            &lt;StarRating
+                              nombre="adecuacion"
+                              puntuacion={this.state.adecuacion}
+                              onStarClick={this.onStarClickAdecuacion}
+                              size={20}
+                            />
+                          &lt;/div>
+                        &lt;/div>
+                      &lt;/div>
+                      &lt;div
+                        style={{
+                          paddingTop: "15px",
+                          fontSize: "14px",
+                          cursor: "pointer",
+                          float: "right",
+                          color: "#235da9"
+                        }}
+                        onClick={() => {
+                          this.puntuar();
+                          this.setState({ popUpPuntuar: false });
+                        }}
+                      >
+                        Puntuar
+                      &lt;/div>
+                    &lt;/div>
+                  &lt;/Popup>
+                  &lt;Popup
+                    open={this.state.popUpCompartir}
+                    onOpen={() =>
+                      this.setState({
+                        popUpCompartir: true,
+                        popUpGuardar: false,
+                        popUpPuntuar: false
+                      })
+                    }
+                    onClose={() => this.setState({ popUpCompartir: false })}
+                    arrow={false}
+                    position="top left"
+                    contentStyle={{
+                      width: "270px",
+                      zIndex: "1000",
+                      maxHeight: "300px",
+                      overflow: "scroll",
+                      padding: "16px 20px",
+                      border: "0",
+                      marginTop: "10px",
+                      boxShadow:
+                        "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4)"
+                    }}
+                    trigger={
+                      &lt;FaShareAlt
+                        size={30}
+                        color={"#00000080"}
+                        style={{ marginRight: "20px", cursor: "pointer" }}
+                      />
+                    }
+                  >
+                    &lt;div>
+                      &lt;div
+                        style={{
+                          borderBottom: "1px solid lightgrey",
+                          marginBottom: "10px"
+                        }}
+                      >
+                        Compartir
+                      &lt;/div>
+                      &lt;div className="share-container">
+                        &lt;div className="share">
+                          &lt;FacebookShareButton
+                            url={currentUrl}
+                            quote={"Vídeo Unicast: " + this.state.video.title}
+                            className="share-button"
+                          >
+                            &lt;FacebookIcon size={32} round />
+                          &lt;/FacebookShareButton>
+                          &lt;div className="share-name">Facebook&lt;/div>
+                        &lt;/div>
+                        &lt;div className="share">
+                          &lt;TwitterShareButton
+                            url={currentUrl}
+                            title={"Vídeo Unicast: " + this.state.video.title}
+                            className="share-button"
+                          >
+                            &lt;TwitterIcon size={32} round />
+                          &lt;/TwitterShareButton>
+                          &lt;div className="share-name">Twitter&lt;/div>
+                        &lt;/div>
+                        &lt;div className="share">
+                          &lt;LinkedinShareButton
+                            url={currentUrl}
+                            className="share-button"
+                          >
+                            &lt;LinkedinIcon size={32} round />
+                          &lt;/LinkedinShareButton>
+                          &lt;div className="share-name">Linkedin&lt;/div>
+                        &lt;/div>
+                        &lt;div className="share">
+                          &lt;PinterestShareButton
+                            url={currentUrl}
+                            media={
+                              this.state.video.thumbnailUrl === undefined
+                                ? ""
+                                : this.state.video.thumbnailUrl
+                            }
+                            description={
+                              "Vídeo Unicast: " + this.state.video.title
+                            }
+                            className="share-button"
+                          >
+                            &lt;PinterestIcon size={32} round />
+                          &lt;/PinterestShareButton>
+                          &lt;div className="share-name">Pinterest&lt;/div>
+                        &lt;/div>
+                        &lt;div className="share">
+                          &lt;RedditShareButton
+                            url={currentUrl}
+                            title={"Vídeo Unicast: " + this.state.video.title}
+                            className="share-button"
+                          >
+                            &lt;RedditIcon size={32} round />
+                          &lt;/RedditShareButton>
+                          &lt;div className="share-name">Reddit&lt;/div>
+                        &lt;/div>
+                        &lt;div className="share">
+                          &lt;EmailShareButton
+                            url={currentUrl}
+                            subject={"Vídeo Unicast: " + this.state.video.title}
+                            body={"Mira este vídeo!\n"}
+                            className="share-button"
+                          >
+                            &lt;EmailIcon size={32} round />
+                            &lt;div className="share-name">Email&lt;/div>
+                          &lt;/EmailShareButton>
+                        &lt;/div>
+                      &lt;/div>
+                    &lt;/div>
+                  &lt;/Popup>
+                  &lt;Popup
+                    open={this.state.popUpGuardar}
+                    onOpen={() =>
+                      this.setState({
+                        popUpGuardar: true,
+                        popUpCompartir: false,
+                        popUpPuntuar: false
+                      })
+                    }
+                    onClose={() => this.setState({ popUpGuardar: false })}
+                    arrow={false}
+                    position="top left"
+                    contentStyle={{
+                      width: "250px",
+                      zIndex: "1000",
+                      maxHeight: "300px",
+                      overflow: "scroll",
+                      padding: "16px 20px",
+                      border: "0",
+                      marginTop: "10px",
+                      boxShadow:
+                        "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4)"
+                    }}
+                    trigger={
+                      &lt;FaRegBookmark
+                        size={30}
+                        color={"#00000080"}
+                        style={{ cursor: "pointer" }}
+                      />
+                    }
+                  >
+                    &lt;ContenidoPopUp
+                      video={this.state.video.title}
+                      videoId={this.state.video.id}
+                      listaRepro={this.state.listasRepro}
+                      enviarPadre={this.guardarVideo}
+                      actualizarListas={this.getReproductionLists}
+                    />
+                  &lt;/Popup>
+                &lt;/div>
+              &lt;/div>
+            &lt;/div>
+            &lt;div className="datos-video">
+              &lt;div style={{ display: "flex", marginBottom: "20px" }}>
+                {this.state.mostrarSpinIcono ? (
+                  &lt;LoadingSpinUniCast className="nombre-canal" />
+                ) : (
+                  &lt;div>
+                    &lt;Link to={`/asig/${this.state.asig.id}`}>
+                      &lt;img
+                        src={this.state.university.photo}
+                        style={{ borderRadius: "50%" }}
+                        height="40"
+                        width="40"
+                        alt="Canal"
+                      />
+                    &lt;/Link>
+                    &lt;Link
+                      className="nombre-canal"
+                      to={`/asig/${this.state.asig.id}`}
+                    >
+                      {this.state.asig.name}
+                    &lt;/Link>
+                  &lt;/div>
+                )}
+                {this.state.mostrarSpinProfesores ? (
+                  &lt;div style={{ marginRight: "0", marginLeft: "auto" }}>
+                    &lt;LoadingSpinUniCast />
+                  &lt;/div>
+                ) : (
+                  &lt;Button className="boton-seguir" onClick={this.seguirAsig}>
+                    {this.state.siguiendoAsig
+                      ? "DEJAR DE SEGUIR"
+                      : "SEGUIR ASIGNATURA"}
+                  &lt;/Button>
+                )}
+              &lt;/div>
+              &lt;div style={{ marginLeft: "48px" }}>
+                &lt;p style={{ fontSize: "15px" }}>
+                  {this.state.video.description}
+                &lt;/p>
+              &lt;/div>
+              {this.state.mostrarSpinProfesores ? (
+                &lt;LoadingSpinUniCast className="spin-ranking" />
+              ) : (
+                &lt;div style={{ marginLeft: "48px" }}>
+                  &lt;p style={{ fontWeight: "550" }}>
+                    Profesores de la asignatura
+                  &lt;/p>
+                  &lt;div style={{ display: "flex" }}>
+                    {ListaProfesores(this.state.profesores)}
+                  &lt;/div>
+                &lt;/div>
+              )}
+            &lt;/div>
+          &lt;/div>
+          &lt;div
+            className="coment"
+            id={"div-comentarios"}
+            style={{
+              flex: "30%",
+              margin: "0px 30px",
+              borderRadius: "3px",
+              border: "1px solid lightgrey",
+              height: "0",
+              paddingBottom: "51.25%"
+            }}
+          >
+            &lt;div
+              id="cabecera-comentarios"
+              style={{
+                borderBottom: "1px solid lightgrey",
+                fontSize: "16px",
+                padding: "10px 20px",
+                fontWeight: "500"
+              }}
+            >
+              Comentarios en vivo
+            &lt;/div>
+            &lt;div
+              className="comentarios"
+              style={{
+                padding: "20px 20px 0",
+                overflowY: "scroll",
+                maxWidth: `${this.state.anchuraComentarios}px`,
+                maxHeight: `${this.state.alturaComentarios}px`,
+                fontSize: "14px"
+              }}
+              onScroll={this.handleScroll}
+            >
+              {this.state.comentarios.map((e, index) => {
+                const { tiempo, comentario, usuario, color } = e;
+                return (
+                  &lt;div
+                    key={`comment${index}`}
+                    id={`comment${index}`}
+                    style={{
+                      marginBottom: "10px",
+                      display: "flex",
+                      width: "100%"
+                    }}
+                  >
+                    &lt;div
+                      style={{
+                        flex: "10%",
+                        marginRight: "5px"
+                      }}
+                    >
+                      &lt;span style={{ fontSize: "12px" }}>
+                        {getTime(tiempo)}
+                      &lt;/span>
+                    &lt;/div>
+                    &lt;div
+                      style={{
+                        flex: "90%",
+                        overflowWrap: "break-word",
+                        width: "10%"
+                      }}
+                    >
+                      &lt;span
+                        style={{
+                          marginRight: "5px",
+                          color: color,
+                          fontWeight: "bold"
+                        }}
+                      >
+                        {usuario}:
+                      &lt;/span>
+                      &lt;span>{comentario}&lt;/span>
+                    &lt;/div>
+                  &lt;/div>
+                );
+              })}
+              {this.irAUltimoComentario()}
+            &lt;/div>
+            &lt;div id="zona-escribir-comentarios" className="escribir-coment">
+              &lt;div
+                style={{
+                  height: "100%",
+                  padding: "10px 20px"
+                }}
+              >
+                &lt;textarea
+                  onKeyDown={this.comentar}
+                  ref={this.comentario}
+                  style={{
+                    border: "0",
+                    width: "100%",
+                    fontSize: "14px",
+                    resize: "none",
+                    outline: "none"
+                  }}
+                  placeholder={`Publicar comentario en ${getTime(
+                    this.state.tiempoVideo
+                  )}`}
+                />
+              &lt;/div>
+            &lt;/div>
+          &lt;/div>
+        &lt;/div>
+        &lt;Notificacion
+          mostrar={this.state.notif}
+          mensaje={this.state.mensajeNotif}
+          deshacer={false}
+        />
+      &lt;/div>
+    );
+  }
+}
+
+export default ViendoVideo;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="App.html">App</a></li><li><a href="BarraNavegacion.html">BarraNavegacion</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addComment">addComment</a></li><li><a href="global.html#addMessage">addMessage</a></li><li><a href="global.html#addProfessor">addProfessor</a></li><li><a href="global.html#addReproductionList">addReproductionList</a></li><li><a href="global.html#addUser">addUser</a></li><li><a href="global.html#addVideotoReproductionList">addVideotoReproductionList</a></li><li><a href="global.html#addVote">addVote</a></li><li><a href="global.html#authUser">authUser</a></li><li><a href="global.html#borrarAsignatura">borrarAsignatura</a></li><li><a href="global.html#borrarProfeAsignatura">borrarProfeAsignatura</a></li><li><a href="global.html#borrarProfesor">borrarProfesor</a></li><li><a href="global.html#borrarUniversidad">borrarUniversidad</a></li><li><a href="global.html#checkFileExtensionImage">checkFileExtensionImage</a></li><li><a href="global.html#checkFileExtensionVideo">checkFileExtensionVideo</a></li><li><a href="global.html#checkNotification">checkNotification</a></li><li><a href="global.html#crearAsigYLigar">crearAsigYLigar</a></li><li><a href="global.html#crearCarreraYLigar">crearCarreraYLigar</a></li><li><a href="global.html#crearUniversidad">crearUniversidad</a></li><li><a href="global.html#deleteProfessor">deleteProfessor</a></li><li><a href="global.html#deleteReproductionList">deleteReproductionList</a></li><li><a href="global.html#deleteVideo">deleteVideo</a></li><li><a href="global.html#deleteVideoFromDisplay">deleteVideoFromDisplay</a></li><li><a href="global.html#deleteVideoFromReproductionList">deleteVideoFromReproductionList</a></li><li><a href="global.html#diasDelMes">diasDelMes</a></li><li><a href="global.html#emailPattern">emailPattern</a></li><li><a href="global.html#esAyer">esAyer</a></li><li><a href="global.html#esBisiesto">esBisiesto</a></li><li><a href="global.html#f_filterResults">f_filterResults</a></li><li><a href="global.html#f_scrollTop">f_scrollTop</a></li><li><a href="global.html#findSubjectByName">findSubjectByName</a></li><li><a href="global.html#findSubjectsContainingName">findSubjectsContainingName</a></li><li><a href="global.html#findUserProfessors">findUserProfessors</a></li><li><a href="global.html#findVideosContainingTitle">findVideosContainingTitle</a></li><li><a href="global.html#generadorColores">generadorColores</a></li><li><a href="global.html#getCommentsByVideo">getCommentsByVideo</a></li><li><a href="global.html#getDegreeOfUser">getDegreeOfUser</a></li><li><a href="global.html#getDegreesFromUnivesity">getDegreesFromUnivesity</a></li><li><a href="global.html#getDisplaysByUser">getDisplaysByUser</a></li><li><a href="global.html#getLastMessages">getLastMessages</a></li><li><a href="global.html#getMessagesFromSender">getMessagesFromSender</a></li><li><a href="global.html#getMessagesToReceiver">getMessagesToReceiver</a></li><li><a href="global.html#getProfessorsFromSubject">getProfessorsFromSubject</a></li><li><a href="global.html#getRecommendations">getRecommendations</a></li><li><a href="global.html#getReproductionListVideoIn">getReproductionListVideoIn</a></li><li><a href="global.html#getScore">getScore</a></li><li><a href="global.html#getSubjectById">getSubjectById</a></li><li><a href="global.html#getSubjectRanking">getSubjectRanking</a></li><li><a href="global.html#getSubjectsAsProfessor">getSubjectsAsProfessor</a></li><li><a href="global.html#getSubjectsFromUniveristy">getSubjectsFromUniveristy</a></li><li><a href="global.html#getSubjectsOfUser">getSubjectsOfUser</a></li><li><a href="global.html#getTime">getTime</a></li><li><a href="global.html#getTimePassed">getTimePassed</a></li><li><a href="global.html#getUniversityOfUser">getUniversityOfUser</a></li><li><a href="global.html#getUnivesities">getUnivesities</a></li><li><a href="global.html#getUser">getUser</a></li><li><a href="global.html#getUserByUsername">getUserByUsername</a></li><li><a href="global.html#getUserID">getUserID</a></li><li><a href="global.html#getUserNotifications">getUserNotifications</a></li><li><a href="global.html#getUserPhoto">getUserPhoto</a></li><li><a href="global.html#getUserReproductionLists">getUserReproductionLists</a></li><li><a href="global.html#getUserRole">getUserRole</a></li><li><a href="global.html#getUserToken">getUserToken</a></li><li><a href="global.html#getUserUncheckedNotifications">getUserUncheckedNotifications</a></li><li><a href="global.html#getVideo">getVideo</a></li><li><a href="global.html#getVideoDisplay">getVideoDisplay</a></li><li><a href="global.html#getVideosFromReproductionList">getVideosFromReproductionList</a></li><li><a href="global.html#getVideosFromSubject">getVideosFromSubject</a></li><li><a href="global.html#getVideosFromUploader">getVideosFromUploader</a></li><li><a href="global.html#getVideoSubject">getVideoSubject</a></li><li><a href="global.html#hacerProfesor">hacerProfesor</a></li><li><a href="global.html#isSignedIn">isSignedIn</a></li><li><a href="global.html#ligarUniAsig">ligarUniAsig</a></li><li><a href="global.html#ligarUniCarr">ligarUniCarr</a></li><li><a href="global.html#mergeSortedArray">mergeSortedArray</a></li><li><a href="global.html#parsearFecha">parsearFecha</a></li><li><a href="global.html#parseNewMessages">parseNewMessages</a></li><li><a href="global.html#putFavouritesFirst">putFavouritesFirst</a></li><li><a href="global.html#RemoveAccents">RemoveAccents</a></li><li><a href="global.html#restriccion">restriccion</a></li><li><a href="global.html#restriccionNombre">restriccionNombre</a></li><li><a href="global.html#restriccionUser">restriccionUser</a></li><li><a href="global.html#scrollFunc">scrollFunc</a></li><li><a href="global.html#setUserPhoto">setUserPhoto</a></li><li><a href="global.html#setUserRole">setUserRole</a></li><li><a href="global.html#signIn">signIn</a></li><li><a href="global.html#signOut">signOut</a></li><li><a href="global.html#SubscribeSubject">SubscribeSubject</a></li><li><a href="global.html#UnsubscribeSubject">UnsubscribeSubject</a></li><li><a href="global.html#updateDisplay">updateDisplay</a></li><li><a href="global.html#updateUser">updateUser</a></li><li><a href="global.html#UploadVideo">UploadVideo</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.2</a> on Tue May 28 2019 16:31:38 GMT+0200 (hora de verano de Europa central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/AdministradorCrear.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/AdministradorCrear.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { Component } from "react";
+import BarraAdmi from "./BarraAdmi";
+import { Helmet } from "react-helmet";
+import { Button, Form, Col, Modal } from "react-bootstrap";
+import { Redirect } from "react-router-dom";
+import { isSignedIn, getUserRole } from "../config/Auth";
+import UniversityApi from "swagger_unicast/dist/api/UniversityApi";
+import DegreeApi from "swagger_unicast/dist/api/DegreeApi";
+import UserApi from "swagger_unicast/dist/api/UserApi";
+import { checkFileExtensionImage } from "../config/Process";
+import {
+  crearUniversidad,
+  crearCarreraYLigar,
+  crearAsigYLigar,
+  addProfessor,
+  hacerProfesor
+} from "../config/AdminAPI";
+import SubjectApi from "swagger_unicast/dist/api/SubjectApi";
+import {
+  getSubjectsFromUniveristy,
+  getUnivesities
+} from "../config/UniversityAPI";
+import { getUserByUsername } from "../config/UserAPI";
+
+const FormularioProfesor = (handleProfesor, userID) => {
+  return (
+    &lt;div style={{ margin: "20px 20px 20px 20px" }}>
+      &lt;h6>Convertir usuario en profesor&lt;/h6>
+      &lt;Form
+        id="form-profesor"
+        onSubmit={e =>
+          handleProfesor(e, document.getElementById("form-profesor"))
+        }
+      >
+        &lt;Form.Group controlId="formGridUserID">
+          &lt;Form.Label>Nombre de usuario&lt;/Form.Label>
+          &lt;Form.Control
+            type="text"
+            placeholder="Nombre de usuario"
+            required
+            ref={userID}
+          />
+        &lt;/Form.Group>
+
+        &lt;Button className="boton-filtro" type="reset">
+          Cancelar
+        &lt;/Button>
+        &lt;Button
+          className="boton-filtro"
+          style={{ float: "right" }}
+          type="submit"
+        >
+          Confirmar
+        &lt;/Button>
+      &lt;/Form>
+    &lt;/div>
+  );
+};
+
+const FormularioUniversidad = (handleUniversidad, nombre, fotoUni) => {
+  return (
+    &lt;div style={{ margin: "20px 20px 20px 20px" }}>
+      &lt;h6>Añadir universidad&lt;/h6>
+      &lt;Form
+        id="form-uni"
+        onSubmit={e =>
+          handleUniversidad(e, document.getElementById("form-uni"))
+        }
+      >
+        &lt;Form.Row>
+          &lt;Form.Group as={Col} controlId="formGridNameUni">
+            &lt;Form.Label>Universidad&lt;/Form.Label>
+            &lt;Form.Control
+              type="text"
+              placeholder="Nombre"
+              required
+              ref={nombre}
+            />
+          &lt;/Form.Group>
+        &lt;/Form.Row>
+        &lt;Form.Group controlId="formGridFotoUni">
+          &lt;Form.Label>Foto de la Universidad&lt;/Form.Label>
+          &lt;Form.Control type="file" accept="image/*" ref={fotoUni} required />
+        &lt;/Form.Group>
+        &lt;Button className="boton-filtro" type="reset">
+          Cancelar
+        &lt;/Button>
+        &lt;Button
+          className="boton-filtro"
+          style={{ float: "right" }}
+          type="submit"
+        >
+          Confirmar
+        &lt;/Button>
+      &lt;/Form>
+    &lt;/div>
+  );
+};
+
+const FormularioCarrera = (handleCarrera, uni, carrera, universidades) => {
+  return (
+    &lt;div style={{ margin: "20px 20px 20px 20px" }}>
+      &lt;h6>Añadir Carrera&lt;/h6>
+      &lt;Form
+        id="form-carrera"
+        onSubmit={e =>
+          handleCarrera(e, document.getElementById("form-carrera"))
+        }
+      >
+        &lt;Form.Row>
+          &lt;Form.Group as={Col} controlId="formGridUniCarr">
+            &lt;Form.Label>Universidad&lt;/Form.Label>
+            &lt;Form.Control as="select" ref={uni}>
+              &lt;option value={-1}>Elegir universidad...&lt;/option>
+              {universidades.map(univ => {
+                const { id, name } = univ;
+                return (
+                  &lt;option key={id} value={id}>
+                    {name}
+                  &lt;/option>
+                );
+              })}
+            &lt;/Form.Control>
+          &lt;/Form.Group>
+        &lt;/Form.Row>
+        &lt;Form.Row>
+          &lt;Form.Group as={Col} controlId="formGridCarrera">
+            &lt;Form.Label>Carrera&lt;/Form.Label>
+            &lt;Form.Control
+              type="text"
+              placeholder="Nombre"
+              required
+              ref={carrera}
+            />
+          &lt;/Form.Group>
+        &lt;/Form.Row>
+        &lt;Button className="boton-filtro" type="reset">
+          Cancelar
+        &lt;/Button>
+        &lt;Button
+          className="boton-filtro"
+          style={{ float: "right" }}
+          type="submit"
+        >
+          Confirmar
+        &lt;/Button>
+      &lt;/Form>
+    &lt;/div>
+  );
+};
+
+const FormularioAsignatura = (
+  handleAsignatura,
+  uni,
+  asignatura,
+  asignatura_corto,
+  universidades
+) => {
+  return (
+    &lt;div style={{ margin: "20px 20px 20px 20px" }}>
+      &lt;h6>Añadir asignatura&lt;/h6>
+      &lt;Form
+        id="form-asignatura"
+        onSubmit={e =>
+          handleAsignatura(e, document.getElementById("form-asignatura"))
+        }
+      >
+        &lt;Form.Row>
+          &lt;Form.Group as={Col} controlId="formGridUni">
+            &lt;Form.Label>Universidad&lt;/Form.Label>
+            &lt;Form.Control as="select" ref={uni}>
+              &lt;option value={-1}>Elegir universidad...&lt;/option>
+              {universidades.map(univ => {
+                const { id, name } = univ;
+                return (
+                  &lt;option key={id} value={id}>
+                    {name}
+                  &lt;/option>
+                );
+              })}
+            &lt;/Form.Control>
+          &lt;/Form.Group>
+        &lt;/Form.Row>
+        &lt;Form.Row>
+          &lt;Form.Group as={Col} controlId="formGridAsignatura">
+            &lt;Form.Label>Asignatura&lt;/Form.Label>
+            &lt;Form.Control
+              type="text"
+              placeholder="Nombre"
+              required
+              ref={asignatura}
+            />
+          &lt;/Form.Group>
+          &lt;Form.Group as={Col} controlId="formGridAsignaturaCorto">
+            &lt;Form.Label>Nombre corto&lt;/Form.Label>
+            &lt;Form.Control
+              type="text"
+              placeholder="Nombre"
+              required
+              ref={asignatura_corto}
+            />
+          &lt;/Form.Group>
+        &lt;/Form.Row>
+        &lt;Button className="boton-filtro" type="reset">
+          Cancelar
+        &lt;/Button>
+        &lt;Button
+          className="boton-filtro"
+          style={{ float: "right" }}
+          type="submit"
+        >
+          Confirmar
+        &lt;/Button>
+      &lt;/Form>
+    &lt;/div>
+  );
+};
+
+class FormularioProfeAsignatura extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      uni: -1,
+      asignaturas: [],
+      showAsig: false
+    };
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+   /**
+   * Busca todas las asignaturas de la universidad deseada.
+   * Si se ha realizado correctamente, actualiza asignaturas con dichas asignaturas, y asigna true a showAsig.
+   * Si la universidad no tiene un valor válido (es -1), asigna false a showAsig y a asignaturas un array vacío.
+   */
+  handleChange(event) {
+    //Buscar asignaturas según la universidad
+    const uni = parseInt(event.target.value);
+    if (uni !== -1) {
+      getSubjectsFromUniveristy(uni, data => {
+        this.setState({ asignaturas: data });
+      });
+      this.setState({ showAsig: true });
+    } else {
+      this.setState({ showAsig: false, asignaturas: [] });
+    }
+    this.setState({ uni: uni });
+  }
+
+  render() {
+    return (
+      &lt;div style={{ margin: "20px 20px 20px 20px" }}>
+        &lt;h6>Añadir profesor a asignatura&lt;/h6>
+        &lt;Form
+          id="form-profeasignatura"
+          onSubmit={e =>
+            this.props.handleProfeAsignatura(
+              e,
+              document.getElementById("form-profeasignatura"),
+              this
+            )
+          }
+        >
+          &lt;Form.Row>
+            &lt;Form.Group as={Col} controlId="formGridUniProfe">
+              &lt;Form.Label>Universidad&lt;/Form.Label>
+              &lt;Form.Control
+                as="select"
+                ref={this.props.uni}
+                onChange={e => this.handleChange(e)}
+                required
+              >
+                &lt;option value={-1}>Elegir universidad...&lt;/option>
+                {this.props.universidades.map(univ => {
+                  const { id, name } = univ;
+                  return (
+                    &lt;option key={id} value={id}>
+                      {name}
+                    &lt;/option>
+                  );
+                })}
+              &lt;/Form.Control>
+            &lt;/Form.Group>
+          &lt;/Form.Row>
+          &lt;Form.Row>
+            &lt;Form.Group as={Col} controlId="formGridAsign" required>
+              &lt;Form.Label>Asignatura&lt;/Form.Label>
+              {this.state.showAsig ? (
+                &lt;Form.Control as="select" ref={this.props.asignatura}>
+                  &lt;option value={-1}>Elegir asignatura...&lt;/option>
+                  {this.state.asignaturas.map(asig => {
+                    const { id, name } = asig;
+                    return (
+                      &lt;option key={id} value={id}>
+                        {name}
+                      &lt;/option>
+                    );
+                  })}
+                &lt;/Form.Control>
+              ) : null}
+            &lt;/Form.Group>
+          &lt;/Form.Row>
+          &lt;Form.Row>
+            &lt;Form.Group as={Col} controlId="formGridUserIDProfe">
+              &lt;Form.Label>Nombre de usuario del profesor&lt;/Form.Label>
+              &lt;Form.Control
+                type="text"
+                placeholder="Usuario"
+                required
+                ref={this.props.user}
+              />
+            &lt;/Form.Group>
+          &lt;/Form.Row>
+          &lt;Button className="boton-filtro" type="reset">
+            Cancelar
+          &lt;/Button>
+          &lt;Button
+            className="boton-filtro"
+            style={{ float: "right" }}
+            type="submit"
+          >
+            Confirmar
+          &lt;/Button>
+        &lt;/Form>
+      &lt;/div>
+    );
+  }
+}
+
+class AdministradorCrear extends Component {
+  constructor(props) {
+    super(props);
+    this._isMounted = false;
+    this.state = {
+      show: false,
+      listaCarreras: [],
+      listaUniversidades: []
+    };
+    this.UniversityApi = new UniversityApi();
+    this.DegreeApi = new DegreeApi();
+    this.SubjectApi = new SubjectApi();
+    this.UserApi = new UserApi();
+    this.userIDProf = React.createRef();
+    this.nombreUni = React.createRef();
+    this.fotoUni = React.createRef();
+    this.nombreCarrera = React.createRef();
+    this.uniAsig = React.createRef();
+    this.uniCarr = React.createRef();
+    this.nombreAsig = React.createRef();
+    this.nombreCortoAsig = React.createRef();
+    this.uniUn = React.createRef();
+    this.asignUn = React.createRef();
+    this.userUn = React.createRef();
+    this.getData = this.getData.bind(this);
+    this.handleProfesor = this.handleProfesor.bind(this);
+    this.handleUniversidad = this.handleUniversidad.bind(this);
+    this.handleAsignatura = this.handleAsignatura.bind(this);
+    this.handleCarrera = this.handleCarrera.bind(this);
+    this.handleProfeAsignatura = this.handleProfeAsignatura.bind(this);
+    this.handleShow = this.handleShow.bind(this);
+    this.handleClose = this.handleClose.bind(this);
+  }
+
+  componentWillMount() {
+    this._isMounted = true;
+    if (isSignedIn()) {
+      this.getData();
+    }
+  }
+  /**
+   * Pone _isMounted a false
+   */
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
+  getData() {
+    getUnivesities(0, data => {
+      this.getAllUniversities(data._embedded.universities, 1);
+    });
+  }
+
+  getAllUniversities(unis, page) {
+    if (unis.length &lt; 20 * page) {
+      if (this._isMounted) {
+        this.setState({ listaUniversidades: unis });
+      }
+    } else {
+      getUnivesities(page, data => {
+        const newData = [...unis, ...data._embedded.universities];
+        this.getAllUniversities(newData, page + 1);
+      });
+    }
+  }
+   /**
+   * Pone show a false
+   */
+  handleClose() {
+    this.setState({ show: false });
+  }
+   /**
+   * Pone show a true
+   */
+  handleShow() {
+    this.setState({ show: true });
+  }
+  /**
+   * Busca el usuario con id userID y lo convierte en profesor
+   * @param {*} event 
+   * @param {HTMLElement} form 
+   */
+  handleProfesor(event, form) {
+    event.preventDefault();
+    const userID = this.userIDProf.current.value;
+    hacerProfesor(userID, form, this.handleShow, this.UserApi);
+  }
+  /**
+   * Si fotoUni es una imagen, crea una universidad con nombre nombreUnin, imagen fotoUni, 
+   * formulario de entrada form, API UniversityApi.
+   * @param {*} event 
+   * @param {HTMLElement} form 
+   */
+  handleUniversidad(event, form) {
+    event.preventDefault();
+    if (checkFileExtensionImage(this.fotoUni.current.value)) {
+      const uni = this.nombreUni.current.value;
+      const file = this.fotoUni.current.files[0];
+      crearUniversidad(
+        uni,
+        file,
+        form,
+        this.handleShow,
+        this.UniversityApi,
+        ok => {
+          if (ok) {
+            this.getData();
+          } else {
+            alert("La universidad " + uni + " ya existe");
+          }
+        }
+      );
+    } else {
+      alert("Debe introducir una imágen válida");
+    }
+  }
+  /**
+   * Si uniCarr es distinto a -1, si no existe la carrera de nombre nombreCarrera, la crea y la asocia a la universidad uniCarr.
+   * Si ya existía, asocia dicha carrera a la universidad.
+   * @param {*} event 
+   * @param {HTMLElement} form 
+   */
+  handleCarrera(event, form) {
+    event.preventDefault();
+    const uni = parseInt(this.uniCarr.current.value);
+    if (uni !== -1) {
+      const carrera = this.nombreCarrera.current.value;
+      //Añadir carrera
+      crearCarreraYLigar(this.DegreeApi, carrera, uni);
+      form.reset();
+      this.handleShow();
+    }
+  }
+   /**
+   * Si no existe la asignatura nombreAsig, la crea y la asocia a la universidad
+   * uniAsig. Si ya existía, asocia dicha asignatura a la universidad uniAsig.
+   * @param {event} event 
+   * @param {HTMLElement} form 
+   */
+  handleAsignatura(event, form) {
+    event.preventDefault();
+    const uni = parseInt(this.uniAsig.current.value);
+    if (uni !== -1) {
+      const subj = this.nombreAsig.current.value;
+      const shortname = this.nombreCortoAsig.current.value;
+      crearAsigYLigar(this.SubjectApi, subj, shortname, uni);
+      form.reset();
+      this.handleShow();
+    }
+  }
+  /**
+   * Si uniUn es correcto (distinto de -1) y asignUn no es null, si existe el usuario userUn,
+   * asigna dicha asignatura a dicho usuario.
+   * @param {event} event 
+   * @param {HTMLElement} form 
+   * @param {*} that 
+   */
+  handleProfeAsignatura(event, form, that) {
+    event.preventDefault();
+
+    const universidad = parseInt(this.uniUn.current.value);
+    if (
+      universidad !== -1 ||
+      (this.asignUn.current !== null &amp;&amp; this.asignUn.current.value !== "-1")
+    ) {
+      const asignatura = parseInt(this.asignUn.current.value);
+      if (!isNaN(asignatura)) {
+        const user = this.userUn.current.value;
+        getUserByUsername(user, data => {
+          if (
+            data === false ||
+            data.length === 0 ||
+            data.role === "ROLE_USER"
+          ) {
+            alert("El usuario especificado no existe");
+          } else {
+            addProfessor(data.id, asignatura, this.SubjectApi, ok => {
+              if (ok) {
+                form.reset();
+                this.handleShow();
+                that.setState({ uni: -1 });
+              } else {
+                alert(
+                  "No se ha podido relacionar el profesor con la asignatura"
+                );
+              }
+            });
+          }
+        });
+      } else {
+        alert("Introduzca una asignatura");
+      }
+    } else {
+      alert("Debe introrucir todos los campos");
+    }
+  }
+
+  render() {
+    return !isSignedIn() || getUserRole() !== "ROLE_ADMIN" ? (
+      &lt;Redirect
+        to={{
+          pathname: "/",
+          state: {
+            url: `/administrador-crear`
+          }
+        }}
+      />
+    ) : (
+      &lt;div>
+        &lt;Helmet>
+          &lt;title>Administrador | UniCast&lt;/title>
+          &lt;style>{"body { background-color: #fafafa; }"}&lt;/style>
+        &lt;/Helmet>
+        &lt;BarraAdmi />
+        &lt;div
+          className="transform"
+          style={{
+            marginTop: "80px",
+            marginLeft: "100px",
+            marginRight: "100px",
+            marginDown: "80px"
+          }}
+        >
+          &lt;h5>Añadir elementos a la página&lt;/h5>
+          &lt;div className="boxed">
+            {FormularioProfesor(this.handleProfesor, this.userIDProf)}
+          &lt;/div>
+          &lt;div className="boxed" style={{ marginTop: "20px" }} id="a">
+            {FormularioUniversidad(
+              this.handleUniversidad,
+              this.nombreUni,
+              this.fotoUni
+            )}
+          &lt;/div>
+          &lt;div className="boxed" style={{ marginTop: "20px" }} id="a">
+            {FormularioCarrera(
+              this.handleCarrera,
+              this.uniCarr,
+              this.nombreCarrera,
+              this.state.listaUniversidades
+            )}
+          &lt;/div>
+          &lt;div className="boxed" style={{ marginTop: "20px" }}>
+            {FormularioAsignatura(
+              this.handleAsignatura,
+              this.uniAsig,
+              this.nombreAsig,
+              this.nombreCortoAsig,
+              this.state.listaUniversidades
+            )}
+          &lt;/div>
+          &lt;div className="boxed" style={{ marginTop: "20px" }}>
+            &lt;FormularioProfeAsignatura
+              handleProfeAsignatura={this.handleProfeAsignatura}
+              uni={this.uniUn}
+              asignatura={this.asignUn}
+              user={this.userUn}
+              universidades={this.state.listaUniversidades}
+            />
+          &lt;/div>
+        &lt;/div>
+        &lt;Modal show={this.state.show} onHide={this.handleClose} centered>
+          &lt;Modal.Header closeButton>
+            &lt;Modal.Title>Elemento añadido&lt;/Modal.Title>
+          &lt;/Modal.Header>
+          &lt;Modal.Body>
+            Se ha añadido correctamente a la base de datos
+          &lt;/Modal.Body>
+          &lt;Modal.Footer>
+            &lt;Button className="boton-filtro" onClick={this.handleClose}>
+              Cerrar
+            &lt;/Button>
+          &lt;/Modal.Footer>
+        &lt;/Modal>
+      &lt;/div>
+    );
+  }
+}
+
+export default AdministradorCrear;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="App.html">App</a></li><li><a href="BarraNavegacion.html">BarraNavegacion</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addComment">addComment</a></li><li><a href="global.html#addMessage">addMessage</a></li><li><a href="global.html#addProfessor">addProfessor</a></li><li><a href="global.html#addReproductionList">addReproductionList</a></li><li><a href="global.html#addUser">addUser</a></li><li><a href="global.html#addVideotoReproductionList">addVideotoReproductionList</a></li><li><a href="global.html#addVote">addVote</a></li><li><a href="global.html#authUser">authUser</a></li><li><a href="global.html#borrarAsignatura">borrarAsignatura</a></li><li><a href="global.html#borrarProfeAsignatura">borrarProfeAsignatura</a></li><li><a href="global.html#borrarProfesor">borrarProfesor</a></li><li><a href="global.html#borrarUniversidad">borrarUniversidad</a></li><li><a href="global.html#checkFileExtensionImage">checkFileExtensionImage</a></li><li><a href="global.html#checkFileExtensionVideo">checkFileExtensionVideo</a></li><li><a href="global.html#checkNotification">checkNotification</a></li><li><a href="global.html#crearAsigYLigar">crearAsigYLigar</a></li><li><a href="global.html#crearCarreraYLigar">crearCarreraYLigar</a></li><li><a href="global.html#crearUniversidad">crearUniversidad</a></li><li><a href="global.html#deleteProfessor">deleteProfessor</a></li><li><a href="global.html#deleteReproductionList">deleteReproductionList</a></li><li><a href="global.html#deleteVideo">deleteVideo</a></li><li><a href="global.html#deleteVideoFromDisplay">deleteVideoFromDisplay</a></li><li><a href="global.html#deleteVideoFromReproductionList">deleteVideoFromReproductionList</a></li><li><a href="global.html#diasDelMes">diasDelMes</a></li><li><a href="global.html#emailPattern">emailPattern</a></li><li><a href="global.html#esAyer">esAyer</a></li><li><a href="global.html#esBisiesto">esBisiesto</a></li><li><a href="global.html#f_filterResults">f_filterResults</a></li><li><a href="global.html#f_scrollTop">f_scrollTop</a></li><li><a href="global.html#findSubjectByName">findSubjectByName</a></li><li><a href="global.html#findSubjectsContainingName">findSubjectsContainingName</a></li><li><a href="global.html#findUserProfessors">findUserProfessors</a></li><li><a href="global.html#findVideosContainingTitle">findVideosContainingTitle</a></li><li><a href="global.html#generadorColores">generadorColores</a></li><li><a href="global.html#getCommentsByVideo">getCommentsByVideo</a></li><li><a href="global.html#getDegreeOfUser">getDegreeOfUser</a></li><li><a href="global.html#getDegreesFromUnivesity">getDegreesFromUnivesity</a></li><li><a href="global.html#getDisplaysByUser">getDisplaysByUser</a></li><li><a href="global.html#getLastMessages">getLastMessages</a></li><li><a href="global.html#getMessagesFromSender">getMessagesFromSender</a></li><li><a href="global.html#getMessagesToReceiver">getMessagesToReceiver</a></li><li><a href="global.html#getProfessorsFromSubject">getProfessorsFromSubject</a></li><li><a href="global.html#getRecommendations">getRecommendations</a></li><li><a href="global.html#getReproductionListVideoIn">getReproductionListVideoIn</a></li><li><a href="global.html#getScore">getScore</a></li><li><a href="global.html#getSubjectById">getSubjectById</a></li><li><a href="global.html#getSubjectRanking">getSubjectRanking</a></li><li><a href="global.html#getSubjectsAsProfessor">getSubjectsAsProfessor</a></li><li><a href="global.html#getSubjectsFromUniveristy">getSubjectsFromUniveristy</a></li><li><a href="global.html#getSubjectsOfUser">getSubjectsOfUser</a></li><li><a href="global.html#getTime">getTime</a></li><li><a href="global.html#getTimePassed">getTimePassed</a></li><li><a href="global.html#getUniversityOfUser">getUniversityOfUser</a></li><li><a href="global.html#getUnivesities">getUnivesities</a></li><li><a href="global.html#getUser">getUser</a></li><li><a href="global.html#getUserByUsername">getUserByUsername</a></li><li><a href="global.html#getUserID">getUserID</a></li><li><a href="global.html#getUserNotifications">getUserNotifications</a></li><li><a href="global.html#getUserPhoto">getUserPhoto</a></li><li><a href="global.html#getUserReproductionLists">getUserReproductionLists</a></li><li><a href="global.html#getUserRole">getUserRole</a></li><li><a href="global.html#getUserToken">getUserToken</a></li><li><a href="global.html#getUserUncheckedNotifications">getUserUncheckedNotifications</a></li><li><a href="global.html#getVideo">getVideo</a></li><li><a href="global.html#getVideoDisplay">getVideoDisplay</a></li><li><a href="global.html#getVideosFromReproductionList">getVideosFromReproductionList</a></li><li><a href="global.html#getVideosFromSubject">getVideosFromSubject</a></li><li><a href="global.html#getVideosFromUploader">getVideosFromUploader</a></li><li><a href="global.html#getVideoSubject">getVideoSubject</a></li><li><a href="global.html#hacerProfesor">hacerProfesor</a></li><li><a href="global.html#isSignedIn">isSignedIn</a></li><li><a href="global.html#ligarUniAsig">ligarUniAsig</a></li><li><a href="global.html#ligarUniCarr">ligarUniCarr</a></li><li><a href="global.html#mergeSortedArray">mergeSortedArray</a></li><li><a href="global.html#parsearFecha">parsearFecha</a></li><li><a href="global.html#parseNewMessages">parseNewMessages</a></li><li><a href="global.html#putFavouritesFirst">putFavouritesFirst</a></li><li><a href="global.html#RemoveAccents">RemoveAccents</a></li><li><a href="global.html#restriccion">restriccion</a></li><li><a href="global.html#restriccionNombre">restriccionNombre</a></li><li><a href="global.html#restriccionUser">restriccionUser</a></li><li><a href="global.html#scrollFunc">scrollFunc</a></li><li><a href="global.html#setUserPhoto">setUserPhoto</a></li><li><a href="global.html#setUserRole">setUserRole</a></li><li><a href="global.html#signIn">signIn</a></li><li><a href="global.html#signOut">signOut</a></li><li><a href="global.html#SubscribeSubject">SubscribeSubject</a></li><li><a href="global.html#UnsubscribeSubject">UnsubscribeSubject</a></li><li><a href="global.html#updateDisplay">updateDisplay</a></li><li><a href="global.html#updateUser">updateUser</a></li><li><a href="global.html#UploadVideo">UploadVideo</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.2</a> on Tue May 28 2019 16:31:38 GMT+0200 (hora de verano de Europa central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
