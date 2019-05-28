@@ -11,6 +11,7 @@ import {
   addMessage
 } from "../config/MessageApi";
 import { mergeSortedArray, parseNewMessages } from "../config/Process";
+import { LoadingSpinUniCast } from "./LoadingSpin";
 
 class Chat extends Component {
   constructor(props) {
@@ -22,7 +23,10 @@ class Chat extends Component {
       sentMessages: [],
       prof: "",
       page: 0,
-      update: false
+      updateSender: false,
+      updateReceiver: false,
+      mostrarSpinUsuario: true,
+      mostrarSpinChat: true
     };
     this.getUser = this.getUser.bind(this);
     this.getNewMessages = this.getNewMessages.bind(this);
@@ -39,9 +43,9 @@ class Chat extends Component {
   componentWillMount() {
     this._isMounted = true;
     if (isSignedIn()) {
-      this.getAllFromSender(0, []);
-      this.getAllSent(0, []);
-      this.getUser();
+      this.getUser(parseInt(this.props.match.params.id));
+      this.getAllFromSender(0, [], parseInt(this.props.match.params.id));
+      this.getAllSent(0, [], parseInt(this.props.match.params.id));
     }
   }
 
@@ -51,7 +55,7 @@ class Chat extends Component {
   }
 
   componentDidUpdate() {
-    if (this.state.update) {
+    if (this.state.updateSender && this.state.updateReceiver) {
       this.pararReloj();
       this.mergeMessages();
       this.iniciarReloj();
@@ -60,65 +64,61 @@ class Chat extends Component {
 
   componentWillReceiveProps(newProps) {
     if (this.props.match.params.id !== newProps.match.params.id) {
-      console.log("HEEY");
+      this.setState({
+        receivedMessages: [],
+        sentMessages: [],
+        mostrarSpinChat: true,
+        mostrarSpinUsuario: true
+      });
       this.pararReloj();
-      this.getAllFromSender(0, []);
-      this.getAllSent(0, []);
-      this.getUser();
+      this.getUser(parseInt(newProps.match.params.id));
+      this.getAllFromSender(0, [], parseInt(newProps.match.params.id));
+      this.getAllSent(0, [], parseInt(newProps.match.params.id));
     }
   }
 
-  getUser() {
-    getUser(this.props.match.params.id, data => {
+  getUser(userId) {
+    getUser(userId, data => {
       if (this._isMounted) {
-        this.setState({ prof: data });
+        this.setState({ prof: data, mostrarSpinUsuario: false });
       }
     });
   }
 
-  getAllFromSender(page, messages) {
+  getAllFromSender(page, messages, userId) {
     if (messages.length < 20 * page) {
-      console.log("paramos", messages.length, page + 1);
       if (this._isMounted) {
-        this.setState({ receivedMessages: messages });
+        this.setState({ receivedMessages: messages, updateReceiver: true });
       }
     } else {
-      console.log("seguimos");
-      getMessagesFromSender(
-        parseInt(this.props.match.params.id),
-        page,
-        dataReceived => {
-          const received = dataReceived.map(el => {
-            el.fromMe = false;
-            return el;
-          });
-          const newData = [...messages, ...received];
-          this.getAllFromSender(page + 1, newData);
-        }
-      );
+      getMessagesFromSender(userId, page, dataReceived => {
+        const received = dataReceived.map(el => {
+          el.fromMe = false;
+          return el;
+        });
+        const newData = [...messages, ...received];
+        this.getAllFromSender(page + 1, newData, userId);
+      });
     }
   }
 
-  getAllSent(page, messages) {
+  getAllSent(page, messages, userId) {
     if (messages.length < 20 * page) {
-      console.log("paramos", messages.length, page);
       if (this._isMounted) {
-        this.setState({ sentMessages: messages, update: true });
+        this.setState({
+          sentMessages: messages,
+          updateSender: true
+        });
       }
     } else {
-      console.log("seguimos");
-      getMessagesToReceiver(
-        parseInt(this.props.match.params.id),
-        page,
-        dataSent => {
-          const sent = dataSent.map(el => {
-            el.fromMe = true;
-            return el;
-          });
-          const newData = [...messages, ...sent];
-          this.getAllSent(page + 1, newData);
-        }
-      );
+      getMessagesToReceiver(userId, page, dataSent => {
+        const sent = dataSent.map(el => {
+          el.fromMe = true;
+          return el;
+        });
+        const newData = [...messages, ...sent];
+        this.getAllSent(page + 1, newData, userId);
+      });
     }
   }
 
@@ -127,7 +127,12 @@ class Chat extends Component {
     const received = this.state.receivedMessages.slice();
     const messages = mergeSortedArray(sent, received).reverse();
     if (this._isMounted) {
-      this.setState({ messages: messages, update: false });
+      this.setState({
+        messages: messages,
+        updateReceiver: false,
+        updateSender: false,
+        mostrarSpinChat: false
+      });
     }
   }
 
@@ -156,7 +161,8 @@ class Chat extends Component {
             if (this._isMounted) {
               this.setState({
                 sentMessages: newSent,
-                update: true,
+                updateSender: true,
+                updateReceiver: true,
                 receivedMessages: newReceived
               });
             }
@@ -226,34 +232,45 @@ class Chat extends Component {
           }}
         >
           <div className="cabecera-asignatura">
-            <Link
-              to={
-                this.state.prof.role === "ROLE_PROFESSOR"
-                  ? `/profesor/${this.props.match.params.id}`
-                  : `/chat/${this.props.match.params.id}`
-              }
-              className="titulo-asignatura"
-              style={{
-                color: "black",
-                textDecoration: "none",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                display: "-webkit-box",
-                WebkitLineClamp: "1",
-                WebkitBoxOrient: "vertical"
-              }}
-            >
-              <img
-                src={this.state.prof.photo}
-                alt="icono usuario"
-                style={{ marginRight: "25px", borderRadius: "50%" }}
-                width="50"
-                height="50"
-              />
-              {this.state.prof.surnames}, {this.state.prof.name}
-            </Link>
+            {this.state.mostrarSpinUsuario ? (
+              <LoadingSpinUniCast />
+            ) : (
+              <Link
+                to={
+                  this.state.prof.role === "ROLE_PROFESSOR"
+                    ? `/profesor/${this.props.match.params.id}`
+                    : `/chat/${this.props.match.params.id}`
+                }
+                className="titulo-asignatura"
+                style={{
+                  color: "black",
+                  textDecoration: "none",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  display: "-webkit-box",
+                  WebkitLineClamp: "1",
+                  WebkitBoxOrient: "vertical"
+                }}
+              >
+                <img
+                  src={this.state.prof.photo}
+                  alt="icono usuario"
+                  style={{ marginRight: "25px", borderRadius: "50%" }}
+                  width="50"
+                  height="50"
+                />
+                {this.state.prof.surnames}, {this.state.prof.name}
+              </Link>
+            )}
           </div>
-          <Messages messages={this.state.messages} onSend={this.sendHandler} />
+          {this.state.mostrarSpinChat ? (
+            <LoadingSpinUniCast className="spin-ranking" />
+          ) : (
+            <Messages
+              messages={this.state.messages}
+              onSend={this.sendHandler}
+            />
+          )}
         </div>
       </div>
     );

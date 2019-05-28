@@ -130,7 +130,6 @@ export function parseNewMessages(newMessages, oldMessages) {
   } else {
     let i = 0;
     var aux = [];
-    console.log(newMessages, oldMessages);
     while (newMessages[i].id !== oldMessages[0].id) {
       aux.push(newMessages[i]);
       i++;
@@ -152,16 +151,15 @@ export function parsearFecha(timestamp) {
   var hora = aux[1];
   hora = hora.split(":");
   var minutos = hora[1];
-  hora = parseInt(hora[0]) + 2;
-  var horaTotal = hora.toString() + ":" + minutos;
+  hora = (parseInt(hora[0]) + 2) % 24;
+  var horaTotal = (hora === 0 ? "00" : hora.toString()) + ":" + minutos;
   var diaActual = parseInt(String(new Date().getDate()).padStart(2, "0"));
-
   var mesActual = new Date().getMonth() + 1;
   var anyoActual = new Date().getFullYear();
   fecha = fecha.split("-");
   var anyo = parseInt(fecha[0]);
   var mes = parseInt(fecha[1]);
-  var dia = parseInt(fecha[2]);
+  var dia = hora !== 0 ? parseInt(fecha[2]) : parseInt(fecha[2]) + 1;
 
   var preludio = "";
   if (mesActual === mes && anyoActual === anyo) {
