@@ -3,9 +3,9 @@
  *
  * @author UniCast
  *
- * @requires ../node_modules/swagger_unicast/dist/ApiClient.js:ApiClient
- * @requires ../node_modules/swagger_unicast/dist/api/VoteApi.js:VoteApi
- * @requires ./Auth.js:getUserToken
+ * @requires ../../node_modules/swagger_unicast/dist/ApiClient.js:ApiClient
+ * @requires ../../node_modules/swagger_unicast/dist/api/VoteApi.js:VoteApi
+ * @requires ./Auth.jsx:getUserToken
  */
 
 import { ApiClient, VoteApi } from "swagger_unicast";

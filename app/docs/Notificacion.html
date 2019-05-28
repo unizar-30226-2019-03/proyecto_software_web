@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: config/Auth.jsx</title>
+    <title>JSDoc: Class: Notificacion</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,123 +17,532 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: config/Auth.jsx</h1>
+    <h1 class="page-title">Class: Notificacion</h1>
 
     
 
 
 
+
+<section>
+
+<header>
     
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>/**
- * @fileoverview Funciones auxiliares de gestión de sesión
- *
- * @author UniCast
- */
+        <h2><span class="attribs"><span class="type-signature"></span></span>Notificacion<span class="signature">(props)</span><span class="type-signature"></span></h2>
+        
+            <div class="class-description"><p>Clase que gestiona una notificación individual, permitiendo
+ser mostrada y revisada.</p></div>
+        
+    
+</header>
 
-/**
- * Expresión regular del correo electrónico
- */
-export const emailPattern = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+<article>
+    <div class="container-overview">
+    
+        
 
-/**
- * Expresión regular de la contraseña
- */
-export const restriccion = /^(?=.*[A-Za-z])(?=.*[0-9])(?=.{8,})/;
+    
+    <h2>Constructor</h2>
+    
 
-/**
- * Expresión regular del nombre real del usuario
- */
-export const restriccionNombre = /^([A-Za-z\u00C0-\u017F]+(([ -][a-zA-Z\u00C0-\u017F])?[a-zA-Z\u00C0-\u017F]*)*){3,}$/;
+    
+    <h4 class="name" id="Notificacion"><span class="type-signature"></span>new Notificacion<span class="signature">(props)</span><span class="type-signature"></span></h4>
+    
 
-/**
- * Expresión regular del nombre de usuario
- */
-export const restriccionUser = /^(\w+){3,}/;
+    
 
-/**
- *  Borra todos los datos de autenticación del usuario
- *  del navegador, lo que provocará el cierre de sesión.
- */
-export function signOut() {
-  localStorage.clear();
-}
 
-/**
- * Guarda el Token de sesión del usuario y el id para que el
- * usuario pueda iniciar sesión en la aplicación.
- * @param {Token} data Contiene el Token de sesión y el id del usuario
- */
-export function signIn(data) {
-  localStorage.setItem("userToken", data.token);
-  localStorage.setItem("userID", data.id);
-}
 
-/**
- * Comprueba si un usuario está loggeado
- *
- * @returns {Boolean} Sesión iniciada
- */
-export function isSignedIn() {
-  const userToken = localStorage.getItem("userToken");
-  return userToken ? true : false;
-}
+<div class="description">
+    <p>Construye el componente Notificacion</p>
+</div>
 
-/**
- * Guarda el rol del usuario para futuras comprobaciones
- * @param {String} role Rol del usuario
- */
-export function setUserRole(role) {
-  localStorage.setItem("role", role);
-}
 
-/**
- * Guarda la foto de perfil del usuario
- * @param {String} photo Foto de perfil del usuario
- */
-export function setUserPhoto(photo) {
-  localStorage.setItem("photo", photo);
-}
 
-/**
- * Devuelve el Token de sesión del usuario.
- *
- * @returns {String} Token del usuario
- */
-export function getUserToken() {
-  return localStorage.getItem("userToken");
-}
 
-/**
- * Devuelve el ID único del usuario.
- *
- * @returns {Number} ID del usuario
- */
-export function getUserID() {
-  return parseInt(localStorage.getItem("userID"));
-}
 
-/**
- * Devuelve el rol del usuario
- *
- * @returns {String} Rol del usuario
- */
-export function getUserRole() {
-  return localStorage.getItem("role");
-}
 
-/**
- * Devuelve la foto del usuario
- *
- * @returns {String} Foto del usuario
- */
-export function getUserPhoto() {
-  return localStorage.getItem("photo");
-}
-</code></pre>
-        </article>
-    </section>
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>props</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Propiedades para inicializar el componente</p>
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>now</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Date</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Timestamp del servidor</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>notif</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Notificación</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_BarraNavegacion.jsx.html">components/BarraNavegacion.jsx</a>, <a href="components_BarraNavegacion.jsx.html#line56">line 56</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+        <h3 class="subsection-title">Extends</h3>
+
+        
+
+
+    <ul>
+        <li>Component</li>
+    </ul>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="_isMounted"><span class="type-signature"></span>_isMounted<span class="type-signature"> :Boolean</span></h4>
+
+
+
+
+<div class="description">
+    <p>Indica si el componente está montado o no</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Boolean</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_BarraNavegacion.jsx.html">components/BarraNavegacion.jsx</a>, <a href="components_BarraNavegacion.jsx.html#line62">line 62</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="getSubjectNotif"><span class="type-signature"></span>getSubjectNotif<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Obtiene la asignatura que ha subido un
+vídeo generando una notificación</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_BarraNavegacion.jsx.html">components/BarraNavegacion.jsx</a>, <a href="components_BarraNavegacion.jsx.html#line102">line 102</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="getUserNotif"><span class="type-signature"></span>getUserNotif<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Obtiene el usuario que ha enviado un
+mensaje generando una notificación</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_BarraNavegacion.jsx.html">components/BarraNavegacion.jsx</a>, <a href="components_BarraNavegacion.jsx.html#line90">line 90</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 

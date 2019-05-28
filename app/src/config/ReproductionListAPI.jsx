@@ -3,9 +3,9 @@
  *
  * @author UniCast
  *
- * @requires ../node_modules/swagger_unicast/dist/ApiClient.js:ApiClient
- * @requires ../node_modules/swagger_unicast/dist/api/ReproductionListApi.js:ReproductionListApi
- * @requires ./Auth.js:getUserToken
+ * @requires ../../node_modules/swagger_unicast/dist/ApiClient.js:ApiClient
+ * @requires ../../node_modules/swagger_unicast/dist/api/ReproductionListApi.js:ReproductionListApi
+ * @requires ./Auth.jsx:getUserToken
  */
 
 import { ApiClient, ReproductionListApi } from "swagger_unicast";

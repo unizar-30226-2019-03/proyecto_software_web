@@ -3,11 +3,11 @@
  *
  * @author UniCast
  *
- * @requires ../node_modules/swagger_unicast/dist/ApiClient.js:ApiClient
- * @requires ../node_modules/swagger_unicast/dist/api/SubjectApi.js:SubjectApi
- * @requires ../node_modules/swagger_unicast/dist/model/Subject2.js:Subject2
- * @requires ../node_modules/swagger_unicast/dist/model/Degree2.js:Degree2
- * @requires ./Auth.js:getUserToken
+ * @requires ../../node_modules/swagger_unicast/dist/ApiClient.js:ApiClient
+ * @requires ../../node_modules/swagger_unicast/dist/api/SubjectApi.js:SubjectApi
+ * @requires ../../node_modules/swagger_unicast/dist/model/Subject2.js:Subject2
+ * @requires ../../node_modules/swagger_unicast/dist/model/Degree2.js:Degree2
+ * @requires ./Auth.jsx:getUserToken
  */
 
 import ApiClient from "swagger_unicast/dist/ApiClient";

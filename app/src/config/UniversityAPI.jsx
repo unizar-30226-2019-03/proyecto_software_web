@@ -3,9 +3,9 @@
  *
  * @author UniCast
  *
- * @requires ../node_modules/swagger_unicast/dist/ApiClient.js:ApiClient
- * @requires ../node_modules/swagger_unicast/dist/api/UniversityApi.js:UniversityApi
- * @requires ./Auth.js:getUserToken
+ * @requires ../../node_modules/swagger_unicast/dist/ApiClient.js:ApiClient
+ * @requires ../../node_modules/swagger_unicast/dist/api/UniversityApi.js:UniversityApi
+ * @requires ./Auth.jsx:getUserToken
  */
 
 import ApiClient from "swagger_unicast/dist/ApiClient";

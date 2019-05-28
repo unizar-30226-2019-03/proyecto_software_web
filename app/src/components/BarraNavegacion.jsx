@@ -1,3 +1,29 @@
+/**
+ * @fileoverview Fichero BarraNavegacion.jsx donde se encuentra la clase
+ * que renderiza la barra de navegación de la aplicación, y la clase Notificacion
+ * que renderiza una notificación recibida de nuevo mensaje o vídeo
+ *
+ * @author UniCast
+ *
+ * @requires ../node_modules/react-router-dom/Link.js:Link
+ * @requires ../../node_modules/react-bootstrap/NavBar.js:NavBar
+ * @requires ../../node_modules/react-bootstrap/Nav.js:Nav
+ * @requires ../../node_modules/react-icons/fa/FaBell.js:FaBell
+ * @requires ../../node_modules/react-icons/fa/FaEnvelope.js:FaEnvelope
+ * @requires ../../node_modules/react-icons/fa/FaBars.js:FaBars
+ * @requires ./BarraBusqueda.jsx:BarraBusqueda
+ * @requires ./BarraLateral.jsx:BarraLateral
+ * @requires ../config/Auth.jsx:signOut
+ * @requires ../config/Auth.jsx:isSignedIn
+ * @requires ../config/Auth.jsx:getUserPhoto
+ * @requires ../config/Auth.jsx:getUserRole
+ * @requires ../config/NotificationAPI.jsx:getUserUncheckedNotifications
+ * @requires ../config/NotificationAPI.jsx:checkNotification
+ * @requires ../config/VideoAPI.jsx:getTimePassed
+ * @requires ../config/UserAPI.jsx:getUser
+ * @requires ../config/SubjectAPI.jsx:getSubjectById
+ */
+
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import brand from "../assets/imgUnicast.jpg";
@@ -14,17 +40,34 @@ import { getTimePassed } from "../config/VideoAPI";
 import { getUser } from "../config/UserAPI";
 import { getSubjectById } from "../config/SubjectAPI";
 
+/**
+ * Clase que gestiona una notificación individual, permitiendo
+ * ser mostrada y revisada.
+ * @extends Component
+ */
 class Notificacion extends Component {
+  /**
+   * Construye el componente Notificacion
+   *
+   * @param {Object} props Propiedades para inicializar el componente
+   * @param {Date} props.now Timestamp del servidor
+   * @param {Object} props.notif Notificación
+   */
   constructor(props) {
     super(props);
+    /**
+     * Indica si el componente está montado o no
+     * @type {Boolean}
+     */
     this._isMounted = false;
     this.state = {
       unChecked: true,
-      timeNow: this.props.now,
-      notif: this.props.notif,
+      timeNow: props.now,
+      notif: props.notif,
       mensaje: "",
       mostrarSpin: true
     };
+
     this.getUserNotif = this.getUserNotif.bind(this);
     this.getSubjectNotif = this.getSubjectNotif.bind(this);
   }
@@ -40,6 +83,10 @@ class Notificacion extends Component {
     }
   }
 
+  /**
+   * Obtiene el usuario que ha enviado un
+   * mensaje generando una notificación
+   */
   getUserNotif() {
     getUser(this.props.notif.creatorId, data => {
       if (this._isMounted) {
@@ -48,6 +95,10 @@ class Notificacion extends Component {
     });
   }
 
+  /**
+   * Obtiene la asignatura que ha subido un
+   * vídeo generando una notificación
+   */
   getSubjectNotif() {
     getSubjectById(this.props.notif.creatorId, data => {
       if (this._isMounted) {
@@ -148,21 +199,34 @@ class Notificacion extends Component {
   }
 }
 
+/**
+ * Clase que gestiona la barra de navegación, controlando a su
+ * vez la barra lateral y la barra de búsqueda
+ * @extends Component
+ */
 class BarraNavegacion extends Component {
   /**
-   * Constructor
-   * @param none
+   * Construye el componente BarraNavegacion
+   *
+   * @param {Object} props Propiedades para inicializar el componente
+   * @param {Boolean} props.displaySide Indica si mostrar la barra lateral o no
+   * @param {Boolean} props.hide Indica si el usuario ha pulsado esconder barra lateral
+   * @param {String} props.nuevoTit Texto introducido para realizar la búsqueda de resultados
    */
   constructor(props) {
     super(props);
+    /**
+     * Indica si el componente está montado o no
+     * @type {Boolean}
+     */
     this._isMounted = false;
     this.state = {
       displayMenu: false,
-      displaySide: this.props.displaySide,
+      displaySide: props.displaySide,
       windowWidth: window.innerWidth,
       displayNotif: false,
-      hide: this.props.hide,
-      busqueda: this.props.nuevoTit,
+      hide: props.hide,
+      busqueda: props.nuevoTit,
       unCheckedNotifications: [],
       bolaNotif: false,
       tiempoCheck: 0,
@@ -180,6 +244,10 @@ class BarraNavegacion extends Component {
     this.tick = this.tick.bind(this);
   }
 
+  /**
+   * Obtiene las notificaciones no revisadas de
+   * un usuario
+   */
   getNotifications() {
     getUserUncheckedNotifications(0, (data, now) => {
       if (!this.state.displayNotif) {
@@ -244,6 +312,11 @@ class BarraNavegacion extends Component {
     this.setState({ busqueda: newProps.nuevoTit });
   }
 
+  /**
+   * Dependiendo del ancho de la pantalla y si el usuario
+   * ha pulsado esconder barra lateral o no, muestra o esconde
+   * la barra lateral.
+   */
   resize() {
     let currentWidthNav = window.innerWidth <= 991;
     if (currentWidthNav && this.state.windowWidth > 991) {
@@ -260,6 +333,10 @@ class BarraNavegacion extends Component {
     this.setState({ windowWidth: window.innerWidth });
   }
 
+  /**
+   * Gestiona el mostrado de la barra lateral tras click del
+   * usuario.
+   */
   showSideBar() {
     this.props.onChange(!this.state.displaySide);
     this.setState({ displaySide: !this.state.displaySide });
@@ -270,6 +347,12 @@ class BarraNavegacion extends Component {
     }
   }
 
+  /**
+   * Muestra u oculta el dropdown del icono del usuario y añade
+   * un EventListener para cuando se pulse fuera del dropdown se
+   * cierre automáticamente.
+   * @param {Event} event Evento al pulsar en el icono de usuario
+   */
   showDropdown(event) {
     event.preventDefault();
     this.setState({ displayMenu: !this.state.displayMenu }, () => {
@@ -277,6 +360,12 @@ class BarraNavegacion extends Component {
     });
   }
 
+  /**
+   * Muestra u oculta el dropdown de las notificaciones y añade
+   * un EventListener para cuando se pulse fuera del dropdown se
+   * cierre automáticamente.
+   * @param {Event} event Evento al pulsar en el icono de notificaciones
+   */
   showDropdownNotif(event) {
     event.preventDefault();
     this.setState({ displayNotif: !this.state.displayNotif }, () => {
@@ -284,33 +373,42 @@ class BarraNavegacion extends Component {
     });
   }
 
+  /**
+   * Muestra el dropdown del icono de usuario y elimina el
+   * EventListener creado.
+   */
   hideDropdown() {
     this.setState({ displayMenu: false }, () => {
       document.removeEventListener("click", this.hideDropdown);
     });
   }
 
+  /**
+   * Oculta el dropdown del icono de usuario y elimina el
+   * EventListener creado.
+   */
   hideDropdownNotif() {
     this.setState({ displayNotif: false }, () => {
       document.removeEventListener("click", this.hideDropdownNotif);
     });
   }
   /**
-   * Pone el reloj a 0 y lo inicia
+   * Resetea el reloj y lo inicializa para ejecutar la función
+   * tick() una vez por segundo.
    */
   iniciarReloj() {
     this.pararReloj();
     this.timerID = setInterval(() => this.tick(), 1000);
   }
   /**
-   * Detiene la ejecución del reloj
+   * Detiene la ejecución del reloj.
    */
   pararReloj() {
     clearInterval(this.timerID);
   }
   /**
-   * suma un tick (suma 1 a tiempo)
-   * Si tiempo==5,pone tiempo a 0 y para el reloj
+   * Suma un tick y si han pasado 5 ticks (5 segundos)
+   * busca nuevas notificaciones y resetea el reloj.
    */
   tick() {
     let t = this.state.tiempoCheck;

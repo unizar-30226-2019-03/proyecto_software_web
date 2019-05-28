@@ -1,3 +1,34 @@
+/**
+ * @fileoverview Fichero App.jsx donde se encuentra la clase raíz de la aplicación
+ *
+ * @author UniCast
+ *
+ * @requires ../node_modules/react-router-dom/BrowserRouter.js:BrowserRouter
+ * @requires ../node_modules/react-router-dom/Route.js:Route
+ * @requires ../node_modules/react-router-dom/Switch.js:Switch
+ * @requires ./components/Inicio.jsx:Inicio
+ * @requires ./components/Asignaturas.jsx:Asignaturas
+ * @requires ./components/EditarPerfil.jsx:EditarPerfil
+ * @requires ./components/SubierVideo.jsx:SubirVideo
+ * @requires ./components/Rankings.jsx:Rankings
+ * @requires ./components/Historial.jsx:Historial
+ * @requires ./components/MisListas.jsx:MisListas
+ * @requires ./components/Perfil.jsx:Perfil
+ * @requires ./components/Mensajes.jsx:Mensajes
+ * @requires ./components/Asignatura.jsx:Asignatura
+ * @requires ./components/AdministradorCrear.jsx:AdministradorCrear
+ * @requires ./components/AdministradorBorrar.jsx:AdministradorBorrar
+ * @requires ./components/Login.jsx:Login
+ * @requires ./components/SignIn.jsx:SignIn
+ * @requires ./components/ViendoVideo.jsx:ViendoVideo
+ * @requires ./components/Profesor.jsx:Profesor
+ * @requires ./components/ListaConcreta.jsx:ListaConcreta
+ * @requires ./components/ResultadoBusqueda.jsx:ResultadoBusqueda
+ * @requires ./components/MensajesProfes.jsx:MensajesProfes
+ * @requires ./components/Chat.jsx:Chat
+ * @requires ./components/MisVideos.jsx:MisVideos
+ */
+
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import "./App.css";
@@ -25,7 +56,9 @@ import MisVideos from "./components/MisVideos";
 
 /**
  * Clase raíz, esta clase se encarga de renderizar todas las páginas
- * de la aplicación.
+ * de la aplicación. En esta clase se definen todas las rutas de acceso
+ * a los distintos componentes.
+ * @extends Component
  */
 class App extends Component {
   render() {
