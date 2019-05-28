@@ -75,7 +75,7 @@ class Asignaturas extends Component {
   /**
    * Devuelve el array lista filtrado de la siguiente forma:
    * o bien son la cadena vacía, o bien su nombre empieza por filtro.
-   * @param {Array} lista 
+   * @param {Array.<Object>} lista
    */
   filtrar(lista) {
     let asig = lista.filter(

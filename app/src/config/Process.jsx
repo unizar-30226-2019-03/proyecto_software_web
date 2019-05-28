@@ -89,9 +89,9 @@ export function checkFileExtensionVideo(filename) {
 
 /**
  * Coloca la lista de reproducción de favoritos en primer lugar
- * @param {Array} data Array de listas de reproducción
+ * @param {Array.<Object>} data Array de listas de reproducción
  *
- * @returns {Array} Lista ordenada
+ * @returns {Array.<Object>} Lista ordenada
  */
 export function putFavouritesFirst(data) {
   const i = data.findIndex(e => {
@@ -105,10 +105,10 @@ export function putFavouritesFirst(data) {
 
 /**
  * Mezcla los dos arrays de forma ordenada descendiente por timestamps
- * @param {Array} a Array ordenada por timestamps A
- * @param {Array} b Array ordenada por timestamps B
+ * @param {Array.<Object>} a Array ordenada por timestamps A
+ * @param {Array.<Object>} b Array ordenada por timestamps B
  *
- * @returns {Array} Array mezclado por orden descendiente
+ * @returns {Array.<Object>} Array mezclado por orden descendiente
  */
 export function mergeSortedArray(a, b) {
   var tempArray = [];
@@ -130,10 +130,10 @@ export function mergeSortedArray(a, b) {
 
 /**
  * Añade los nuevos mensajes a los mensajes del chat
- * @param {Array} newMessages Nuevos mensajes recibidos
- * @param {Array} oldMessages Mensajes del chat
+ * @param {Array.<Object>} newMessages Nuevos mensajes recibidos
+ * @param {Array.<Object>} oldMessages Mensajes del chat
  *
- * @returns {Array} Mensajes nuevos y antiguos
+ * @returns {Array.<Object>} Mensajes nuevos y antiguos
  */
 export function parseNewMessages(newMessages, oldMessages) {
   if (oldMessages.length === 0 && newMessages.length === 0) {

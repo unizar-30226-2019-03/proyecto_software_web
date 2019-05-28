@@ -394,7 +394,7 @@ class BarraNavegacion extends Component {
   }
   /**
    * Resetea el reloj y lo inicializa para ejecutar la función
-   * tick() una vez por segundo.
+   * BarraNavegacion.tick() una vez por segundo.
    */
   iniciarReloj() {
     this.pararReloj();

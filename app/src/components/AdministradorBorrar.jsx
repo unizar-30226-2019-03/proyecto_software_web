@@ -158,7 +158,7 @@ class FormularioAsignatura extends Component {
   /**
    * Si es una universidad (valor distinto de -1), asgna a asignaturas las asignaturas de la universidad,
    * y pone showAsig a true. En caso contrario pone showAsig a false y a asignaturas le asigna un vector vacío.
-   * @param {event} event
+   * @param {Event} event Evento que devuelve el formulario
    */
   handleChange(event) {
     //Buscar asignaturas según la universidad
@@ -267,7 +267,7 @@ class FormularioProfeAsignatura extends Component {
   /**
    * Si es una universidad (valor distinto de -1), asgna a asignaturas las asignaturas de la universidad,
    * y pone showAsig a true. En caso contrario pone showAsig a false y a asignaturas le asigna un vector vacío.
-   * @param {event} event
+   * @param {Event} event Evento que devuelve el formulario
    */
   handleChange(event) {
     //Buscar asignaturas según la universidad
@@ -286,7 +286,7 @@ class FormularioProfeAsignatura extends Component {
   /**
    * Si es una asignatura (valor distinto de null y de -1), asgna a profesores los profesores de la asignatura,
    * y pone showProfe a true. En caso contrario pone showProfe a false y a profesores le asigna un vector vacío.
-   * @param {event} event
+   * @param {Event} event Evento que devuelve el formulario
    */
   handleChangeProfes(event) {
     //Buscar asignaturas según la universidad

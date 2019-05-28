@@ -1,3 +1,62 @@
+/**
+ * @fileoverview Fichero BarraNavegacion.jsx donde se encuentra la clase
+ * que renderiza la barra de navegación de la aplicación, y la clase Notificacion
+ * que renderiza una notificación recibida de nuevo mensaje o vídeo
+ *
+ * @author UniCast
+ *
+ * @requires ./BarraNavegacion.jsx:BarraNavegacion
+ * @requires ../node_modules/react-helmet/es/Helmet.js:Helmet
+ * @requires ../node_modules/react-router-dom/Link.js:Link
+ * @requires ../node_modules/react-router-dom/Redirect.js:Redirect
+ * @requires ../../node_modules/react-bootstrap/Button.js:Button
+ * @requires ./Video.jsx:Video
+ * @requires ../../node_modules/react-icons/fa/FaShareAlt.js:FaShareAlt
+ * @requires ../../node_modules/react-icons/fa/FaRegBookmark.js:FaRegBookmark
+ * @requires ../../node_modules/react-icons/fa/FaRegStar.js:FaRegStar
+ * @requires ../../node_modules/react-icons/fa/FaStar.js:FaStar
+ * @requires ../../node_modules/react-icons/fa/FaStarHalf.js:FaStarHalf
+ * @requires ../config/Process.jsx:getTime
+ * @requires ../config/Process.jsx:putFavouritesFirst
+ * @requires ../../node_modules/reactjs-popup/reactjs-popup.js:Popup
+ * @requires ../../node_modules/react-star-rating-component/dist/react-star-rating-component.js:StarRatingComponent
+ * @requires ./ListaVertical.jsx:ContenidoPopUp
+ * @requires ./MisListas.jsx:Notificacion
+ * @requires ../config/Auth.jsx:isSignedIn
+ * @requires ../config/Auth.jsx:getUserID
+ * @requires ../config/Auth.jsx:getUserRole
+ * @requires ../config/VideoAPI.jsx:generadorColores
+ * @requires ../config/VideoAPI.jsx:scrollFunc
+ * @requires ../config/VideoAPI.jsx:getTimePassed
+ * @requires ../config/VideoAPI.jsx:getVideo
+ * @requires ../config/CommentsAPI.jsx:getCommentsByVideo
+ * @requires ../config/CommentsAPI.jsx:addComment
+ * @requires ../config/UserAPI.jsx:getUser
+ * @requires ../config/UserAPI.jsx:getSubjectsOfUser
+ * @requires ../config/SubjectAPI.jsx:SubscribeSubject
+ * @requires ../config/SubjectAPI.jsx:UnsubscribeSubject
+ * @requires ../config/SubjectAPI.jsx:getProfessorsFromSubject
+ * @requires ../config/DisplayAPI.jsx:updateDisplay
+ * @requires ../config/DisplayAPI.jsx:getVideoDisplay
+ * @requires ../config/VoteAPI.jsx:addVote
+ * @requires ../config/ReproductionListAPI.jsx:getUserReproductionLists
+ * @requires ../config/ReproductionListAPI.jsx:addVideotoReproductionList
+ * @requires ../config/ReproductionListAPI.jsx:deleteVideoFromReproductionList
+ * @requires ../../node_modules/react-share/es/FacebookShareButton.js:FacebookShareButton
+ * @requires ../../node_modules/react-share/es/FacebookIcon.js:FacebookIcon
+ * @requires ../../node_modules/react-share/es/LinkedinShareButton.js:LinkedinShareButton
+ * @requires ../../node_modules/react-share/es/LinkedinIcon.js:LinkedinIcon
+ * @requires ../../node_modules/react-share/es/PinterestShareButton.js:PinterestShareButton
+ * @requires ../../node_modules/react-share/es/PinterestIcon.js:PinterestIcon
+ * @requires ../../node_modules/react-share/es/RedditShareButton.js:RedditShareButton
+ * @requires ../../node_modules/react-share/es/RedditIcon.js:RedditIcon
+ * @requires ../../node_modules/react-share/es/TwitterShareButton.js:TwitterShareButton
+ * @requires ../../node_modules/react-share/es/TwitterIcon.js:TwitterIcon
+ * @requires ../../node_modules/react-share/es/EmailShareButton.js:EmailShareButton
+ * @requires ../../node_modules/react-share/es/EmailIcon.js:EmailIcon
+ * @requires ./LoadingSpin.jsx:LoadingSpinUniCast
+ */
+
 import React, { Component } from "react";
 import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
@@ -53,6 +112,14 @@ import {
 } from "react-share";
 import { LoadingSpinUniCast } from "./LoadingSpin";
 
+/**
+ * Renderiza las cinco estrellas para realizar la votación de un vídeo.
+ * @param {Object} param0 Propiedades del componente
+ * @param {String} param0.nombre Nombre del parámetro a votar
+ * @param {Number} param0.puntuacion Puntuación dada por el usuario
+ * @param {Function} param0.onStarClick Función a ejecutar trás pulsar una estrella
+ * @param {Number} param0.size Tamaño de las estrellas a mostrar
+ */
 const StarRating = ({ nombre, puntuacion, onStarClick, size }) => {
   return (
     <StarRatingComponent
@@ -83,6 +150,11 @@ const StarRating = ({ nombre, puntuacion, onStarClick, size }) => {
   );
 };
 
+/**
+ * Renderiza la información relativa a un profesor para la pantalla de ViendoVídeo
+ * @param {Object} param0 Propiedades del componente
+ * @param {Object} param0.user Profesor asociado
+ */
 const Profesor = ({ user }) => {
   return (
     <div style={{ marginRight: "20px", textAlign: "center" }}>
@@ -103,14 +175,30 @@ const Profesor = ({ user }) => {
   );
 };
 
+/**
+ * Renderiza todos los profesores de una asignatura.
+ * @param {Array.<Object>} list Lista de profesores de una asignatura
+ */
 const ListaProfesores = list =>
   list.map(el => {
     return <Profesor user={el} key={el.id} />;
   });
 
+/**
+ * Clase que gestiona la pantalla de ver un vídeo de
+ * una asignatura.
+ * @extends Component
+ */
 class ViendoVideo extends Component {
+  /**
+   * Construye el componente ViendoVideo
+   */
   constructor() {
     super();
+    /**
+     * Indica si el componente está montado o no
+     * @type {Boolean}
+     */
     this._isMounted = false;
     this.state = {
       contentMargin: "15%",
@@ -167,6 +255,12 @@ class ViendoVideo extends Component {
     this.comentario = React.createRef();
   }
 
+  /**
+   * Obtiene el usuario que visualiza el vídeo,
+   * el vídeo a visualizar, los profesores asociados
+   * a la asignatura del vídeo y por último
+   * los comentarios que se han hecho en el vídeo
+   */
   getData() {
     getUser(getUserID(), user => {
       if (this._isMounted) {
@@ -216,6 +310,10 @@ class ViendoVideo extends Component {
     });
   }
 
+  /**
+   * Obtiene las listas de reproducción de un usuario y
+   * coloca en primera posición la lista Favoritos.
+   */
   getReproductionLists() {
     getUserReproductionLists(data => {
       if (this._isMounted) {
@@ -225,11 +323,13 @@ class ViendoVideo extends Component {
     });
   }
   /**
-   * para cada comentario cuyo tiempo esta entre tiempoInicio y tiempoFin,
-   * si no esta incluido en la Lista lista, lo añade
-   * @param {Number} tiempoInicio
-   * @param {Number} tiempoFin
-   * @param {Array} lista
+   * Para cada comentario cuyo tiempo esta entre tiempoInicio y tiempoFin,
+   * si no esta incluido en la lista lista, lo añade.
+   * @param {Number} tiempoInicio Marca temporal límite por abajo
+   * @param {Number} tiempoFin Marca temporal límite por arriba
+   * @param {Array.<Object>} lista Lista de comentarios
+   *
+   * @returns {Array.<Object>} Lista con los nuevos comentarios
    */
   recogerComentarios(tiempoInicio, tiempoFin, lista) {
     const res = this.state.totalComentarios.filter(
@@ -242,8 +342,10 @@ class ViendoVideo extends Component {
     });
     return lista;
   }
+
   /**
-   * Hace scroll hasta la posición final del último comentario
+   * Hace scroll hasta la posición del último comentario en
+   * la casilla de comentarios en vivo
    */
   irAUltimoComentario() {
     if (!this.state.fijarComentarios) {
@@ -256,6 +358,10 @@ class ViendoVideo extends Component {
     }
   }
 
+  /**
+   * Actualiza la altura y anchura de los comentarios en vivo
+   * según aumenta o disminuye el tamaño de la pantalla
+   */
   handleResize() {
     const altura =
       document.getElementById("div-comentarios").clientHeight -
@@ -270,8 +376,12 @@ class ViendoVideo extends Component {
   }
 
   /**
-   * Almacena en comentarios todos los nuevos comentarios del video
-   * @param {estado} estado
+   * Recibe el estado actual del vídeo, actualiza los comentarios
+   * según el tiempo transcurrido, envía tiempo actual de visualización
+   * al servidor para futura sincronización y registrar la visualización y
+   * actualiza el tamaño de los comentarios en vivo.
+   * @param {Object} estado Estado actual del vídeo
+   * @param {Number} estado.currentTime Tiempo actual transcurrido desde el inicio
    */
   recibirEstadoVideo(estado) {
     var nuevosComentarios = this.state.comentarios.slice();
@@ -307,10 +417,7 @@ class ViendoVideo extends Component {
       anchuraComentarios: document.getElementById("div-comentarios").clientWidth
     });
   }
-  /**
-   * Si obtenerNuevosComentarios es igual a true y todavía no se están obteniendo,
-   * pone obteniendoComentarios a true y obtiene los comentarios del video de la siguiente página
-   */
+
   componentDidUpdate() {
     if (
       this.state.obtenerNuevosComentarios &&
@@ -333,9 +440,9 @@ class ViendoVideo extends Component {
     }
   }
   /**
-   * Obtiene los comentarios del video video de la página page
-   * @param {video} video video del que se desea obtener los comentarios
-   * @param {Number} page número de página a recuperar
+   * Obtiene los comentarios de la página solicitada del video
+   * @param {Object} video Vídeo a visualizar
+   * @param {Number} page Número de página a recuperar
    */
   obtenerComentarios(video, page) {
     getCommentsByVideo(video.id, page, comentarios => {
@@ -354,9 +461,9 @@ class ViendoVideo extends Component {
     });
   }
   /**
-   * Asigna a asig la asignatura del video, y si la asignatura no está en la lista de asignaturas del usuario,
-   * es decir, no la sigue, pone siguiendoAsig a false; en caso contrario lo pone a true
-   * @param {video} video
+   * Obtiene los profesores de la asignatura y comprueba si el usuario
+   * sigue o no a la asignatura asociada al vídeo.
+   * @param {Object} video Vídeo a visualizar
    */
   obtenerAsignaturaUni(asig) {
     getProfessorsFromSubject(asig.id, data => {
@@ -378,6 +485,10 @@ class ViendoVideo extends Component {
     });
   }
 
+  /**
+   * Ajusta el contenido a la barra lateral
+   * @param {Boolean} display Determina si desplazar contenido o no
+   */
   handleChange(display) {
     if (display) {
       this.setState({ contentMargin: "320px" });
@@ -386,46 +497,53 @@ class ViendoVideo extends Component {
     }
   }
 
+  /**
+   * Si se hace scroll hasta el último comentario los comentarios
+   * no se fijan, si el usuario hace scroll para ver un comentario
+   * éstos se quedan fijos.
+   * @param {Event} e Evento que devuelve el div de comentarios
+   */
   handleScroll(e) {
     const bottom =
       e.target.scrollHeight - e.target.scrollTop <= e.target.clientHeight + 10;
     this.setState({ fijarComentarios: !bottom });
   }
+
   /**
    * Cuando se haya pulsado enter, si el nuevo comentario no es vacío,
-   * añade el nuevo comentario y lo sube al servidor
-   * @param {Event} e
+   * añade el nuevo comentario al vídeo con la marca temporal correspondiente
+   * @param {Event} e Evento que devuelve el formulario
    */
   comentar(e) {
     const comentario = this.comentario.current.value;
     if (comentario.length > 0) {
       if (e.keyCode === 13) {
-        //Enviar comentario
         var nuevosComentarios = this.state.comentarios.slice();
         const usuario = this.state.user.username;
         const tiempo = this.state.tiempoVideo;
         const color = generadorColores(usuario);
         nuevosComentarios.push({ tiempo, comentario, usuario, color });
         this.comentario.current.value = "";
-        this.setState({ comentarios: nuevosComentarios });
-        // Subir comentario al servidor
+        this.setState({
+          comentarios: nuevosComentarios,
+          fijarComentarios: false
+        });
         addComment(comentario, tiempo, this.state.video.id);
         e.preventDefault();
       }
     }
   }
   /**
-   * Si anyadir=true, añade el video al lsita lista; en caso contrario, lo borra. Asigna a notif el valor de mostrar
-   * y a mensajeNotif el valor de mensaje e inicia el reloj.
+   * Si anyadir=true, añade el video al lsita lista; en caso contrario, lo borra. Además
+   * muestra una notificación informando de la operación realizada.
    * @param {Number} idLista ID de la lista de reproducción
    * @param {String} mensaje Mensaje a mostrar en el popup informativo
-   * @param {boolean} anyadir True si añadir a la lista, false si borrar de la lista
+   * @param {Boolean} anyadir True si añadir a la lista, false si borrar de la lista
    * @param {Function} callback Función a ejecutar para mostrar el feedback
    */
   guardarVideo(idLista, mensaje, anyadir, callback) {
     const idVideo = this.state.video.id;
     if (anyadir) {
-      //Añadir el video
       addVideotoReproductionList(idLista, idVideo, ok => {
         if (ok) {
           this.setState({
@@ -442,7 +560,6 @@ class ViendoVideo extends Component {
         }
       });
     } else {
-      //Borrar el video
       deleteVideoFromReproductionList(idLista, idVideo, ok => {
         if (ok) {
           this.setState({
@@ -462,7 +579,8 @@ class ViendoVideo extends Component {
     this.iniciarReloj();
   }
   /**
-   * Pone el reloj a 0 y lo inicia
+   * Resetea el reloj y lo inicializa para ejecutar la función
+   * ViendoVideo.tick() una vez por segundo.
    */
   iniciarReloj() {
     this.pararReloj();
@@ -475,8 +593,8 @@ class ViendoVideo extends Component {
     clearInterval(this.timerID);
   }
   /**
-   * suma un tick (suma 1 a tiempo)
-   * Si tiempo==3,pone tiempo a 0 y para el reloj
+   * Suma un tick y si han pasado 3 ticks (3 segundos)
+   * quita la notificación de pantalla.
    */
   tick() {
     let t = this.state.tiempoNotif;
@@ -487,15 +605,20 @@ class ViendoVideo extends Component {
     }
     this.setState({ tiempoNotif: t + 1 });
   }
-  /**
-   * Detiene la ejecución del reloj
-   */
+
   componentWillUnmount() {
     this._isMounted = false;
     this.pararReloj();
     window.removeEventListener("resize", this.handleResize);
   }
 
+  /**
+   * Actualiza la valoración de claridad indicada por el usuario
+   * @param {Number} nextValue Valor entre 0 y 5 correspondiente a la claridad
+   * @param {Number} prevValue Valor anterior de claridad
+   * @param {String} name Nombre del parámetro a puntuar
+   * @param {Event} e Evento que devuelve el formulario
+   */
   onStarClickClaridad(nextValue, prevValue, name, e) {
     const xPos =
       (e.pageX - e.currentTarget.getBoundingClientRect().left) /
@@ -507,6 +630,13 @@ class ViendoVideo extends Component {
     this.setState({ claridad: nextValue });
   }
 
+  /**
+   * Actualiza la valoración de calidad indicada por el usuario
+   * @param {Number} nextValue Valor entre 0 y 5 correspondiente a la calidad
+   * @param {Number} prevValue Valor anterior de calidad
+   * @param {String} name Nombre del parámetro a puntuar
+   * @param {Event} e Evento que devuelve el formulario
+   */
   onStarClickCalidad(nextValue, prevValue, name, e) {
     const xPos =
       (e.pageX - e.currentTarget.getBoundingClientRect().left) /
@@ -518,6 +648,13 @@ class ViendoVideo extends Component {
     this.setState({ calidad: nextValue });
   }
 
+  /**
+   * Actualiza la valoración de adecuación indicada por el usuario
+   * @param {Number} nextValue Valor entre 0 y 5 correspondiente a la adecuación
+   * @param {Number} prevValue Valor anterior de adecuación
+   * @param {String} name Nombre del parámetro a puntuar
+   * @param {Event} e Evento que devuelve el formulario
+   */
   onStarClickAdecuacion(nextValue, prevValue, name, e) {
     const xPos =
       (e.pageX - e.currentTarget.getBoundingClientRect().left) /
@@ -530,7 +667,8 @@ class ViendoVideo extends Component {
   }
   /**
    * Añade la puntuación de claridad, calidad y adecuación actual a los votos
-   * Si hay algún error, lo muesetra por consola
+   * e informa al usuario de ello con una notificación. Si se produce algún error
+   * muestra un mensaje informando de ello.
    */
   puntuar() {
     addVote(
@@ -552,8 +690,10 @@ class ViendoVideo extends Component {
     );
   }
   /**
-   * Si siguiendoAsig=false, relaciona el usuario con la asignatura y se inicia el reloj.
-   * Si siguiendoAsi=true, elimina la relación del usuario con la asignatura e inicia el reloj.
+   * Si el usuario no seguía la asignatura, relaciona el usuario
+   * con la asignatura y se informa de ello.
+   * Si el usuario ya seguía la asignatura, elimina la relación
+   * del usuario con la asignatura y se informa de ello.
    */
   seguirAsig() {
     !this.state.siguiendoAsig
