@@ -147,6 +147,7 @@ class ViendoVideo extends Component {
     this.getData = this.getData.bind(this);
     this.getReproductionLists = this.getReproductionLists.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleResize = this.handleResize.bind(this);
     this.recogerComentarios = this.recogerComentarios.bind(this);
     this.recibirEstadoVideo = this.recibirEstadoVideo.bind(this);
     this.irAUltimoComentario = this.irAUltimoComentario.bind(this);
@@ -254,6 +255,20 @@ class ViendoVideo extends Component {
       }
     }
   }
+
+  handleResize() {
+    const altura =
+      document.getElementById("div-comentarios").clientHeight -
+      document.getElementById("cabecera-comentarios").clientHeight -
+      document.getElementById("zona-escribir-comentarios").clientHeight -
+      10;
+
+    this.setState({
+      alturaComentarios: altura,
+      anchuraComentarios: document.getElementById("div-comentarios").clientWidth
+    });
+  }
+
   /**
    * Almacena en comentarios todos los nuevos comentarios del video
    * @param {estado} estado
@@ -275,20 +290,21 @@ class ViendoVideo extends Component {
         nuevosComentarios
       );
     }
+
+    if (currentTime > this.state.tiempoVideo) {
+      updateDisplay(this.state.video.id, currentTime);
+    }
     const altura =
       document.getElementById("div-comentarios").clientHeight -
       document.getElementById("cabecera-comentarios").clientHeight -
       document.getElementById("zona-escribir-comentarios").clientHeight -
       10;
-    if (currentTime > this.state.tiempoVideo) {
-      updateDisplay(this.state.video.id, currentTime);
-    }
+
     this.setState({
       comentarios: nuevosComentarios,
+      tiempoVideo: currentTime,
       alturaComentarios: altura,
-      anchuraComentarios: document.getElementById("div-comentarios")
-        .clientWidth,
-      tiempoVideo: currentTime
+      anchuraComentarios: document.getElementById("div-comentarios").clientWidth
     });
   }
   /**
@@ -303,6 +319,10 @@ class ViendoVideo extends Component {
       this.setState({ obteniendoComentarios: true });
       this.obtenerComentarios(this.state.video, this.state.page + 1);
     }
+  }
+
+  componentDidMount() {
+    window.addEventListener("resize", this.handleResize);
   }
 
   componentWillMount() {
@@ -473,6 +493,7 @@ class ViendoVideo extends Component {
   componentWillUnmount() {
     this._isMounted = false;
     this.pararReloj();
+    window.removeEventListener("resize", this.handleResize);
   }
 
   onStarClickClaridad(nextValue, prevValue, name, e) {
