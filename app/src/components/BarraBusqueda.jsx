@@ -40,7 +40,7 @@ class BarraBusqueda extends Component {
 
   /**
    * Almacena el valor de lo escrito por el usuario.
-   * @param {Event} e Evento que ejecuta la función
+   * @param {Event} e Evento que devuelve el elemento input
    */
   handleChange(e) {
     this.setState({ value: e.target.value });
@@ -48,7 +48,7 @@ class BarraBusqueda extends Component {
   /**
    * Si se ha pulsado enter y había algo que buscar,
    * se redirige a la página de búsqueda.
-   * @param {Event} e Evento que ejecuta la función
+   * @param {Event} e Evento que devuelve el elemento input
    */
   keyPress(e) {
     if (e.keyCode === 13) {

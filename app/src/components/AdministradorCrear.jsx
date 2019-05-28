@@ -273,9 +273,9 @@ const FormularioAsignatura = (
 
 /**
  * Clase que renderiza un formulario que permite añadir un profesor a una asignatura
- * @extends React.Component
+ * @extends Component
  */
-class FormularioProfeAsignatura extends React.Component {
+class FormularioProfeAsignatura extends Component {
   /**
    * Construye el componente FormularioProfeAsignatura
    *
@@ -414,9 +414,25 @@ class AdministradorCrear extends Component {
       listaCarreras: [],
       listaUniversidades: []
     };
+    /**
+     * Api de las universidades
+     * @type {Object}
+     */
     this.UniversityApi = new UniversityApi();
+    /**
+     * Api de las carreras
+     * @type {Object}
+     */
     this.DegreeApi = new DegreeApi();
+    /**
+     * Api de las asignaturas
+     * @type {Object}
+     */
     this.SubjectApi = new SubjectApi();
+    /**
+     * Api de los usuarios
+     * @type {Object}
+     */
     this.UserApi = new UserApi();
     this.userIDProf = React.createRef();
     this.nombreUni = React.createRef();
@@ -445,13 +461,14 @@ class AdministradorCrear extends Component {
       this.getData();
     }
   }
-  /**
-   * Pone _isMounted a false
-   */
+
   componentWillUnmount() {
     this._isMounted = false;
   }
 
+  /**
+   * Obtiene la lista de universidades añadidas.
+   */
   getData() {
     getUnivesities(0, data => {
       this.getAllUniversities(data._embedded.universities, 1);
@@ -476,13 +493,14 @@ class AdministradorCrear extends Component {
     }
   }
   /**
-   * Pone show a false
+   * Cierra el modal (Pop-up)
    */
   handleClose() {
     this.setState({ show: false });
   }
+
   /**
-   * Pone show a true
+   * Abre el modal (Pop-up)
    */
   handleShow() {
     this.setState({ show: true });
