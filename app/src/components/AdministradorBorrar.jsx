@@ -1,3 +1,31 @@
+/**
+ * @fileoverview Fichero AdministradorBorrar.jsx donde se encuentra la clase
+ * que renderiza la página de borrar elementos de la aplicación del adeministrador
+ *
+ * @author UniCast
+ *
+ * @requires ../node_modules/react-helmet/Helmet.js:Helmet
+ * @requires ../node_modules/react-router-dom/Redirect.js:Redirect
+ * @requires ../../node_modules/react-bootstrap/Button.js:Button
+ * @requires ../../node_modules/react-bootstrap/Form.js:Form
+ * @requires ../../node_modules/react-bootstrap/Col.js:Col
+ * @requires ../../node_modules/react-bootstrap/Modal.js:Modal
+ * @requires ../../node_modules/swagger_unicast/dist/api/UniversityApi.js:UniversityApi
+ * @requires ../../node_modules/swagger_unicast/dist/api/DegreeApi.js:DegreeApi
+ * @requires ../../node_modules/swagger_unicast/dist/api/UserApi.js:UserApi
+ * @requires ../../node_modules/swagger_unicast/dist/api/SubjectApi.js:SubjectApi
+ * @requires ./BarraAdmi.jsx:BarraAdmi
+ * @requires ../config/Auth.jsx:isSignedIn
+ * @requires ../config/Auth.jsx:getUserRole
+ * @requires ../config/AdminAPI.jsx:borrarUniversidad
+ * @requires ../config/AdminAPI.jsx:borrarProfesor
+ * @requires ../config/AdminAPI.jsx:borrarProfeAsignatura
+ * @requires ../config/AdminAPI.jsx:borrarAsignatura
+ * @requires ../config/AdminAPI.jsx:borrarUniversidad
+ * @requires ../config/SubjectAPI.jsx:getProfessorsFromSubject
+ * @requires ../config/UniversityAPI.jsx:getSubjectsFromUniversity
+ * @requires ../config/UniversityAPI.jsx:getUniversities
+ */
 import React, { Component } from "react";
 import BarraAdmi from "./BarraAdmi";
 import { Helmet } from "react-helmet";
@@ -20,6 +48,11 @@ import {
 } from "../config/UniversityAPI";
 import { getProfessorsFromSubject } from "../config/SubjectAPI";
 
+/**
+ * Renderiza  el formulario que permite borrar a un usuario de profesor
+ * @param {Function} handleProfesor Función que utiliza los datos guardados en el formulario para borrar el profesor
+ * @param {String} userID Almacena el nombre de usuario del profesor
+ */
 const FormularioProfesor = (handleProfesor, userID) => {
   return (
     <div style={{ margin: "20px 20px 20px 20px" }}>
@@ -55,6 +88,12 @@ const FormularioProfesor = (handleProfesor, userID) => {
   );
 };
 
+/**
+ * Renderiza el formulario que permite borrar una universidad
+ * @param {Function} handleUniversidad Función que utiliza los datos guardados en el formulario para borrar la universidad
+ * @param {String} idUni Almacena el id de la universidad
+ * @param {Object} lista Lista de universidades guardadas
+ */
 const FormularioUniversidad = (handleUniversidad, idUni, lista) => {
   return (
     <div style={{ margin: "20px 20px 20px 20px" }}>
@@ -96,7 +135,17 @@ const FormularioUniversidad = (handleUniversidad, idUni, lista) => {
   );
 };
 
+/**
+ * Clase que renderiza un formulario que permite borrar una asignatura
+ * @extends React.Component
+ */
 class FormularioAsignatura extends React.Component {
+  /**
+   * Construye el componente FormularioAsignatura
+   *
+   * @param {Object} props Propiedades para inicializar el componente
+   * @param {Object} props.universidades Lista de universidades
+   */
   constructor(props) {
     super(props);
     this.state = {
@@ -109,7 +158,7 @@ class FormularioAsignatura extends React.Component {
   /**
    * Si es una universidad (valor distinto de -1), asgna a asignaturas las asignaturas de la universidad,
    * y pone showAsig a true. En caso contrario pone showAsig a false y a asignaturas le asigna un vector vacío.
-   * @param {event} event 
+   * @param {event} event
    */
   handleChange(event) {
     //Buscar asignaturas según la universidad
@@ -193,8 +242,17 @@ class FormularioAsignatura extends React.Component {
     );
   }
 }
-
+/**
+ * Clase que renderiza un formulario que permite borrar un profesor de determinada asignatura
+ * @extends React.Component
+ */
 class FormularioProfeAsignatura extends React.Component {
+  /**
+   * Construye el componente FormularioProfeAsignatura
+   *
+   * @param {Object} props Propiedades para inicializar el componente
+   * @param {Object} props.universidades Lista de universidades
+   */
   constructor(props) {
     super(props);
     this.state = {
@@ -209,7 +267,7 @@ class FormularioProfeAsignatura extends React.Component {
   /**
    * Si es una universidad (valor distinto de -1), asgna a asignaturas las asignaturas de la universidad,
    * y pone showAsig a true. En caso contrario pone showAsig a false y a asignaturas le asigna un vector vacío.
-   * @param {event} event 
+   * @param {event} event
    */
   handleChange(event) {
     //Buscar asignaturas según la universidad
@@ -228,7 +286,7 @@ class FormularioProfeAsignatura extends React.Component {
   /**
    * Si es una asignatura (valor distinto de null y de -1), asgna a profesores los profesores de la asignatura,
    * y pone showProfe a true. En caso contrario pone showProfe a false y a profesores le asigna un vector vacío.
-   * @param {event} event 
+   * @param {event} event
    */
   handleChangeProfes(event) {
     //Buscar asignaturas según la universidad
@@ -336,9 +394,22 @@ class FormularioProfeAsignatura extends React.Component {
   }
 }
 
+/**
+ * Clase que renderiza la pagina de borrar del administrador
+ * @extends Component
+ */
 class AdministradorBorrar extends Component {
+  /**
+   * Construye el componente AdministradorBorrar
+   *
+   * @param {Object} props Propiedades para inicializar el componente
+   */
   constructor(props) {
     super(props);
+    /**
+     * Indica si el componente está montado o no
+     * @type {Boolean}
+     */
     this._isMounted = false;
     this.state = {
       show: false,
@@ -381,6 +452,11 @@ class AdministradorBorrar extends Component {
     });
   }
 
+  /**
+   * Obtiene la lista de universidades añadidas
+   * @param {Object} unis Lista de universidades recogidas hasta la página solicitada
+   * @param {Number} page Número de página de la petición
+   */
   getAllUniversities(unis, page) {
     if (unis.length < 20) {
       if (this._isMounted) {
@@ -410,8 +486,8 @@ class AdministradorBorrar extends Component {
 
   /**
    * Busca el usuario userIDProf y lo convierte a un usuario normal
-   * @param {event} event 
-   * @param {HTMLElement} form 
+   * @param {Event} event Evento devuelto por el formulario
+   * @param {HTMLElement} form  Formulario de borrar profesor
    */
   handleProfesor(event, form) {
     event.preventDefault();
@@ -421,8 +497,8 @@ class AdministradorBorrar extends Component {
 
   /**
    * Elimina la universidad con id idUni
-   * @param {*} event 
-   * @param {{HTMLElement} form 
+   * @param {Event} event Evento devuelto por el formulario
+   * @param {HTMLElement} form Formulario de borrar profesor
    */
   handleUniversidad(event, form) {
     event.preventDefault();
@@ -438,9 +514,9 @@ class AdministradorBorrar extends Component {
 
   /**
    * Si uniAsig y nombreAsig tienen valores válidos, elimina la asignatura y asigna a uni la cadena vacía
-   * @param {*} event 
-   * @param {{HTMLElement} form 
-   * @param {*} that 
+   * @param {Event} event Evento devuelto por el formulario
+   * @param {HTMLElement} form Formulario de borrar asignatura
+   * @param {*} that
    */
   handleAsignatura(event, form, that) {
     event.preventDefault();
@@ -461,12 +537,12 @@ class AdministradorBorrar extends Component {
     }
   }
   /**
-  * Si uniUn, asignUn y userUn tienen valores válidos, elimina la asociación del profesor con 
-  * la asignatura
-  * @param {*} event 
-  * @param {{HTMLElement} form 
-  * @param {*} that 
-  */
+   * Si uniUn, asignUn y userUn tienen valores válidos, elimina la asociación del profesor con
+   * la asignatura
+   * @param {Event} event Evento devuelto por el formulario
+   * @param {HTMLElement} form Formulario de borrar profesor de la asignatura
+   * @param {*} that
+   */
   handleProfeAsignatura(event, form, that) {
     event.preventDefault();
     if (

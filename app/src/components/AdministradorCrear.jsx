@@ -1,3 +1,32 @@
+/**
+ * @fileoverview Fichero AdministradorCrear.jsx donde se encuentra la clase
+ * que renderiza la página de crear elementos de la aplicación del adeministrador
+ *
+ * @author UniCast
+ *
+ * @requires ../node_modules/react-helmet/Helmet.js:Helmet
+ * @requires ../node_modules/react-router-dom/Redirect.js:Redirect
+ * @requires ../../node_modules/react-bootstrap/Button.js:Button
+ * @requires ../../node_modules/react-bootstrap/Form.js:Form
+ * @requires ../../node_modules/react-bootstrap/Col.js:Col
+ * @requires ../../node_modules/react-bootstrap/Modal.js:Modal
+ * @requires ../../node_modules/swagger_unicast/dist/api/UniversityApi.js:UniversityApi
+ * @requires ../../node_modules/swagger_unicast/dist/api/DegreeApi.js:DegreeApi
+ * @requires ../../node_modules/swagger_unicast/dist/api/UserApi.js:UserApi
+ * @requires ../../node_modules/swagger_unicast/dist/api/SubjectApi.js:SubjectApi
+ * @requires ./BarraAdmi.jsx:BarraAdmi
+ * @requires ../config/Auth.jsx:isSignedIn
+ * @requires ../config/Auth.jsx:getUserRole
+ * @requires ../config/AdminAPI.jsx:crearUniversidad
+ * @requires ../config/AdminAPI.jsx:crearCarreraYLigar
+ * @requires ../config/AdminAPI.jsx:crearAsigYLigar
+ * @requires ../config/AdminAPI.jsx:addProfessor
+ * @requires ../config/AdminAPI.jsx:hacerProfesor
+ * @requires ../config/UserAPI.jsx:getUserByUsername
+ * @requires ../config/UniversityAPI.jsx:getSubjectsFromUniversity
+ * @requires ../config/UniversityAPI.jsx:getUniversities
+ * @requires ../config/Process.jsx:checkFileExtensionImage
+ */
 import React, { Component } from "react";
 import BarraAdmi from "./BarraAdmi";
 import { Helmet } from "react-helmet";
@@ -22,6 +51,11 @@ import {
 } from "../config/UniversityAPI";
 import { getUserByUsername } from "../config/UserAPI";
 
+/**
+ * Renderiza  el formulario que permite convertir a un usuario en profesor
+ * @param {Function} handleProfesor Función que utiliza los datos guardados en el formulario para añadir el profesor
+ * @param {String} userID Almacena el nombre de usuario del profesor
+ */
 const FormularioProfesor = (handleProfesor, userID) => {
   return (
     <div style={{ margin: "20px 20px 20px 20px" }}>
@@ -57,6 +91,12 @@ const FormularioProfesor = (handleProfesor, userID) => {
   );
 };
 
+/**
+ * Renderiza el formulario que permite añadir una universidad
+ * @param {Function} handleUniversidad Función que utiliza los datos guardados en el formulario para añadir la universidad
+ * @param {String} nombre Almacena el nombre
+ * @param {String} fotoUni Ruta de la imagen de la universidad
+ */
 const FormularioUniversidad = (handleUniversidad, nombre, fotoUni) => {
   return (
     <div style={{ margin: "20px 20px 20px 20px" }}>
@@ -97,6 +137,13 @@ const FormularioUniversidad = (handleUniversidad, nombre, fotoUni) => {
   );
 };
 
+/**
+ * Renderiza el formulario que permite añadir una carrera
+ * @param {Function} handleCarrera Función que utiliza los datos guardados en el formulario para añadir la carrera
+ * @param {String} uni Almacena el id de la universidad
+ * @param {String} carrera Almacena el nombre de la carrera a guardar
+ * @param {Object} universidades Lista de universidades guardadas
+ */
 const FormularioCarrera = (handleCarrera, uni, carrera, universidades) => {
   return (
     <div style={{ margin: "20px 20px 20px 20px" }}>
@@ -149,6 +196,14 @@ const FormularioCarrera = (handleCarrera, uni, carrera, universidades) => {
   );
 };
 
+/**
+ * Renderiza el formulario que permite añadir una asignatura
+ * @param {Function} handleAsignatura Función que utiliza los datos guardados en el formulario para añadir la asignatura
+ * @param {String} uni Almacena el id de la universidad
+ * @param {String} asignatura Nombre de la asignatura
+ * @param {String} asignatura_corto Abreviatura de la asignatura
+ * @param {Object} universidades Lista de universidades guardadas
+ */
 const FormularioAsignatura = (
   handleAsignatura,
   uni,
@@ -216,7 +271,17 @@ const FormularioAsignatura = (
   );
 };
 
+/**
+ * Clase que renderiza un formulario que permite añadir un profesor a una asignatura
+ * @extends React.Component
+ */
 class FormularioProfeAsignatura extends React.Component {
+  /**
+   * Construye el componente FormularioProfeAsignatura
+   *
+   * @param {Object} props Propiedades para inicializar el componente
+   * @param {Object} props.universidades Lista de universidades
+   */
   constructor(props) {
     super(props);
     this.state = {
@@ -227,10 +292,11 @@ class FormularioProfeAsignatura extends React.Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
-   /**
+  /**
    * Busca todas las asignaturas de la universidad deseada.
    * Si se ha realizado correctamente, actualiza asignaturas con dichas asignaturas, y asigna true a showAsig.
    * Si la universidad no tiene un valor válido (es -1), asigna false a showAsig y a asignaturas un array vacío.
+   * @param {Event} event Evento que devuelve el formulario
    */
   handleChange(event) {
     //Buscar asignaturas según la universidad
@@ -326,9 +392,22 @@ class FormularioProfeAsignatura extends React.Component {
   }
 }
 
+/**
+ * Clase que renderiza la pagina de crear del administrador
+ * @extends Component
+ */
 class AdministradorCrear extends Component {
+  /**
+   * Construye el componente AdministradorCrear
+   *
+   * @param {Object} props Propiedades para inicializar el componente
+   */
   constructor(props) {
     super(props);
+    /**
+     * Indica si el componente está montado o no
+     * @type {Boolean}
+     */
     this._isMounted = false;
     this.state = {
       show: false,
@@ -379,6 +458,11 @@ class AdministradorCrear extends Component {
     });
   }
 
+  /**
+   * Obtiene la lista de universidades añadidas
+   * @param {Object} unis Lista de universidades recogidas hasta la página solicitada
+   * @param {Number} page Número de página de la petición
+   */
   getAllUniversities(unis, page) {
     if (unis.length < 20 * page) {
       if (this._isMounted) {
@@ -391,13 +475,13 @@ class AdministradorCrear extends Component {
       });
     }
   }
-   /**
+  /**
    * Pone show a false
    */
   handleClose() {
     this.setState({ show: false });
   }
-   /**
+  /**
    * Pone show a true
    */
   handleShow() {
@@ -405,8 +489,8 @@ class AdministradorCrear extends Component {
   }
   /**
    * Busca el usuario con id userID y lo convierte en profesor
-   * @param {*} event 
-   * @param {HTMLElement} form 
+   * @param {Event} event Evento que devuelve el formulario
+   * @param {HTMLElement} form Formulario de añadir profesor
    */
   handleProfesor(event, form) {
     event.preventDefault();
@@ -414,10 +498,10 @@ class AdministradorCrear extends Component {
     hacerProfesor(userID, form, this.handleShow, this.UserApi);
   }
   /**
-   * Si fotoUni es una imagen, crea una universidad con nombre nombreUnin, imagen fotoUni, 
+   * Si fotoUni es una imagen, crea una universidad con nombre nombreUnin, imagen fotoUni,
    * formulario de entrada form, API UniversityApi.
-   * @param {*} event 
-   * @param {HTMLElement} form 
+   * @param {Event} event Evento que devuelve el formulario
+   * @param {HTMLElement} form Formulario de añadir universidad
    */
   handleUniversidad(event, form) {
     event.preventDefault();
@@ -445,8 +529,8 @@ class AdministradorCrear extends Component {
   /**
    * Si uniCarr es distinto a -1, si no existe la carrera de nombre nombreCarrera, la crea y la asocia a la universidad uniCarr.
    * Si ya existía, asocia dicha carrera a la universidad.
-   * @param {*} event 
-   * @param {HTMLElement} form 
+   * @param {Event} event Evento que devuelve el formulario
+   * @param {HTMLElement} form Formulario de añadir carrera
    */
   handleCarrera(event, form) {
     event.preventDefault();
@@ -459,11 +543,11 @@ class AdministradorCrear extends Component {
       this.handleShow();
     }
   }
-   /**
+  /**
    * Si no existe la asignatura nombreAsig, la crea y la asocia a la universidad
    * uniAsig. Si ya existía, asocia dicha asignatura a la universidad uniAsig.
-   * @param {event} event 
-   * @param {HTMLElement} form 
+   * @param {Event} event Evento que devuelve el formulario
+   * @param {HTMLElement} form Formulario de añadir asignatura
    */
   handleAsignatura(event, form) {
     event.preventDefault();
@@ -479,9 +563,9 @@ class AdministradorCrear extends Component {
   /**
    * Si uniUn es correcto (distinto de -1) y asignUn no es null, si existe el usuario userUn,
    * asigna dicha asignatura a dicho usuario.
-   * @param {event} event 
-   * @param {HTMLElement} form 
-   * @param {*} that 
+   * @param {Event} event Evento que devuelve el formulario
+   * @param {HTMLElement} form Formulario de añadir profesor a asignatura
+   * @param {*} that
    */
   handleProfeAsignatura(event, form, that) {
     event.preventDefault();
