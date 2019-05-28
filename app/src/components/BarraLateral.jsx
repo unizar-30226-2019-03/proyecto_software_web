@@ -1,15 +1,46 @@
+/**
+ * @fileoverview Fichero BarraLateral.jsx donde se encuentra la clase
+ * que renderiza la barra lateral de la aplicación, integrada en
+ * la barra de navegación.
+ *
+ * @author UniCast
+ *
+ * @requires ../node_modules/react-router-dom/Link.js:Link
+ * @requires ../config/UserAPI.jsx:getSubjectsOfUser
+ * @requires ../config/Auth.jsx:getUserID
+ * @requires ../config/Auth.jsx:isSignedIn
+ */
+
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { getSubjectsOfUser } from "../config/UserAPI";
 import { getUserID, isSignedIn } from "../config/Auth";
 
+/**
+ * Clase que renderiza la barra lateral, integrada en la
+ * barra de navegación.
+ * @extends Component
+ */
 class BarraLateral extends Component {
+  /**
+   * Construye el componente BarraLateral
+   *
+   * @param {Object} props Propiedades para inicializar el componente
+   * @param {Boolean} props.show Indica si mostrar o no la barra lateral
+   */
   constructor(props) {
     super(props);
-    this.state = { activar: this.props.show, asigs: [] };
+    /**
+     * Indica si el componente está montado o no
+     * @type {Boolean}
+     */
+    this._isMounted = false;
+    this.state = {
+      activar: props.show,
+      asigs: []
+    };
     this.active = this.active.bind(this);
     this.getData = this.getData.bind(this);
-    this._isMounted = false;
   }
 
   componentWillMount() {
@@ -23,6 +54,9 @@ class BarraLateral extends Component {
     this._isMounted = false;
   }
 
+  /**
+   * Obtiene las asignaturas que un usuario sigue.
+   */
   getData() {
     getSubjectsOfUser(getUserID(), data => {
       if (this._isMounted) {
@@ -42,6 +76,13 @@ class BarraLateral extends Component {
     }
   }
 
+  /**
+   * Devuelve la cadena active si la página actual coincide
+   * con el parámetro de entrada
+   * @param {String} name Nombre de la asignatura
+   *
+   * @returns {String} Clase del elemento HTML
+   */
   active(name) {
     if (name === this.props.activate) {
       return "active";

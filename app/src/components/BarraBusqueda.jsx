@@ -1,36 +1,57 @@
+/**
+ * @fileoverview Fichero BarraBusqueda.jsx donde se encuentra la clase
+ * que renderiza la barra de búsqueda, integrada en la barra de navegación.
+ *
+ * @author UniCast
+ *
+ * @requires ../node_modules/react-router-dom/Redirect.js:Redirect
+ * @requires ../../node_modules/mdbreact/dist/mdbreact.js:MDBCol
+ */
+
 import React, { Component } from "react";
 import { MDBCol } from "mdbreact";
 import { Redirect } from "react-router-dom";
 
+/**
+ * Clase que renderiza la barra de búsqueda, integrada en
+ * la barra de navegación.
+ * @extends Component
+ */
 class BarraBusqueda extends Component {
+  /**
+   * Construye el componente BarraBusqueda
+   *
+   * @param {Object} props Propiedades para inicializar el componente
+   * @param {String} props.nuevoTit Valor de la búsqueda realizada
+   */
   constructor(props) {
     super(props);
     this.state = {
-      value: this.props.nuevoTit === undefined ? "" : this.props.nuevoTit,
+      value: props.nuevoTit === undefined ? "" : props.nuevoTit,
       buscar: false
     };
     this.handleChange = this.handleChange.bind(this);
     this.keyPress = this.keyPress.bind(this);
   }
 
-  /**
-   * Pone buscar a false
-   * @param {*} newProps 
-   */
-  componentWillReceiveProps(newProps) {
+  componentWillReceiveProps() {
     this.setState({ buscar: false });
   }
 
+  /**
+   * Almacena el valor de lo escrito por el usuario.
+   * @param {Event} e Evento que ejecuta la función
+   */
   handleChange(e) {
     this.setState({ value: e.target.value });
   }
   /**
-   * Si se ha pulsado el enter, si length>0, pone buscar a true
-   * @param {*} e 
+   * Si se ha pulsado enter y había algo que buscar,
+   * se redirige a la página de búsqueda.
+   * @param {Event} e Evento que ejecuta la función
    */
   keyPress(e) {
     if (e.keyCode === 13) {
-      //ESTO CAMBIA DE PÁGINA window.location = "/";
       if (this.state.value.length > 0) {
         this.setState({ buscar: true });
       }

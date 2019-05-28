@@ -1,9 +1,27 @@
+/**
+ * @fileoverview Fichero BarraAdmi.jsx donde se encuentra la clase
+ * que renderiza la barra de navegación del administrador.
+ *
+ * @author UniCast
+ *
+ * @requires ../node_modules/react-router-dom/Link.js:Link
+ * @requires ../../node_modules/react-bootstrap/NavBar.js:NavBar
+ * @requires ../../node_modules/react-bootstrap/Nav.js:Nav
+ * @requires ../../node_modules/react-bootstrap/Button.js:Button
+ * @requires ../config/Auth.jsx:signOut
+ */
+
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import brand from "../assets/imgUnicast.jpg";
 import { Navbar, Nav, Button } from "react-bootstrap";
 import { signOut } from "../config/Auth";
 
+/**
+ * Clase que gestiona la barra de navegación
+ * del administrador.
+ * @extends Component
+ */
 class BarraAdmi extends Component {
   render() {
     return (
