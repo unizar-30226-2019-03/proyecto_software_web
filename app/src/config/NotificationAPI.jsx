@@ -1,3 +1,13 @@
+/**
+ * @fileoverview Funciones de la API de las notificaciones
+ *
+ * @author UniCast
+ *
+ * @requires ../node_modules/swagger_unicast/dist/ApiClient.js:ApiClient
+ * @requires ../node_modules/swagger_unicast/dist/api/NotificationApi.js:NotificationApi
+ * @requires ./Auth.js:getUserToken
+ */
+
 import ApiClient from "swagger_unicast/dist/ApiClient";
 import NotificationApi from "swagger_unicast/dist/api/NotificationApi";
 import { getUserToken } from "./Auth";

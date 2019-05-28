@@ -1,6 +1,16 @@
+/**
+ * @fileoverview Funciones de la API de las asignaturas
+ *
+ * @author UniCast
+ *
+ * @requires ../node_modules/swagger_unicast/dist/ApiClient.js:ApiClient
+ * @requires ../node_modules/swagger_unicast/dist/api/SubjectApi.js:SubjectApi
+ * @requires ./Auth.js:getUserToken
+ */
+
 import ApiClient from "swagger_unicast/dist/ApiClient";
-import { getUserToken } from "./Auth";
 import SubjectApi from "swagger_unicast/dist/api/SubjectApi";
+import { getUserToken } from "./Auth";
 
 const apiInstance = new SubjectApi();
 const defaultClient = ApiClient.instance;

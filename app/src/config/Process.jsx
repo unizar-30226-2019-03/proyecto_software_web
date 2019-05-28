@@ -1,6 +1,14 @@
 /**
+ * @fileoverview Funciones auxiliares para el procesado de cadenas y listas
+ *
+ * @author UniCast
+ */
+
+/**
  * Devuelve la cadena str sin acentos
  * @param {String} str Cadena de texto a quitar acentos
+ *
+ * @returns {String} Cadena sin acentos
  */
 export function RemoveAccents(str) {
   var accents =
@@ -19,8 +27,10 @@ export function RemoveAccents(str) {
 }
 
 /**
- * Devuelve el tiempo t en formato mm:ss
+ * Devuelve el tiempo t en formato hh:mm:ss
  * @param {Number} t Tiempo en segundos
+ *
+ * @returns {String} Duración total en formato hh:mm:ss
  */
 export function getTime(t) {
   const tiempoAux = Math.trunc(t);
@@ -49,9 +59,10 @@ export function getTime(t) {
 }
 
 /**
- * Comprueba si el fichero es una imagen, devuelve TRUE si lo es
- * y FALSE en caso contrario
+ * Comprueba si el fichero es una imagen.
  * @param {String} filename Nombre del fichero a subir
+ *
+ * @returns {Boolean} true si es una imagen
  */
 export function checkFileExtensionImage(filename) {
   var ext = filename.split(".").pop();
@@ -59,9 +70,10 @@ export function checkFileExtensionImage(filename) {
 }
 
 /**
- * Comprueba si el fichero es un vídeo, devuelve TRUE si lo es
- * y FALSE en caso contrario
+ * Comprueba si el fichero es un vídeo.
  * @param {String} filename Nombre del fichero a subir
+ *
+ * @returns {Boolean} true si es un vídeo
  */
 export function checkFileExtensionVideo(filename) {
   var ext = filename.split(".").pop();
@@ -78,6 +90,8 @@ export function checkFileExtensionVideo(filename) {
 /**
  * Coloca la lista de reproducción de favoritos en primer lugar
  * @param {Array} data Array de listas de reproducción
+ *
+ * @returns {Array} Lista ordenada
  */
 export function putFavouritesFirst(data) {
   const i = data.findIndex(e => {
@@ -93,6 +107,8 @@ export function putFavouritesFirst(data) {
  * Mezcla los dos arrays de forma ordenada descendiente por timestamps
  * @param {Array} a Array ordenada por timestamps A
  * @param {Array} b Array ordenada por timestamps B
+ *
+ * @returns {Array} Array mezclado por orden descendiente
  */
 export function mergeSortedArray(a, b) {
   var tempArray = [];
@@ -116,6 +132,7 @@ export function mergeSortedArray(a, b) {
  * Añade los nuevos mensajes a los mensajes del chat
  * @param {Array} newMessages Nuevos mensajes recibidos
  * @param {Array} oldMessages Mensajes del chat
+ *
  * @returns {Array} Mensajes nuevos y antiguos
  */
 export function parseNewMessages(newMessages, oldMessages) {
@@ -142,6 +159,8 @@ export function parseNewMessages(newMessages, oldMessages) {
  * Devuelve una cadena indicando el tiempo en el que un mensaje
  * fue enviado según su marca temporal
  * @param {Date} timestamp Marca temporal de un mensaje
+ *
+ * @returns {String} Fecha
  */
 export function parsearFecha(timestamp) {
   var aux = timestamp.toISOString().split("Z");
@@ -175,6 +194,8 @@ export function parsearFecha(timestamp) {
 /**
  * Devuelve true si es un año bisiesto
  * @param {Number} anyo Año
+ *
+ * @returns {Boolean} true si es bisiesto
  */
 export function esBisiesto(anyo) {
   return (anyo % 4 === 0 && anyo % 100 !== 0) || anyo % 400 === 0;
@@ -184,6 +205,8 @@ export function esBisiesto(anyo) {
  * Devuelve el número de días que tiene un mes en un año
  * @param {Number} mes Mes del año
  * @param {Number} anyo Año
+ *
+ * @returns {Number} Número de días del mes actual
  */
 export function diasDelMes(mes, anyo) {
   if (mes === 2) {
@@ -213,6 +236,8 @@ export function diasDelMes(mes, anyo) {
  * @param {Number} diaActual Día actual
  * @param {Number} mesActual Mes actual
  * @param {Number} anyoActual Año actual
+ *
+ * @returns {Boolean} true si el día corresponde al día anterior al actual
  */
 export function esAyer(dia, mes, anyo, diaActual, mesActual, anyoActual) {
   if (mes === mesActual && anyo === anyoActual && dia + 1 === diaActual) {

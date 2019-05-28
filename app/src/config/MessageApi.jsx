@@ -1,3 +1,13 @@
+/**
+ * @fileoverview Funciones de la API de los mensajes
+ *
+ * @author UniCast
+ *
+ * @requires ../node_modules/swagger_unicast/dist/ApiClient.js:ApiClient
+ * @requires ../node_modules/swagger_unicast/dist/api/MessageApi.js:MessageApi
+ * @requires ./Auth.js:getUserToken
+ */
+
 import { ApiClient } from "swagger_unicast";
 import MessageApi from "swagger_unicast/dist/api/MessageApi";
 import { getUserToken } from "./Auth";

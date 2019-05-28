@@ -1,6 +1,16 @@
+/**
+ * @fileoverview Funciones de la API de los usuarios
+ *
+ * @author UniCast
+ *
+ * @requires ../node_modules/swagger_unicast/dist/ApiClient.js:ApiClient
+ * @requires ../node_modules/swagger_unicast/dist/api/UserApi.js:UserApi
+ * @requires ./Auth.js:getUserToken
+ */
+
 import { ApiClient } from "swagger_unicast";
-import { getUserToken } from "./Auth";
 import UserApi from "swagger_unicast/dist/api/UserApi";
+import { getUserToken } from "./Auth";
 
 const apiInstance = new UserApi(); //Instancia de la API de usuarios
 const defaultClient = ApiClient.instance;

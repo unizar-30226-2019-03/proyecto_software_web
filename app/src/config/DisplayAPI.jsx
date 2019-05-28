@@ -1,3 +1,13 @@
+/**
+ * @fileoverview Funciones de la API del historial y reproducciones
+ *
+ * @author UniCast
+ *
+ * @requires ../node_modules/swagger_unicast/dist/ApiClient.js:ApiClient
+ * @requires ../node_modules/swagger_unicast/dist/api/DisplayApi.js:DisplayApi
+ * @requires ./Auth.js:getUserToken
+ */
+
 import ApiClient from "swagger_unicast/dist/ApiClient";
 import { DisplayApi } from "swagger_unicast";
 import { getUserToken } from "./Auth";

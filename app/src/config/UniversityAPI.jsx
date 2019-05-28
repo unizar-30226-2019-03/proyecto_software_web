@@ -1,6 +1,16 @@
+/**
+ * @fileoverview Funciones de la API de las universidades
+ *
+ * @author UniCast
+ *
+ * @requires ../node_modules/swagger_unicast/dist/ApiClient.js:ApiClient
+ * @requires ../node_modules/swagger_unicast/dist/api/UniversityApi.js:UniversityApi
+ * @requires ./Auth.js:getUserToken
+ */
+
 import ApiClient from "swagger_unicast/dist/ApiClient";
-import { getUserToken } from "./Auth";
 import { UniversityApi } from "swagger_unicast";
+import { getUserToken } from "./Auth";
 
 const apiInstance = new UniversityApi();
 

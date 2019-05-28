@@ -1,5 +1,15 @@
-import VideoApi from "swagger_unicast/dist/api/VideoApi";
+/**
+ * @fileoverview Funciones de la API de los vídeos
+ *
+ * @author UniCast
+ *
+ * @requires ../node_modules/swagger_unicast/dist/ApiClient.js:ApiClient
+ * @requires ../node_modules/swagger_unicast/dist/api/VideoApi.js:VideoApi
+ * @requires ./Auth.js:getUserToken
+ */
+
 import ApiClient from "swagger_unicast/dist/ApiClient";
+import VideoApi from "swagger_unicast/dist/api/VideoApi";
 import { getUserToken } from "./Auth";
 
 const apiInstance = new VideoApi(); //Instancia de la API de vídeos
@@ -8,6 +18,8 @@ const defaultClient = ApiClient.instance;
 /**
  * Genera un color aleatorio a partir del nombre del usuario
  * @param {String} usuario Nombre del usuario
+ *
+ * @returns {String} Color RGB
  */
 export function generadorColores(usuario) {
   var hash = 0;
@@ -37,6 +49,8 @@ export function scrollFunc(elemento) {
 
 /**
  * Devuelve la posición hasta la que hacer scroll
+ *
+ * @returns {Number} Posición
  */
 function f_scrollTop() {
   return f_filterResults(
@@ -51,6 +65,8 @@ function f_scrollTop() {
  * @param {Number} n_win Offset en la componente Y de la pantalla
  * @param {Number} n_docel Posición superior del elemento
  * @param {Number} n_body Posición superior del documento
+ *
+ * @returns {Number} Posición
  */
 function f_filterResults(n_win, n_docel, n_body) {
   var n_result = n_win ? n_win : 0;
@@ -63,6 +79,8 @@ function f_filterResults(n_win, n_docel, n_body) {
  * transcurridos desde que se subió hasta el momento.
  * @param {Date} date1 Timestamp de un vídeo
  * @param {Date} now Tiempo actual del servidor
+ *
+ * @returns {String} Tiempo transcurrido desde la marca temporal hasta ahora
  */
 export function getTimePassed(date1, now) {
   const diffMs = now - date1;
@@ -95,6 +113,12 @@ export function getTimePassed(date1, now) {
   }
 }
 
+/**
+ * Devuelve la puntuación de un vídeo sobre 100
+ * @param {Number} score Puntuación de un vídeo
+ *
+ * @returns {Number} Puntuación sobre 100
+ */
 export function getScore(score) {
   return Math.round((score * 100) / 5);
 }

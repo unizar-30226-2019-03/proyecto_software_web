@@ -1,3 +1,13 @@
+/**
+ * @fileoverview Funciones de la API de las listas de reproducción
+ *
+ * @author UniCast
+ *
+ * @requires ../node_modules/swagger_unicast/dist/ApiClient.js:ApiClient
+ * @requires ../node_modules/swagger_unicast/dist/api/ReproductionListApi.js:ReproductionListApi
+ * @requires ./Auth.js:getUserToken
+ */
+
 import { ApiClient, ReproductionListApi } from "swagger_unicast";
 import { getUserToken } from "./Auth";
 

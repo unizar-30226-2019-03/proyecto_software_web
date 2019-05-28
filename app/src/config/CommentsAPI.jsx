@@ -1,5 +1,16 @@
-import { getUserToken } from "./Auth";
+/**
+ * @fileoverview Funciones de la API de los Comentarios
+ *
+ * @author UniCast
+ *
+ * @requires ../node_modules/swagger_unicast/dist/ApiClient.js:ApiClient
+ * @requires ../node_modules/swagger_unicast/dist/api/CommentApi.js:CommentApi
+ * @requires ./Auth.js:getUserToken
+ * @requires ./VideoAPI.js:generadorColores
+ */
+
 import { ApiClient, CommentApi } from "swagger_unicast";
+import { getUserToken } from "./Auth";
 import { generadorColores } from "./VideoAPI";
 
 const apiInstance = new CommentApi();

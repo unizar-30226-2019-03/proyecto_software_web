@@ -1,4 +1,10 @@
 /**
+ * @fileoverview Funciones auxiliares de gestión de sesión
+ *
+ * @author UniCast
+ */
+
+/**
  * Expresión regular del correo electrónico
  */
 export const emailPattern = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
@@ -37,8 +43,9 @@ export function signIn(data) {
 }
 
 /**
- * Devuelve TRUE si el usuario está loggeado (su Token está almacenado
- * en la sesión), y FALSE en caso contrario.
+ * Comprueba si un usuario está loggeado
+ *
+ * @returns {Boolean} Sesión iniciada
  */
 export function isSignedIn() {
   const userToken = localStorage.getItem("userToken");
@@ -63,6 +70,8 @@ export function setUserPhoto(photo) {
 
 /**
  * Devuelve el Token de sesión del usuario.
+ *
+ * @returns {String} Token del usuario
  */
 export function getUserToken() {
   return localStorage.getItem("userToken");
@@ -70,6 +79,8 @@ export function getUserToken() {
 
 /**
  * Devuelve el ID único del usuario.
+ *
+ * @returns {Number} ID del usuario
  */
 export function getUserID() {
   return parseInt(localStorage.getItem("userID"));
@@ -77,11 +88,18 @@ export function getUserID() {
 
 /**
  * Devuelve el rol del usuario
+ *
+ * @returns {String} Rol del usuario
  */
 export function getUserRole() {
   return localStorage.getItem("role");
 }
 
+/**
+ * Devuelve la foto del usuario
+ *
+ * @returns {String} Foto del usuario
+ */
 export function getUserPhoto() {
   return localStorage.getItem("photo");
 }
