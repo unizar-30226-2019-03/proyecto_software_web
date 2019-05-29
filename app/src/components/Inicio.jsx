@@ -1,3 +1,25 @@
+/**
+ * @fileoverview Fichero Inicio.jsx donde se encuentra la clase
+ * que renderiza la pantalla de inicio de la aplicación.
+ *
+ * @author UniCast
+ *
+ * @requires ../node_modules/react-router-dom/Link.js:Link
+ * @requires ../node_modules/react-router-dom/Redirect.js:Redirect
+ * @requires ./BarraNavegacion.jsx:BarraNavegacion
+ * @requires ./ListaHorizontal.jsx:ListaHorizontal
+ * @requires ./ListaHorizontal.jsx:Menu
+ * @requires ../node_modules/react-helmet/es/Helmet.js:Helmet
+ * @requires ../config/Auth.jsx:isSignedIn
+ * @requires ../config/Auth.jsx:getUserID
+ * @requires ../config/Auth.jsx:getUserRole
+ * @requires ../config/VideoAPI.jsx:getRecommendations
+ * @requires ../config/VideoAPI.jsx:getVideosFromSubject
+ * @requires ../config/VideoAPI.jsx:findTrendingVideos
+ * @requires ../config/UserAPI.jsx:getSubjectsOfUser
+ * @requires ./LoadingSpin.jsx:LoadingSpinUniCast
+ */
+
 import React, { Component } from "react";
 import { Link, Redirect } from "react-router-dom";
 import BarraNavegacion from "./BarraNavegacion";
@@ -12,9 +34,20 @@ import {
 import { getSubjectsOfUser } from "../config/UserAPI";
 import { LoadingSpinUniCast } from "./LoadingSpin";
 
+/**
+ * Clase que gestiona la pantalla de inicio de la aplicación
+ * @extends Component
+ */
 class Inicio extends Component {
+  /**
+   * Construye el componente Inicio
+   */
   constructor() {
     super();
+    /**
+     * Indica si el componente está montado o no
+     * @type {Boolean}
+     */
     this._isMounted = false;
     this.state = {
       contentMargin: "300px",
@@ -63,28 +96,21 @@ class Inicio extends Component {
       }
     });
   }
-  /**
-   * Pone _isMounted a true. Si el usuario esta loggeado,
-   * Obtiene las asignaturas del usuario y obtiene los videos de esas asignaturas.
-   * Obtiene los videos recomendados para el usuario, y obtiene los videos que son tendencia.
-   */
+
   componentWillMount() {
     this._isMounted = true;
     if (isSignedIn()) {
       this.getData();
     }
   }
-  /**
-   * Pone _isMounted a false.
-   */
+
   componentWillUnmount() {
     this._isMounted = false;
   }
 
   /**
-   * Aumenta o dimsinuye el margen izquierdo del contenido de la
-   * página dependiendo del parámetro display
-   * @param {Boolean} display Determina si aumentar o disminuir margen
+   * Ajusta el contenido a la barra lateral.
+   * @param {Boolean} display Determina si desplazar contenido o no
    */
   handleChange(display) {
     if (display) {

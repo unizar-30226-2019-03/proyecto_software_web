@@ -77,12 +77,14 @@ class HistorialLista extends Component {
       listasRepro: nextProps.listasRepro
     });
   }
+
   /**
    * Abre el pop-up para borrar el historial completo.
    */
   abrirPopUp() {
     this.setState({ popUp: true });
   }
+
   /**
    * Cierra el pop-up para borrar el historial completo.
    */
@@ -589,6 +591,7 @@ class Historial extends Component {
       this.setState({ contentMargin: "70px" });
     }
   }
+
   /**
    * Resetea el reloj y lo inicializa para ejecutar la función
    * Historial.tick() una vez por segundo.
@@ -597,12 +600,14 @@ class Historial extends Component {
     this.pararReloj();
     this.timerID = setInterval(() => this.tick(), 1000);
   }
+
   /**
    * Detiene la ejecución del reloj
    */
   pararReloj() {
     clearInterval(this.timerID);
   }
+
   /**
    * Suma un tick y si han pasado 3 ticks (3 segundos)
    * quita la notificación de pantalla.

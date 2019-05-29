@@ -1,3 +1,18 @@
+/**
+ * @fileoverview Fichero ListaBusqueda.jsx donde se encuentra la clase
+ * que renderiza la lista de vídeos recuperados tras realizar una búsqueda.
+ *
+ * @author UniCast
+ *
+ * @requires ../node_modules/react-router-dom/Link.js:Link
+ * @requires ../../node_modules/react-icons/fa/FaPlus.js:FaPlus
+ * @requires ../../node_modules/reactjs-popup/reactjs-popup.js:Popup
+ * @requires ../config/Process.jsx:getTime
+ * @requires ../config/VideoAPI.jsx:getScore
+ * @requires ../config/VideoAPI.jsx:getTimePassed
+ * @requires ./ListaVertical.jsx:ContenidoPopUp
+ */
+
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
@@ -6,9 +21,17 @@ import { getTime } from "../config/Process";
 import { getScore, getTimePassed } from "../config/VideoAPI";
 import { ContenidoPopUp } from "./ListaVertical";
 
+/**
+ * Clase que renderiza un vídeo individual para la lista
+ * de búsqueda.
+ * @extends Component
+ */
 class MenuItem extends Component {
-  constructor(props) {
-    super(props);
+  /**
+   * Construye el componente MenuItem
+   */
+  constructor() {
+    super();
     this.state = {
       mostrarOpciones: false,
       popUp: false
@@ -18,11 +41,12 @@ class MenuItem extends Component {
     this.recibirHijo = this.recibirHijo.bind(this);
   }
   /**
-   * Si anyadir=true, anyadir a la lista lista, sino borrar de la lista lista
-   * @param {lista} lista 
-   * @param {*} mensaje 
-   * @param {boolean} anyadir 
-   * @param {*} callback 
+   * Si anyadir=true, anyade el vídeo a la lista de reproducción,
+   * sino lo borra de la lista.
+   * @param {Number} lista Id de la lista de reproducción
+   * @param {String} mensaje Mensaje a mostrar en la notificación
+   * @param {Boolean} anyadir Indica si añadir (true) o borrar (false) el vídeo a la lista
+   * @param {Function} callback Función a ejecutar tras añadir/borrar el vídeo de la lista
    */
   recibirHijo(lista, mensaje, anyadir, callback) {
     //SI anyadir = true, anyadir a la lista lista, sino borrar de la lista lista
@@ -30,14 +54,18 @@ class MenuItem extends Component {
       callback(ok);
     });
   }
+
   /**
-   * Pone popUp a true
+   * Abre el pop-up para añadir el vídeo a las listas de reproducción
+   * del usuario.
    */
   abrirPopUp() {
     this.setState({ popUp: true });
   }
+
   /**
-   * Pone popUp y mostrarOpciones a false
+   * Cierra el pop-up para borrar el vídeo a las listas de reproducción
+   * del usuario.
    */
   cerrarPopUp() {
     this.setState({ popUp: false, mostrarOpciones: false });
@@ -225,8 +253,15 @@ class MenuItem extends Component {
   }
 }
 
-// All items component
-// Important! add unique key
+/**
+ * Renderiza la lista completa de los vídeos que coinciden con la búsqueda realizada
+ * por el usuario
+ * @param {Array.<Object>} list Lista de vídeos recuperados
+ * @param {Function} anyadir Función para añadir/borrar un vídeo a una lista de reproducción
+ * @param {Array.<Object>} listaRepro Listas de reproducción del usuario
+ * @param {Date} time Timestamp para calcular la fecha de subida del vídeo
+ * @param {Function} actualizarListas Función para actualizar las listas de reproducción del usuario
+ */
 export const MenuVertical = (
   list,
   anyadir,
@@ -255,21 +290,33 @@ export const MenuVertical = (
     );
   });
 
+/**
+ * Clase que gestiona la lista de vídeos que coinciden
+ * con la búsqueda realizada por el usuario.
+ * @extends Component
+ */
 class ListaBusqueda extends Component {
+  /**
+   * Construye el componente ListaBusqueda
+   *
+   * @param {Object} props Propiedades para inicializar el componente
+   * @param {Array.<Object>} props.lista Lista de vídeos que coinciden con la búsqueda
+   * @param {Function} props.anyadirALista Función para añadir/borrar un vídeo a una lista de reproducción
+   * @param {Array.<Object>} props.listaRepro Listas de reproducción de un usuario
+   * @param {Date} props.time Timestamp del servidor para calcular el tiempo transcurrido desde la subida del vídeo
+   * @param {Function} props.actualizarListas Función para actualizar las listas de reproducción del usuario
+   */
   constructor(props) {
     super(props);
     this.menu = MenuVertical(
-      this.props.lista,
-      this.props.anyadirALista,
-      this.props.listaRepro,
-      this.props.time,
-      this.props.actualizarListas
+      props.lista,
+      props.anyadirALista,
+      props.listaRepro,
+      props.time,
+      props.actualizarListas
     );
   }
-  /**
-   * Asigna a menu el MenuVertical con las propiedades de newProps
-   * @param {*} newProps 
-   */
+
   componentWillReceiveProps(newProps) {
     this.menu = MenuVertical(
       newProps.lista,

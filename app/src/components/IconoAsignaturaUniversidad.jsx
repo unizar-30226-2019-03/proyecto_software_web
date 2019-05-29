@@ -1,7 +1,20 @@
 import React from "react";
 
-let MAX_CHAR_NAME = 5;
+/**
+ * Número máximo de caracteres a mostrar
+ * @constant
+ *
+ * @type {Number}
+ */
+const MAX_CHAR_NAME = 5;
 
+/**
+ * Renderiza el icono de la asignatura de un vídeo
+ *
+ * @param {Object} param0 Propiedades del componente
+ * @param {String} param0.image URI de la foto de la universidad
+ * @param {String} param0.name Nombre de la asignatura
+ */
 const IconoAsignaturaUniversidad = ({ image, name }) => {
   return (
     <div className="container">

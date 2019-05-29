@@ -148,8 +148,8 @@ class ResultadoBusqueda extends Component {
   }
 
   componentWillReceiveProps(newProps) {
+    this.setState({ busqueda: newProps.match.params.valor, mostrarSpin: true });
     this.buscarResultados(newProps.match.params.valor);
-    this.setState({ busqueda: newProps.match.params.valor });
   }
 
   render() {

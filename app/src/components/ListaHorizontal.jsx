@@ -1,3 +1,19 @@
+/**
+ * @fileoverview Fichero ListaHorizontal.jsx donde se encuentra la clase
+ * que renderiza una lista horizontal de vídeos.
+ *
+ * @author UniCast
+ *
+ * @requires ../../node_modules/react-horizontal-scrolling-menu/build/index.js:ScrollMenu
+ * @requires ../../node_modules/react-icons/fa/FaAngleRight.js:FaAngleRight
+ * @requires ../../node_modules/react-icons/fa/FaAngleLeft.js:FaAngleLeft
+ * @requires ../node_modules/react-router-dom/Link.js:Link
+ * @requires ../config/Process.jsx:getTime
+ * @requires ./IconoAsignaturaUniversidad.jsx:IconoAsignaturaUniversidad
+ * @requires ../config/VideoAPI.jsx:getTimePassed
+ * @requires ../config/VideoAPI.jsx:getScore
+ */
+
 import React, { Component } from "react";
 import ScrollMenu from "react-horizontal-scrolling-menu";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
@@ -6,8 +22,10 @@ import { getTime } from "../config/Process";
 import IconoAsignaturaUniversidad from "./IconoAsignaturaUniversidad";
 import { getTimePassed, getScore } from "../config/VideoAPI";
 
-// One item component
-// selected prop will be passed
+/**
+ * Clase que renderiza un vídeo individual para la lista horizontal.
+ * @extends Component
+ */
 class MenuItem extends Component {
   render() {
     return (
@@ -110,8 +128,11 @@ class MenuItem extends Component {
   }
 }
 
-// All items component
-// Important! add unique key
+/**
+ * Renderiza la lista completa de vídeos.
+ * @param {Array.<Object>} list Lista de vídeos a renderizar
+ * @param {Date} now Timestamp del servidor para calcular el tiempo transcurrido desde la subida del vídeo
+ */
 export const Menu = (list, now) =>
   list.map(el => {
     const { title, id, thumbnailUrl, score, timestamp, seconds } = el;
@@ -132,6 +153,9 @@ export const Menu = (list, now) =>
     );
   });
 
+/**
+ * Renderiza la flecha izquierda de la lista horizontal
+ */
 const ArrowL = () => {
   return (
     <div
@@ -153,6 +177,9 @@ const ArrowL = () => {
   );
 };
 
+/**
+ * Renderiza la flecha derecha de la lista horizontal
+ */
 const ArrowR = () => {
   return (
     <div
@@ -174,12 +201,25 @@ const ArrowR = () => {
   );
 };
 
+/**
+ * Clase que gestiona la lista de vídeos horizontal con flechas en los laterales
+ */
 class HMenuArr extends Component {
+  /**
+   * Construye el componente HMenuArr
+   *
+   * @param {Object} props Propiedades para inicializar el componente
+   * @param {Array.<Object>} props.menu Lista renderizada de los vídeos
+   */
   constructor(props) {
     super(props);
+    /**
+     * Indica si el componente está montado o no
+     * @type {Boolean}
+     */
     this._isMounted = false;
     this.state = {
-      menu: this.props.menu
+      menu: props.menu
     };
   }
 
@@ -223,11 +263,21 @@ class HMenuArr extends Component {
   }
 }
 
+/**
+ * Clase que gestiona la lista horizontal de vídeos.
+ * @extends Component
+ */
 class ListaHorizontal extends Component {
+  /**
+   * Construye el componente ListaHorizontal
+   *
+   * @param {Object} props Propiedades para inicializar el componente
+   * @param {Array.<Object>} props.list Lista de vídeos a renderizar
+   * @param {Date} props.now Timestamp del servidor para calcular el tiempo transcurrido desde la subida del vídeo
+   */
   constructor(props) {
     super(props);
-    // call it again if items count changes
-    this.menuItems = Menu(this.props.list, this.props.now);
+    this.menuItems = Menu(props.list, props.now);
   }
 
   componentWillReceiveProps(newProps) {
@@ -235,7 +285,6 @@ class ListaHorizontal extends Component {
   }
 
   render() {
-    // Create menu from items
     return (
       <div style={{ marginBottom: "50px" }}>
         <HMenuArr menu={this.menuItems} />

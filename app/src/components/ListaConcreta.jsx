@@ -1,3 +1,28 @@
+/**
+ * @fileoverview Fichero ListaConcreta.jsx donde se encuentra la clase
+ * que renderiza la pantalla de una lista de reproducción de un
+ * usuario concreto.
+ *
+ * @author UniCast
+ *
+ * @requires ../node_modules/react-router-dom/Redirect.js:Redirect
+ * @requires ./BarraNavegacion.jsx:BarraNavegacion
+ * @requires ../node_modules/react-helmet/es/Helmet.js:Helmet
+ * @requires ./ListaVertical.jsx:ListaVertical
+ * @requires ./MisListas.jsx:Notificacion
+ * @requires ../../node_modules/reactjs-popup/reactjs-popup.js:Popup
+ * @requires ../config/Process.jsx:RemoveAccents
+ * @requires ../config/Process.jsx:putFavouritesFirst
+ * @requires ../config/Auth.jsx:isSignedIn
+ * @requires ../config/Auth.jsx:getUserRole
+ * @requires ../config/VideoAPI.jsx:getVideosFromReproductionList
+ * @requires ../config/ReproductionListAPI.jsx:deleteVideoFromReproductionList
+ * @requires ../config/ReproductionListAPI.jsx:deleteReproductionList
+ * @requires ../config/ReproductionListAPI.jsx:getUserReproductionLists
+ * @requires ../config/ReproductionListAPI.jsx:addVideotoReproductionList
+ * @requires ./LoadingSpin.jsx:LoadingSpinUniCast
+ */
+
 import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
 import BarraNavegacion from "./BarraNavegacion";
@@ -16,23 +41,30 @@ import {
 } from "../config/ReproductionListAPI";
 import { LoadingSpinUniCast } from "./LoadingSpin";
 
+/**
+ * Clase que gestiona una lista de reproducción de
+ * un usuario.
+ * @extends Component
+ */
 class Lista extends Component {
+  /**
+   * Construye el componente Lista
+   *
+   * @param {Object} props Propiedades para inicializar el componente
+   * @param {Array.<Object>} props.listasRepro Listas de reproducción de un usuario
+   * @param {Array.<Object>} props.historial Lista de vídeos de la lista de reproducción
+   */
   constructor(props) {
     super(props);
     this.state = {
       popUp: false,
-      listaVideos: this.props.historial,
-      listasRepro: this.props.listasRepro
+      listaVideos: props.historial,
+      listasRepro: props.listasRepro
     };
     this.abrirPopUp = this.abrirPopUp.bind(this);
     this.cerrarPopUp = this.cerrarPopUp.bind(this);
   }
 
-  /**
-   * Asigna a listaVideos y a listasRepro, el historial y listasRepro
-   * de nextProps
-   * @param {*} nextProps
-   */
   componentWillReceiveProps(nextProps) {
     this.setState({
       listaVideos: nextProps.historial,
@@ -41,14 +73,14 @@ class Lista extends Component {
   }
 
   /**
-   * Pone popUp a true
+   * Abre el pop-up para borrar la lista de reproducción completa.
    */
   abrirPopUp() {
     this.setState({ popUp: true });
   }
 
   /**
-   * Pone popUp a false
+   * Cierra el pop-up para borrar la lista de reproducción completa.
    */
   cerrarPopUp() {
     this.setState({ popUp: false });
@@ -281,9 +313,21 @@ class Lista extends Component {
   }
 }
 
+/**
+ * Clase que gestiona la pantalla de una lista de
+ * reproducción concreta de un usuario.
+ * @extends Component
+ */
 class ListaConcreta extends Component {
+  /**
+   * Construye el componente ListaConcreta
+   */
   constructor() {
     super();
+    /**
+     * Indica si el componente está montado o no
+     * @type {Boolean}
+     */
     this._isMounted = false;
     this.state = {
       idLista: -1,
@@ -320,6 +364,10 @@ class ListaConcreta extends Component {
     this.tick = this.tick.bind(this);
   }
 
+  /**
+   * Obtiene 20 vídeos de la lista de reproducción.
+   * @param {Number} page Página de datos a obtener
+   */
   getData(page) {
     const id =
       this.state.idLista === -1
@@ -340,9 +388,8 @@ class ListaConcreta extends Component {
   }
 
   /**
-   * Obtiene las listas de reproducción del usuario, y si
-   * _isMounted=true, coloca la lista de reproducción de
-   * favoritos primero, y se la asigna a listasRepro.
+   * Obtiene las listas de reproducción del usuario y coloca la lista de
+   * reproducción de favoritos primero.
    */
   getReproductionLists() {
     getUserReproductionLists(data => {
@@ -354,8 +401,7 @@ class ListaConcreta extends Component {
   }
 
   /**
-   * Borra la lista de reproducción con id idLista. Si se ha realizado
-   * correctamente pone borradoCompleto a true.
+   * Borra la lista de reproducción seleccionada.
    */
   borrarLista() {
     //Borrar la lista en el servidor
@@ -366,6 +412,10 @@ class ListaConcreta extends Component {
     });
   }
 
+  /**
+   * Actualiza el valor de búsqueda introducido por el usuario
+   * @param {Event} e Evento que devuelve el formulario
+   */
   buscarEnLista(e) {
     e.preventDefault();
     this.setState({ busqueda: e.target.value });
@@ -374,6 +424,11 @@ class ListaConcreta extends Component {
     }
   }
 
+  /**
+   * Cuando se haya pulsado enter, se filtran los vídeos de la lista de reproducción
+   * según la búsqueda realizada por el usuario.
+   * @param {Event} e Evento que devuelve el formulario
+   */
   keyDown(e) {
     if (this.state.busqueda !== "") {
       if (e.keyCode === 13) {
@@ -397,6 +452,15 @@ class ListaConcreta extends Component {
     }
   }
 
+  /**
+   * Añade o quita el video seleccionado a la lista de videos elegida
+   * por el usuario.
+   * @param {Number} idVideo Id del video a añadir o quitar
+   * @param {String} mensaje Mensaje de notificación al añadir
+   * @param {Number} idLista Id de la lista de videos a la que añadir o quitar el video nombreVideo
+   * @param {Boolean} anyadir Si es true añade, si es false quita a la lista
+   * @param {Function} callback Función a ejecutar tras añadir/quitar el vídeo a la lista
+   */
   anyadirVideoALista(idVideo, mensaje, idLista, anyadir, callback) {
     //Añadir o borrar de la lista lista, dependiendo del parametro anyadir
     if (anyadir) {
@@ -451,6 +515,11 @@ class ListaConcreta extends Component {
     this.iniciarReloj();
   }
 
+  /**
+   * Elimina el video seleccionado de la lista de reproducción.
+   * @param {Number} idVideo id del video a eliminar
+   * @param {String} nombreVideo nombre del video a eliminar
+   */
   borrarVideo(idVideo, nombreVideo) {
     const idLista = this.state.idLista;
     deleteVideoFromReproductionList(idLista, parseInt(idVideo), ok => {
@@ -470,6 +539,10 @@ class ListaConcreta extends Component {
     this.iniciarReloj();
   }
 
+  /**
+   * Ajusta el contenido del historial al tamaño actual
+   * de la pantalla.
+   */
   handleResize() {
     if (this.state.miLista.length > 0) {
       if (window.innerWidth <= 970) {
@@ -511,6 +584,10 @@ class ListaConcreta extends Component {
     window.removeEventListener("scroll", this.handleScroll);
   }
 
+  /**
+   * Ajusta el contenido a la barra lateral.
+   * @param {Boolean} display Determina si desplazar contenido o no
+   */
   handleChange(display) {
     if (display) {
       this.setState({ contentMargin: "300px" });
@@ -519,6 +596,11 @@ class ListaConcreta extends Component {
     }
   }
 
+  /**
+   * Controla el scroll del usuario para cargar más
+   * vídeos del historial si el usuario hace scroll
+   * hasta el final de la lista de vídeos.
+   */
   handleScroll() {
     var d = document.documentElement;
     var offset = d.scrollTop + window.innerHeight;
@@ -529,15 +611,26 @@ class ListaConcreta extends Component {
     }
   }
 
+  /**
+   * Resetea el reloj y lo inicializa para ejecutar la función
+   * ListaConcreta.tick() una vez por segundo.
+   */
   iniciarReloj() {
     this.pararReloj();
     this.timerID = setInterval(() => this.tick(), 1000);
   }
 
+  /**
+   * Detiene la ejecución del reloj
+   */
   pararReloj() {
     clearInterval(this.timerID);
   }
 
+  /**
+   * Suma un tick y si han pasado 3 ticks (3 segundos)
+   * quita la notificación de pantalla.
+   */
   tick() {
     let t = this.state.tiempo;
     if (t === 3) {
