@@ -33,6 +33,17 @@ const FormularioDatos = (
 ) => {
   return (
     <Form onSubmit={e => handleSubmit(e)}>
+      {estado.errorRegistro ? (
+        <Form.Group
+          style={{
+            color: "red",
+            fontSize: "13px",
+            marginBottom: ".55rem"
+          }}
+        >
+          No se ha podido realizar el registro, compruebe los datos.
+        </Form.Group>
+      ) : null}
       <Form.Row>
         <Form.Group as={Col} controlId="formGridName">
           {estado.nombreInvalido ? (
@@ -56,15 +67,6 @@ const FormularioDatos = (
             ref={nombre}
           />
         </Form.Group>
-        <div
-          style={{
-            color: "red",
-            fontSize: "12px",
-            marginBottom: ".55rem"
-          }}
-        >
-          No se ha podido realizar el registro, compruebe los datos.
-        </div>
 
         <Form.Group as={Col} controlId="formGridSurname">
           {estado.apellidoInvalido ? (
@@ -497,7 +499,11 @@ class SignIn extends Component {
         data => {
           if (data === false) {
             if (this._isMounted) {
-              this.setState({ mostrarSpin: false, error: true });
+              this.setState({
+                mostrarSpin: false,
+                error: true,
+                datosValidados: false
+              });
             }
           } else {
             apiInstance.authUser(
@@ -557,7 +563,7 @@ class SignIn extends Component {
           <div>
             <div className="signin transform">
               <img className="img-signin" src={uni} alt="UniCast" />
-              {!this.state.datosValidados && !this.state.error
+              {!this.state.datosValidados
                 ? FormularioDatos(
                     this.handleSubmitDatos,
                     this.nombre,
