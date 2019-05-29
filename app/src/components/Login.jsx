@@ -1,3 +1,23 @@
+/**
+ * @fileoverview Fichero Login.jsx donde se encuentra la clase
+ * que renderiza la pantalla de login de la aplicación.
+ *
+ * @author UniCast
+ *
+ * @requires ../../node_modules/react-bootstrap/Button.js:Button
+ * @requires ../../node_modules/react-bootstrap/Form.js:Form
+ * @requires ../node_modules/react-router-dom/Redirect.js:Redirect
+ * @requires ../node_modules/react-helmet/es/Helmet.js:Helmet
+ * @requires ../config/Auth.jsx:signIn
+ * @requires ../config/Auth.jsx:setUserRole
+ * @requires ../config/Auth.jsx:isSignedIn
+ * @requires ../config/Auth.jsx:getUserRole
+ * @requires ../config/Auth.jsx:setUserPhoto
+ * @requires ../config/UserAPI.jsx:getUser
+ * @requires ../config/UserAPI.jsx:authUser
+ * @requires ./LoadingSpin.jsx:LoadingSpinUniCast
+ */
+
 import React, { Component } from "react";
 import { Button, Form } from "react-bootstrap";
 import { Redirect } from "react-router-dom";
@@ -13,12 +33,22 @@ import {
 import { getUser, authUser } from "../config/UserAPI";
 import { LoadingSpinUniCast } from "./LoadingSpin";
 
+/**
+ * Clase que gestiona la pantalla de login de la aplicación
+ * @extends Component
+ */
 class Login extends Component {
+  /**
+   * Construye el componente Login
+   *
+   * @param {Object} props Propiedades para inicializar el componente
+   * @param {Object} props.location
+   */
   constructor(props) {
     super(props);
     this._isMounted = false;
     this.state = {
-      location: this.props.location,
+      location: props.location,
       error: false,
       validado: -1,
       redirectSignIn: false,
@@ -65,7 +95,7 @@ class Login extends Component {
   render() {
     return this.state.redirectSignIn ? (
       <Redirect
-        to={{ pathname: "/registro", state: this.props.location.state }}
+        to={{ pathname: "/registro", state: this.state.location.state }}
       />
     ) : (
       <div>
@@ -74,10 +104,10 @@ class Login extends Component {
         </Helmet>
         {this.state.validado === 0 ||
         (isSignedIn() && getUserRole() !== "ROLE_ADMIN") ? (
-          this.props.location.state === undefined ? (
+          this.state.location.state === undefined ? (
             <Redirect to={"/inicio"} />
           ) : (
-            <Redirect to={this.props.location.state.url} />
+            <Redirect to={this.state.location.state.url} />
           )
         ) : (
           <div>

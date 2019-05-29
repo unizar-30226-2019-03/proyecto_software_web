@@ -69,6 +69,7 @@ export function addUser(
     (error, data, response) => {
       if (error) {
         console.error(error);
+        callback(false);
       } else {
         callback(data);
       }

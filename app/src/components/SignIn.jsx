@@ -56,6 +56,15 @@ const FormularioDatos = (
             ref={nombre}
           />
         </Form.Group>
+        <div
+          style={{
+            color: "red",
+            fontSize: "12px",
+            marginBottom: ".55rem"
+          }}
+        >
+          No se ha podido realizar el registro, compruebe los datos.
+        </div>
 
         <Form.Group as={Col} controlId="formGridSurname">
           {estado.apellidoInvalido ? (
@@ -314,6 +323,7 @@ class SignIn extends Component {
       userInvalido: false,
       emailInvalido: false,
       errorFoto: false,
+      error: false,
       nombre: "",
       apellidos: "",
       email: "",
@@ -441,7 +451,8 @@ class SignIn extends Component {
         apellidos: apellidos,
         email: email,
         userID: userID,
-        pass: pass
+        pass: pass,
+        error: false
       });
     }
   }
@@ -484,24 +495,30 @@ class SignIn extends Component {
         carrera,
         this.foto.current.files[0],
         data => {
-          apiInstance.authUser(
-            data.username,
-            this.state.pass,
-            (error, data2, response) => {
-              if (error) {
-                if (this._isMounted) {
-                  this.setState({ mostrarSpin: false });
-                }
-              } else {
-                signIn(data2);
-                setUserRole(data.role);
-                setUserPhoto(data.photo);
-                if (this._isMounted) {
-                  this.setState({ infoValidada: true });
+          if (data === false) {
+            if (this._isMounted) {
+              this.setState({ mostrarSpin: false, error: true });
+            }
+          } else {
+            apiInstance.authUser(
+              data.username,
+              this.state.pass,
+              (error, data2, response) => {
+                if (error) {
+                  if (this._isMounted) {
+                    this.setState({ mostrarSpin: false });
+                  }
+                } else {
+                  signIn(data2);
+                  setUserRole(data.role);
+                  setUserPhoto(data.photo);
+                  if (this._isMounted) {
+                    this.setState({ infoValidada: true, error: false });
+                  }
                 }
               }
-            }
-          );
+            );
+          }
         }
       );
     }
@@ -515,6 +532,7 @@ class SignIn extends Component {
 
   render() {
     const estadoValidacion = {
+      errorRegistro: this.state.error,
       passNoIguales: this.state.passNoIguales,
       passNoValida: this.state.passNoValida,
       nombreInvalido: this.state.nombreInvalido,
@@ -527,7 +545,9 @@ class SignIn extends Component {
         <Helmet>
           <title>Crea tu cuenta de UniCast</title>
         </Helmet>
-        {this.state.datosValidados & this.state.infoValidada ? (
+        {!this.state.error &&
+        this.state.datosValidados &&
+        this.state.infoValidada ? (
           this.props.location.state === undefined ? (
             <Redirect to={"/inicio"} />
           ) : (
@@ -537,7 +557,7 @@ class SignIn extends Component {
           <div>
             <div className="signin transform">
               <img className="img-signin" src={uni} alt="UniCast" />
-              {!this.state.datosValidados
+              {!this.state.datosValidados && !this.state.error
                 ? FormularioDatos(
                     this.handleSubmitDatos,
                     this.nombre,

@@ -1,6 +1,20 @@
+/**
+ * @fileoverview Fichero ListaVerticalProfes.jsx donde se encuentra la clase
+ * que renderiza la lista vertical de profesores de un usuario.
+ *
+ * @author UniCast
+ *
+ * @requires ../node_modules/react-router-dom/Link.js:Link
+ */
+
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 
+/**
+ * Clase que renderiza un elemento de la lista de profesores
+ * de un usuario.
+ * @extends Component
+ */
 class MenuItem extends Component {
   render() {
     return (
@@ -79,17 +93,29 @@ class MenuItem extends Component {
   }
 }
 
-// All items component
-// Important! add unique key
+/**
+ * Renderiza la lista de profesores de un usuario
+ * @param {Array.<Object>} list Lista de profesores de un usuario
+ */
 export const MenuVertical = list =>
   list.map(el => {
     return <MenuItem user={el} key={el.id} />;
   });
 
+/**
+ * Clase que gestiona la lista de profesores de un usuario
+ * @extends Component
+ */
 class ListaVerticalProfes extends Component {
+  /**
+   * Construye el componente ListaVerticalProfes
+   *
+   * @param {Object} props Propiedades para inicializar el componente
+   * @param {Array.<Object>} props.lista Lista de profesores de un usuario
+   */
   constructor(props) {
     super(props);
-    this.menu = MenuVertical(this.props.lista);
+    this.menu = MenuVertical(props.lista);
   }
 
   componentWillReceiveProps(newProps) {
