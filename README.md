@@ -19,6 +19,14 @@
 3. Comprobar compatibilidad.
 4. Instalar la librería ejecutando `npm install {librería} --save`
 
+## Generar documentación automática de la aplicación
+1. `cd proyecto_software_web/app`
+2. `npm run doc`
+
+## Generar versión compilada de la aplicación
+1. `cd proyecto_software_web/app`
+2. `npm run build`
+
 ## Documentación y pruebas de la api
 
 1. Ir a `https://swagger.io/tools/swagger-ui/` y pulsar sobre **Live Demo**.
