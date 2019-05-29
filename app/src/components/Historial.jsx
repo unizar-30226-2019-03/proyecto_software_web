@@ -470,6 +470,7 @@ class Historial extends Component {
       }
     }
   }
+
   /**
    * Añade o quita el video seleccionado a la lista de videos elegida
    * por el usuario.

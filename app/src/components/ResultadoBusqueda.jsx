@@ -1,3 +1,27 @@
+/**
+ * @fileoverview Fichero ResultadoBusqueda.jsx donde se encuentra la clase
+ * que renderiza la pantalla de los resultados obtenidos tras una búsqueda
+ * realizada por un usuario.
+ *
+ * @author UniCast
+ *
+ * @requires ./ListaBusqueda.jsx:ListaBusqueda
+ * @requires ./MisListas.jsx:Notificacion
+ * @requires ../node_modules/react-helmet/es/Helmet.js:Helmet
+ * @requires ./BarraNavegacion.jsx:BarraNavegacion
+ * @requires ../node_modules/react-router-dom/Redirect.js:Redirect
+ * @requires ../config/Auth.jsx:isSignedIn
+ * @requires ../config/Auth.jsx:getUserRole
+ * @requires ../config/VideoAPI.jsx:findVideosContainingTitle
+ * @requires ../config/SubjectAPI.jsx:findSubjectsContainingName
+ * @requires ./BusquedaAsignaturas.jsx:BusquedaAsignaturas
+ * @requires ../config/Process.jsx:putFavouritesFirst
+ * @requires ../config/ReproductionListAPI.jsx:getUserReproductionLists
+ * @requires ../config/ReproductionListAPI.jsx:addVideotoReproductionList
+ * @requires ../config/ReproductionListAPI.jsx:deleteVideoFromReproductionList
+ * @requires ./LoadingSpin.jsx:LoadingSpinUniCast
+ */
+
 import React, { Component } from "react";
 import ListaBusqueda from "./ListaBusqueda";
 import { Notificacion } from "./MisListas";
@@ -16,13 +40,27 @@ import {
 } from "../config/ReproductionListAPI";
 import { LoadingSpinUniCast } from "./LoadingSpin";
 
+/**
+ * Clase que gestiona la pantalla de búsqueda de
+ * vídeos y asignaturas en la aplicación.
+ * @extends Component
+ */
 class ResultadoBusqueda extends Component {
+  /**
+   * Construye el componente ResultadoBusqueda
+   *
+   * @param {Object} props Propiedades para inicializar el componente
+   */
   constructor(props) {
     super(props);
+    /**
+     * Indica si el componente está montado o no
+     * @type {Boolean}
+     */
     this._isMounted = false;
     this.state = {
       contentMargin: "300px",
-      busqueda: this.props.match.params.valor,
+      busqueda: props.match.params.valor,
       lista: [],
       listaAsignaturas: [],
       listasRepro: [],
@@ -50,6 +88,11 @@ class ResultadoBusqueda extends Component {
     }
   }
 
+  /**
+   * Obtiene los vídeos y asignaturas cuyo título contenga
+   * la cadena introducida por el usuario.
+   * @param {String} titulo Título por el que buscar
+   */
   buscarResultados(titulo) {
     findVideosContainingTitle(titulo, (videos, time) => {
       if (this._isMounted) {
@@ -66,6 +109,9 @@ class ResultadoBusqueda extends Component {
     });
   }
 
+  /**
+   * Obtiene las listas de reproducción de un usuario.
+   */
   getReproductionLists() {
     getUserReproductionLists(data => {
       if (this._isMounted) {
@@ -75,6 +121,10 @@ class ResultadoBusqueda extends Component {
     });
   }
 
+  /**
+   * Ajusta el contenido a la barra lateral.
+   * @param {Boolean} display Determina si desplazar contenido o no
+   */
   handleChange(display) {
     if (display) {
       this.setState({ contentMargin: "300px" });
@@ -83,15 +133,26 @@ class ResultadoBusqueda extends Component {
     }
   }
 
+  /**
+   * Resetea el reloj y lo inicializa para ejecutar la función
+   * ResultadoBusqueda.tick() una vez por segundo.
+   */
   iniciarReloj() {
     this.pararReloj();
     this.timerID = setInterval(() => this.tick(), 1000);
   }
 
+  /**
+   * Detiene la ejecución del reloj
+   */
   pararReloj() {
     clearInterval(this.timerID);
   }
 
+  /**
+   * Suma un tick y si han pasado 3 ticks (3 segundos)
+   * quita la notificación de pantalla.
+   */
   tick() {
     let t = this.state.tiempo;
     if (t === 3) {
@@ -102,8 +163,16 @@ class ResultadoBusqueda extends Component {
     this.setState({ tiempo: t + 1 });
   }
 
+  /**
+   * Añade o quita el video seleccionado a la lista de videos elegida
+   * por el usuario.
+   * @param {Number} idVideo Id del video a añadir o quitar
+   * @param {String} mensaje Mensaje de notificación al añadir
+   * @param {Number} idLista Id de la lista de videos a la que añadir o quitar el video nombreVideo
+   * @param {Boolean} anyadir Si es true añade, si es false quita a la lista
+   * @param {Function} callback Función a ejecutar tras añadir/quitar el vídeo a la lista
+   */
   anyadirVideoALista(idVideo, mensaje, idLista, anyadir, callback) {
-    //Añadir o borrar de la lista lista, dependiendo del parametro anyadir
     if (anyadir) {
       //Añadir el video
       addVideotoReproductionList(idLista, idVideo, ok => {

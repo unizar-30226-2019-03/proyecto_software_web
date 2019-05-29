@@ -1,3 +1,26 @@
+/**
+ * @fileoverview Fichero SubirVideo.jsx donde se encuentra la clase
+ * que renderiza la pantalla de subir un nuevo vídeo.
+ *
+ * @author UniCast
+ *
+ * @requires ./BarraNavegacion.jsx:BarraNavegacion
+ * @requires ../node_modules/react-helmet/es/Helmet.js:Helmet
+ * @requires ../../node_modules/react-bootstrap/Button.js:Button
+ * @requires ../../node_modules/react-bootstrap/Form.js:Form
+ * @requires ../../node_modules/react-bootstrap/Col.js:Col
+ * @requires ../node_modules/react-router-dom/Redirect.js:Redirect
+ * @requires ../node_modules/react-router-dom/Link.js:Link
+ * @requires ../config/Auth.jsx:isSignedIn
+ * @requires ../config/Auth.jsx:getUserID
+ * @requires ../config/Auth.jsx:getUserRole
+ * @requires ../config/Process.jsx:checkFileExtensionImage
+ * @requires ../config/Process.jsx:checkFileExtensionVideo
+ * @requires ../config/VideoAPI.jsx:UploadVideo
+ * @requires ../config/UserAPI.jsx:getSubjectsAsProfessor
+ * @requires ./LoadingSpin.jsx:LoadingSpinUniCast
+ */
+
 import React, { Component } from "react";
 import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
@@ -12,6 +35,20 @@ import { UploadVideo } from "../config/VideoAPI";
 import { getSubjectsAsProfessor } from "../config/UserAPI";
 import { LoadingSpinUniCast } from "./LoadingSpin";
 
+/**
+ * Renderiza el formulario que permite subir un nuevo vídeo
+ * @param {Function} handleSubmit Función que utiliza los datos guardados en el formulario para subir un vídeo
+ * @param {String} titulo Referencia al título del vídeo
+ * @param {File} miniatura Referencia a la imagen de portada del vídeo
+ * @param {String} descripcion Referencia a la descripción del vídeo
+ * @param {File} video Referencia al archivo de vídeo a subir
+ * @param {Number} asignatura Referencia a la asignatura del vídeo (y profesor)
+ * @param {Number} img_valida Determina si la imagen introducida es válida
+ * @param {Number} video_valido Determina si el vídeo introducido es válido
+ * @param {Array.<Object>} listaAsignaturas Lista de asignaturas del profesor
+ * @param {Boolean} mostrarSpin Parámetro que indica si mostrar un spin de carga o no
+ * @param {Function} handleSpin Función que se ejecuta tras someter el formulario y controla el spin de carga
+ */
 const FormularioDatos = (
   handleSubmit,
   titulo,
@@ -119,9 +156,20 @@ const FormularioDatos = (
   );
 };
 
+/**
+ * Clase que gestiona la pantalla de subir un nuevo vídeo.
+ * @extends Component
+ */
 class SubirVideo extends Component {
+  /**
+   * Construye el componente SubirVideo
+   */
   constructor() {
     super();
+    /**
+     * Indica si el componente está montado o no
+     * @type {Boolean}
+     */
     this._isMounted = false;
     this.state = {
       contentMargin: "300px",
@@ -143,6 +191,10 @@ class SubirVideo extends Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
+  /**
+   * Obtiene la lista de asignaturas en las que
+   * está un profesor.
+   */
   getData() {
     getSubjectsAsProfessor(getUserID(), asignaturas => {
       if (this._isMounted) {
@@ -162,6 +214,11 @@ class SubirVideo extends Component {
     this._isMounted = false;
   }
 
+  /**
+   * Dependiendo de los datos introducidos por el usuario
+   * se mostrará el spin de carga o si hay error no se mostrará
+   * nada.
+   */
   handleSpin() {
     const miniatura = this.miniatura.current.value;
     const video = this.video.current.value;
@@ -174,6 +231,11 @@ class SubirVideo extends Component {
     }
   }
 
+  /**
+   * Comprueba que los datos introducidos por el usuario son válidos.
+   * De ser así, sube el vídeo.
+   * @param {Event} event Evento que devuelve el formulario
+   */
   handleSubmitDatos(event) {
     event.preventDefault();
     const titulo = this.titulo.current.value;
@@ -219,15 +281,16 @@ class SubirVideo extends Component {
       }
     }
   }
+
+  /**
+   * Ajusta el contenido a la barra lateral.
+   * @param {Boolean} display Determina si desplazar contenido o no
+   */
   handleChange(display) {
     if (display) {
-      this.setState({
-        contentMargin: "300px"
-      });
+      this.setState({ contentMargin: "300px" });
     } else {
-      this.setState({
-        contentMargin: "70px"
-      });
+      this.setState({ contentMargin: "70px" });
     }
   }
 

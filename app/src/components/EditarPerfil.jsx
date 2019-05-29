@@ -454,6 +454,7 @@ class EditarPerfil extends Component {
   handleChangeDescription(e) {
     this.setState({ description: e.target.value });
   }
+
   /**
    * Comprueba que los datos introducidos por el usuario son válidos.
    * De ser así, actualiza el usuario.

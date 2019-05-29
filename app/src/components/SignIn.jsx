@@ -1,3 +1,30 @@
+/**
+ * @fileoverview Fichero SignIn.jsx donde se encuentra la clase
+ * que renderiza la pantalla de registro de la aplicación.
+ *
+ * @author UniCast
+ *
+ * @requires ../../node_modules/react-bootstrap/Button.js:Button
+ * @requires ../../node_modules/react-bootstrap/Form.js:Form
+ * @requires ../../node_modules/react-bootstrap/Col.js:Col
+ * @requires ../node_modules/react-router-dom/Redirect.js:Redirect
+ * @requires ../node_modules/react-router-dom/Link.js:Link
+ * @requires ../node_modules/react-helmet/es/Helmet.js:Helmet
+ * @requires ../node_modules/swagger_unicast/dist/index.js:UserApi
+ * @requires ../config/Process.jsx:checkFileExtensionImage
+ * @requires ../config/Auth.jsx:signIn
+ * @requires ../config/Auth.jsx:restriccionNombre
+ * @requires ../config/Auth.jsx:restriccionUser
+ * @requires ../config/Auth.jsx:emailPattern
+ * @requires ../config/Auth.jsx:restriccion
+ * @requires ../config/Auth.jsx:setUserRole
+ * @requires ../config/Auth.jsx:setUserPhoto
+ * @requires ../config/UniversityAPI.jsx:getUnivesities
+ * @requires ../config/UniversityAPI.jsx:getDegreesFromUnivesity
+ * @requires ../config/UserAPI.jsx:addUser
+ * @requires ./LoadingSpin.jsx:LoadingSpinUniCast
+ */
+
 import React, { Component } from "react";
 import { Button, Form, Col } from "react-bootstrap";
 import { Redirect, Link } from "react-router-dom";
@@ -21,6 +48,17 @@ import {
 import { addUser } from "../config/UserAPI";
 import { LoadingSpinUniCast } from "./LoadingSpin";
 
+/**
+ * Renderiza el formulario que permite registrar un usuario
+ * @param {Function} handleSubmit Función que utiliza los datos guardados en el formulario para registrar al usuario
+ * @param {String} nombre Referencia al nombre del nuevo usuario
+ * @param {String} apellidos Referencia a los apellidos del nuevo usuario
+ * @param {String} userID Referencia al nombre de usuario del nuevo usuario
+ * @param {String} email Referencia al email del nuevo usuario
+ * @param {String} passwd Referencia a la contraseña del nuevo usuario
+ * @param {String} passwd2 Referencia a la contraseña a confirmar del nuevo usuario
+ * @param {Object} estado Estado de errores en los datos introducidos
+ */
 const FormularioDatos = (
   handleSubmit,
   nombre,
@@ -205,6 +243,21 @@ const FormularioDatos = (
   );
 };
 
+/**
+ * Renderiza el formulario que permite registrar un usuario
+ * @param {Function} handleSubmit Función que utiliza los datos guardados en el formulario para registrar al usuario
+ * @param {File} foto Referencia a la foto de perfil del nuevo usuario
+ * @param {String} descripcion Referencia a la descripción del nuevo usuario
+ * @param {Number} universidad Referencia a la universidad del nuevo usuario
+ * @param {Number} carrera Referencia a la carrear del nuevo usuario
+ * @param {Function} cancelar Función para cancelar el registro
+ * @param {Boolean} errorFoto Indica si hay un error en la foto seleccionada
+ * @param {Array.<Object>} universidades Lista de universidades de la aplicación
+ * @param {Array.<Object>} carreras Lista de carreras de una universidad concreta
+ * @param {Function} handleChangeUni Actualiza la lista de carreras según la universidad seleccionada
+ * @param {Boolean} mostrarSpin Determina si mostrar o no el spin de carga mientras se registra el usuario
+ * @param {Function} handleSpin Función que se ejecuta tras someter el formulario y controla el spin de carga
+ */
 const FormularioInfo = (
   handleSubmit,
   foto,
@@ -311,9 +364,21 @@ const FormularioInfo = (
   );
 };
 
+/**
+ * Clase que gestiona la pantalla de registro de un usuario
+ * en el sistema.
+ * @extends Component
+ */
 class SignIn extends Component {
-  constructor(props) {
-    super(props);
+  /**
+   * Construye el componente SignIn.
+   */
+  constructor() {
+    super();
+    /**
+     * Indica si el componente está montado o no
+     * @type {Boolean}
+     */
     this._isMounted = false;
     this.state = {
       datosValidados: false,
@@ -355,6 +420,9 @@ class SignIn extends Component {
     this.handleSpin = this.handleSpin.bind(this);
   }
 
+  /**
+   * Obtiene todas las universidades.
+   */
   getData() {
     getUnivesities(0, data => {
       if (data._embedded.universities.length === 20) {
@@ -376,6 +444,11 @@ class SignIn extends Component {
     this._isMounted = false;
   }
 
+  /**
+   * Obtiene todas las universidades almacenadas en el sistema
+   * @param {Array.<Object>} unis Lista de universidades
+   * @param {Number} page Página de universidades a obtener
+   */
   getAllUniversities(unis, page) {
     if (unis.length < 20 * page) {
       if (this._isMounted) {
@@ -389,10 +462,20 @@ class SignIn extends Component {
     }
   }
 
+  /**
+   * Cancela el registro y vuelve a la pantalla para introducir
+   * los datos de nuevo.
+   */
   back() {
     this.setState({ datosValidados: false, infoValidada: false });
   }
 
+  /**
+   * Comprueba los datos introducidos, si cumplen con las restricciones
+   * se avanza a la página para introducir la información no sensible
+   * del usuario.
+   * @param {Event} event Evento que devuelve el formulario
+   */
   handleSubmitDatos(event) {
     event.preventDefault();
     let ok = true;
@@ -459,6 +542,11 @@ class SignIn extends Component {
     }
   }
 
+  /**
+   * Actualiza la lista de carreras cuando hay un
+   * cambio en la universidad seleccionada.
+   * @param {Event} e Evento que devuelve el formulario
+   */
   handleChangeUni(e) {
     const uniId = parseInt(e.target.value);
     getDegreesFromUnivesity(uniId, data => {
@@ -466,6 +554,13 @@ class SignIn extends Component {
     });
   }
 
+  /**
+   * Comprueba los datos introducidos por el usuario y si son
+   * correctos se procede a registrar el usuario, si se produce
+   * algún fallo, se redirige a la pantalla principal del registro
+   * y se informa de ello.
+   * @param {Event} event Evento que devuelve el formulario
+   */
   handleSubmitInfo(event) {
     event.preventDefault();
     let ok = true;
@@ -530,6 +625,9 @@ class SignIn extends Component {
     }
   }
 
+  /**
+   * Controla el mostrado del spin de carga
+   */
   handleSpin() {
     if (this._isMounted) {
       this.setState({ mostrarSpin: true });

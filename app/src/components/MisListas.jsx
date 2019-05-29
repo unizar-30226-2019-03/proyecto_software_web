@@ -1,3 +1,31 @@
+/**
+ * @fileoverview Fichero MisListas.jsx donde se encuentra la clase
+ * que renderiza la pantalla de las listas de reproducción de un
+ * usuario.
+ *
+ * @author UniCast
+ *
+ * @requires ./BarraNavegacion.jsx:BarraNavegacion
+ * @requires ../node_modules/react-helmet/es/Helmet.js:Helmet
+ * @requires ./ListaHorizontal.jsx:ListaHorizontal
+ * @requires ../../node_modules/react-icons/fa/FaPlus.js:FaPlus
+ * @requires ../../node_modules/react-icons/fa/FaRegTrashAlt.js:FaRegTrashAlt
+ * @requires ../../node_modules/react-icons/fa/FaStar.js:FaStar
+ * @requires ../../node_modules/reactjs-popup/reactjs-popup.js:Popup
+ * @requires ../../node_modules/react-bootstrap/Form.js:Form
+ * @requires ../../node_modules/react-bootstrap/Button.js:Button
+ * @requires ../node_modules/react-router-dom/Redirect.js:Redirect
+ * @requires ../node_modules/react-router-dom/Link.js:Link
+ * @requires ../config/Auth.jsx:isSignedIn
+ * @requires ../config/Auth.jsx:getUserRole
+ * @requires ../config/ReproductionListAPI.jsx:getUserReproductionLists
+ * @requires ../config/ReproductionListAPI.jsx:addVideotoReproductionList
+ * @requires ../config/ReproductionListAPI.jsx:deleteVideoFromReproductionList
+ * @requires ../config/VideoAPI.jsx:getVideosFromReproductionList
+ * @requires ../config/Process.jsx:putFavouritesFirst
+ * @requires ./LoadingSpin.jsx:LoadingSpinUniCast
+ */
+
 import React, { Component } from "react";
 import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
@@ -16,6 +44,14 @@ import { getVideosFromReproductionList } from "../config/VideoAPI";
 import { putFavouritesFirst } from "../config/Process";
 import { LoadingSpinUniCast } from "./LoadingSpin";
 
+/**
+ * Renderiza el componente de una notificación
+ * @param {Object} param0 Propiedades del componente
+ * @param {Boolean} param0.mostrar Determina si mostrar o no la notificación
+ * @param {String} param0.mensaje Mensaje a mostrar en la notificación
+ * @param {Function} param0.handleClick Función a ejecutar tras pulsar DESHACER
+ * @param {Boolean} param0.deshacer Determina si una operación se puede deshacer o no
+ */
 export const Notificacion = ({ mostrar, mensaje, handleClick, deshacer }) => {
   return (
     <div
@@ -57,9 +93,20 @@ export const Notificacion = ({ mostrar, mensaje, handleClick, deshacer }) => {
   );
 };
 
+/**
+ * Clase que gestiona una lista de reproducción de un usuario.
+ * @extends Component
+ */
 class Lista extends Component {
-  constructor(props) {
-    super(props);
+  /**
+   * Construye el componente Lista
+   */
+  constructor() {
+    super();
+    /**
+     * Indica si el componente está montado o no
+     * @type {Boolean}
+     */
     this._isMounted = false;
     this.state = {
       lista: {},
@@ -72,6 +119,10 @@ class Lista extends Component {
     this.cerrarPopUp = this.cerrarPopUp.bind(this);
   }
 
+  /**
+   * Obtiene los primeros 20 vídeos de una lista de reproducción
+   * @param {Array.<Object>} list Lista de reproducción
+   */
   getData(list) {
     getVideosFromReproductionList(list.id, 0, (data, now) => {
       this.props.loadACK();
@@ -100,10 +151,16 @@ class Lista extends Component {
     this._isMounted = false;
   }
 
+  /**
+   * Abre el pop-up para borrar la lista de reproducción.
+   */
   abrirPopUp() {
     this.setState({ popUp: true });
   }
 
+  /**
+   * Cierra el pop-up para borrar la lista de reproducción.
+   */
   cerrarPopUp() {
     this.setState({ popUp: false });
   }
@@ -231,9 +288,21 @@ class Lista extends Component {
   }
 }
 
+/**
+ * Clase que gestiona la pantalla de las listas de
+ * reproducción de un usuario.
+ * @extends Component
+ */
 class MisListas extends Component {
+  /**
+   * Construye el componente MisListas
+   */
   constructor() {
     super();
+    /**
+     * Indica si el componente está montado o no
+     * @type {Boolean}
+     */
     this._isMounted = false;
     this.state = {
       contentMargin: "300px",
@@ -274,6 +343,10 @@ class MisListas extends Component {
     this.pararReloj();
   }
 
+  /**
+   * Obtiene las listas de reproducción de un usuario y coloca
+   * la lista de favoritos en primer lugar.
+   */
   getData() {
     getUserReproductionLists(data => {
       if (this._isMounted) {
@@ -286,6 +359,11 @@ class MisListas extends Component {
     });
   }
 
+  /**
+   * Una vez se han cargado todas las listas con sus vídeos,
+   * se quita de pantalla el spin de carga y se muestran las
+   * listas de reproducción del usuario.
+   */
   ackLista() {
     const numACK = this.state.listasCargadas + 1;
     if (numACK === this.state.numListas) {
@@ -294,6 +372,10 @@ class MisListas extends Component {
     this.setState({ listasCargadas: numACK });
   }
 
+  /**
+   * Ajusta el contenido a la barra lateral.
+   * @param {Boolean} display Determina si desplazar contenido o no
+   */
   handleChange(display) {
     if (display) {
       this.setState({ contentMargin: "300px" });
@@ -302,14 +384,24 @@ class MisListas extends Component {
     }
   }
 
+  /**
+   * Abre el pop-up para añadir/quitar un vídeo a una lista de reproducción
+   */
   abrirPopUp() {
     this.setState({ popUp: true, nombreLista: "" });
   }
 
+  /**
+   * Cierra el pop-up para añadir/quitar un vídeo a una lista de reproducción.
+   */
   cerrarPopUp() {
     this.setState({ popUp: false });
   }
 
+  /**
+   * Crea una nueva lista de reproducción.
+   * @param {Event} evento Evento que devuelve el formulario
+   */
   crearLista(evento) {
     evento.preventDefault();
     const nombreLista = this.nombreLista.current.value;
@@ -333,19 +425,34 @@ class MisListas extends Component {
     });
   }
 
+  /**
+   * Deshace la creación de una lista de reproducción
+   */
   deshacer() {
     this.borrarLista(this.state.listaCreada);
     this.setState({ notif: false });
   }
 
+  /**
+   * Resetea el reloj y lo inicializa para ejecutar la función
+   * MisListas.tick() una vez por segundo.
+   */
   iniciarReloj() {
+    this.pararReloj();
     this.timerID = setInterval(() => this.tick(), 1000);
   }
 
+  /**
+   * Detiene la ejecución del reloj
+   */
   pararReloj() {
     clearInterval(this.timerID);
   }
 
+  /**
+   * Suma un tick y si han pasado 3 ticks (3 segundos)
+   * quita la notificación de pantalla.
+   */
   tick() {
     let t = this.state.tiempo;
     if (t === 3) {
@@ -356,6 +463,10 @@ class MisListas extends Component {
     this.setState({ tiempo: t + 1 });
   }
 
+  /**
+   * Borra una lista de reproducción
+   * @param {Object} lista Lista de reproducción
+   */
   borrarLista(lista) {
     this.pararReloj();
     deleteReproductionList(lista.id, ok => {

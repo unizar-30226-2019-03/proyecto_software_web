@@ -1,3 +1,10 @@
+/**
+ * @fileoverview Fichero IconoAsignaturaUniversidad.jsx donde se encuentra el componente
+ * que renderiza el icono de la asignatura de un vídeo.
+ *
+ * @author UniCast
+ */
+
 import React from "react";
 
 /**

@@ -1,3 +1,25 @@
+/**
+ * @fileoverview Fichero Profesor.jsx donde se encuentra la clase
+ * que renderiza la pantalla de usuario de un profesor.
+ *
+ * @author UniCast
+ *
+ * @requires ./BarraNavegacion.jsx:BarraNavegacion
+ * @requires ../node_modules/react-helmet/es/Helmet.js:Helmet
+ * @requires ../../node_modules/react-bootstrap/Button.js:Button
+ * @requires ../node_modules/react-router-dom/Link.js:Link
+ * @requires ../node_modules/react-router-dom/Redirect.js:Redirect
+ * @requires ../config/Auth.jsx:isSignedIn
+ * @requires ../config/Auth.jsx:getUserRole
+ * @requires ../config/Auth.jsx:getUserID
+ * @requires ../config/UserAPI.jsx:getUser
+ * @requires ../config/UserAPI.jsx:getUniversityOfUser
+ * @requires ../config/UserAPI.jsx:getDegreeOfUser
+ * @requires ../config/UserAPI.jsx:getSubjectsAsProfessor
+ * @requires ../config/UserAPI.jsx:findUserProfessors
+ * @requires ./LoadingSpin.jsx:LoadingSpinUniCast
+ */
+
 import React, { Component } from "react";
 import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
@@ -14,6 +36,11 @@ import {
 } from "../config/UserAPI";
 import { LoadingSpinUniCast } from "./LoadingSpin";
 
+/**
+ * Clase que renderiza los datos de un usuario para
+ * mostrarlos.
+ * @extends Component
+ */
 class CamposMostrar extends Component {
   renderCampo(nombre, contenido) {
     return (
@@ -65,10 +92,21 @@ class CamposMostrar extends Component {
   }
 }
 
+/**
+ * Clase que renderiza las asignaturas a las que pertenece
+ * un profesor.
+ * @extends Component
+ */
 class AsignaturasProf extends Component {
+  /**
+   * Construye el componente AsignaturasProf
+   *
+   * @param {Object} props Propiedades para inicializar el componente
+   * @param {Array.<Object>} props.sub Lista de asignaturas de un profesor
+   */
   constructor(props) {
     super(props);
-    this.state = { sub: this.props.sub };
+    this.state = { sub: props.sub };
   }
 
   componentWillReceiveProps(newProps) {
@@ -120,9 +158,20 @@ class AsignaturasProf extends Component {
   }
 }
 
+/**
+ * Clase que gestiona la pantalla de usuario de un profesor.
+ * @extends Component
+ */
 class Profesor extends Component {
-  constructor(props) {
-    super(props);
+  /**
+   * Construye el componente Profesor
+   */
+  constructor() {
+    super();
+    /**
+     * Indica si el componente está montado o no
+     * @type {Boolean}
+     */
     this._isMounted = false;
     this.state = {
       contentMargin: "300px",
@@ -139,15 +188,15 @@ class Profesor extends Component {
     this.getDegreeFromUser = this.getDegreeFromUser.bind(this);
   }
 
+  /**
+   * Ajusta el contenido a la barra lateral.
+   * @param {Boolean} display Determina si desplazar contenido o no
+   */
   handleChange(display) {
     if (display) {
-      this.setState({
-        contentMargin: "300px"
-      });
+      this.setState({ contentMargin: "300px" });
     } else {
-      this.setState({
-        contentMargin: "70px"
-      });
+      this.setState({ contentMargin: "70px" });
     }
   }
 
@@ -162,6 +211,11 @@ class Profesor extends Component {
     this._isMounted = false;
   }
 
+  /**
+   * Obtiene el profesor, su universidad, su carrera
+   * y las asignaturas del profesor. Además comprueba
+   * que el usuario sea un profesor.
+   */
   getData() {
     getUser(this.props.match.params.id, data => {
       if (this._isMounted) {
@@ -178,6 +232,11 @@ class Profesor extends Component {
     });
   }
 
+  /**
+   * Comprueba que el perfil visualizado es el de un profesor.
+   * @param {Array.<Object>} professors Lista de profesores
+   * @param {Number} page Página de profesores a obtener
+   */
   checkProfessor(professors, page) {
     if (professors.length < 20 * page) {
       var esProfe = false;
@@ -197,6 +256,10 @@ class Profesor extends Component {
     }
   }
 
+  /**
+   * Obtiene la universidad del usuario.
+   * @param {Number} id Id del usuario
+   */
   getUniFromUser(id) {
     getUniversityOfUser(id, data => {
       if (this._isMounted) {
@@ -205,6 +268,10 @@ class Profesor extends Component {
     });
   }
 
+  /**
+   * Obtiene la carrera del usuario.
+   * @param {Number} id Id del usuario
+   */
   getDegreeFromUser(id) {
     getDegreeOfUser(id, data => {
       if (this._isMounted) {
@@ -213,6 +280,11 @@ class Profesor extends Component {
     });
   }
 
+  /**
+   * Renderiza un botón para enviar un mensaje privado dependiendo
+   * de si el usuario es un profesor o no.
+   * @param {Boolean} esProfe Determina si el usuario es profesor o no
+   */
   renderButton(esProfe) {
     if (esProfe) {
       return (

@@ -1,3 +1,23 @@
+/**
+ * @fileoverview Fichero Perfil.jsx donde se encuentra la clase
+ * que renderiza la pantalla del perfil de un usuario.
+ *
+ * @author UniCast
+ *
+ * @requires ./BarraNavegacion.jsx:BarraNavegacion
+ * @requires ../node_modules/react-helmet/es/Helmet.js:Helmet
+ * @requires ../../node_modules/react-bootstrap/Button.js:Button
+ * @requires ../node_modules/react-router-dom/Link.js:Link
+ * @requires ../node_modules/react-router-dom/Redirect.js:Redirect
+ * @requires ../config/Auth.jsx:isSignedIn
+ * @requires ../config/Auth.jsx:getUserID
+ * @requires ../config/Auth.jsx:getUserRole
+ * @requires ../config/UserAPI.jsx:getUser
+ * @requires ../config/UserAPI.jsx:getUniversityOfUser
+ * @requires ../config/UserAPI.jsx:getDegreeOfUser
+ * @requires ./LoadingSpin.jsx:LoadingSpinUniCast
+ */
+
 import React, { Component } from "react";
 import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
@@ -11,6 +31,11 @@ import {
 } from "../config/UserAPI";
 import { LoadingSpinUniCast } from "./LoadingSpin";
 
+/**
+ * Clase que renderiza los datos de un usuario para
+ * mostrarlos.
+ * @extends Component
+ */
 class CamposMostrar extends Component {
   renderCampo(nombre, contenido) {
     return (
@@ -59,9 +84,21 @@ class CamposMostrar extends Component {
   }
 }
 
+/**
+ * Clase que gestiona la pantalla del perfil
+ * de un usuario.
+ * @extends Component
+ */
 class Perfil extends Component {
+  /**
+   * Construye el componente Perfil
+   */
   constructor() {
     super();
+    /**
+     * Indica si el componente está montado o no
+     * @type {Boolean}
+     */
     this._isMounted = false;
     this.state = {
       contentMargin: "300px",
@@ -90,6 +127,9 @@ class Perfil extends Component {
     this._isMounted = false;
   }
 
+  /**
+   * Obtiene el usuario junto con su universidad y carrera.
+   */
   getData() {
     getUser(getUserID(), data => {
       if (this._isMounted) {
@@ -100,6 +140,10 @@ class Perfil extends Component {
     });
   }
 
+  /**
+   * Obtiene la universidad del usuario.
+   * @param {Number} id Id del usuario
+   */
   getUniFromUser(id) {
     getUniversityOfUser(id, data => {
       if (this._isMounted) {
@@ -108,6 +152,10 @@ class Perfil extends Component {
     });
   }
 
+  /**
+   * Obtiene la carrera del usuario.
+   * @param {Number} id Id del usuario
+   */
   getDegreeFromUser(id) {
     getDegreeOfUser(id, data => {
       if (this._isMounted) {
@@ -116,15 +164,15 @@ class Perfil extends Component {
     });
   }
 
+  /**
+   * Ajusta el contenido a la barra lateral.
+   * @param {Boolean} display Determina si desplazar contenido o no
+   */
   handleChange(display) {
     if (display) {
-      this.setState({
-        contentMargin: "300px"
-      });
+      this.setState({ contentMargin: "300px" });
     } else {
-      this.setState({
-        contentMargin: "70px"
-      });
+      this.setState({ contentMargin: "70px" });
     }
   }
 

@@ -1,4 +1,9 @@
-/* CSS DE LA APLICACIÓN */
+/**
+ * @fileoverview Fichero App.css donde se encuentra todo el código
+ * CSS de la aplicación
+ *
+ * @author UniCast
+ */
 .App {
   text-align: center;
 }

@@ -1,3 +1,30 @@
+/**
+ * @fileoverview Fichero MisVideos.jsx donde se encuentra la clase
+ * que renderiza la pantalla de los vídeos subidos por un profesor.
+ *
+ * @author UniCast
+ *
+ * @requires ./BarraNavegacion.jsx:BarraNavegacion
+ * @requires ../node_modules/react-helmet/es/Helmet.js:Helmet
+ * @requires ../../node_modules/react-bootstrap/Button.js:Button
+ * @requires ../node_modules/react-router-dom/Link.js:Link
+ * @requires ../node_modules/react-router-dom/Redirect.js:Redirect
+ * @requires ../config/Auth.jsx:isSignedIn
+ * @requires ../config/Auth.jsx:getUserID
+ * @requires ../config/Auth.jsx:getUserRole
+ * @requires ../../node_modules/reactjs-popup/reactjs-popup.js:Popup
+ * @requires ./IconoAsignaturaUniversidad.jsx:IconoAsignaturaUniversidad
+ * @requires ../config/Process.jsx:getTime
+ * @requires ../config/VideoAPI.jsx:getTimePassed
+ * @requires ../config/VideoAPI.jsx:getScore
+ * @requires ../config/VideoAPI.jsx:getVideosFromUploader
+ * @requires ../config/VideoAPI.jsx:deleteVideo
+ * @requires ../config/UserAPI.jsx:getUser
+ * @requires ../../node_modules/react-icons/fa/FaEllipsisV.js:FaEllipsisV
+ * @requires ./MisListas.jsx:Notificacion
+ * @requires ./LoadingSpin.jsx:LoadingSpinUniCast
+ */
+
 import React, { Component } from "react";
 import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
@@ -18,11 +45,21 @@ import { FaEllipsisV } from "react-icons/fa";
 import { Notificacion } from "./MisListas";
 import { LoadingSpinUniCast } from "./LoadingSpin";
 
-// One item component
-// selected prop will be passed
+/**
+ * Clase que renderiza un vídeo individual para la
+ * lista de vídeos subidos de un profesor.
+ * @extends Component
+ */
 class MiVideoItem extends Component {
-  constructor(props) {
-    super(props);
+  /**
+   * Construye el componente MiVideoItem
+   */
+  constructor() {
+    super();
+    /**
+     * Indica si el componente está montado o no
+     * @type {Boolean}
+     */
     this._isMounted = false;
     this.state = {
       mostrarOpciones: false,
@@ -34,12 +71,18 @@ class MiVideoItem extends Component {
     this.cerrarPopUp = this.cerrarPopUp.bind(this);
   }
 
+  /**
+   * Abre el pop-up para borrar un vídeo
+   */
   abrirPopUp() {
     if (this._isMounted) {
       this.setState({ popUp: true });
     }
   }
 
+  /**
+   * Cierra el pop-up para borrar un vídeo
+   */
   cerrarPopUp() {
     if (this._isMounted) {
       this.setState({ popUp: false, mostrarOpciones: false });
@@ -228,8 +271,12 @@ class MiVideoItem extends Component {
   }
 }
 
-// All items component
-// Important! add unique key
+/**
+ * Renderiza la lista de vídeos subidos por un profesor.
+ * @param {Array.<Object>} list Lista de vídeos subidos
+ * @param {Date} now Timestamp del servidor para calcular el tiempo transcurrido desde que se subió el vídeo
+ * @param {Function} borrarVideo Función que borra el vídeo seleccionado
+ */
 const Menu = (list, now, borrarVideo) =>
   list.map(el => {
     const { title, url, id, thumbnailUrl, score, timestamp, seconds } = el;
@@ -253,9 +300,21 @@ const Menu = (list, now, borrarVideo) =>
     );
   });
 
+/**
+ * Clase que gestiona la pantalla de vídeos subidos
+ * de un profesor.
+ * @extends Component
+ */
 class MisVideos extends Component {
+  /**
+   * Construye el componente MisVideos.
+   */
   constructor() {
     super();
+    /**
+     * Indica si el componente está montado o no
+     * @type {Boolean}
+     */
     this._isMounted = false;
     this.state = {
       contentMargin: "300px",
@@ -279,6 +338,9 @@ class MisVideos extends Component {
     this.tick = this.tick.bind(this);
   }
 
+  /**
+   * Obtiene el profesor y sus 20 primeros vídeos subidos.
+   */
   getData() {
     getUser(getUserID(), data => {
       if (this._isMounted) {
@@ -315,6 +377,11 @@ class MisVideos extends Component {
     window.removeEventListener("scroll", this.handleScroll);
   }
 
+  /**
+   * Controla el scroll del profesor para cargar más
+   * vídeos subidos si el profesor hace scroll
+   * hasta el final de la lista de vídeos.
+   */
   handleScroll() {
     var d = document.documentElement;
     var offset = d.scrollTop + window.innerHeight;
@@ -325,6 +392,10 @@ class MisVideos extends Component {
     }
   }
 
+  /**
+   * Obtiene 20 vídeos subidos más, si los hay.
+   * @param {Number} page Página de vídeos a obtener
+   */
   loadMoreVideos(page) {
     getVideosFromUploader(page, (videos, time) => {
       if (this._isMounted) {
@@ -337,6 +408,10 @@ class MisVideos extends Component {
     });
   }
 
+  /**
+   * Borra el vídeo seleccionado.
+   * @param {Number} id Id del vídeo a borrar
+   */
   borrarVideo(id) {
     deleteVideo(id, ok => {
       if (ok) {
@@ -358,6 +433,10 @@ class MisVideos extends Component {
     });
   }
 
+  /**
+   * Ajusta el contenido a la barra lateral.
+   * @param {Boolean} display Determina si desplazar contenido o no
+   */
   handleChange(display) {
     if (display) {
       this.setState({ contentMargin: "300px" });
@@ -366,15 +445,26 @@ class MisVideos extends Component {
     }
   }
 
+  /**
+   * Resetea el reloj y lo inicializa para ejecutar la función
+   * MisVideos.tick() una vez por segundo.
+   */
   iniciarReloj() {
     this.pararReloj();
     this.timerID = setInterval(() => this.tick(), 1000);
   }
 
+  /**
+   * Detiene la ejecución del reloj
+   */
   pararReloj() {
     clearInterval(this.timerID);
   }
 
+  /**
+   * Suma un tick y si han pasado 3 ticks (3 segundos)
+   * quita la notificación de pantalla.
+   */
   tick() {
     let t = this.state.tiempoNotif;
     if (t === 3) {
