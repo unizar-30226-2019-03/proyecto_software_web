@@ -1,3 +1,23 @@
+/**
+ * @fileoverview Fichero ListaVertical.jsx donde se encuentra la clase
+ * que renderiza una lista vertical de vídeos.
+ *
+ * @author UniCast
+ *
+ * @requires ../node_modules/react-router-dom/Link.js:Link
+ * @requires ../../node_modules/react-icons/fa/FaTimes.js:FaTimes
+ * @requires ../../node_modules/react-icons/fa/FaPlus.js:FaPlus
+ * @requires ../../node_modules/react-bootstrap/FormCheck.js:FormCheck
+ * @requires ../../node_modules/reactjs-popup/reactjs-popup.js:Popup
+ * @requires ../config/VideoAPI.jsx:getScore
+ * @requires ../config/VideoAPI.jsx:getTimePassed
+ * @requires ../config/VideoAPI.jsx:getVideoSubject
+ * @requires ../config/Process.jsx:getTime
+ * @requires ../config/ReproductionListAPI.jsx:getReproductionListVideoIn
+ * @requires ../config/ReproductionListAPI.jsx:addReproductionList
+ * @requires ../config/Auth.jsx:isSignedIn
+ */
+
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { FaTimes, FaPlus } from "react-icons/fa";
@@ -11,12 +31,27 @@ import {
 } from "../config/ReproductionListAPI";
 import { isSignedIn } from "../config/Auth";
 
-export class ContenidoPopUp extends Component {
+/**
+ * Clase que gestiona el pop-up para añadir o quitar un vídeo
+ * a una lista de reproducción de un usuario.
+ * @extends Component
+ */
+class ContenidoPopUp extends Component {
+  /**
+   * Construye el componente ContenidoPopUp
+   *
+   * @param {Object} props Propiedades para inicializar el componente
+   * @param {Array.<Object>} props.listaRepro Listas de reproducción del usuario
+   */
   constructor(props) {
     super(props);
+    /**
+     * Indica si el componente está montado o no
+     * @type {Boolean}
+     */
     this._isMounted = false;
     this.state = {
-      listas: this.props.listaRepro,
+      listas: props.listaRepro,
       listasDelVideo: [],
       crearLista: false,
       nombreNuevaLista: ""
@@ -27,6 +62,10 @@ export class ContenidoPopUp extends Component {
     this.crearLista = this.crearLista.bind(this);
   }
 
+  /**
+   * Obtiene las listas de reproducción a las que un
+   * vídeo concreto pertenece.
+   */
   getData() {
     const id = parseInt(this.props.videoId);
     getReproductionListVideoIn(id, data => {
@@ -47,6 +86,13 @@ export class ContenidoPopUp extends Component {
     this._isMounted = false;
   }
 
+  /**
+   * Añade o borra un vídeo a la lista de reproducción seleccionada
+   * e informa de ello.
+   * @param {Event} e Evento que devuelve el formulario
+   * @param {Number} id Id de la lista de reproducción
+   * @param {String} name Nombre de la lista de reproducción
+   */
   handleChange(e, id, name) {
     const isChecked = e.target.checked;
 
@@ -77,11 +123,21 @@ export class ContenidoPopUp extends Component {
     }
   }
 
+  /**
+   * Actualiza el valor del nombre de la nueva lista
+   * de reproducción a crear.
+   * @param {Event} e Evento que devuelve el formulario
+   */
   actualizarNuevaLista(e) {
     e.preventDefault();
     this.setState({ nombreNuevaLista: e.target.value });
   }
 
+  /**
+   * Crea la lista de reproducción con el nombre indicado
+   * por el usuario.
+   * @param {Event} e Evento que devuelve el formulario
+   */
   crearLista(e) {
     if (e.keyCode === 13) {
       //CREAR LA LISTA
@@ -162,10 +218,18 @@ export class ContenidoPopUp extends Component {
     );
   }
 }
+export { ContenidoPopUp };
 
+/**
+ * Clase que renderiza un vídeo individual para la lista vertical.
+ * @extends Component
+ */
 class MenuItem extends Component {
-  constructor(props) {
-    super(props);
+  /**
+   * Construye el componente MenuItem
+   */
+  constructor() {
+    super();
     this._isMounted = false;
     this.state = {
       mostrarOpciones: false,
@@ -178,6 +242,9 @@ class MenuItem extends Component {
     this.recibirHijo = this.recibirHijo.bind(this);
   }
 
+  /**
+   * Obtiene la asignatura del vídeo a mostrar
+   */
   getData() {
     getVideoSubject(this.props.id, data => {
       if (this._isMounted) {
@@ -195,17 +262,32 @@ class MenuItem extends Component {
     this._isMounted = false;
   }
 
+  /**
+   * Si anyadir=true, anyade el vídeo a la lista de reproducción,
+   * sino lo borra de la lista.
+   * @param {Number} lista Id de la lista de reproducción
+   * @param {String} mensaje Mensaje a mostrar en la notificación
+   * @param {Boolean} anyadir Indica si añadir (true) o borrar (false) el vídeo a la lista
+   * @param {Function} callback Función a ejecutar tras añadir/borrar el vídeo de la lista
+   */
   recibirHijo(lista, mensaje, anyadir, callback) {
-    //SI anyadir = true, anyadir a la lista lista, sino borrar de la lista lista
     this.props.anyadirALista(this.props.id, mensaje, lista, anyadir, ok => {
       callback(ok);
     });
   }
 
+  /**
+   * Abre el pop-up para añadir el vídeo a las listas de reproducción
+   * del usuario.
+   */
   abrirPopUp() {
     this.setState({ popUp: true });
   }
 
+  /**
+   * Cierra el pop-up para borrar el vídeo a las listas de reproducción
+   * del usuario.
+   */
   cerrarPopUp() {
     this.setState({ popUp: false, mostrarOpciones: false });
   }
@@ -397,8 +479,15 @@ class MenuItem extends Component {
   }
 }
 
-// All items component
-// Important! add unique key
+/**
+ * Renderiza la lista vertical completa de vídeos.
+ * @param {Array.<Object>} list Lista de vídeos recuperados
+ * @param {Function} borrar Función para borrar un vídeo de la lista
+ * @param {Function} anyadir Función para añadir/borrar un vídeo a una lista de reproducción
+ * @param {Array.<Object>} listaRepro Listas de reproducción del usuario
+ * @param {Date} time Timestamp para calcular la fecha de subida del vídeo
+ * @param {Function} actualizarListas Función para actualizar las listas de reproducción del usuario
+ */
 export const MenuVertical = (
   list,
   borrar,
@@ -427,16 +516,31 @@ export const MenuVertical = (
     );
   });
 
+/**
+ * Clase que gestiona la lista vertical de vídeos
+ * @extends Component
+ */
 class ListaVertical extends Component {
+  /**
+   * Construye el componente ListaVertical
+   *
+   * @param {Object} props Propiedades para inicializar el componente
+   * @param {Array.<Object>} props.lista Lista de vídeos que coinciden con la búsqueda
+   * @param {Array.<Object>} props.borrar Función para borrar un vídeo de la lista
+   * @param {Function} props.anyadirALista Función para añadir/borrar un vídeo a una lista de reproducción
+   * @param {Array.<Object>} props.listaRepro Listas de reproducción de un usuario
+   * @param {Date} props.time Timestamp del servidor para calcular el tiempo transcurrido desde la subida del vídeo
+   * @param {Function} props.actualizarListas Función para actualizar las listas de reproducción del usuario
+   */
   constructor(props) {
     super(props);
     this.menu = MenuVertical(
-      this.props.lista,
-      this.props.borrar,
-      this.props.anyadirALista,
-      this.props.listaRepro,
-      this.props.time,
-      this.props.actualizarListas
+      props.lista,
+      props.borrar,
+      props.anyadirALista,
+      props.listaRepro,
+      props.time,
+      props.actualizarListas
     );
   }
 

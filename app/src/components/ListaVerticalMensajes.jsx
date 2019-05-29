@@ -1,7 +1,21 @@
+/**
+ * @fileoverview Fichero ListaVerticalMensajes.jsx donde se encuentra la clase
+ * que renderiza la lista vertical de mensajes.
+ *
+ * @author UniCast
+ *
+ * @requires ../node_modules/react-router-dom/Link.js:Link
+ * @requires ../config/Auth.jsx:getUserId
+ */
+
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { getUserID } from "../config/Auth";
 
+/**
+ * Clase que renderiza un elemento de la lista de mensajes con profesores
+ * @extends Component
+ */
 class MenuItem extends Component {
   render() {
     const usuario =
@@ -85,17 +99,29 @@ class MenuItem extends Component {
   }
 }
 
-// All items component
-// Important! add unique key
+/**
+ * Renderiza la lista de mensajes con profesores
+ * @param {Array.<Object>} list Lista de mensajes de profesores
+ */
 export const MenuVertical = list =>
   list.map(el => {
     return <MenuItem key={el.id} chat={el} />;
   });
 
+/**
+ * Clase que gestiona la lista de mensajes con profesores
+ * @extends Component
+ */
 class ListaVerticalMensajes extends Component {
+  /**
+   * Construye el componente ListaVerticalMensajes
+   *
+   * @param {Object} props Propiedades para inicializar el componente
+   * @param {Array.<Object>} props.lista Lista de mensajes con profesores
+   */
   constructor(props) {
     super(props);
-    this.menu = MenuVertical(this.props.lista);
+    this.menu = MenuVertical(props.lista);
   }
 
   componentWillReceiveProps(newProps) {
