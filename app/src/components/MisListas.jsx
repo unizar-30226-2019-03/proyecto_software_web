@@ -62,7 +62,8 @@ export const Notificacion = ({ mostrar, mensaje, handleClick, deshacer }) => {
         bottom: "20px",
         backgroundColor: "#323232",
         color: "white",
-        borderRadius: "3px"
+        borderRadius: "3px",
+        zIndex: "1000"
       }}
     >
       <div
