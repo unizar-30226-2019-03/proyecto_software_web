@@ -95,7 +95,7 @@ const FormularioProfesor = (handleProfesor, userID) => {
  * Renderiza el formulario que permite añadir una universidad
  * @param {Function} handleUniversidad Función que utiliza los datos guardados en el formulario para añadir la universidad
  * @param {String} nombre Almacena el nombre
- * @param {String} fotoUni Ruta de la imagen de la universidad
+ * @param {File} fotoUni Imagen de la universidad
  */
 const FormularioUniversidad = (handleUniversidad, nombre, fotoUni) => {
   return (
@@ -140,8 +140,8 @@ const FormularioUniversidad = (handleUniversidad, nombre, fotoUni) => {
 /**
  * Renderiza el formulario que permite añadir una carrera
  * @param {Function} handleCarrera Función que utiliza los datos guardados en el formulario para añadir la carrera
- * @param {String} uni Almacena el id de la universidad
- * @param {String} carrera Almacena el nombre de la carrera a guardar
+ * @param {Number} uni Almacena el id de la universidad
+ * @param {Number} carrera Almacena el nombre de la carrera a guardar
  * @param {Object} universidades Lista de universidades guardadas
  */
 const FormularioCarrera = (handleCarrera, uni, carrera, universidades) => {
@@ -199,10 +199,10 @@ const FormularioCarrera = (handleCarrera, uni, carrera, universidades) => {
 /**
  * Renderiza el formulario que permite añadir una asignatura
  * @param {Function} handleAsignatura Función que utiliza los datos guardados en el formulario para añadir la asignatura
- * @param {String} uni Almacena el id de la universidad
+ * @param {Number} uni Almacena el id de la universidad
  * @param {String} asignatura Nombre de la asignatura
  * @param {String} asignatura_corto Abreviatura de la asignatura
- * @param {Object} universidades Lista de universidades guardadas
+ * @param {Array.<Object>} universidades Lista de universidades guardadas
  */
 const FormularioAsignatura = (
   handleAsignatura,
@@ -280,7 +280,7 @@ class FormularioProfeAsignatura extends Component {
    * Construye el componente FormularioProfeAsignatura
    *
    * @param {Object} props Propiedades para inicializar el componente
-   * @param {Object} props.universidades Lista de universidades
+   * @param {Array.<Object>} props.universidades Lista de universidades
    */
   constructor(props) {
     super(props);

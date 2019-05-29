@@ -91,8 +91,8 @@ const FormularioProfesor = (handleProfesor, userID) => {
 /**
  * Renderiza el formulario que permite borrar una universidad
  * @param {Function} handleUniversidad Función que utiliza los datos guardados en el formulario para borrar la universidad
- * @param {String} idUni Almacena el id de la universidad
- * @param {Object} lista Lista de universidades guardadas
+ * @param {Number} idUni Almacena el id de la universidad
+ * @param {Array.<Object>} lista Lista de universidades guardadas
  */
 const FormularioUniversidad = (handleUniversidad, idUni, lista) => {
   return (
@@ -144,7 +144,7 @@ class FormularioAsignatura extends Component {
    * Construye el componente FormularioAsignatura
    *
    * @param {Object} props Propiedades para inicializar el componente
-   * @param {Object} props.universidades Lista de universidades
+   * @param {Array.<Object>} props.universidades Lista de universidades
    */
   constructor(props) {
     super(props);
@@ -251,7 +251,7 @@ class FormularioProfeAsignatura extends Component {
    * Construye el componente FormularioProfeAsignatura
    *
    * @param {Object} props Propiedades para inicializar el componente
-   * @param {Object} props.universidades Lista de universidades
+   * @param {Array.<Object>} props.universidades Lista de universidades
    */
   constructor(props) {
     super(props);

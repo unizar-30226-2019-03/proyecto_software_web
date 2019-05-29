@@ -1,3 +1,31 @@
+/**
+ * @fileoverview Fichero EditarPerfil.jsx donde se encuentra la clase
+ * que renderiza la pantalla de editar el perfil de un usuario.
+ *
+ * @author UniCast
+ *
+ * @requires ./BarraNavegacion.jsx:BarraNavegacion
+ * @requires ../node_modules/react-helmet/es/Helmet.js:Helmet
+ * @requires ../../node_modules/react-bootstrap/Button.js:Button
+ * @requires ../../node_modules/react-bootstrap/Form.js:Form
+ * @requires ../../node_modules/react-bootstrap/Col.js:Col
+ * @requires ../node_modules/react-router-dom/Redirect.js:Redirect
+ * @requires ../node_modules/react-router-dom/Link.js:Link
+ * @requires ../config/Auth.jsx:isSignedIn
+ * @requires ../config/Auth.jsx:getUserID
+ * @requires ../config/Auth.jsx:restriccionNombre
+ * @requires ../config/Auth.jsx:restriccionUser
+ * @requires ../config/Auth.jsx:emailPattern
+ * @requires ../config/Auth.jsx:restriccion
+ * @requires ../config/Auth.jsx:getUserRole
+ * @requires ../config/Process.jsx:checkFileExtensionImage
+ * @requires ../config/UserAPI.jsx:getUser
+ * @requires ../config/UserAPI.jsx:updateUser
+ * @requires ../config/UniversityAPI.jsx:getUniversities
+ * @requires ../config/UniversityAPI.jsx:getDegreesFromUniversity
+ * @requires ./LoadingSpin.jsx:LoadingSpinUniCast
+ */
+
 import React, { Component } from "react";
 import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
@@ -20,6 +48,34 @@ import {
 } from "../config/UniversityAPI";
 import { LoadingSpinUniCast } from "./LoadingSpin";
 
+/**
+ * Renderiza el formulario que permite actualizar el perfil del usuario
+ * @param {Function} handleSubmit Función que utiliza los datos guardados en el formulario para actualizar el usuario
+ * @param {String} nombre Referencia al nombre del usuario
+ * @param {String} apellidos Referencia a los apellidos del usuario
+ * @param {String} userID Referencia al nombre de usuario del usuario
+ * @param {String} email Referencia al email del usuario
+ * @param {String} passwd Referencia a la contraseña del usuario
+ * @param {String} passwd2 Referencia a la contraseña a confirmar del usuario
+ * @param {File} foto Referencia a la foto de perfil del usuario
+ * @param {Number} universidad Referencia al id de la universidad del usuario
+ * @param {Number} carrera Referencia al id de la carrera del usuario
+ * @param {Object} user Usuario antes de actualizar el perfil
+ * @param {String} description Referencia a la descripción del usuario
+ * @param {Function} handleChangeDescription Función que se ejecuta tras cambiar el valor de la descripción del usuario
+ * @param {Number} img_valida Parámetro que indica si la imagen introducida es válida o no
+ * @param {Boolean} nombreInvalido Parámetro que indica si el nombre introducido es válido o no
+ * @param {Boolean} apellidoInvalido Parámetro que indica si los apellidos introducidos son válidos o no
+ * @param {Boolean} userInvalido Parámetro que indica si el nombre de usuario introducido es válido o no
+ * @param {Boolean} emailInvalido Parámetro que indica si el email introducido es válido o no
+ * @param {Boolean} passNoIguales Parámetro que indica si la contraseñas introducidas coinciden o no
+ * @param {Boolean} passNoValida Parámetro que indica si la contraseña introducida es válida o no
+ * @param {Array.<Object>} listaUniversidades Lista de todas las universidades
+ * @param {Array.<Object>} listaCarreras Lista de todas las carreras perteneciantes a una universidad
+ * @param {Function} handleChangeUni Función que se ejecuta tras seleccionar otra universidad en el formulario
+ * @param {Boolean} mostrarSpin Parámetro que indica si mostrar un spin de carga o no
+ * @param {Function} handleSpin Función que se ejecuta tras someter el formulario y controla el spin de carga
+ */
 const FormularioDatos = (
   handleSubmit,
   nombre,
@@ -230,9 +286,21 @@ const FormularioDatos = (
   );
 };
 
+/**
+ * Clase que gestiona la pantalla de actualizar el perfil
+ * de un usuario.
+ * @extends Component
+ */
 class EditarPerfil extends Component {
-  constructor(props) {
-    super(props);
+  /**
+   * Construye el componente EditarPerfil
+   */
+  constructor() {
+    super();
+    /**
+     * Indica si el componente está montado o no
+     * @type {Boolean}
+     */
     this._isMounted = false;
     this.state = {
       contentMargin: "300px",
@@ -270,6 +338,10 @@ class EditarPerfil extends Component {
     this.getAllUniversities = this.getAllUniversities.bind(this);
   }
 
+  /**
+   * Obtiene el usuario a actualizar y la lista completa de
+   * universidades.
+   */
   getData() {
     getUser(getUserID(), u => {
       if (this._isMounted) {
@@ -298,6 +370,11 @@ class EditarPerfil extends Component {
     this._isMounted = false;
   }
 
+  /**
+   * Dependiendo de los datos introducidos por el usuario
+   * se mostrará el spin de carga o si hay error no se mostrará
+   * nada.
+   */
   handleSpin() {
     const nombre = this.nombre.current.value;
     const apellidos = this.apellidos.current.value;
@@ -339,6 +416,12 @@ class EditarPerfil extends Component {
     }
   }
 
+  /**
+   * Obtiene las 20 universidades solicitadas y las añade a la lista
+   * completa de universidades.
+   * @param {Array.<Object>} unis Lista de universidades
+   * @param {Number} page Página de universidades a obtener
+   */
   getAllUniversities(unis, page) {
     if (unis.length < 20 * page) {
       if (this._isMounted) {
@@ -352,6 +435,10 @@ class EditarPerfil extends Component {
     }
   }
 
+  /**
+   * Actualiza la lista de carreras según la universidad seleccionada.
+   * @param {Event} e Evento que devuelve el formulario
+   */
   handleChangeUni(e) {
     const uniId = parseInt(e.target.value);
     //ACTUALIZAR LISTA DE CARRERAS (getDegreesFromUniversity)
@@ -360,14 +447,17 @@ class EditarPerfil extends Component {
     });
   }
 
+  /**
+   * Actualiza el valor de la descripción introducida por el usuario
+   * @param {Event} e Evento que devuelve el formulario
+   */
   handleChangeDescription(e) {
     this.setState({ description: e.target.value });
   }
   /**
-   * Comprueba que nombre, apellidos, userID, email, pass y pass2, y foto son correctas.
-   * De ser así, actualiza el usuario. Si se ha actualizado el usuario, pondrá datosValidos a true,
-   * y datosInvalidos a false. En el caso contrario será al reves.
-   * @param {*} event 
+   * Comprueba que los datos introducidos por el usuario son válidos.
+   * De ser así, actualiza el usuario.
+   * @param {Event} event Evento que devuelve el formulario
    */
   handleSubmitDatos(event) {
     event.preventDefault();
@@ -470,15 +560,15 @@ class EditarPerfil extends Component {
     }
   }
 
+  /**
+   * Ajusta el contenido a la barra lateral.
+   * @param {Boolean} display Determina si desplazar contenido o no
+   */
   handleChange(display) {
     if (display) {
-      this.setState({
-        contentMargin: "300px"
-      });
+      this.setState({ contentMargin: "300px" });
     } else {
-      this.setState({
-        contentMargin: "70px"
-      });
+      this.setState({ contentMargin: "70px" });
     }
   }
 

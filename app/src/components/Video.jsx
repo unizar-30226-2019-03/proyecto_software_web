@@ -33,7 +33,7 @@ import {
  * Clase que gestiona la reproducción de archivos de vídeo.
  * @extends Component
  */
-export default class Video extends Component {
+class Video extends Component {
   /**
    * Construye el componente Video
    * @param {Object} props Propiedades para inicializar el componente
@@ -148,3 +148,5 @@ export default class Video extends Component {
     );
   }
 }
+
+export default Video;

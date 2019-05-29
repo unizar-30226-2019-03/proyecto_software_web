@@ -43,11 +43,9 @@ import { LoadingSpinUniCast } from "./LoadingSpin";
 class Chat extends Component {
   /**
    * Construye el componente Chat
-   *
-   * @param {Object} props Propiedades para inicializar el componente
    */
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     /**
      * Indica si el componente está montado o no
      * @type {Boolean}
