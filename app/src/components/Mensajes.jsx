@@ -1,3 +1,20 @@
+/**
+ * @fileoverview Fichero Mensajes.jsx donde se encuentra la clase
+ * que renderiza la pantalla de la lista de chats abiertos de un usuario.
+ *
+ * @author UniCast
+ *
+ * @requires ./BarraNavegacion.jsx:BarraNavegacion
+ * @requires ../node_modules/react-helmet/es/Helmet.js:Helmet
+ * @requires ./ListaVerticalMensajes.jsx:ListaVerticalMensajes
+ * @requires ../config/Auth.jsx:isSignedIn
+ * @requires ../config/Auth.jsx:getUserRole
+ * @requires ../node_modules/react-router-dom/Link.js:Link
+ * @requires ../node_modules/react-router-dom/Redirect.js:Redirect
+ * @requires ../config/MessageAPI.jsx:getLastMessages
+ * @requires ./LoadingSpin.jsx:LoadingSpinUniCast
+ */
+
 import React, { Component } from "react";
 import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
@@ -7,25 +24,26 @@ import { Redirect, Link } from "react-router-dom";
 import { getLastMessages } from "../config/MessageApi";
 import { LoadingSpinUniCast } from "./LoadingSpin";
 
+/**
+ * Clase que gestiona la lista de chats activos de un usuario.
+ * @extends Component
+ */
 class MensajesLista extends Component {
+  /**
+   * Construye el componente MensajesLista
+   *
+   * @param {Object} props Propiedades para inicializar el componente
+   * @param {Array.<Object>} props.chats Lista de chats activos de un usuario
+   */
   constructor(props) {
     super(props);
-    this.state = { popUp: false, listaChats: this.props.chats };
-    this.abrirPopUp = this.abrirPopUp.bind(this);
-    this.cerrarPopUp = this.cerrarPopUp.bind(this);
+    this.state = { listaChats: props.chats };
   }
 
   componentWillReceiveProps(nextProps) {
     this.setState({ listaChats: nextProps.chats });
   }
 
-  abrirPopUp() {
-    this.setState({ popUp: true });
-  }
-
-  cerrarPopUp() {
-    this.setState({ popUp: false });
-  }
   render() {
     return (
       <div>
@@ -39,9 +57,21 @@ class MensajesLista extends Component {
   }
 }
 
+/**
+ * Clase que gestiona la pantalla de la lista de chats
+ * de un usuario.
+ * @extends Component
+ */
 class Mensajes extends Component {
+  /**
+   * Construye el componente Mensajes
+   */
   constructor() {
     super();
+    /**
+     * Indica si el componente está montado o no
+     * @type {Boolean}
+     */
     this._isMounted = false;
     this.state = {
       contentMargin: "300px",
@@ -52,6 +82,9 @@ class Mensajes extends Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
+  /**
+   * Obtiene la lista de los chats activos de un usuario.
+   */
   getData() {
     getLastMessages(data => {
       if (this._isMounted) {
@@ -71,6 +104,10 @@ class Mensajes extends Component {
     this._isMounted = false;
   }
 
+  /**
+   * Ajusta el contenido a la barra lateral.
+   * @param {Boolean} display Determina si desplazar contenido o no
+   */
   handleChange(display) {
     if (display) {
       this.setState({ contentMargin: "300px" });

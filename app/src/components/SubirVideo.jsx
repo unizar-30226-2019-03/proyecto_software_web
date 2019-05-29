@@ -120,8 +120,8 @@ const FormularioDatos = (
 };
 
 class SubirVideo extends Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     this._isMounted = false;
     this.state = {
       contentMargin: "300px",

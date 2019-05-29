@@ -1,10 +1,30 @@
-import React from "react";
+/**
+ * @fileoverview Fichero Messages.jsx donde se encuentra la clase
+ * que renderiza la lista de mensajes de un chat.
+ *
+ * @author UniCast
+ *
+ * @requires ./Message.jsx:Message
+ */
+
+import React, { Component } from "react";
 import Message from "./Message";
 
-class ChatInput extends React.Component {
+/**
+ * Clase que gestiona el área de texto para que el usuario introduzca
+ * el mensaje a enviar.
+ * @extends Component
+ */
+class ChatInput extends Component {
+  /**
+   * Construye la clase ChatInput
+   *
+   * @param {Object} props Propiedades para inicializar el componente
+   * @param {Number} props.width Ancho del componente
+   */
   constructor(props) {
     super(props);
-    this.state = { width: this.props.width };
+    this.state = { width: props.width };
     this.comentario = React.createRef();
 
     this.submitHandler = this.submitHandler.bind(this);
@@ -14,6 +34,10 @@ class ChatInput extends React.Component {
     this.setState({ width: newProps.width });
   }
 
+  /**
+   * Envía un mensaje a un usuario por el chat.
+   * @param {Event} event Evento que devuelve el formulario
+   */
   submitHandler(event) {
     const comentario = this.comentario.current.value;
     if (comentario === "\n") {
@@ -43,6 +67,10 @@ class ChatInput extends React.Component {
   }
 }
 
+/**
+ * Renderiza todos los mensajes de un chat entre dos usuarios.
+ * @param {Array.<Object>} listaMensajes Lista de mensajes del chat
+ */
 const MensajesChat = listaMensajes =>
   listaMensajes.map((message, index) => {
     return (
@@ -56,11 +84,23 @@ const MensajesChat = listaMensajes =>
     );
   });
 
-class Messages extends React.Component {
+/**
+ * Clase que gestiona el listado de mensajes del chat
+ * entre dos usuarios.
+ * @extends Component
+ */
+class Messages extends Component {
+  /**
+   * Construye el componente Messages.
+   *
+   * @param {Object} props Propiedades para inicializar el componente
+   * @param {Array.<Object>} props.messages Lista de mensajes del chat
+   */
   constructor(props) {
     super(props);
     this.state = { width: 0, fijarChat: false };
-    this.mensajes = MensajesChat(this.props.messages);
+    this.mensajes = MensajesChat(props.messages);
+
     this.handleResize = this.handleResize.bind(this);
     this.handleScroll = this.handleScroll.bind(this);
     this.irAUltimoComentario = this.irAUltimoComentario.bind(this);
@@ -73,11 +113,19 @@ class Messages extends React.Component {
     }
   }
 
+  /**
+   * Recalcula el ancho en px que tiene que tener el área
+   * de texto para que el usuario escriba un mensaje.
+   */
   handleResize() {
     const w = document.getElementById("messageList").clientWidth - 40;
     this.setState({ width: w });
   }
 
+  /**
+   * Determina si dejar fija la lista de mensajes o no.
+   * @param {Event} e Evento que devuelve el formulario
+   */
   handleScroll(e) {
     const bottom =
       e.target.scrollHeight - e.target.scrollTop <= e.target.clientHeight;
@@ -100,6 +148,9 @@ class Messages extends React.Component {
     window.removeEventListener("resize", this.handleResize);
   }
 
+  /**
+   * Realiza un scroll hasta el último mensaje del chat.
+   */
   irAUltimoComentario() {
     var element = document.getElementById(
       `mensaje${this.props.messages.length - 1}`
@@ -120,9 +171,5 @@ class Messages extends React.Component {
     );
   }
 }
-
-Messages.defaultProps = {
-  messages: []
-};
 
 export default Messages;

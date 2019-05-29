@@ -42,10 +42,14 @@ class Login extends Component {
    * Construye el componente Login
    *
    * @param {Object} props Propiedades para inicializar el componente
-   * @param {Object} props.location
+   * @param {Object} props.location Propiedades para la redirección desde el login
    */
   constructor(props) {
     super(props);
+    /**
+     * Indica si el componente está montado o no
+     * @type {Boolean}
+     */
     this._isMounted = false;
     this.state = {
       location: props.location,
@@ -67,6 +71,11 @@ class Login extends Component {
     this._isMounted = false;
   }
 
+  /**
+   * Inicia la sesión del usuario, si los datos son
+   * incorrectos informa de ello.
+   * @param {Event} event Evento que devuelve el formulario
+   */
   handleSubmit = event => {
     const username = this.userID.current.value;
     const pass = this.pass.current.value;
@@ -79,7 +88,6 @@ class Login extends Component {
       } else {
         signIn(data);
         getUser(data.id, user => {
-          // validaeo será 1 si es admin, y 0 si es un usuario normal o profesor
           setUserRole(user.role);
           setUserPhoto(user.photo);
           if (this._isMounted) {
