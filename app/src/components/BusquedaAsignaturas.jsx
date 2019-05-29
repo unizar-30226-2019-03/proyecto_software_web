@@ -1,7 +1,23 @@
+/**
+ * @fileoverview Fichero Asignaturas.jsx donde se encuentra la clase
+ * que renderiza la pantalla de la lista de asignaturas de un usuario.
+ *
+ * @author UniCast
+ *
+ * @requires ../node_modules/react-router-dom/Link.js:Link
+ * @requires ../../node_modules/react-bootstrap/Button.js:Button
+ */
+
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "react-bootstrap";
 
+/**
+ * Renderiza la información relativa a una asignatura para la pantalla
+ * de búsqueda.
+ * @param {Object} param0 Propiedades del componente
+ * @param {Object} param0.subject Asignatura
+ */
 const MenuItem = ({ subject }) => {
   return (
     <div
@@ -70,17 +86,30 @@ const MenuItem = ({ subject }) => {
   );
 };
 
-// All items component
-// Important! add unique key
+/**
+ * Renderiza las asignaturas que coinciden con la búsqueda del usuario
+ * @param {Array.<Object>} list Lista de asignaturas a mostrar
+ */
 const Menu = list =>
   list.map(el => {
     return <MenuItem subject={el} key={el.id} />;
   });
 
+/**
+ * Clase que muestra las asignaturas cuyo nombre coincide
+ * con la búsqueda realizada por el usuario.
+ * @extends Component
+ */
 class BusquedaAsignaturas extends Component {
+  /**
+   * Construye el componente BusquedaAsignaturas
+   *
+   * @param {Object} props Propiedades para inicializar el componente
+   * @param {Array.<Object>} lista Lista de asignaturas recuperadas
+   */
   constructor(props) {
     super(props);
-    this.menu = Menu(this.props.lista);
+    this.menu = Menu(props.lista);
   }
 
   componentWillReceiveProps(nextProps) {

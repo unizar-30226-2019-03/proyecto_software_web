@@ -1,3 +1,20 @@
+/**
+ * @fileoverview Fichero Video.jsx donde se encuentra la clase
+ * que renderiza el componente para visualizar un vídeo
+ *
+ * @author UniCast
+ *
+ * @requires ../node_modules/video-react/lib/components/Player.js:Player
+ * @requires ../node_modules/video-react/lib/components/control-bar/ControlBar.js:ControlBar
+ * @requires ../node_modules/video-react/lib/components/control-bar/ReplayControl.js:ReplayControl
+ * @requires ../node_modules/video-react/lib/components/control-bar/ForwardControl.js:ForwardControl
+ * @requires ../node_modules/video-react/lib/components/time-control/CurrentTimeDisplay.js:CurrentTimeDisplay
+ * @requires ../node_modules/video-react/lib/components/time-control/TimeDivider.js:TimeDivider
+ * @requires ../node_modules/video-react/lib/components/control-bar/PlaybackRateMenuButton.js:PlaybackRateMenuButton
+ * @requires ../node_modules/video-react/lib/components/control-bar/VolumeMenuButton.js:VolumeMenuButton
+ * @requires ../node_modules/video-react/lib/components/BigPlayButton.js:BigPlayButton
+ */
+
 import "../../node_modules/video-react/dist/video-react.css";
 import React, { Component } from "react";
 import {
@@ -12,14 +29,22 @@ import {
   BigPlayButton
 } from "video-react";
 
+/**
+ * Clase que gestiona la reproducción de archivos de vídeo.
+ * @extends Component
+ */
 export default class Video extends Component {
+  /**
+   * Construye el componente Video
+   * @param {Object} props Propiedades para inicializar el componente
+   */
   constructor(props) {
     super(props);
     this.state = {
       video: "",
       thumbnailUrl: "",
       altura: 0,
-      startTime: this.props.time
+      startTime: props.time
     };
     this.div = React.createRef();
     this.play_pause = this.play_pause.bind(this);
@@ -50,23 +75,37 @@ export default class Video extends Component {
     }
   }
 
+  /**
+   * Cambia el tamaño del marco del vídeo
+   */
   cambiarAltura() {
     this.setState({ altura: this.div.current.clientHeight });
   }
 
+  /**
+   * Guarda el estado actual del vídeo y lo envía al componente
+   * ViendoVideo.
+   * @param {Object} state Estado del vídeo
+   */
   handleStateChange(state) {
-    // copy player state to this component's state
-    //Envía el estado al padre para gestion de comentarios
     this.props.enviarEstado(state);
     this.setState({
       player: state
     });
   }
 
+  /**
+   * Despliega el vídeo a lo largo de toda la pantalla
+   * para ser visualizado en modo pantalla completa.
+   */
   maxPantalla() {
     this.refs.player.toggleFullscreen();
   }
 
+  /**
+   * Dependiendo si el vídeo está pausado o no, reanuda o pausa
+   * el vídeo.
+   */
   play_pause() {
     const { player } = this.refs.player.getState();
     player.paused ? this.refs.player.play() : this.refs.player.pause();

@@ -1,3 +1,28 @@
+/**
+ * @fileoverview Fichero Historial.jsx donde se encuentra la clase
+ * que renderiza la pantalla del historial de reproducciones de un
+ * usuario concreto.
+ *
+ * @author UniCast
+ *
+ * @requires ./BarraNavegacion.jsx:BarraNavegacion
+ * @requires ../node_modules/react-helmet/es/Helmet.js:Helmet
+ * @requires ../node_modules/react-router-dom/Redirect.js:Redirect
+ * @requires ../../node_modules/reactjs-popup/reactjs-popup.js:Popup
+ * @requires ./MisListas.jsx:Notificacion
+ * @requires ../config/Process.jsx:RemoveAccents
+ * @requires ../config/Process.jsx:putFavouritesFirst
+ * @requires ../config/Auth.jsx:isSignedIn
+ * @requires ../config/Auth.jsx:getUserRole
+ * @requires ../config/DisplayAPI.jsx:getDisplaysByUser
+ * @requires ../config/DisplayAPI.jsx:deleteVideoFromDisplay
+ * @requires ./ListaVertical.jsx:ListaVertical
+ * @requires ../config/ReproductionListAPI.jsx:addVideotoReproductionList
+ * @requires ../config/ReproductionListAPI.jsx:deleteVideoFromReproductionList
+ * @requires ../config/ReproductionListAPI.jsx:getUserReproductionLists
+ * @requires ./LoadingSpin.jsx:LoadingSpinUniCast
+ */
+
 import React, { Component } from "react";
 import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
@@ -18,24 +43,32 @@ import {
 } from "../config/ReproductionListAPI";
 import { LoadingSpinUniCast } from "./LoadingSpin";
 
+/**
+ * Clase que gestiona el historial de reproducciones de
+ * un usuario.
+ * @extends Component
+ */
 class HistorialLista extends Component {
+  /**
+   * Construye el componente HistorialLista
+   *
+   * @param {Object} props Propiedades para inicializar el componente
+   * @param {Array.<Object>} props.listasRepro Listas de reproducción de un usuario
+   * @param {Array.<Object>} props.historial Lista de vídeos visualizados por un usuario
+   */
   constructor(props) {
     super(props);
     this.state = {
       popUp: false,
-      listasRepro: this.props.listasRepro,
-      listaVideos: this.props.historial.map(e => {
+      listasRepro: props.listasRepro,
+      listaVideos: props.historial.map(e => {
         return e.video;
       })
     };
     this.abrirPopUp = this.abrirPopUp.bind(this);
     this.cerrarPopUp = this.cerrarPopUp.bind(this);
   }
-  /**
-   * Se ejecutará cuando el componente reciba propiedades nuevas,
-   * para actualizar el estado del componente
-   * @param {Object} nextProps propiedades a actualizar en el componente
-   */
+
   componentWillReceiveProps(nextProps) {
     this.setState({
       listaVideos: nextProps.historial.map(e => {
@@ -45,13 +78,13 @@ class HistorialLista extends Component {
     });
   }
   /**
-   * Actualiza el valor de popUp a true
+   * Abre el pop-up para borrar el historial completo.
    */
   abrirPopUp() {
     this.setState({ popUp: true });
   }
   /**
-   * Actualiza el valor de popUp a false
+   * Cierra el pop-up para borrar el historial completo.
    */
   cerrarPopUp() {
     this.setState({ popUp: false });
@@ -283,9 +316,21 @@ class HistorialLista extends Component {
   }
 }
 
+/**
+ * Clase que gestiona la pantalla del historial de
+ * reproducciones de un usuario.
+ * @extends Component
+ */
 class Historial extends Component {
+  /**
+   * Construye el componente Historial
+   */
   constructor() {
     super();
+    /**
+     * Indica si el componente está montado o no
+     * @type {Boolean}
+     */
     this._isMounted = false;
     this.state = {
       contentMargin: "300px",
@@ -324,10 +369,10 @@ class Historial extends Component {
       this.getReproductionLists();
     }
   }
+
   /**
-   * Obtiene una lista de vídeos reproducidos por el usuario
-   * y actualiza el estado del componente
-   * @param {Number} page pagina a obtener
+   * Obtiene una lista con 20 vídeos reproducidos por el usuario.
+   * @param {Number} page Página de vídeos a obtener
    */
   getHistorial(page) {
     getDisplaysByUser(page, data => {
@@ -345,6 +390,10 @@ class Historial extends Component {
     });
   }
 
+  /**
+   * Obtiene las listas de reproducción que un usuario
+   * tiene.
+   */
   getReproductionLists() {
     getUserReproductionLists(data => {
       if (this._isMounted) {
@@ -353,8 +402,9 @@ class Historial extends Component {
       }
     });
   }
+
   /**
-   * Borra el historial de videos
+   * Borra por completo el historial de reproducciones.
    */
   borrarHistorial() {
     this.state.miHistorial.map(elmnt => {
@@ -377,9 +427,10 @@ class Historial extends Component {
     });
     this.iniciarReloj();
   }
+
   /**
-   * Actualiza el componente asignando a busqueda el historial
-   * @param {Event} e evento producido
+   * Actualiza el valor de búsqueda introducido por el usuario
+   * @param {Event} e Evento que devuelve el formulario
    */
   buscarHistorial(e) {
     e.preventDefault();
@@ -388,10 +439,11 @@ class Historial extends Component {
       this.setState({ historialFiltrado: [], filtrado: false });
     }
   }
+
   /**
-   * Cuando se haya pulsado enter, actualiza historialFiltrado con todos los videos del historial
-   * que contengan alguna de las palabras buscadas
-   * @param {Event} e evento producido
+   * Cuando se haya pulsado enter, se filtran los vídeos del historial
+   * según la búsqueda realizada por el usuario.
+   * @param {Event} e Evento que devuelve el formulario
    */
   keyDown(e) {
     if (this.state.busqueda !== "") {
@@ -417,16 +469,16 @@ class Historial extends Component {
     }
   }
   /**
-   * Añade o borra el video de nombre nombreVideo a la Lista de videos lista
-   * @param {String} nombreVideo nombre del video a añadir o borrar
-   * @param {String} mensaje mensaje de notificación al añadir
-   * @param {listaVideos} lista lista de videos a la que añadir el video nombreVideo
-   * @param {Boolean} anyadir Si es true añade, si es false borra
+   * Añade o quita el video seleccionado a la lista de videos elegida
+   * por el usuario.
+   * @param {Number} idVideo Id del video a añadir o quitar
+   * @param {String} mensaje Mensaje de notificación al añadir
+   * @param {Number} idLista Id de la lista de videos a la que añadir o quitar el video nombreVideo
+   * @param {Boolean} anyadir Si es true añade, si es false quita a la lista
+   * @param {Function} callback Función a ejecutar tras añadir/quitar el vídeo a la lista
    */
   anyadirVideoALista(idVideo, mensaje, idLista, anyadir, callback) {
-    //Añadir o borrar de la lista lista, dependiendo del parametro anyadir
     if (anyadir) {
-      //Añadir el video
       addVideotoReproductionList(idLista, idVideo, ok => {
         if (ok) {
           this.setState({
@@ -443,7 +495,6 @@ class Historial extends Component {
         }
       });
     } else {
-      //Borrar el video
       deleteVideoFromReproductionList(idLista, idVideo, ok => {
         if (ok) {
           this.setState({
@@ -464,7 +515,7 @@ class Historial extends Component {
   }
 
   /**
-   * Elimina el video con id idVideo del historial
+   * Elimina el video seleccionado del historial.
    * @param {Number} idVideo id del video a eliminar
    * @param {String} nombreVideo nombre del video a eliminar
    */
@@ -486,6 +537,10 @@ class Historial extends Component {
     this.iniciarReloj();
   }
 
+  /**
+   * Ajusta el contenido del historial al tamaño actual
+   * de la pantalla.
+   */
   handleResize() {
     if (this.state.miHistorial.length > 0) {
       if (window.innerWidth <= 970) {
@@ -508,6 +563,11 @@ class Historial extends Component {
     window.removeEventListener("scroll", this.handleScroll);
   }
 
+  /**
+   * Controla el scroll del usuario para cargar más
+   * vídeos del historial si el usuario hace scroll
+   * hasta el final de la lista de vídeos.
+   */
   handleScroll() {
     var d = document.documentElement;
     var offset = d.scrollTop + window.innerHeight;
@@ -518,6 +578,10 @@ class Historial extends Component {
     }
   }
 
+  /**
+   * Ajusta el contenido a la barra lateral.
+   * @param {Boolean} display Determina si desplazar contenido o no
+   */
   handleChange(display) {
     if (display) {
       this.setState({ contentMargin: "300px" });
@@ -526,7 +590,8 @@ class Historial extends Component {
     }
   }
   /**
-   * Pone el reloj a 0 y lo inicia
+   * Resetea el reloj y lo inicializa para ejecutar la función
+   * Historial.tick() una vez por segundo.
    */
   iniciarReloj() {
     this.pararReloj();
@@ -539,8 +604,8 @@ class Historial extends Component {
     clearInterval(this.timerID);
   }
   /**
-   * suma un tick (suma 1 a tiempo)
-   * Si tiempo==3,pone tiempo a 0 y para el reloj
+   * Suma un tick y si han pasado 3 ticks (3 segundos)
+   * quita la notificación de pantalla.
    */
   tick() {
     let t = this.state.tiempo;

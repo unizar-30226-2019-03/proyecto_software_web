@@ -1,3 +1,25 @@
+/**
+ * @fileoverview Fichero Chat.jsx donde se encuentra la clase
+ * que renderiza la pantalla del chat entre un usuario y su
+ * profesor.
+ *
+ * @author UniCast
+ *
+ * @requires ./BarraNavegacion.jsx:BarraNavegacion
+ * @requires ../node_modules/react-helmet/es/Helmet.js:Helmet
+ * @requires ./Messages.jsx:Messages
+ * @requires ../config/Auth.jsx:isSignedIn
+ * @requires ../node_modules/react-router-dom/Redirect.js:Redirect
+ * @requires ../node_modules/react-router-dom/Link.js:Link
+ * @requires ../config/UserAPI.jsx:getUser
+ * @requires ../config/MessageApi.jsx:getMessagesToReceiver
+ * @requires ../config/MessageApi.jsx:getMessagesFromSender
+ * @requires ../config/MessageApi.jsx:addMessage
+ * @requires ../config/Process.jsx:mergeSortedArray
+ * @requires ../config/Process.jsx:parseNewMessages
+ * @requires ./LoadingSpin.jsx:LoadingSpinUniCast
+ */
+
 import React, { Component } from "react";
 import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
@@ -13,9 +35,24 @@ import {
 import { mergeSortedArray, parseNewMessages } from "../config/Process";
 import { LoadingSpinUniCast } from "./LoadingSpin";
 
+/**
+ * Clase que gestiona la pantalla del chat entre un
+ * usuario y uno de sus profesores.
+ * @extends Component
+ */
 class Chat extends Component {
+  /**
+   * Construye el componente Chat
+   *
+   * @param {Object} props Propiedades para inicializar el componente
+   */
   constructor(props) {
     super(props);
+    /**
+     * Indica si el componente está montado o no
+     * @type {Boolean}
+     */
+    this._isMounted = false;
     this.state = {
       contentMargin: "300px",
       messages: [],
@@ -77,6 +114,10 @@ class Chat extends Component {
     }
   }
 
+  /**
+   * Obtiene el usuario al que se le enviarán mensajes.
+   * @param {Number} userId Id del usuario al que enviar un mensaje
+   */
   getUser(userId) {
     getUser(userId, data => {
       if (this._isMounted) {
@@ -85,6 +126,13 @@ class Chat extends Component {
     });
   }
 
+  /**
+   * Obtiene todos los mensajes que un usuario ha recibido por parte
+   * de un profesor/alumno.
+   * @param {Number} page Página de datos a obtener
+   * @param {Array.<Object>} messages Lista de mensajes recibidos
+   * @param {Number} userId Id del usuario que envió los mensajes
+   */
   getAllFromSender(page, messages, userId) {
     if (messages.length < 20 * page) {
       if (this._isMounted) {
@@ -102,6 +150,13 @@ class Chat extends Component {
     }
   }
 
+  /**
+   * Obtiene todos los mensajes que un usuario ha enviado a otro
+   * profesor/alumno.
+   * @param {Number} page Página de datos a obtener
+   * @param {Array.<Object>} messages Lista de mensajes enviados
+   * @param {Number} userId Id del usuario destino
+   */
   getAllSent(page, messages, userId) {
     if (messages.length < 20 * page) {
       if (this._isMounted) {
@@ -122,6 +177,11 @@ class Chat extends Component {
     }
   }
 
+  /**
+   * Obtiene los mensajes enviados y recibidos de un usuario
+   * y los mezcla ordenadamente de forma descendiente según
+   * su marca temporal.
+   */
   mergeMessages() {
     const sent = this.state.sentMessages.slice();
     const received = this.state.receivedMessages.slice();
@@ -136,6 +196,9 @@ class Chat extends Component {
     }
   }
 
+  /**
+   * Obtiene los nuevos mensajes enviados/recibidos del usuario.
+   */
   getNewMessages() {
     getMessagesFromSender(
       parseInt(this.props.match.params.id),
@@ -172,6 +235,10 @@ class Chat extends Component {
     );
   }
 
+  /**
+   * Ajusta el contenido a la barra lateral.
+   * @param {Boolean} display Determina si desplazar contenido o no
+   */
   handleChange(display) {
     if (display) {
       this.setState({ contentMargin: "300px" });
@@ -180,12 +247,20 @@ class Chat extends Component {
     }
   }
 
+  /**
+   * Envía un mensaje a un usuario.
+   * @param {String} message Mensaje a enviar
+   */
   sendHandler(message) {
     this.addMessage(message);
   }
 
+  /**
+   * Envía un mensaje a un usuario, y muestra el mensaje
+   * enviado en el chat del usuario.
+   * @param {String} message Mensaje a enviar
+   */
   addMessage(message) {
-    // Append the message to the component state
     const receiver = parseInt(this.props.match.params.id);
     addMessage(receiver, message, data => {
       if (data !== false) {
@@ -197,10 +272,18 @@ class Chat extends Component {
     });
   }
 
+  /**
+   * Resetea el reloj y lo inicializa para ejecutar la función
+   * Chat.getNewMessages() una vez por segundo.
+   */
   iniciarReloj() {
+    this.pararReloj();
     this.timerID = setInterval(() => this.getNewMessages(), 1000);
   }
 
+  /**
+   * Detiene la ejecución del reloj
+   */
   pararReloj() {
     clearInterval(this.timerID);
   }

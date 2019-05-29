@@ -1,3 +1,25 @@
+/**
+ * @fileoverview Fichero Asignaturas.jsx donde se encuentra la clase
+ * que renderiza la pantalla de la lista de asignaturas de un usuario.
+ *
+ * @author UniCast
+ *
+ * @requires ./BarraNavegacion.jsx:BarraNavegacion
+ * @requires ../node_modules/react-helmet/es/Helmet.js:Helmet
+ * @requires ../../node_modules/react-bootstrap/ListGroup.js:ListGroup
+ * @requires ../../node_modules/react-bootstrap/Dropdown.js:Dropdown
+ * @requires ../../node_modules/react-bootstrap/Button.js:Button
+ * @requires ../../node_modules/react-bootstrap/FormControl.js:FormControl
+ * @requires ../node_modules/react-router-dom/Link.js:Link
+ * @requires ../node_modules/react-router-dom/Redirect.js:Redirect
+ * @requires ./CustomToggle.jsx:CustomToggle
+ * @requires ../config/Auth.jsx:isSignedIn
+ * @requires ../config/Auth.jsx:getUserID
+ * @requires ../config/Auth.jsx:getUserRole
+ * @requires ../config/UserAPI.jsx:getSubjectsOfUser
+ * @requires ./LoadingSpin.jsx:LoadingSpinUniCast
+ */
+
 import React, { Component } from "react";
 import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
@@ -8,6 +30,15 @@ import { isSignedIn, getUserID, getUserRole } from "../config/Auth";
 import { getSubjectsOfUser } from "../config/UserAPI";
 import { LoadingSpinUniCast } from "./LoadingSpin";
 
+/**
+ * Renderiza la información básica de una asignatura que sigue un
+ * usuario (nombre, universidad y foto).
+ * @param {Object} param0 Propiedades del componente
+ * @param {String} param0.name Nombre de la asignatura
+ * @param {String} param0.uni Nombre de la universidad de la asignatura
+ * @param {String} param0.foto URI de la foto de la universidad
+ * @param {Number} param0.id Id de la asignatura
+ */
 const ItemAsignatura = ({ nombre, uni, foto, id }) => {
   return (
     <Link to={`/asig/${id}`} style={{ color: "black", textDecoration: "none" }}>
@@ -20,6 +51,10 @@ const ItemAsignatura = ({ nombre, uni, foto, id }) => {
   );
 };
 
+/**
+ * Renderiza todas las asignaturas que un usuario sigue.
+ * @param {Array.<Object>} lista Lista de asignaturas de un usuario
+ */
 const ListaAsignaturas = lista =>
   lista.map(el => {
     const { name, university, id } = el;
@@ -34,9 +69,21 @@ const ListaAsignaturas = lista =>
     );
   });
 
+/**
+ * Clase que gestiona la pantalla de las asignaturas que sigue
+ * un usuario.
+ * @extends Component
+ */
 class Asignaturas extends Component {
+  /**
+   * Construye el componente Asignaturas
+   */
   constructor() {
     super();
+    /**
+     * Indica si el componente está montado o no
+     * @type {Boolean}
+     */
     this._isMounted = false;
     this.state = {
       contentMargin: "300px",
@@ -61,6 +108,9 @@ class Asignaturas extends Component {
     this._isMounted = false;
   }
 
+  /**
+   * Obtiene todas las asignaturas que un usuario sigue.
+   */
   getData() {
     getSubjectsOfUser(getUserID(), data => {
       if (this._isMounted) {
@@ -69,12 +119,16 @@ class Asignaturas extends Component {
     });
   }
 
+  /**
+   * Actualiza el valor por el que filtrar las asignaturas.
+   * @param {Event} e Evento que devuelve el formulario
+   */
   cambiaFiltro(e) {
     this.setState({ filtro: e.target.value.toLowerCase().trim() });
   }
   /**
-   * Devuelve el array lista filtrado de la siguiente forma:
-   * o bien son la cadena vacía, o bien su nombre empieza por filtro.
+   * Filtra la lista de asignaturas del usuario según el valor
+   * escrito por el mismo.
    * @param {Array.<Object>} lista
    */
   filtrar(lista) {
@@ -84,6 +138,10 @@ class Asignaturas extends Component {
     return asig;
   }
 
+  /**
+   * Ajusta el contenido a la barra lateral.
+   * @param {Boolean} display Determina si desplazar contenido o no
+   */
   handleChange(display) {
     if (display) {
       this.setState({ contentMargin: "300px" });
@@ -91,6 +149,7 @@ class Asignaturas extends Component {
       this.setState({ contentMargin: "70px" });
     }
   }
+
   render() {
     const asignaturasFiltradas = this.filtrar(this.state.asignaturas);
     const listaAsign = ListaAsignaturas(asignaturasFiltradas);

@@ -1,3 +1,28 @@
+/**
+ * @fileoverview Fichero Asignatura.jsx donde se encuentra la clase
+ * que renderiza la pantalla de una asignatura concreta.
+ *
+ * @author UniCast
+ *
+ * @requires ./BarraNavegacion.jsx:BarraNavegacion
+ * @requires ../node_modules/react-helmet/es/Helmet.js:Helmet
+ * @requires ../../node_modules/react-bootstrap/Button.js:Button
+ * @requires ../node_modules/react-router-dom/Link.js:Link
+ * @requires ../node_modules/react-router-dom/Redirect.js:Redirect
+ * @requires ./ListaHorizontal.jsx:Menu
+ * @requires ../config/Auth.jsx:isSignedIn
+ * @requires ../config/Auth.jsx:getUserID
+ * @requires ../config/Auth.jsx:getUserRole
+ * @requires ../config/SubjectAPI.jsx:SubscribeSubject
+ * @requires ../config/SubjectAPI.jsx:UnsubscribeSubject
+ * @requires ../config/SubjectAPI.jsx:getSubjectById
+ * @requires ../config/SubjectAPI.jsx:getProfessorsFromSubject
+ * @requires ../config/UserAPI.jsx:getSubjectsOfUser
+ * @requires ./MisListas.jsx:Notificacion
+ * @requires ../config/VideoAPI.jsx:getVideosFromSubject
+ * @requires ./LoadingSpin.jsx:LoadingSpinUniCast
+ */
+
 import React, { Component } from "react";
 import BarraNavegacion from "./BarraNavegacion";
 import { Helmet } from "react-helmet";
@@ -11,11 +36,17 @@ import {
   getSubjectById,
   getProfessorsFromSubject
 } from "../config/SubjectAPI";
-import { getUser, getSubjectsOfUser } from "../config/UserAPI";
+import { getSubjectsOfUser } from "../config/UserAPI";
 import { Notificacion } from "./MisListas";
 import { getVideosFromSubject } from "../config/VideoAPI";
 import { LoadingSpinUniCast } from "./LoadingSpin";
 
+/**
+ * Renderiza la información relativa a un profesor de forma vertical para la
+ * pantalla Asignatura.
+ * @param {Object} param0 Propiedades del componente
+ * @param {Object} param0.user Profesor asociado
+ */
 export const Profesor = ({ user }) => {
   return (
     <div
@@ -44,19 +75,33 @@ export const Profesor = ({ user }) => {
   );
 };
 
+/**
+ * Renderiza todos los profesores de la asignatura de forma vertical.
+ * @param {Array.<Object>} list Lista de profesores de la asignatura
+ */
 export const ListaProfesores = list =>
   list.map(el => {
     return <Profesor user={el} key={el.id} />;
   });
 
+/**
+ * Clase que gestiona la pantalla de una asignatura concreta.
+ * @extends Component
+ */
 class Asignatura extends Component {
+  /**
+   * Construye el componente Asignatura
+   */
   constructor() {
     super();
+    /**
+     * Indica si el componente está montado o no
+     * @type {Boolean}
+     */
     this._isMounted = false;
     this.state = {
       contentMargin: "300px",
       siguiendoAsig: false,
-      user: {},
       asig: {},
       notif: false,
       mensajeNotif: "",
@@ -79,12 +124,15 @@ class Asignatura extends Component {
     this.tick = this.tick.bind(this);
   }
 
+  /**
+   * Obtiene la asignatura asociada al id, las asignaturas
+   * del usuario que visita la asignatura para comprobar si
+   * sigue dicha asignatura o no, los profesores
+   * asociados a la asignatura y por último los vídeos subidos de la
+   * asignatura.
+   * @param {Number} subjectId ID de la asignatura
+   */
   getData(subjectId) {
-    getUser(getUserID(), data => {
-      if (this._isMounted) {
-        this.setState({ user: data });
-      }
-    });
     getSubjectById(subjectId, data => {
       if (this._isMounted) {
         this.setState({ asig: data, mostrarSpinFoto: false });
@@ -119,6 +167,9 @@ class Asignatura extends Component {
     });
   }
 
+  /**
+   * Carga los siguiente vídeos de la asignatura si es necesario.
+   */
   loadMoreVideos() {
     if (this.state.moreVideos) {
       getVideosFromSubject(this.state.asig.id, this.state.page, data => {
@@ -151,21 +202,24 @@ class Asignatura extends Component {
   }
 
   /**
-   * Pone el reloj a 0 y lo inicia
+   * Resetea el reloj y lo inicializa para ejecutar la función
+   * Asignatura.tick() una vez por segundo.
    */
   iniciarReloj() {
     this.pararReloj();
     this.timerID = setInterval(() => this.tick(), 1000);
   }
+
   /**
    * Detiene la ejecución del reloj
    */
   pararReloj() {
     clearInterval(this.timerID);
   }
+
   /**
-   * suma un tick (suma 1 a tiempo)
-   * Si tiempo==3,pone tiempo a 0 y para el reloj
+   * Suma un tick y si han pasado 3 ticks (3 segundos)
+   * quita la notificación de pantalla.
    */
   tick() {
     let t = this.state.tiempoNotif;
@@ -177,6 +231,10 @@ class Asignatura extends Component {
     this.setState({ tiempoNotif: t + 1, updateSubject: false });
   }
 
+  /**
+   * Ajusta el contenido a la barra lateral.
+   * @param {Boolean} display Determina si desplazar contenido o no
+   */
   handleChange(display) {
     if (display) {
       this.setState({ contentMargin: "300px" });
@@ -185,10 +243,9 @@ class Asignatura extends Component {
     }
   }
   /**
-   * Si no se sigue a la asignatura, relaciona al usuario con la asignatura. Si se ha realizado correctamente,
-   * pone siguiendoAsig y notif a true, pone "Siguiendo a ..."(la asignatura) en mensajeNotif, e inicia el reloj.
-   * Si no sigue a la asignatura, elimina la relación del usuario con la asignatura. Si se ha realizado correctamente,
-   * pone siguiendoAsig a false, notif a true y en mensajeNotif pone "Dejando de seguir a ..."(la asignatura), e inicia el reloj.
+   * Si el usuario no seguía la asignatura, relaciona el usuario con la asignatura
+   * y se informa de ello. Si el usuario ya seguía la asignatura, elimina la
+   * relación del usuario con la asignatura y se informa de ello.
    */
   seguirAsig() {
     !this.state.siguiendoAsig
