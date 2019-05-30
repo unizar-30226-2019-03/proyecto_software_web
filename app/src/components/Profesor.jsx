@@ -69,6 +69,8 @@ class CamposMostrar extends Component {
     ) : (
       <div>
         <div>
+          {this.renderCampo("Usuario:", this.props.username)}
+          <br />
           <h6
             style={{
               float: "left"
@@ -76,13 +78,10 @@ class CamposMostrar extends Component {
           >
             <strong>Descripción:</strong>
           </h6>
-          <div
-            style={{
-              margin: "40px 40% 0 120px"
-            }}
-          >
-            <h6 style={{ textAlign: "justify" }}>{this.props.description}</h6>
-          </div>
+
+          <h6 style={{ textAlign: "justify", margin: "0 40% 0 120px" }}>
+            {this.props.description}
+          </h6>
           <br />
         </div>
         {this.renderCampo("Universidad:", this.props.uni)}
@@ -387,26 +386,17 @@ class Profesor extends Component {
                   this.state.esProfe
                     ? null
                     : this.renderButton(this.state.esProfe)}
-
-                  <div
-                    style={{
-                      padding: "40px 20px 0px 0px"
-                    }}
-                  >
-                    <h6
-                      style={{
-                        float: "left",
-                        padding: "0 20px 0 0"
-                      }}
-                    >
-                      <strong>Nombre de usuario:</strong>
-                    </h6>
-                    <p>{user_nom}</p>
-                  </div>
                 </div>
               </div>
               <br />
-              <CamposMostrar description={descr} uni={uni} degree={degree} />
+              <div style={{ marginTop: "150px" }}>
+                <CamposMostrar
+                  description={descr}
+                  uni={uni}
+                  degree={degree}
+                  username={user_nom}
+                />
+              </div>
               <AsignaturasProf sub={this.state.sub} />
             </div>
           )}
