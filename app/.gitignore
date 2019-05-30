@@ -11,6 +11,9 @@
 # production
 /build
 
+#Comprimidos
+*.zip
+
 #vscode settings
 /.vscode
 
