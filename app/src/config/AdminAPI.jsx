@@ -261,27 +261,59 @@ export function crearAsigYLigar(SubjectApi, subject, shortname, uni) {
   let bearerAuth = defaultClient.authentications["bearerAuth"];
   bearerAuth.accessToken = getUserToken();
 
-  let subject2 = new Subject2(subject, shortname.substr(0, 5)); // Subject2 | Asignatura a añadir
-  SubjectApi.addSubject(subject2, (error, data, response) => {
+  let encontrado = false;
+  let opts = {
+    cacheControl: "no-cache, no-store, must-revalidate", // String |
+    pragma: "no-cache", // String |
+    expires: "0", // String |
+    projection: "subjectWithUniversity", // String | Incluir si se quiere obtener tambien la universidad en la respuesta
+    name: subject // String | Nombre a buscar
+  };
+  SubjectApi.findSubjectsByName(opts, (error, data, response) => {
     if (error) {
-      //console.error(error);
-      //Ya existe, buscarla y ligarla
-      let opts = {
-        cacheControl: "no-cache, no-store, must-revalidate", // String |
-        pragma: "no-cache", // String |
-        expires: "0", // String |
-        projection: "subjectWithUniversity", // String | Incluir si se quiere obtener tambien la universidad en la respuesta
-        name: subject // String | Nombre a buscar
-      };
-      SubjectApi.findSubjectsByName(opts, (error, data, response) => {
-        if (error) {
-          console.error(error);
-        } else {
-          ligarUniAsig(uni, data._embedded.subjects[0].id, SubjectApi);
+      console.error(error);
+    } else {
+      console.log(data);
+      data._embedded.subjects.forEach(element => {
+        if (element.university !== undefined && element.university.id === uni) {
+          encontrado = true;
+          console.log(encontrado);
         }
       });
+    }
+    if (encontrado) {
+      alert("La asignatura ya existía para esa universidad");
     } else {
-      ligarUniAsig(uni, data.id, SubjectApi);
+      let subject2 = new Subject2(subject, shortname.substr(0, 5)); // Subject2 | Asignatura a añadir
+      SubjectApi.addSubject(subject2, (error, data, response) => {
+        if (error) {
+          //console.error(error);
+          //Ya existe, buscarla y ligarla
+          let opts = {
+            cacheControl: "no-cache, no-store, must-revalidate", // String |
+            pragma: "no-cache", // String |
+            expires: "0", // String |
+            projection: "subjectWithUniversity", // String | Incluir si se quiere obtener tambien la universidad en la respuesta
+            name: subject // String | Nombre a buscar
+          };
+          SubjectApi.findSubjectsByName(opts, (error, data, response) => {
+            if (error) {
+              console.error(error);
+            } else {
+              console.log(data);
+              let id = 0;
+              data._embedded.subjects.forEach(element => {
+                if (element.university === undefined) {
+                  id = parseInt.element.id;
+                }
+              });
+              ligarUniAsig(uni, id, SubjectApi);
+            }
+          });
+        } else {
+          ligarUniAsig(uni, data.id, SubjectApi);
+        }
+      });
     }
   });
 }
