@@ -164,6 +164,7 @@ class MiVideoItem extends Component {
           >
             <img
               src={this.props.img}
+              style={{ objectFit: "cover" }}
               width="210"
               height="118"
               alt={this.props.title}
@@ -233,10 +234,12 @@ class MiVideoItem extends Component {
               </Link>
             </div>
             <div
+              className="tooltip"
               style={{
                 marginLeft: "75px",
                 height: "32px",
-                lineHeight: "normal"
+                lineHeight: "normal",
+                display: "block"
               }}
             >
               {" "}
@@ -256,6 +259,7 @@ class MiVideoItem extends Component {
                 to={`/video?id=${this.props.id}`}
               >
                 {this.props.title}
+                <span className="tooltiptext">{this.props.title}</span>
               </Link>
             </div>
           </div>

@@ -38,7 +38,8 @@ import {
   restriccionUser,
   emailPattern,
   restriccion,
-  getUserRole
+  getUserRole,
+  setUserPhoto
 } from "../config/Auth";
 import { checkFileExtensionImage } from "../config/Process";
 import { getUser, updateUser } from "../config/UserAPI";
@@ -541,6 +542,7 @@ class EditarPerfil extends Component {
         updated => {
           if (updated) {
             if (this._isMounted) {
+              getUser(getUserID(), data => setUserPhoto(data.photo));
               this.setState({ datosValidados: true, datosInvalidos: false });
             }
           } else {

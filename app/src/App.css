@@ -1059,3 +1059,37 @@ h3 {
   float: left;
   margin-right: 25px;
 }
+
+/* Tooltip container */
+.tooltip {
+  position: relative;
+  display: inline-block;
+  opacity: 1;
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: fit-content;
+  font-size: 12px;
+  font-weight: 300;
+  background-color: black;
+  color: white;
+  text-align: left;
+  padding: 2px;
+  border-radius: 6px;
+
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  top: 50%; /* At the top of the tooltip */
+  left: 0%;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 2s;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}

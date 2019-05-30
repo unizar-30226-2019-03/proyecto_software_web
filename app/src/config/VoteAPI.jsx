@@ -29,9 +29,9 @@ export function addVote(videoId, suitability, clarity, quality, callback) {
 
   apiInstance.addVote(
     videoId,
-    Math.floor(suitability),
-    Math.floor(clarity),
-    Math.floor(quality),
+    Math.ceil(suitability),
+    Math.ceil(clarity),
+    Math.ceil(quality),
     (error, data, response) => {
       if (error) {
         callback(false);

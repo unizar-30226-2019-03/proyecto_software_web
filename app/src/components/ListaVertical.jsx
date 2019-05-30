@@ -312,7 +312,13 @@ class MenuItem extends Component {
             to={`/video?id=${this.props.id}`}
             style={{ position: "relative" }}
           >
-            <img src={this.props.img} width="240" height="140" alt="videoX" />
+            <img
+              src={this.props.img}
+              style={{ objectFit: "cover" }}
+              width="240"
+              height="140"
+              alt="videoX"
+            />
             <div
               style={{
                 color: "white",
@@ -401,7 +407,10 @@ class MenuItem extends Component {
               }}
               to={`/asig/${this.state.asig.id}`}
             >
-              {this.state.asig.name}
+              {this.state.asig.name} -{" "}
+              {this.state.asig.university === undefined
+                ? ""
+                : this.state.asig.university.name}
             </Link>
             <div style={{ marginTop: "10px", width: "90%" }}>
               <div

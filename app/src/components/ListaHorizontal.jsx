@@ -35,7 +35,13 @@ class MenuItem extends Component {
             to={`/video?id=${this.props.id}`}
             style={{ position: "relative" }}
           >
-            <img src={this.props.img} width="210" height="118" alt="videoX" />
+            <img
+              src={this.props.img}
+              style={{ objectFit: "cover" }}
+              width="210"
+              height="118"
+              alt="videoX"
+            />
             <div
               style={{
                 color: "white",
@@ -95,7 +101,10 @@ class MenuItem extends Component {
                 />
               </Link>
             </div>
-            <div style={{ marginLeft: "5px", lineHeight: "16px" }}>
+            <div
+              className="tooltip"
+              style={{ marginLeft: "5px", lineHeight: "16px" }}
+            >
               {" "}
               <Link
                 style={{
@@ -113,6 +122,7 @@ class MenuItem extends Component {
                 to={`/video?id=${this.props.id}`}
               >
                 {this.props.title}
+                <span className="tooltiptext">{this.props.title}</span>
               </Link>
             </div>
           </div>

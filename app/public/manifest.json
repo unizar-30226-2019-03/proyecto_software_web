@@ -3,8 +3,8 @@
   "name": "Aplicación Web UniCast",
   "icons": [
     {
-      "src": "favicon-16x16.png",
-      "sizes": "16x16",
+      "src": "favico96x96.png",
+      "sizes": "96x96",
       "type": "image/png"
     }
   ],

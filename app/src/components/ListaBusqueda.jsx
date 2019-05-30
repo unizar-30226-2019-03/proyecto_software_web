@@ -91,7 +91,13 @@ class MenuItem extends Component {
             to={`/video?id=${this.props.id}`}
             style={{ position: "relative" }}
           >
-            <img src={this.props.img} width="240" height="140" alt="videoX" />
+            <img
+              src={this.props.img}
+              style={{ objectFit: "cover" }}
+              width="240"
+              height="140"
+              alt="videoX"
+            />
             <div
               style={{
                 color: "white",
@@ -180,7 +186,7 @@ class MenuItem extends Component {
               }}
               to={`/asig/${this.props.canalId}`}
             >
-              {this.props.canal}
+              {this.props.canal} - {this.props.uni}
             </Link>
             <div style={{ marginTop: "10px", width: "90%" }}>
               <div
@@ -274,6 +280,7 @@ export const MenuVertical = (
       <MenuItem
         url={video.title}
         canal={video.subject.name}
+        uni={video.university.name}
         canalId={video.subject.id}
         key={video.id}
         id={video.id}
