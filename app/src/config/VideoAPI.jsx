@@ -248,7 +248,7 @@ export function findVideosContainingTitle(title, callback) {
     cacheControl: "no-cache, no-store, must-revalidate", // String |
     pragma: "no-cache", // String |
     expires: "0", // String |
-    projection: "videoWithSubject", // String | Incluir si se quiere obtener tambien la universidad y/o la asignatura en la respuesta
+    projection: "videoWithSubjectAndUniversity", // String | Incluir si se quiere obtener tambien la universidad y/o la asignatura en la respuesta
     title: title // String | String a buscar en el titulo de videos
   };
   apiInstance.findVideosContainingTitle(opts, (error, data, response) => {

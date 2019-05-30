@@ -405,11 +405,27 @@ class ListaConcreta extends Component {
    */
   borrarLista() {
     //Borrar la lista en el servidor
-    deleteReproductionList(this.state.idLista, ok => {
-      if (ok) {
-        this.setState({ borradoCompleto: true });
-      }
-    });
+    if (this.state.nombreLista === "Favoritos") {
+      this.state.miLista.map(video => {
+        deleteVideoFromReproductionList(this.state.idLista, video.id, ok => {});
+        return null;
+      });
+      this.setState({
+        notif: true,
+        mensajeNotif: `Borrados todos los vídeos de la lista`,
+        listaFiltrada: [],
+        miLista: [],
+        busqueda: "",
+        filtrado: false,
+        page: 0
+      });
+    } else {
+      deleteReproductionList(this.state.idLista, ok => {
+        if (ok) {
+          this.setState({ borradoCompleto: true });
+        }
+      });
+    }
   }
 
   /**
