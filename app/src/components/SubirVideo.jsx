@@ -108,7 +108,7 @@ const FormularioDatos = (
         <Form.Group controlId="formGridMiniatura">
           <Form.Label className={img_valida === 0 ? "text-danger" : ""}>
             {img_valida === 0
-              ? "Introduzca un formato de imagen válido"
+              ? "Introduzca un formato de imagen válido y seleccione Confirmar"
               : "Miniatura del video"}
           </Form.Label>
           <Form.Control type="file" accept="image/*" ref={miniatura} required />
@@ -128,7 +128,7 @@ const FormularioDatos = (
         <Form.Group controlId="formGridVideo">
           <Form.Label className={video_valido === 0 ? "text-danger" : ""}>
             {video_valido === 0
-              ? "Introduzca un formato de imagen válido"
+              ? "Introduzca un formato de vídeo válido y seleccione Confirmar"
               : "Vídeo"}
           </Form.Label>
           <Form.Control type="file" accept="video/*" ref={video} required />

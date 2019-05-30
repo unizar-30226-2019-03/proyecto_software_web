@@ -60,6 +60,9 @@ class CamposMostrar extends Component {
   render() {
     return (
       <div>
+        {this.renderCampo("Usuario:", this.props.username)}
+        {this.renderCampo("Universidad:", this.props.uni)}
+        {this.renderCampo("Grado:", this.props.degree)}
         <div>
           <h6
             style={{
@@ -77,8 +80,6 @@ class CamposMostrar extends Component {
           </div>
         </div>
         <br />
-        {this.renderCampo("Universidad:", this.props.uni)}
-        {this.renderCampo("Grado:", this.props.degree)}
       </div>
     );
   }
@@ -258,27 +259,12 @@ class Perfil extends Component {
                         a
                       </div>
                     )}
-
-                    <div
-                      style={{
-                        padding: "40px 20px 0px 0px"
-                      }}
-                    >
-                      <h6
-                        style={{
-                          float: "left",
-                          padding: "0 20px 0 0"
-                        }}
-                      >
-                        <strong>Nombre de usuario:</strong>
-                      </h6>
-                      <p>{this.state.user.username}</p>
-                    </div>
                   </div>
                 </div>
               </div>
-              <div style={{ marginTop: "80px" }}>
+              <div style={{ marginTop: "150px" }}>
                 <CamposMostrar
+                  username={this.state.user.username}
                   description={this.state.user.description}
                   uni={this.state.uni.name}
                   degree={this.state.degree.name}

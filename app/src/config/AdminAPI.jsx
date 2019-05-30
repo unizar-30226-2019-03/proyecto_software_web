@@ -256,7 +256,14 @@ function ligarUniCarr(uniID, carreraID, DegreeApi) {
  * @param {String} shortname Nombre abreviado de la asignatura
  * @param {Number} uni ID de la universidad
  */
-export function crearAsigYLigar(SubjectApi, subject, shortname, uni) {
+export function crearAsigYLigar(
+  SubjectApi,
+  subject,
+  shortname,
+  uni,
+  form,
+  handleShow
+) {
   // Configure Bearer (JWT) access token for authorization: bearerAuth
   let bearerAuth = defaultClient.authentications["bearerAuth"];
   bearerAuth.accessToken = getUserToken();
@@ -273,7 +280,6 @@ export function crearAsigYLigar(SubjectApi, subject, shortname, uni) {
     if (error) {
       console.error(error);
     } else {
-      console.log(data);
       data._embedded.subjects.forEach(element => {
         if (element.university !== undefined && element.university.id === uni) {
           encontrado = true;
@@ -283,6 +289,7 @@ export function crearAsigYLigar(SubjectApi, subject, shortname, uni) {
     }
     if (encontrado) {
       alert("La asignatura ya existía para esa universidad");
+      form.reset();
     } else {
       let subject2 = new Subject2(subject, shortname.substr(0, 5)); // Subject2 | Asignatura a añadir
       SubjectApi.addSubject(subject2, (error, data, response) => {
@@ -300,7 +307,6 @@ export function crearAsigYLigar(SubjectApi, subject, shortname, uni) {
             if (error) {
               console.error(error);
             } else {
-              console.log(data);
               let id = 0;
               data._embedded.subjects.forEach(element => {
                 if (element.university === undefined) {
@@ -314,6 +320,8 @@ export function crearAsigYLigar(SubjectApi, subject, shortname, uni) {
           ligarUniAsig(uni, data.id, SubjectApi);
         }
       });
+      form.reset();
+      handleShow();
     }
   });
 }

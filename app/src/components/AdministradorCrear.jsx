@@ -573,9 +573,14 @@ class AdministradorCrear extends Component {
     if (uni !== -1) {
       const subj = this.nombreAsig.current.value;
       const shortname = this.nombreCortoAsig.current.value;
-      crearAsigYLigar(this.SubjectApi, subj, shortname, uni);
-      form.reset();
-      this.handleShow();
+      crearAsigYLigar(
+        this.SubjectApi,
+        subj,
+        shortname,
+        uni,
+        form,
+        this.handleShow
+      );
     }
   }
   /**
